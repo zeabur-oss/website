@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@import "@zeabur/design-system";
+@import "fumadocs-ui/css/shadcn.css";
+@import "fumadocs-ui/css/preset.css";
+
+@source "../../node_modules/fumadocs-ui/dist";
+
+html {
+  scrollbar-gutter: stable;
+}
+
+/* The landing header lines up with PageColumn. */
+#nd-home-layout {
+  --fd-layout-width: var(--container-page-wide);
+}
+
+@media (width >= 48rem) {
+  #nd-nav [class*="max-w-(--fd-layout-width)"] {
+    padding-inline: 2rem;
+  }
+}
