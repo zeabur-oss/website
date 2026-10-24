@@ -1,0 +1,15 @@
+node_modules
+.DS_Store
+.direnv
+/.cache
+/.local
+/.shots
+/content
+/public/docs-assets
+/public/shots
+/dist
+/.output
+/.tanstack
+/.nitro
+/.source
+src/routeTree.gen.ts

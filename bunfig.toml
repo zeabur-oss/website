@@ -1,0 +1,5 @@
+[install]
+# Do not resolve package versions published less than seven days ago (the same delay as the other
+# zeabur-oss repositories). No `trustedDependencies`: no package runs install scripts.
+minimumReleaseAge = 604800
+exact = true

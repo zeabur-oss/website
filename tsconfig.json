@@ -1,0 +1,18 @@
+{
+  "include": ["src", "scripts", "*.ts"],
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["DOM", "DOM.Iterable", "ES2024"],
+    "types": ["vite/client", "bun", "unplugin-icons/types/react"],
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "target": "ES2022",
+    "noEmit": true
+  }
+}
