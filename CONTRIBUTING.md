@@ -27,8 +27,8 @@ committed `bun.lock` and a `minimumReleaseAge` of seven days (`bunfig.toml`).
 
 ```sh
 bun install
+bun run build    # also writes content/ and the route tree that typecheck reads
 bun run fmt:check && bun run typecheck && bun run test
-bun run build
 ```
 
 `bun run dev` serves the site with hot reload. To look at the built site in a real browser:
