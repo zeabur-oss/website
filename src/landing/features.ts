@@ -24,8 +24,8 @@ export const groupNames: Record<SiteLocale, Record<GroupId, string>> = {
     diagnose: "看出哪裡出錯",
     team: "團隊與權限",
     cluster: "叢集與節點",
-    install: "安裝與升級",
-    leave: "離開 Zeabur",
+    install: "安裝",
+    leave: "移除 Zeabur",
   },
   "zh-CN": {
     deploy: "部署与配置",
@@ -34,8 +34,8 @@ export const groupNames: Record<SiteLocale, Record<GroupId, string>> = {
     diagnose: "看出哪里出错",
     team: "团队与权限",
     cluster: "集群与节点",
-    install: "安装与升级",
-    leave: "离开 Zeabur",
+    install: "安装",
+    leave: "移除 Zeabur",
   },
   en: {
     deploy: "Deploy and configure",
@@ -44,7 +44,7 @@ export const groupNames: Record<SiteLocale, Record<GroupId, string>> = {
     diagnose: "Find what is wrong",
     team: "People and permissions",
     cluster: "Cluster and nodes",
-    install: "Install and upgrade",
+    install: "Install",
     leave: "Leave Zeabur",
   },
 }
@@ -86,14 +86,55 @@ export const features: Feature[] = [
     "zh-TW": [
       "從 Git 建置",
       "用 Railpack 或 Dockerfile 建置，可指定子資料夾，建置變數不會留在映像檔裡。",
+      "要裝 Zeabur Builder",
     ],
     "zh-CN": [
       "从 Git 构建",
       "用 Railpack 或 Dockerfile 构建，可指定子目录，构建变量不会留在镜像里。",
+      "需要安装 Zeabur Builder",
     ],
     en: [
       "Build from Git",
       "Railpack or a Dockerfile, from any folder. Build variables stay out of the image.",
+      "Needs Zeabur Builder",
+    ],
+  },
+  {
+    group: "deploy",
+    doc: "zeabur/deploy/upload",
+    "zh-TW": [
+      "上傳資料夾",
+      "不用 Git 儲存庫，把資料夾或 .zip 拖進網頁，或用 zeaburctl up 上傳，再建置。",
+      "要裝 Zeabur Builder",
+    ],
+    "zh-CN": [
+      "上传文件夹",
+      "不用 Git 仓库，把文件夹或 .zip 拖进网页，或用 zeaburctl up 上传，再构建。",
+      "需要安装 Zeabur Builder",
+    ],
+    en: [
+      "Upload a folder",
+      "No Git repository needed. Drop a folder or .zip into the page, or use zeaburctl up, then build.",
+      "Needs Zeabur Builder",
+    ],
+  },
+  {
+    group: "deploy",
+    doc: "zeabur/cluster/github-app",
+    "zh-TW": [
+      "用 GitHub App 部署私有儲存庫",
+      "替叢集建立 GitHub App，成員直接挑儲存庫部署，不用另外設定部署金鑰。",
+      "要裝 Zeabur Builder",
+    ],
+    "zh-CN": [
+      "用 GitHub App 部署私有仓库",
+      "给集群创建 GitHub App，成员直接挑仓库部署，不用另外配置部署密钥。",
+      "需要安装 Zeabur Builder",
+    ],
+    en: [
+      "Private repos with a GitHub App",
+      "Create a GitHub App for the cluster and members pick a repository. No deploy keys.",
+      "Needs Zeabur Builder",
     ],
   },
   {
@@ -127,47 +168,53 @@ export const features: Feature[] = [
   },
   {
     group: "deploy",
-    "zh-TW": ["用 YAML 建立任何物件", "直接寫 YAML，建立叢集認得的任何類型，包含 CRD。"],
-    "zh-CN": ["用 YAML 创建任何对象", "直接写 YAML，创建集群认识的任何类型，包括 CRD。"],
-    en: ["Create anything from YAML", "Write YAML for any kind the cluster knows, CRDs included."],
-  },
-  {
-    group: "deploy",
-    "zh-TW": ["部署紀錄與回滾", "每次改動都留一筆，可以比較兩版差異，回到某一版。"],
-    "zh-CN": ["部署记录与回滚", "每次改动都留一条，可以比较两个版本的差异，回到某个版本。"],
-    en: [
-      "History and rollback",
-      "Every change is kept. Compare two versions and roll back to one.",
-    ],
-  },
-  {
-    group: "deploy",
-    doc: "zeabur/reference/security",
+    doc: "zeabur/configure/objects-yaml",
     "zh-TW": [
-      "先檢查變更再套用",
-      "列出要寫入的欄位、會不會停機、會掉哪些資料。有人先改過就不寫入。",
+      "用 YAML 建立和編輯物件",
+      "表單沒有的設定直接寫 YAML，建立或編輯任何類型，包含自訂資源。",
     ],
     "zh-CN": [
-      "先检查变更再应用",
-      "列出要写入的字段、会不会停机、会丢哪些数据。有人先改过就不写入。",
+      "用 YAML 创建和编辑对象",
+      "表单没有的配置直接写 YAML，创建或编辑任何类型，包括自定义资源。",
     ],
     en: [
-      "Review before applying",
-      "Shows the fields, any downtime and any data at risk. Stops if someone changed it first.",
+      "Create and edit objects with YAML",
+      "Write YAML for any kind the cluster provides, custom resources included.",
     ],
   },
   {
     group: "deploy",
-    doc: "zeabur/deploy/image",
-    "zh-TW": ["副本數、規格與健康檢查", "調整副本、CPU 和記憶體，設定就緒、存活和啟動檢查。"],
-    "zh-CN": ["副本数、规格与健康检查", "调整副本、CPU 和内存，配置就绪、存活和启动检查。"],
+    doc: "zeabur/configure/restart-rollback",
+    "zh-TW": ["回滾到之前的版本", "部署紀錄列出每個版本，可以比較差異，再回到其中一版。"],
+    "zh-CN": ["回滚到之前的版本", "部署记录列出每个版本，可以比较差异，再回到其中一版。"],
     en: [
-      "Replicas, resources, probes",
+      "Roll back to a previous version",
+      "The history lists each version. Compare two, then go back to one.",
+    ],
+  },
+  {
+    group: "deploy",
+    doc: "zeabur/get-started/how-it-works",
+    "zh-TW": ["先檢查變更再套用", "列出要寫進叢集的差異再套用。有人先改過就拒絕，請你重新檢查。"],
+    "zh-CN": ["先检查变更再应用", "列出要写进集群的差异再应用。有人先改过就拒绝，请你重新检查。"],
+    en: [
+      "Review before applying",
+      "Shows the difference before it is written. If someone changed it first, it refuses and asks you to review again.",
+    ],
+  },
+  {
+    group: "deploy",
+    doc: "zeabur/configure/service-settings",
+    "zh-TW": ["副本、資源與健康檢查", "調整副本、CPU 和記憶體，設定就緒、存活和啟動檢查。"],
+    "zh-CN": ["副本、资源与健康检查", "调整副本、CPU 和内存，配置就绪、存活和启动检查。"],
+    en: [
+      "Replicas, resources and health checks",
       "Set replicas, CPU and memory, and readiness, liveness and startup checks.",
     ],
   },
   {
     group: "deploy",
+    doc: "zeabur/configure/restart-rollback",
     "zh-TW": ["暫停或重新啟動整個專案", "一次停掉專案所有服務再恢復，或分批重新啟動。"],
     "zh-CN": ["暂停或重启整个项目", "一次停掉项目所有服务再恢复，或分批重启。"],
     en: [
@@ -213,53 +260,44 @@ export const features: Feature[] = [
   },
   {
     group: "deploy",
-    doc: "zeabur/reference/security",
+    doc: "zeabur/configure/service-settings",
     "zh-TW": [
-      "嚴格的容器安全預設",
-      "新專案只跑非 root 容器、移除所有 capabilities。要放寬時會說清楚。",
+      "嚴格或相容的安全設定",
+      "服務選嚴格時，以非 root 執行、不能提升權限、移除所有 capabilities。",
     ],
     "zh-CN": [
-      "严格的容器安全默认值",
-      "新项目只运行非 root 容器、移除所有 capabilities。要放宽时会说清楚。",
+      "严格或兼容的安全配置",
+      "服务选严格时，以非 root 运行、不能提升权限、移除所有 capabilities。",
     ],
     en: [
-      "Strict container defaults",
-      "New projects run as non-root with no capabilities. Loosening it says so.",
+      "Strict or compatible security",
+      "A strict service runs as non-root, cannot escalate and drops all capabilities.",
     ],
   },
   {
     group: "deploy",
-    doc: "zeabur/get-started/how-it-works",
+    doc: "zeabur/configure/projects",
     "zh-TW": [
-      "接手既有的服務",
-      "叢集裡的 Namespace 按一下就變成專案。Helm、Argo CD、Flux 管的物件不讓你改錯。",
+      "把既有的 Namespace 加進 Zeabur",
+      "叢集裡的 Namespace 按一下就變成專案。Helm、Argo CD、Flux 管的服務不讓你改錯。",
     ],
     "zh-CN": [
-      "接手已有的服务",
-      "集群里的 Namespace 点一下就变成项目。Helm、Argo CD、Flux 管理的对象不让你改错。",
+      "把已有的 Namespace 加进 Zeabur",
+      "集群里的 Namespace 点一下就变成项目。Helm、Argo CD、Flux 管理的服务不让你改错。",
     ],
     en: [
-      "Take over what runs",
-      "Any namespace becomes a project in one click. Helm, Argo CD and Flux objects stay theirs.",
+      "Add an existing namespace",
+      "Any namespace becomes a project in one click. Services that Helm, Argo CD or Flux manage stay theirs.",
     ],
   },
   {
     group: "deploy",
-    doc: "catalog",
-    "zh-TW": [
-      "應用範本",
-      "Zeabur Catalog 有 35 個測過的範本，例如 n8n、Dify、WordPress。",
-      "介面目前只會部署 Error pages",
-    ],
-    "zh-CN": [
-      "应用模板",
-      "Zeabur Catalog 有 35 个测过的模板，例如 n8n、Dify、WordPress。",
-      "界面目前只会部署 Error pages",
-    ],
+    doc: "zeabur/deploy/templates",
+    "zh-TW": ["應用程式範本", "從 Zeabur Catalog 挑一個應用程式，填好網域和欄位，檢查後部署。"],
+    "zh-CN": ["应用程序模板", "从 Zeabur Catalog 挑一个应用程序，填好域名和字段，检查后部署。"],
     en: [
       "App templates",
-      "Zeabur Catalog has 35 tested templates, such as n8n, Dify and WordPress.",
-      "The UI only deploys Error pages for now",
+      "Pick an app from Zeabur Catalog, fill in the domain and fields, review, then deploy.",
     ],
   },
 
@@ -267,10 +305,10 @@ export const features: Feature[] = [
   {
     group: "network",
     doc: "zeabur/configure/domains",
-    "zh-TW": ["網域與自動 HTTPS", "列出要加的 DNS 紀錄，憑證自動簽發與續期。"],
-    "zh-CN": ["域名与自动 HTTPS", "列出要加的 DNS 记录，证书自动签发与续期。"],
+    "zh-TW": ["公開網域與 HTTPS", "列出要加的 DNS 紀錄，憑證自動簽發與續期。"],
+    "zh-CN": ["公开域名与 HTTPS", "列出要加的 DNS 记录，证书自动签发与续期。"],
     en: [
-      "Domains with HTTPS",
+      "Public domains with HTTPS",
       "Shows the DNS records to add. Certificates are issued and renewed for you.",
     ],
   },
@@ -346,18 +384,27 @@ export const features: Feature[] = [
   },
   {
     group: "network",
-    "zh-TW": ["對外連接埠", "不經網域，直接開一個 TCP 連接埠，例如讓資料庫對外。"],
-    "zh-CN": ["对外端口", "不经过域名，直接开放一个 TCP 端口，例如让数据库对外。"],
-    en: ["Public TCP ports", "Open a TCP port without a domain, for a database for example."],
+    doc: "zeabur/configure/networking",
+    "zh-TW": ["開放連接埠到網際網路", "不經網域，直接開一個 TCP 連接埠，例如讓資料庫對外。"],
+    "zh-CN": ["开放端口到互联网", "不经过域名，直接开放一个 TCP 端口，例如让数据库对外。"],
+    en: [
+      "Open a port to the internet",
+      "Open a TCP port without a domain, for a database for example.",
+    ],
   },
   {
     group: "network",
-    "zh-TW": ["服務之間的連線規則", "用圖看誰連得到誰，一鍵隔離，或只讓特定服務連進來。"],
-    "zh-CN": ["服务之间的连接规则", "用图看谁能连到谁，一键隔离，或只让特定服务连进来。"],
-    en: ["Who can reach whom", "See it as a graph. Isolate a service or allow only some callers."],
+    doc: "zeabur/configure/networking",
+    "zh-TW": ["連線規則", "隔離服務，或只讓特定服務連進來，連入和連出分開列出。"],
+    "zh-CN": ["连接规则", "隔离服务，或只让特定服务连进来，连入和连出分开列出。"],
+    en: [
+      "Connection rules",
+      "Isolate a service or allow only some callers. Inbound and outbound are listed apart.",
+    ],
   },
   {
     group: "network",
+    doc: "zeabur/cluster/diagnosis",
     "zh-TW": ["連線檢查", "網址打不開時，從叢集內和你的瀏覽器兩邊查，指出卡在哪一段。"],
     "zh-CN": ["连接检查", "网址打不开时，从集群内和你的浏览器两边查，指出卡在哪一段。"],
     en: [
@@ -365,21 +412,37 @@ export const features: Feature[] = [
       "When a URL fails, checks from inside the cluster and your browser and names the broken step.",
     ],
   },
+  {
+    group: "network",
+    doc: "zeabur/configure/ip-limits",
+    "zh-TW": [
+      "限制能連入和連出的 IP",
+      "只讓指定的 IP 開啟網域，也限制服務能連到哪些 IP。",
+      "網域限制只在 Traefik 上",
+    ],
+    "zh-CN": [
+      "限制能连入和连出的 IP",
+      "只让指定的 IP 打开域名，也限制服务能连到哪些 IP。",
+      "域名限制只在 Traefik 上",
+    ],
+    en: [
+      "Limit inbound and outbound IPs",
+      "Only listed IPs open a domain, and a service reaches only listed IPs.",
+      "Domain limits are Traefik only",
+    ],
+  },
 
   // Data and backups
   {
     group: "data",
     doc: "zeabur/deploy/databases",
-    "zh-TW": [
-      "一鍵資料庫",
-      "PostgreSQL、MongoDB、MySQL、MariaDB、Dragonfly，各由自己的 operator 管。",
-    ],
+    "zh-TW": ["資料庫", "PostgreSQL、MongoDB、MySQL、MariaDB、Dragonfly，各由自己的 operator 管。"],
     "zh-CN": [
-      "一键数据库",
+      "数据库",
       "PostgreSQL、MongoDB、MySQL、MariaDB、Dragonfly，各由自己的 operator 管理。",
     ],
     en: [
-      "Databases in a click",
+      "Databases",
       "PostgreSQL, MongoDB, MySQL, MariaDB and Dragonfly, each run by its operator.",
     ],
   },
@@ -515,10 +578,11 @@ export const features: Feature[] = [
   },
   {
     group: "data",
-    "zh-TW": ["檔案瀏覽", "在瀏覽器看容器和磁碟區的檔案，上傳、下載、預覽、改名、刪除。"],
-    "zh-CN": ["文件浏览", "在浏览器看容器和存储卷的文件，上传、下载、预览、改名、删除。"],
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": ["瀏覽檔案", "在瀏覽器看容器和磁碟區的檔案，上傳、下載、預覽、改名、刪除。"],
+    "zh-CN": ["浏览文件", "在浏览器看容器和存储卷的文件，上传、下载、预览、改名、删除。"],
     en: [
-      "File browser",
+      "Browse files",
       "Browse a container or volume. Upload, download, preview, rename, delete.",
     ],
   },
@@ -526,92 +590,111 @@ export const features: Feature[] = [
   // Find what is wrong
   {
     group: "diagnose",
-    "zh-TW": ["白話診斷", "服務不健康時，用一般話說原因，附上依據和下一步。不靠 AI。"],
-    "zh-CN": ["白话诊断", "服务不健康时，用平常的话说原因，附上依据和下一步。不靠 AI。"],
+    doc: "zeabur/cluster/diagnosis",
+    "zh-TW": ["出了什麼問題", "服務有問題時，一句話說原因和怎麼處理，附上依據，按鈕直接帶你去改。"],
+    "zh-CN": ["出了什么问题", "服务有问题时，一句话说原因和怎么处理，附上依据，按钮直接带你去改。"],
     en: [
-      "Plain diagnosis",
-      "Says why a service is unhealthy, with the evidence and the next step. No AI.",
+      "What went wrong",
+      "One line on the cause and one on what to do, with the evidence and buttons that take you to the fix.",
     ],
   },
   {
     group: "diagnose",
-    "zh-TW": [
-      "依原因分組的「需要處理」",
-      "所有專案的問題分成四類，同一個原因拖垮的服務合成一件事。",
-    ],
-    "zh-CN": ["按原因分组的“需要处理”", "所有项目的问题分成四类，同一个原因拖垮的服务合成一件事。"],
+    doc: "zeabur/cluster/diagnosis",
+    "zh-TW": ["需要處理", "首頁列出停擺的服務，叢集概覽列出 Kubernetes 版本、節點和元件的問題。"],
+    "zh-CN": ["需要处理", "首页列出停摆的服务，集群概览列出 Kubernetes 版本、节点和组件的问题。"],
     en: [
-      "Needs attention, by cause",
-      "Problems across projects in four kinds. One cause, one item.",
+      "Needs attention",
+      "The home page lists stopped services. Cluster overview lists Kubernetes version, node and component problems.",
     ],
   },
   {
     group: "diagnose",
-    "zh-TW": ["缺少的設定提醒", "指出沒有就緒檢查、沒有資源上限的服務，附上要加的 YAML。"],
-    "zh-CN": ["缺少的配置提醒", "指出没有就绪检查、没有资源上限的服务，附上要加的 YAML。"],
+    doc: "zeabur/cluster/diagnosis",
+    "zh-TW": ["缺少的設定", "指出沒有就緒檢查、沒有記憶體上限、沒有備份的設定，附上修正按鈕。"],
+    "zh-CN": ["缺少的配置", "指出没有就绪检查、没有内存上限、没有备份的配置，附上修正按钮。"],
     en: [
       "Missing settings",
-      "Points out missing readiness checks and limits, with the YAML to add.",
+      "Points out missing readiness checks, memory limits and backups, with a button to fix each.",
     ],
   },
   {
     group: "diagnose",
-    "zh-TW": ["即時日誌", "可以篩選、排除、看前一次執行、下載。"],
-    "zh-CN": ["实时日志", "可以筛选、排除、看上一次运行、下载。"],
-    en: ["Live logs", "Filter, exclude, see the previous run, download."],
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": ["日誌", "可以篩選、排除、看前一次執行、下載。"],
+    "zh-CN": ["日志", "可以筛选、排除、看上一次运行、下载。"],
+    en: ["Logs", "Filter, exclude, see the previous run, download."],
   },
   {
     group: "diagnose",
-    doc: "zeabur/reference/security",
-    "zh-TW": ["日誌歷史", "看所有副本寫過的日誌，包含已被取代的。", "要裝 VictoriaLogs，預設關閉"],
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": [
+      "日誌的歷史紀錄",
+      "看所有副本寫過的日誌，包含已被取代的。",
+      "要開啟 Zeabur Proxy 並裝日誌儲存服務",
+    ],
     "zh-CN": [
-      "日志历史",
+      "日志的历史记录",
       "看所有副本写过的日志，包括已被替换的。",
-      "需要安装 VictoriaLogs，默认关闭",
+      "需要开启 Zeabur Proxy 并安装日志存储服务",
     ],
     en: [
       "Log history",
       "Logs from every replica, replaced ones too.",
-      "Needs VictoriaLogs, off by default",
+      "Needs Zeabur Proxy and a log store",
     ],
   },
   {
     group: "diagnose",
-    doc: "zeabur/reference/security",
-    "zh-TW": ["容器終端機", "在瀏覽器開 shell，容器沒有 shell 時自動加一個除錯容器。"],
-    "zh-CN": ["容器终端", "在浏览器打开 shell，容器没有 shell 时自动加一个调试容器。"],
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": ["終端機", "在瀏覽器開 shell，容器沒有 shell 時自動加一個除錯容器。"],
+    "zh-CN": ["终端", "在浏览器打开 shell，容器没有 shell 时自动加一个调试容器。"],
+    en: ["Terminal", "A shell in the browser. Adds a debug container when the image has none."],
+  },
+  {
+    group: "diagnose",
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": ["kubectl 終端機", "內建 kubectl 和 helm 的短暫終端機，用你自己的權限。"],
+    "zh-CN": ["kubectl 终端", "内置 kubectl 和 helm 的临时终端，用你自己的权限。"],
+    en: ["kubectl terminal", "A short-lived terminal with kubectl and helm, as you."],
+  },
+  {
+    group: "diagnose",
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": [
+      "用量",
+      "每個副本目前的 CPU 和記憶體，對照上限，歷史圖標出記憶體不足和重新啟動。",
+      "要裝 metrics-server，歷史要有指標儲存服務",
+    ],
+    "zh-CN": [
+      "用量",
+      "每个副本当前的 CPU 和内存，对照上限，历史图标出内存不足和重启。",
+      "需要安装 metrics-server，历史需要指标存储服务",
+    ],
     en: [
-      "Container shell",
-      "A shell in the browser. Adds a debug container when the image has none.",
+      "Usage",
+      "CPU and memory per replica against limits. History marks out-of-memory kills and restarts.",
+      "Needs metrics-server, and a metrics store for history",
     ],
   },
   {
     group: "diagnose",
-    doc: "zeabur/reference/security",
-    "zh-TW": ["瀏覽器裡的 kubectl", "內建 kubectl 和 helm 的短暫終端機，用你自己的權限。"],
-    "zh-CN": ["浏览器里的 kubectl", "内置 kubectl 和 helm 的临时终端，用你自己的权限。"],
-    en: ["kubectl in the browser", "A short-lived terminal with kubectl and helm, as you."],
-  },
-  {
-    group: "diagnose",
-    "zh-TW": ["CPU 與記憶體用量", "即時和最近 7 天的用量，對照上限，標出記憶體不足和重新啟動。"],
-    "zh-CN": ["CPU 与内存用量", "实时和最近 7 天的用量，对照上限，标出内存不足和重启。"],
+    doc: "zeabur/configure/logs-terminal",
+    "zh-TW": [
+      "事件",
+      "副本排到哪個節點、健康檢查失敗、記憶體超過上限，這類 Kubernetes 事件最新的在前。",
+      "Kubernetes 只保留大約一小時",
+    ],
+    "zh-CN": [
+      "事件",
+      "副本调度到哪个节点、健康检查失败、内存超过上限，这类 Kubernetes 事件最新的在前。",
+      "Kubernetes 只保留大约一小时",
+    ],
     en: [
-      "CPU and memory",
-      "Now and the last 7 days, against limits, with out-of-memory kills and restarts marked.",
+      "Events",
+      "Kubernetes events such as scheduling, failed probes and out-of-memory kills, newest first.",
+      "Kubernetes keeps about an hour",
     ],
-  },
-  {
-    group: "diagnose",
-    "zh-TW": ["變更時間軸", "誰改了什麼，用 Zeabur、Helm、Argo CD、Flux 還是 kubectl 改的。"],
-    "zh-CN": ["变更时间线", "谁改了什么，用 Zeabur、Helm、Argo CD、Flux 还是 kubectl 改的。"],
-    en: ["Change timeline", "Who changed what, and with Zeabur, Helm, Argo CD, Flux or kubectl."],
-  },
-  {
-    group: "diagnose",
-    "zh-TW": ["專案架構圖", "把服務之間的連線畫出來。"],
-    "zh-CN": ["项目架构图", "把服务之间的连接画出来。"],
-    en: ["Project map", "The services and the connections between them."],
   },
   {
     group: "diagnose",
@@ -641,10 +724,10 @@ export const features: Feature[] = [
   },
   {
     group: "diagnose",
-    doc: "zeabur/cluster/notifications",
-    "zh-TW": ["執行期安全警示", "裝了 Falco 時，在介面看警示，也能送到通知管道。"],
-    "zh-CN": ["运行时安全告警", "装了 Falco 时，在界面看告警，也能发到通知渠道。"],
-    en: ["Runtime security alerts", "With Falco installed, see its alerts and send them on."],
+    doc: "zeabur/cluster/diagnosis",
+    "zh-TW": ["執行期警示（Falco）", "裝了 Falco 時，在介面看警示，也能送到通知管道。"],
+    "zh-CN": ["运行时告警（Falco）", "装了 Falco 时，在界面看告警，也能发到通知渠道。"],
+    en: ["Runtime alerts (Falco)", "With Falco installed, see its alerts and send them on."],
   },
   {
     group: "diagnose",
@@ -654,16 +737,6 @@ export const features: Feature[] = [
     en: [
       "zeaburctl doctor",
       "Checks the cluster's versions, components and sign-in from your laptop.",
-    ],
-  },
-  {
-    group: "diagnose",
-    doc: "zeabur/reference/zeaburctl",
-    "zh-TW": ["唯讀 MCP", "讓 AI 助理問哪裡壞了，只能讀，讀不到 Secret 的值。"],
-    "zh-CN": ["只读 MCP", "让 AI 助手问哪里坏了，只能读，读不到 Secret 的值。"],
-    en: [
-      "Read-only MCP",
-      "Lets an AI assistant ask what broke. It can read, but never Secret values.",
     ],
   },
 
@@ -743,18 +816,44 @@ export const features: Feature[] = [
   // Cluster and nodes
   {
     group: "cluster",
-    "zh-TW": ["叢集總覽", "Kubernetes 支援到什麼時候、kubelet 版本差距、哪些元件比測過的舊。"],
-    "zh-CN": ["集群总览", "Kubernetes 支持到什么时候、kubelet 版本差距、哪些组件比测过的旧。"],
-    en: ["Cluster overview", "Support dates, kubelet skew and components older than tested."],
+    doc: "zeabur/cluster/components",
+    "zh-TW": [
+      "叢集元件",
+      "檢查叢集裝了哪些元件，由 Zeabur 安裝，或產生 Helm、HelmChart、Flux、Argo CD 格式自己裝。",
+    ],
+    "zh-CN": [
+      "集群组件",
+      "检查集群装了哪些组件，由 Zeabur 安装，或生成 Helm、HelmChart、Flux、Argo CD 格式自己装。",
+    ],
+    en: [
+      "Cluster components",
+      "See what is installed. Install from Zeabur, or get Helm, HelmChart, Flux or Argo CD output.",
+    ],
   },
   {
     group: "cluster",
-    doc: "zeabur/cluster/components",
-    "zh-TW": ["元件目錄", "由 Zeabur 安裝，或產生 Helm、HelmChart、Flux、Argo CD 格式自己裝。"],
-    "zh-CN": ["组件目录", "由 Zeabur 安装，或生成 Helm、HelmChart、Flux、Argo CD 格式自己装。"],
+    doc: "zeabur/cluster/settings",
+    "zh-TW": ["叢集名稱、網域與用量歷史", "改叢集名稱，選用量歷史的來源，設定新服務用的網域。"],
+    "zh-CN": ["集群名称、域名与用量历史", "改集群名称，选用量历史的来源，设置新服务用的域名。"],
     en: [
-      "Component catalog",
-      "Install from Zeabur, or get Helm, HelmChart, Flux or Argo CD output.",
+      "Cluster name, domain and usage history",
+      "Rename the cluster, choose where usage history comes from, and set the domain for new services.",
+    ],
+  },
+  {
+    group: "cluster",
+    doc: "zeabur/cluster/external-secrets",
+    "zh-TW": [
+      "從外部機密庫同步機密",
+      "連接 OpenBao、Vault、1Password 或 AWS Secrets Manager，把機密同步成叢集裡的 Secret。",
+    ],
+    "zh-CN": [
+      "从外部密钥库同步密钥",
+      "连接 OpenBao、Vault、1Password 或 AWS Secrets Manager，把密钥同步成集群里的 Secret。",
+    ],
+    en: [
+      "Sync secrets from a vault",
+      "Connect OpenBao, Vault, 1Password or AWS Secrets Manager and sync into Secrets.",
     ],
   },
   {
@@ -939,25 +1038,6 @@ export const features: Feature[] = [
     "zh-CN": ["用 GitOps 管理 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
     en: ["Zeabur by GitOps", "Deploy Zeabur's chart with Argo CD or Flux."],
   },
-  {
-    group: "install",
-    doc: "zeabur/get-started/install",
-    "zh-TW": [
-      "升級 Zeabur",
-      "Helm 安裝的叢集用 helm upgrade。",
-      "Installer 裝的叢集還沒有升級步驟",
-    ],
-    "zh-CN": [
-      "升级 Zeabur",
-      "Helm 安装的集群用 helm upgrade。",
-      "Installer 装的集群还没有升级步骤",
-    ],
-    en: [
-      "Upgrade Zeabur",
-      "helm upgrade on Helm installs.",
-      "No upgrade steps for installer clusters yet",
-    ],
-  },
 
   // Leave Zeabur
   {
@@ -989,7 +1069,7 @@ export const features: Feature[] = [
   },
   {
     group: "leave",
-    doc: "zeabur/cluster/s3-destinations",
+    doc: "zeabur/leave/uninstall",
     "zh-TW": ["移除後備份照跑", "備份由 operator、K8up、Velero 自己執行，不靠 Zeabur。"],
     "zh-CN": ["移除后备份照常运行", "备份由 operator、K8up、Velero 自己执行，不靠 Zeabur。"],
     en: ["Backups keep running", "Operators, K8up and Velero run them without Zeabur."],
