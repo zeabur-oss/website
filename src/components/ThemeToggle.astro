@@ -1,0 +1,36 @@
+---
+import Icon from "./Icon.astro"
+
+interface Props {
+  label: string
+}
+---
+
+<button type="button" class="icon-button theme-toggle" aria-label={Astro.props.label}>
+  <Icon name="sun" class="theme-dark" />
+  <Icon name="moon" class="theme-light" />
+</button>
+
+<script>
+  // The same key as Starlight's theme picker, so the landing and the docs agree.
+  const key = "starlight-theme"
+  const preferred = () => {
+    try {
+      const stored = localStorage.getItem(key)
+      if (stored === "light" || stored === "dark") return stored
+    } catch {}
+    return matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"
+  }
+  document.addEventListener("click", (event) => {
+    if (!(event.target as Element).closest(".theme-toggle")) return
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark"
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem(key, next)
+    } catch {}
+  })
+  // A page swapped in by the router keeps the theme instead of its server-rendered default.
+  document.addEventListener("astro:before-swap", (event) => {
+    event.newDocument.documentElement.dataset.theme = preferred()
+  })
+</script>

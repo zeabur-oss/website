@@ -1,0 +1,15 @@
+---
+import Search from "@astrojs/starlight/components/Search.astro"
+import SiteHeader from "../SiteHeader.astro"
+import { homeUrl } from "../../lib/chrome.ts"
+import { isSiteLocale, locales } from "../../lib/urls.ts"
+
+const { id, lang } = Astro.locals.starlightRoute
+const locale = isSiteLocale(lang) ? lang : "en"
+// Starlight builds one 404 page, at /404 only.
+const alternates = id === "404" ? Object.fromEntries(locales.map((l) => [l, homeUrl(l)])) : {}
+---
+
+<SiteHeader locale={locale} section="docs" alternates={alternates} docs>
+  <Search slot="search" />
+</SiteHeader>

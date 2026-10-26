@@ -1,0 +1,175 @@
+/* The product images (src/components/imagery/): Kubernetes objects drawn as labelled boxes on
+   hairlines. Each product arranges them its own way: Zeabur nests them in a project, Identity
+   lays them on a time axis, Builder on a branch, Catalog in a matrix. Violet marks the one thing
+   that acts. Each plays one short sequence when it scrolls into view. */
+
+.imagery {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-stack-mono);
+  --img-line: var(--site-line);
+  --img-line-strong: var(--site-line-strong);
+  --img-soft: var(--site-bg-soft);
+  --img-card: var(--site-card);
+  --img-ink: var(--site-text);
+  --img-muted: var(--site-muted);
+  --img-faint: var(--site-faint);
+  --img-accent: var(--site-accent);
+}
+.imagery * {
+  vector-effect: non-scaling-stroke;
+}
+.img-frame {
+  fill: var(--img-soft);
+  stroke: var(--img-line);
+}
+.img-group {
+  fill: color-mix(in srgb, var(--img-card) 55%, transparent);
+  stroke: var(--img-line);
+}
+.img-box,
+.img-card {
+  fill: var(--img-card);
+  stroke: var(--img-line-strong);
+}
+.img-card {
+  filter: drop-shadow(0 6px 14px light-dark(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.35)));
+}
+.img-box-accent {
+  stroke: var(--img-accent);
+  stroke-width: 1.5;
+}
+.img-kind {
+  font-size: 10.5px;
+  fill: var(--img-muted);
+}
+.img-name {
+  font-size: 12px;
+  fill: var(--img-ink);
+}
+.img-strong {
+  font-family: var(--font-stack-sans);
+  font-weight: 500;
+  font-size: 13px;
+}
+.img-title {
+  font-family: var(--font-stack-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--img-ink);
+}
+.img-faint {
+  fill: var(--img-faint);
+}
+.img-accent-text {
+  fill: var(--img-accent);
+}
+.img-link,
+.img-guide,
+.img-axis,
+.img-tick {
+  fill: none;
+  stroke: var(--img-line-strong);
+}
+.img-tick {
+  stroke: var(--img-muted);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.img-accent-stroke {
+  stroke: var(--img-accent);
+}
+.img-dot {
+  fill: var(--img-card);
+  stroke: var(--img-ink);
+  stroke-width: 1.5;
+}
+.img-dot-accent {
+  fill: var(--img-accent);
+  stroke: var(--img-accent);
+}
+.img-hit {
+  fill: var(--site-accent-soft);
+}
+.img-button {
+  fill: var(--img-accent);
+}
+.img-button-text {
+  font-size: 11.5px;
+  font-weight: 500;
+  fill: rgb(var(--white));
+}
+.img-flag {
+  fill: var(--img-ink);
+}
+.img-layer-old {
+  fill: none;
+  stroke: var(--img-line-strong);
+}
+.img-layer-new {
+  fill: color-mix(in srgb, var(--img-accent) 18%, var(--img-card));
+  stroke: var(--img-accent);
+}
+
+/* The sequence each image plays once. Before it plays (and when scripts are off) the image shows
+   its final state. */
+.reveal-ready [data-reveal]:not(.is-in) .imagery-zeabur .img-plan {
+  opacity: 0;
+  translate: 8px 0;
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-zeabur .img-hit {
+  opacity: 0;
+}
+.imagery-zeabur .img-plan {
+  transition:
+    opacity 500ms var(--ease-site) 200ms,
+    translate 500ms var(--ease-site) 200ms;
+}
+.imagery-zeabur .img-hit {
+  transition: opacity 400ms var(--ease-site) 700ms;
+}
+
+.imagery-identity .img-seg {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transition:
+    scale 450ms var(--ease-site),
+    opacity 450ms var(--ease-site);
+  transition-delay: calc(150ms + var(--i) * 220ms);
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-identity .img-seg {
+  scale: 0 1;
+  opacity: 0;
+}
+
+.imagery-builder .img-layer-new {
+  transition:
+    opacity 300ms var(--ease-site),
+    translate 300ms var(--ease-site);
+  transition-delay: calc(200ms + var(--i) * 140ms);
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-builder .img-layer-new {
+  opacity: 0;
+  translate: 0 -6px;
+}
+
+.imagery-catalog .img-check {
+  transition: opacity 300ms var(--ease-site);
+  transition-delay: calc(150ms + var(--i) * 50ms);
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-catalog .img-check {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imagery * {
+    transition: none !important;
+  }
+  .reveal-ready [data-reveal]:not(.is-in) .imagery * {
+    opacity: 1 !important;
+    translate: none !important;
+    scale: none !important;
+  }
+}

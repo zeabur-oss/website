@@ -1,0 +1,118 @@
+---
+import ProductLink from "../ProductLink.astro"
+import Default from "@astrojs/starlight/components/Sidebar.astro"
+import Icon from "../Icon.astro"
+import {
+  blogUrl,
+  chrome,
+  homeUrl,
+  productIcon,
+  productIds,
+  type ProductId,
+} from "../../lib/chrome.ts"
+import { docsUrl, isSiteLocale } from "../../lib/urls.ts"
+
+// The product whose docs these are, as a menu at the top, then that product's pages.
+const { lang, entry } = Astro.locals.starlightRoute
+const locale = isSiteLocale(lang) ? lang : "en"
+const t = chrome[locale]
+const current = (entry.data as { repo?: string }).repo as ProductId | undefined
+---
+
+{current && (
+  <details class="menu product-switch" data-menu>
+    <summary>
+      <span class="mark">
+        <Icon name={productIcon[current]} />
+      </span>
+      <span class="product-switch-name">{t.products[current].name}</span>
+      <Icon name="caret-up-down" class="caret-both" />
+    </summary>
+    <div class="menu-panel products-panel">
+      {productIds.map((id) => (
+        <ProductLink
+          id={id}
+          href={docsUrl(locale, id)}
+          current={id === current}
+          name={t.products[id].name}
+          line={t.products[id].short}
+        />
+      ))}
+    </div>
+  </details>
+)}
+<Default />
+<nav class="docs-mobile-nav" aria-label="Zeabur OSS">
+  <a href={homeUrl(locale)}>
+    <Icon name="house" />
+    {t.nav.home}
+  </a>
+  <a href={blogUrl(locale)}>
+    <Icon name="article" />
+    {t.nav.blog}
+  </a>
+</nav>
+
+<style>
+  .product-switch {
+    margin-bottom: 0.25rem;
+  }
+  .product-switch > summary {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    height: 2.75rem;
+    padding: 0 0.625rem 0 0.375rem;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-lg);
+    background: var(--site-card);
+    color: var(--site-text);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  .product-switch > summary:hover,
+  .product-switch[open] > summary {
+    border-color: var(--site-line-strong);
+    background: var(--site-card);
+  }
+  .product-switch > summary .mark {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .product-switch > summary .mark :global(.icon) {
+    width: 1rem;
+    height: 1rem;
+  }
+  .product-switch-name {
+    flex: 1;
+  }
+  .product-switch :global(.caret-both) {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--site-faint);
+  }
+  .product-switch .products-panel {
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+  .docs-mobile-nav {
+    display: flex;
+    gap: 1rem;
+    padding-block: 1rem 0.5rem;
+    border-top: 1px solid var(--site-line);
+    font-size: 0.875rem;
+  }
+  .docs-mobile-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--site-muted);
+    text-decoration: none;
+  }
+  @media (min-width: 50rem) {
+    .docs-mobile-nav {
+      display: none;
+    }
+  }
+</style>

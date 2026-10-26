@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "printWidth": 100,
+  "astro": true,
+  "ignorePatterns": [
+    "node_modules",
+    "bun.lock",
+    "content",
+    "dist",
+    ".cache",
+    ".local",
+    ".shots",
+    "public",
+    ".astro",
+    "src/content/docs"
+  ]
+}

@@ -1,0 +1,39 @@
+---
+// A section's heading: an optional kicker, the title with an optional dim half, and a lead.
+// After zeabur.com's LandingSectionHeader (eyebrow, title, description, left or centred).
+interface Props {
+  id: string
+  title?: string
+  /** The quieter first half of the title. */
+  dim?: string
+  /** A quieter second half, after a space. */
+  tail?: string
+  lead?: string
+  kicker?: string
+  align?: "start" | "center"
+}
+const { id, title, dim, tail, lead, kicker, align = "start" } = Astro.props
+// Chinese runs the two halves together; other languages put a space between them.
+const gap = dim && !/[　-鿿＀-￯]$/u.test(dim) ? " " : ""
+---
+
+<header class:list={["section-head", align === "center" && "section-head-center"]} data-reveal>
+  {kicker && <p class="kicker">{kicker}</p>}
+  <h2 id={id}>
+    {tail ? (
+      <>
+        {`${title} `}
+        <span class="dim">{tail}</span>
+      </>
+    ) : dim ? (
+      <>
+        <span class="dim">{dim}</span>
+        {gap}
+        <span class="rest">{title}</span>
+      </>
+    ) : (
+      title
+    )}
+  </h2>
+  {lead && <p class="lead">{lead}</p>}
+</header>

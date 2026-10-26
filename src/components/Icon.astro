@@ -1,0 +1,18 @@
+---
+import { iconBody, type IconWeight } from "../lib/icons.ts"
+
+interface Props {
+  name: string
+  weight?: IconWeight
+  class?: string
+}
+const { name, weight, class: className } = Astro.props
+---
+
+<svg
+  class:list={["icon", className]}
+  viewBox="0 0 256 256"
+  fill="currentColor"
+  aria-hidden="true"
+  set:html={iconBody(name, weight)}
+/>

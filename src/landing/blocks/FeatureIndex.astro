@@ -1,0 +1,59 @@
+---
+// Every feature in groups, one line each, after the Apple and Tailscale feature lists: a name, what
+// it does, and what is missing when it is not finished.
+import { features, groupNames, featureCopy, type GroupId } from "../features.ts"
+import { docsUrl, type SiteLocale } from "../../lib/urls.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const names = groupNames[locale]
+const t = featureCopy[locale]
+const groups = Object.keys(names) as GroupId[]
+const href = (doc: string) => {
+  const [repo, ...rest] = doc.split("/")
+  return docsUrl(locale, repo!, rest.join("/") || "index")
+}
+---
+
+<div class="feature-index">
+  {groups.map((group) => {
+    const items = features.filter((f) => f.group === group)
+    return (
+      <section
+        class="grid12 feature-group"
+        id={`features-${group}`}
+        aria-labelledby={`features-${group}-title`}
+      >
+        <h3 id={`features-${group}-title`} class="feature-group-title" data-reveal>
+          {names[group]}
+          <span class="count">{items.length}</span>
+        </h3>
+        <ul class="feature-list">
+          {items.map((f) => {
+            const [name, line, note] = f[locale]
+            return (
+              <li>
+                {f.doc ? (
+                  <a class="feature-name" href={href(f.doc)}>
+                    {name}
+                  </a>
+                ) : (
+                  <span class="feature-name">{name}</span>
+                )}
+                <span class="body">{line}</span>
+                {note && (
+                  <span class="feature-note">
+                    <span class="sr-only">{t.partial}: </span>
+                    {note}
+                  </span>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+    )
+  })}
+</div>

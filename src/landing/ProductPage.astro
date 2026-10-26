@@ -1,0 +1,229 @@
+---
+import Icon from "../components/Icon.astro"
+import Imagery from "../components/imagery/Imagery.astro"
+import Site from "../layouts/Site.astro"
+import { chrome, productIcon, type ProductId } from "../lib/chrome.ts"
+import { githubOrg } from "../lib/site.ts"
+import { organization } from "../lib/seo.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { landingCopy } from "./copy.ts"
+import { builderExample, catalogExample, identityExample } from "./examples.ts"
+import { productCopy } from "./products.ts"
+import Shot from "./Shot.astro"
+import StartWays from "./StartWays.astro"
+import Chapter from "./blocks/Chapter.astro"
+import FeatureIndex from "./blocks/FeatureIndex.astro"
+import SectionHead from "./blocks/SectionHead.astro"
+import { chapters, featureCopy, features, groupNames } from "./features.ts"
+import { docsShot, identityShot, siteShot, sizes } from "./shots.ts"
+
+interface Props {
+  locale: SiteLocale
+  id: ProductId
+}
+const { locale, id } = Astro.props
+const t = productCopy[locale][id]
+const home = landingCopy[locale]
+const name = chrome[locale].products[id].name
+const repo = `${githubOrg}/${id}`
+const docs = {
+  zeabur: docsUrl(locale, "zeabur"),
+  identity: docsUrl(locale, "identity", "get-started"),
+  builder: docsUrl(locale, "builder"),
+  catalog: docsUrl(locale, "catalog"),
+}[id]
+
+const file = {
+  zeabur: undefined,
+  identity: identityExample,
+  builder: builderExample,
+  catalog: catalogExample,
+}[id]
+
+const f = featureCopy[locale]
+const productShots = productCopy[locale].identity.shots?.captions ?? {}
+const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) => {
+  if (shot.from === "identity")
+    return { ...identityShot(shot.id), alt: productShots[shot.id] ?? fallback }
+  if (shot.from === "docs") return { ...docsShot(locale, shot.id), alt: fallback }
+  const known = home.shots as Record<string, string>
+  return { ...siteShot(locale, shot.id), alt: known[shot.id] ?? fallback }
+}
+---
+
+<Site
+  locale={locale}
+  title={t.meta.title}
+  description={t.meta.description}
+  section="products"
+  image={`/og/${id}.png`}
+  schema={{
+    "@type": "SoftwareApplication",
+    name,
+    description: t.meta.description,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Linux, Kubernetes",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    codeRepository: repo,
+    publisher: organization,
+  }}
+>
+  <section class="wrap hero product-hero">
+    <div class="grid12">
+      <div class="hero-text stagger">
+        <p class="eyebrow">
+          <span class="mark">
+            <Icon name={productIcon[id]} />
+          </span>
+          {name}
+          <span class="pill">{t.status}</span>
+        </p>
+        <h1 class="display">
+          <span class="dim">{t.titleDim}</span>
+          {locale === "en" ? " " : ""}
+          <span class="rest">{t.title}</span>
+        </h1>
+        <p class="lead">{t.sub}</p>
+        <div class="actions">
+          <a href={docs} class="button primary">
+            {t.docs}
+            <Icon name="arrow-right" class="go" />
+          </a>
+          <a href={repo} class="button">
+            <Icon name="github-logo" />
+            {t.source}
+          </a>
+        </div>
+        {id === "zeabur" && (
+          <a href="#features" class="more more-down">
+            {f.all(features.length)}
+            <Icon name="arrow-down" class="go" />
+          </a>
+        )}
+      </div>
+      <div class="hero-art art" data-reveal style="--i:2">
+        <Imagery id={id} />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="highlights">
+    <SectionHead id="highlights" dim={t.highlights.titleDim} title={t.highlights.title} />
+    <ul class="cells">
+      {t.highlights.items.map((item, i) => (
+        <li class="cell" data-reveal style={`--i:${i}`}>
+          <span class="tag">{item.tag}</span>
+          <h3>{item.title}</h3>
+          <p class="body">{item.body}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="wrap section" aria-labelledby="how">
+    <SectionHead id="how" dim={t.how.titleDim} title={t.how.title} />
+    <ol class="steps">
+      {t.how.steps.map((step, i) => (
+        <li data-reveal style={`--i:${i}`}>
+          <h3>{step.title}</h3>
+          <p class="body">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  {id === "zeabur" && (
+    <section class="wrap section" aria-labelledby="chapters">
+      <SectionHead id="chapters" title={f.chapters} />
+      {chapters.map((c) => {
+        const w = c.words[locale]
+        return (
+          <Chapter
+            id={`chapter-${c.group}`}
+            kicker={groupNames[locale][c.group]}
+            title={w.title}
+            body={w.body}
+            shot={chapterShot(c.shot, w.alt)}
+            link={{
+              href: `#features-${c.group}`,
+              text: f.group(features.filter((x) => x.group === c.group).length),
+            }}
+          />
+        )
+      })}
+    </section>
+  )}
+
+  {id === "zeabur" && (
+    <section class="wrap section" id="features" aria-labelledby="features-title">
+      <SectionHead id="features-title" title={f.index.title} lead={f.index.lead} />
+      <FeatureIndex locale={locale} />
+    </section>
+  )}
+
+  {id === "identity" && t.shots && (
+    <section class="wrap section" aria-labelledby="shots">
+      <SectionHead id="shots" title={t.shots.title} />
+      <div class="duo">
+        {["sign-in", "setup"].map((shot, i) => (
+          <div data-reveal style={`--i:${i}`}>
+            <Shot
+              {...identityShot(shot)}
+              alt={t.shots!.captions[shot]!}
+              caption={t.shots!.captions[shot]}
+              sizes={sizes.half}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="wrap section" aria-labelledby="details">
+    <SectionHead id="details" title={t.details.title} />
+    <div class="spec-scroll" data-reveal>
+      <table class="spec">
+        <thead>
+          <tr>
+            {t.details.cols.map((c) => (
+              <th scope="col">{c}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {t.details.rows.map((row) => (
+            <tr>
+              {row.map((cell, i) => (
+                <td class:list={[id === "catalog" && i === 0 && "mono"]}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="start">
+    {file ? (
+      <div class="grid12">
+        <div class="start-text" data-reveal>
+          <h2 id="start">{t.start.title}</h2>
+          <p class="lead">{t.start.sub}</p>
+          <div class="actions">
+            <a href={docs} class="button primary">
+              {t.start.cta}
+              <Icon name="arrow-right" class="go" />
+            </a>
+          </div>
+        </div>
+        <pre class="file start-side" data-reveal style="--i:1"><code>{file}</code></pre>
+      </div>
+    ) : (
+      <>
+        <SectionHead id="start" title={t.start.title} lead={t.start.sub} />
+        <StartWays locale={locale} />
+      </>
+    )}
+  </section>
+</Site>

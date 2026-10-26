@@ -1,0 +1,28 @@
+{
+  "repos": [
+    {
+      "name": "zeabur",
+      "label": "Zeabur",
+      "github": "zeabur-oss/zeabur",
+      "ref": "02e61c5c61be6ebc5fd5919a02f38ba5bccf2d4b"
+    },
+    {
+      "name": "identity",
+      "label": "Identity",
+      "github": "zeabur-oss/identity",
+      "ref": "baca2a8cc728daf6342d177b3f739918d5ea3ac6"
+    },
+    {
+      "name": "builder",
+      "label": "Builder",
+      "github": "zeabur-oss/builder",
+      "ref": "8ad652b60f8a54838d35bf27b5902e1883de791e"
+    },
+    {
+      "name": "catalog",
+      "label": "Catalog",
+      "github": "zeabur-oss/catalog",
+      "ref": "9f4e27b8cea45c0087063d78da63344a25ff6ab5"
+    }
+  ]
+}

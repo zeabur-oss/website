@@ -1,0 +1,36 @@
+---
+// Elements with data-reveal, and the children of .stagger, come in once when they enter the
+// viewport. The class that hides them is set before paint, and only when scripts run.
+---
+
+<script is:inline>
+  document.documentElement.classList.add("reveal-ready")
+</script>
+<script>
+  let observer: IntersectionObserver | undefined
+
+  function reveal() {
+    observer?.disconnect()
+    const targets = document.querySelectorAll("[data-reveal]:not(.is-in), .stagger:not(.is-in)")
+    if (!("IntersectionObserver" in window)) {
+      targets.forEach((el) => el.classList.add("is-in"))
+      return
+    }
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          entry.target.classList.add("is-in")
+          observer?.unobserve(entry.target)
+        }
+      },
+      { rootMargin: "0px 0px -60px 0px", threshold: 0.05 },
+    )
+    targets.forEach((el) => observer!.observe(el))
+  }
+
+  document.addEventListener("astro:before-swap", (event) => {
+    event.newDocument.documentElement.classList.add("reveal-ready")
+  })
+  document.addEventListener("astro:page-load", reveal)
+</script>

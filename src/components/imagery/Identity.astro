@@ -1,0 +1,86 @@
+---
+// Zeabur Identity: credentials on a time axis. A passkey starts a member's 10-minute token and
+// an admin account's 5-minute token; both renew while the session lasts.
+const x0 = 88
+const perMinute = 12
+const at = (minute: number) => x0 + minute * perMinute
+const tokens = [
+  { from: 0, to: 10, label: "token · 10 min" },
+  { from: 10, to: 20, label: "renewed" },
+  { from: 20, to: 30, label: "renewed" },
+]
+const adminStart = 6
+const adminTokens = [0, 1, 2].map((i) => adminStart + i * 5)
+---
+
+<rect class="img-frame" x="16" y="16" width="448" height="288" rx="6"></rect>
+<text class="img-kind" x="32" y="78">
+  passkey
+</text>
+<text class="img-kind" x="32" y="142">
+  member
+</text>
+<text class="img-kind" x="32" y="206">
+  admin
+</text>
+
+<path class="img-guide" d={`M${at(0)} 82 V124`}></path>
+<path class="img-guide img-accent-stroke" d={`M${at(adminStart)} 82 V188`}></path>
+<circle class="img-dot" cx={at(0)} cy="74" r="7"></circle>
+<circle class="img-dot img-dot-accent" cx={at(adminStart)} cy="74" r="7"></circle>
+
+{tokens.map((t, i) => (
+  <g class="img-seg" style={`--i:${i}`}>
+    <rect
+      class="img-box"
+      x={at(t.from) + 1}
+      y="124"
+      width={(t.to - t.from) * perMinute - 2}
+      height="30"
+      rx="3"
+    />
+    <text
+      class="img-name"
+      x={at(t.from) + ((t.to - t.from) * perMinute) / 2}
+      y="143"
+      text-anchor="middle"
+    >
+      {t.label}
+    </text>
+  </g>
+))}
+{adminTokens.map((m, i) => (
+  <g class="img-seg" style={`--i:${i + 3}`}>
+    <rect
+      class={i === 0 ? "img-button" : "img-box"}
+      x={at(m) + 1}
+      y="188"
+      width={5 * perMinute - 2}
+      height="30"
+      rx="3"
+    />
+    <text
+      class={i === 0 ? "img-button-text" : "img-name"}
+      x={at(m) + (5 * perMinute) / 2}
+      y="207"
+      text-anchor="middle"
+    >
+      5 min
+    </text>
+  </g>
+))}
+
+<path class="img-axis" d={`M${at(0)} 252 H${at(30)}`}></path>
+{[0, 10, 20, 30].map((m) => (
+  <g>
+    <path class="img-axis" d={`M${at(m)} 248 V256`} />
+    <text
+      class="img-kind"
+      x={at(m)}
+      y="276"
+      text-anchor={m === 0 ? "start" : m === 30 ? "end" : "middle"}
+    >
+      {m === 30 ? "30 min" : String(m)}
+    </text>
+  </g>
+))}

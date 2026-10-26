@@ -1,0 +1,77 @@
+---
+// Zeabur: a Namespace read as one project with its services, and a change shown as a plan of
+// fields before anything is written.
+const box = (x: number, y: number, kind: string, name: string) => ({ x, y, kind, name })
+const web = [
+  box(44, 92, "Deployment", "web"),
+  box(162, 92, "Service", "web:8080"),
+  box(44, 144, "HTTPRoute", "app.example"),
+  box(162, 144, "PVC", "data · 10Gi"),
+]
+const worker = [box(44, 240, "Deployment", "worker"), box(162, 240, "Secret", "worker-env")]
+---
+
+<rect class="img-frame" x="16" y="16" width="282" height="288" rx="6"></rect>
+<text class="img-kind" x="30" y="40">
+  Namespace shop
+</text>
+
+<rect class="img-group" x="30" y="54" width="254" height="146" rx="4"></rect>
+<text class="img-title" x="44" y="76">
+  web
+</text>
+{web.map((b) => (
+  <g>
+    <rect class="img-box" x={b.x} y={b.y} width="110" height="42" rx="3" />
+    <text class="img-kind" x={b.x + 10} y={b.y + 17}>
+      {b.kind}
+    </text>
+    <text class="img-name" x={b.x + 10} y={b.y + 33}>
+      {b.name}
+    </text>
+  </g>
+))}
+
+<rect class="img-group" x="30" y="210" width="254" height="84" rx="4"></rect>
+<text class="img-title" x="44" y="230">
+  worker
+</text>
+{worker.map((b) => (
+  <g>
+    <rect class="img-box" x={b.x} y={b.y - 2} width="110" height="42" rx="3" />
+    <text class="img-kind" x={b.x + 10} y={b.y + 15}>
+      {b.kind}
+    </text>
+    <text class="img-name" x={b.x + 10} y={b.y + 31}>
+      {b.name}
+    </text>
+  </g>
+))}
+
+<path class="img-link" d="M284 113 H318"></path>
+<g class="img-plan">
+  <rect class="img-card" x="318" y="54" width="146" height="200" rx="6"></rect>
+  <text class="img-title" x="332" y="78">
+    plan
+  </text>
+  <rect class="img-hit" x="324" y="92" width="134" height="40" rx="3"></rect>
+  <text class="img-kind" x="332" y="108">
+    ~ spec.replicas
+  </text>
+  <text class="img-name img-accent-text" x="332" y="124">
+    2 → 3
+  </text>
+  <text class="img-kind" x="332" y="152">
+    ~ image
+  </text>
+  <text class="img-name" x="332" y="168">
+    web:v11 → v12
+  </text>
+  <text class="img-kind img-faint" x="332" y="196">
+    = HTTPRoute
+  </text>
+  <rect class="img-button" x="332" y="214" width="118" height="26" rx="4"></rect>
+  <text class="img-button-text" x="391" y="231" text-anchor="middle">
+    apply
+  </text>
+</g>

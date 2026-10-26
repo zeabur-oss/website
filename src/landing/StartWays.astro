@@ -1,0 +1,34 @@
+---
+// The three ways to start with Zeabur, on the landing and on the Zeabur page.
+import Icon from "../components/Icon.astro"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { landingCopy } from "./copy.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const start = landingCopy[locale].start
+const zeaburDocs = (slug: string) => docsUrl(locale, "zeabur", slug)
+const ways = [
+  { way: start.server, href: zeaburDocs("get-started/quickstart"), icon: "hard-drives" },
+  { way: start.cluster, href: zeaburDocs("get-started/install"), icon: "cube" },
+  { way: start.laptop, href: zeaburDocs("reference/zeaburctl"), icon: "laptop" },
+]
+---
+
+<ul class="cells">
+  {ways.map(({ way, href, icon }, i) => (
+    <li data-reveal style={`--i:${i}`}>
+      <a href={href} class="cell">
+        <Icon name={icon} class="icon-lead" />
+        <h3>{way.title}</h3>
+        <p class="body">{way.body}</p>
+        <span class="more">
+          {way.link}
+          <Icon name="arrow-right" class="go" />
+        </span>
+      </a>
+    </li>
+  ))}
+</ul>

@@ -1,0 +1,45 @@
+---
+import { existsSync } from "node:fs"
+import { avifFileSize } from "../lib/avif.ts"
+
+interface Props {
+  light: string
+  dark: string
+  alt: string
+  sizes: string
+  caption?: string
+  eager?: boolean
+  class?: string
+}
+const { light, dark, alt, sizes, caption, eager, class: className } = Astro.props
+// A shot that was not taken (see scripts/shots.sh) has no size, as in the docs pages.
+const size = existsSync(`public${light}`) ? avifFileSize(`public${light}`) : undefined
+const width = size?.[0]
+// The images are taken at twice the pixel density, so their CSS size is half their pixels.
+const attrs = {
+  alt,
+  sizes,
+  width: width && width / 2,
+  height: size && size[1] / 2,
+  decoding: "async",
+  loading: eager ? "eager" : "lazy",
+} as const
+---
+
+<figure class:list={["shot", className]}>
+  <div class="shot-frame">
+    <img
+      class="theme-light"
+      src={light}
+      srcset={width ? `${light} ${width}w` : undefined}
+      {...attrs}
+    />
+    <img
+      class="theme-dark"
+      src={dark}
+      srcset={width ? `${dark} ${width}w` : undefined}
+      {...attrs}
+    />
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

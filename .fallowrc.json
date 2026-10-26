@@ -1,0 +1,30 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/v3.33.1/schema.json",
+  // astro.config.ts names route-data.ts as Starlight's route middleware, and remark-docs.ts imports
+  // src/docs-components/index.ts into each docs page by path.
+  "entry": ["scripts/*.ts", "src/route-data.ts", "src/docs-components/index.ts"],
+  "ignoreDependencies": [
+    // Starlight adds the MDX and sitemap integrations itself.
+    "@astrojs/mdx",
+    "@astrojs/sitemap",
+    // Read by path with require.resolve (src/blog/og.ts, src/lib/icons.ts).
+    "@fontsource/geist-sans",
+    "@fontsource/noto-sans-sc",
+    "@fontsource/noto-sans-tc",
+    "@phosphor-icons/core",
+    // Type-only imports of packages that astro and @astrojs/markdown-remark bring in.
+    "estree",
+    "hast",
+    "mdast",
+    "mdast-util-mdx-jsx",
+    "mdast-util-mdxjs-esm",
+    "vfile"
+  ],
+  "rules": {
+    // The docs pages that render src/docs-components/ come from the product repositories.
+    "unrendered-components": "off",
+    // Everything runs at build time: the site ships no server code.
+    "test-only-dependencies": "off",
+    "dev-dependencies-in-production": "off"
+  }
+}

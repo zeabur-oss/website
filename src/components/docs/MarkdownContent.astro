@@ -1,0 +1,79 @@
+---
+import Default from "@astrojs/starlight/components/MarkdownContent.astro"
+import { getCollection } from "astro:content"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
+import type { SiteNav } from "../../../scripts/sync-docs.ts"
+import StartCards, { type Card } from "./StartCards.astro"
+import { docsUrl } from "../../lib/urls.ts"
+
+// A product's first docs page has cards: the pages of the smaller repositories or the sections of
+// Builder's single page above the text, Zeabur's sidebar groups after its two ways to start.
+const route = Astro.locals.starlightRoute
+const repo = (route.entry.data as { repo?: string }).repo
+const here = Astro.url.pathname.replace(/\/$/, "")
+const isStart = repo !== undefined && here === docsUrl(route.lang, repo)
+
+const icons: Record<string, string> = {
+  "get-started": "rocket-launch",
+  deploy: "cloud-arrow-up",
+  configure: "sliders-horizontal",
+  cluster: "hard-drives",
+  reference: "book-open-text",
+  leave: "sign-out",
+  "github-sign-in": "github-logo",
+  "google-sign-in": "google-logo",
+  clients: "plugs-connected",
+  "managing-users": "users",
+  "provisioning-users": "users-three",
+  architecture: "tree-structure",
+  conformance: "list-checks",
+  releases: "tag",
+  operations: "wrench",
+  "release-installation": "download-simple",
+  "deploy-a-template": "rocket-launch",
+  "template-standards": "ruler",
+}
+const iconFor = (slug: string) => icons[slug] ?? icons[slug.split("/")[0]!] ?? "file-text"
+
+let cards: Card[] = []
+let after = false
+if (isStart) {
+  const nav: SiteNav = JSON.parse(readFileSync(join(process.cwd(), "content/nav.json"), "utf8"))
+  const groups = nav[route.lang]?.[repo] ?? []
+  const labelled = groups.filter((g) => g.label)
+  if (labelled.length > 0) {
+    after = true
+    cards = labelled.map((g) => ({
+      icon: iconFor(g.items[0]!.slug),
+      title: g.label!,
+      href: g.items[0]!.href,
+      links: g.items.slice(0, 4).map(({ label, href }) => ({ label, href })),
+    }))
+  } else {
+    const items = groups.flatMap((g) => g.items).filter((i) => i.slug !== "index")
+    if (items.length > 0) {
+      const docs = await getCollection("docs")
+      const description = (href: string) =>
+        docs.find((d) => `/${d.id}`.toLowerCase() === href.toLowerCase())?.data.description ??
+        undefined
+      cards = items.map((i) => ({
+        icon: iconFor(i.slug),
+        title: i.label,
+        href: i.href,
+        body: description(i.href),
+      }))
+    } else {
+      cards = route.headings
+        .filter((h) => h.depth === 2)
+        .map((h) => ({ icon: "hash", title: h.text, href: `#${h.slug}` }))
+    }
+  }
+}
+---
+
+<Default>
+  {!after && <StartCards cards={cards} />}
+  <slot />
+  {after && <StartCards cards={cards} />}
+</Default>

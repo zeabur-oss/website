@@ -1,0 +1,59 @@
+---
+// Zeabur Catalog: capabilities by upstream, each tested by CI. The recommended ones for a
+// single node are filled in; one chosen entry is marked.
+const entries = [
+  ["ingress", "Traefik", true],
+  ["certificates", "cert-manager", true],
+  ["volume-backup", "Velero", false],
+  ["logs", "VictoriaLogs", true],
+  ["databases", "CloudNativePG", false],
+  ["databases", "MariaDB", false],
+  ["volume-backup", "K8up", false],
+  ["dns", "ExternalDNS", false],
+  ["uptime-probes", "blackbox", false],
+  ["config-reload", "Reloader", false],
+  ["remote-access", "Tailscale", false],
+  ["object-storage", "SeaweedFS", false],
+] as const
+const w = 104
+const h = 84
+const gap = 8
+const x0 = 20
+const y0 = 26
+---
+
+{entries.map(([capability, upstream, recommended], i) => {
+  const x = x0 + (i % 4) * (w + gap)
+  const y = y0 + Math.floor(i / 4) * (h + gap)
+  const chosen = i === 1
+  return (
+    <g class:list={["img-tile", chosen && "img-chosen"]} style={`--i:${i}`}>
+      <rect
+        class:list={["img-box", chosen && "img-box-accent"]}
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        rx="4"
+      />
+      <text class="img-kind" x={x + 10} y={y + 20}>
+        {capability}
+      </text>
+      <text class="img-name img-strong" x={x + 10} y={y + 40}>
+        {upstream}
+      </text>
+      {recommended && (
+        <rect class="img-flag" x={x + w - 16} y={y + h - 18} width="6" height="6" rx="1" />
+      )}
+      <g class="img-check">
+        <path
+          class:list={["img-tick", chosen && "img-accent-stroke"]}
+          d={`M${x + 10} ${y + 66} l4 4 l8 -9`}
+        />
+        <text class="img-kind" x={x + 28} y={y + 70}>
+          CI
+        </text>
+      </g>
+    </g>
+  )
+})}

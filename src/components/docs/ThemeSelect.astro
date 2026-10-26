@@ -1,0 +1,9 @@
+---
+import ThemeToggle from "../ThemeToggle.astro"
+import { chrome } from "../../lib/chrome.ts"
+import { isSiteLocale } from "../../lib/urls.ts"
+
+const { lang } = Astro.locals.starlightRoute
+---
+
+<ThemeToggle label={chrome[isSiteLocale(lang) ? lang : "en"].nav.theme} />

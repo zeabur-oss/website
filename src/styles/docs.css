@@ -1,0 +1,540 @@
+/* Starlight in the design system's colours, type and radius, sharing the site's header, surfaces
+   and page transition (site.css). Both themes come from light-dark(); data-theme only sets the
+   colour scheme. Measurements behind the sizes: zeabur-notes/research/docs-visual-diff.md. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "@zeabur/design-system/tokens.css";
+@import "@zeabur/design-system/fonts.css";
+@import "./site.css";
+
+:root,
+::backdrop {
+  color-scheme: dark;
+}
+:root[data-theme="light"],
+[data-theme="light"] ::backdrop {
+  color-scheme: light;
+}
+
+:root,
+:root[data-theme="light"] {
+  --docs-prose: light-dark(rgb(43 42 46), rgb(222 221 225));
+  --docs-code-bg: light-dark(rgb(250 250 251), rgb(12 12 14));
+
+  --sl-font: var(--font-stack-sans);
+  --sl-font-mono: var(--font-stack-mono);
+
+  --sl-color-white: var(--site-text);
+  --sl-color-gray-1: var(--site-text);
+  --sl-color-gray-2: var(--docs-prose);
+  --sl-color-gray-3: var(--site-muted);
+  --sl-color-gray-4: var(--site-faint);
+  --sl-color-gray-5: var(--site-line-strong);
+  --sl-color-gray-6: var(--site-line);
+  --sl-color-gray-7: var(--site-bg-soft);
+  --sl-color-black: var(--site-bg);
+
+  --sl-color-text: var(--docs-prose);
+  --sl-color-text-accent: var(--site-accent);
+  --sl-color-text-invert: var(--on-primary);
+  --sl-color-accent-low: var(--site-accent-soft);
+  --sl-color-accent: var(--site-accent);
+  --sl-color-accent-high: var(--site-accent);
+
+  --sl-color-bg: var(--site-bg);
+  --sl-color-bg-nav: color-mix(in srgb, var(--site-bg) 88%, transparent);
+  --sl-color-bg-sidebar: var(--site-bg-soft);
+  --sl-color-bg-inline-code: var(--site-bg-soft);
+  --sl-color-bg-accent: var(--site-accent);
+  --sl-color-hairline: var(--site-line);
+  --sl-color-hairline-light: var(--site-line);
+  --sl-color-hairline-shade: var(--site-line);
+  --sl-color-backdrop-overlay: var(--overlay);
+
+  --sl-color-blue-low: var(--progress-soft);
+  --sl-color-blue: var(--progress);
+  --sl-color-blue-high: var(--progress-strong);
+  --sl-color-purple-low: var(--site-accent-soft);
+  --sl-color-purple: var(--site-accent);
+  --sl-color-purple-high: var(--site-accent);
+  --sl-color-green-low: var(--ok-soft);
+  --sl-color-green: var(--ok);
+  --sl-color-green-high: var(--ok-strong);
+  --sl-color-orange-low: var(--warn-soft);
+  --sl-color-orange: var(--warn);
+  --sl-color-orange-high: var(--warn-strong);
+  --sl-color-red-low: var(--fail-soft);
+  --sl-color-red: var(--fail);
+  --sl-color-red-high: var(--fail-strong);
+
+  --sl-text-body: 0.9375rem;
+  --sl-line-height: 1.8;
+  --sl-content-width: 44rem;
+  --sl-sidebar-width: 16.5rem;
+  --sl-nav-height: var(--header-height);
+  --sl-text-h1: 2rem;
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.1875rem;
+  --sl-text-h4: 1.0625rem;
+  --sl-text-h5: 1rem;
+}
+
+body {
+  background: var(--site-bg);
+  color: var(--docs-prose);
+  font-family: var(--font-stack-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- frame: header, sidebar, transitions ---------- */
+
+.page > .header {
+  backdrop-filter: saturate(1.4) blur(12px);
+  view-transition-name: site-header;
+}
+.sidebar-pane {
+  view-transition-name: docs-sidebar;
+}
+.main-frame {
+  view-transition-name: docs-page;
+}
+@media (min-width: 50rem) {
+  .sidebar-pane {
+    border-inline-end: 0 !important;
+  }
+}
+.content-panel + .content-panel {
+  border-top: 0;
+}
+.right-sidebar {
+  border-inline-start: 0 !important;
+}
+
+.docs-header {
+  height: 100%;
+}
+.docs-header .site-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+}
+.docs-header .site-nav {
+  display: none;
+}
+.docs-header .site-search {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+.docs-header .mobile-menu {
+  display: none;
+}
+@media (min-width: 50rem) {
+  .docs-header .brand {
+    min-width: calc(var(--sl-sidebar-width) - 2 * var(--sl-nav-pad-x));
+  }
+  .docs-header .site-search {
+    justify-content: flex-start;
+  }
+  .docs-header site-search {
+    width: min(20rem, 100%);
+  }
+}
+@media (min-width: 72rem) {
+  .docs-header .site-nav {
+    display: flex;
+  }
+}
+@media (max-width: 49.99rem) {
+  .docs-header .site-tools > :not(.theme-toggle) {
+    display: none;
+  }
+}
+site-search > button[data-open-modal] {
+  border-radius: var(--radius-md);
+  border-color: var(--site-line);
+  background: var(--site-bg-soft);
+}
+
+/* ---------- sidebar ---------- */
+
+.sidebar-content {
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+.sidebar-content .top-level a {
+  min-height: 2rem;
+  padding: 0.3125rem 0.625rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--site-muted);
+  transition:
+    color var(--transition-duration-quick) var(--ease-site),
+    background-color var(--transition-duration-quick) var(--ease-site);
+}
+.sidebar-content .top-level a:hover {
+  color: var(--site-text);
+  background: var(--glass-hover);
+}
+.sidebar-content .top-level a[aria-current="page"],
+.sidebar-content .top-level a[aria-current="page"]:hover,
+.sidebar-content .top-level a[aria-current="page"]:focus {
+  background: var(--site-accent-soft);
+  color: var(--site-accent);
+  font-weight: 500;
+}
+.sidebar-content .group-label .large,
+.sidebar-content a.large {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--site-text);
+}
+.sidebar-content a.large {
+  font-size: 0.875rem;
+}
+.sidebar-content .top-level > li + li {
+  margin-top: 0.25rem;
+}
+.sidebar-content summary {
+  padding-block: 0.5rem 0.25rem;
+}
+.sidebar-content ul ul li {
+  margin-inline-start: 0;
+  border-inline-start: 0;
+  padding-inline-start: 0;
+}
+
+/* ---------- table of contents ---------- */
+
+starlight-toc h2,
+mobile-starlight-toc h2 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--site-muted);
+}
+starlight-toc a {
+  font-size: 0.8125rem;
+  color: var(--site-faint);
+}
+starlight-toc a:hover {
+  color: var(--site-text);
+}
+starlight-toc a[aria-current="true"] {
+  color: var(--site-text);
+  font-weight: 500;
+}
+
+/* ---------- prose ---------- */
+
+.sl-markdown-content {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--docs-prose);
+}
+.sl-markdown-content > * + :not(:where(.not-content *)) {
+  margin-top: 1.25rem;
+}
+.sl-markdown-content :is(h1, h2, h3, h4) {
+  color: var(--site-text);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+:lang(zh) .sl-markdown-content :is(h1, h2, h3, h4) {
+  letter-spacing: 0;
+}
+.sl-markdown-content > :is(h2, .level-h2) {
+  margin-top: 3rem;
+}
+.sl-markdown-content > :is(h3, .level-h3) {
+  margin-top: 2rem;
+}
+.sl-markdown-content > :is(h2, .level-h2) + * {
+  margin-top: 1rem;
+}
+.sl-markdown-content > :is(h3, h4, .level-h3, .level-h4) + * {
+  margin-top: 0.75rem;
+}
+.sl-markdown-content li + li:not(:where(.not-content *)) {
+  margin-top: 0.375rem;
+}
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--site-text);
+  font-weight: 500;
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--site-accent) 55%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.sl-markdown-content a:hover:not(:where(.not-content *)) {
+  color: var(--site-accent);
+  text-decoration-color: currentColor;
+}
+.sl-markdown-content :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+}
+
+/* A paragraph that is only a link (rehype-docs-html.ts). */
+.sl-markdown-content p.docs-next a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  text-decoration: none;
+}
+.sl-markdown-content p.docs-next a::after {
+  content: "";
+  width: 0.9375rem;
+  height: 0.9375rem;
+  background: currentColor;
+  mask: var(--icon-arrow-right) center / contain no-repeat;
+  transition: translate var(--transition-duration-fast) var(--ease-site);
+}
+.sl-markdown-content p.docs-next a:hover::after {
+  translate: 3px 0;
+}
+
+/* Tables: one bordered block with a soft header row. The block hugs the table, so its border,
+   header and row rules end together, and scrolls sideways when the table is wider than the text. */
+.sl-markdown-content table:not(:where(.not-content *)) {
+  display: block;
+  overflow-x: auto;
+  width: max-content;
+  max-width: 100%;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+  padding: 0.625rem 0.875rem;
+  border-bottom: 1px solid var(--site-line);
+}
+.sl-markdown-content :is(th:first-child, td:first-child):not(:where(.not-content *)) {
+  padding-inline-start: 0.875rem;
+}
+.sl-markdown-content tr:last-child td {
+  border-bottom: 0;
+}
+.sl-markdown-content th:not(:where(.not-content *)) {
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-weight: 600;
+}
+
+/* Asides: one thin box for every kind. The icon and the label say which kind it is. */
+.starlight-aside {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-md);
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-size: 0.9375rem;
+}
+.starlight-aside--caution {
+  border-color: color-mix(in srgb, var(--warn) 40%, var(--site-line));
+}
+.starlight-aside--danger {
+  border-color: color-mix(in srgb, var(--fail) 40%, var(--site-line));
+}
+.starlight-aside__title {
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.starlight-aside--note .starlight-aside__title,
+.starlight-aside--tip .starlight-aside__title {
+  color: var(--site-text);
+}
+.starlight-aside__content a {
+  color: var(--sl-color-text-accent);
+}
+.starlight-aside__icon {
+  width: 1rem;
+  height: 1rem;
+}
+.starlight-aside__content {
+  margin-top: 0.25rem;
+}
+
+/* Code blocks: Expressive Code with the site's line and radius. */
+.sl-markdown-content .expressive-code {
+  --ec-brdRad: var(--radius-lg);
+}
+.expressive-code .frame pre {
+  border: 1px solid var(--site-line) !important;
+  border-radius: var(--radius-lg);
+  background: var(--docs-code-bg) !important;
+}
+.expressive-code .frame pre code {
+  line-height: 1.65;
+}
+.expressive-code .copy button {
+  opacity: 0.6 !important;
+}
+
+/* <Steps>: numbered blocks on one rail, each opening with a heading. */
+.docs-steps {
+  counter-reset: step;
+  margin-left: 0.875rem;
+  padding-left: 1.75rem;
+  border-left: 1px solid var(--site-line);
+}
+.docs-step {
+  position: relative;
+  counter-increment: step;
+}
+.docs-step + .docs-step {
+  margin-top: 2rem;
+}
+.docs-step::before {
+  content: counter(step);
+  position: absolute;
+  left: calc(-1.75rem - 0.875rem - 0.5px);
+  top: 0;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--site-line-strong);
+  border-radius: 999px;
+  background: var(--site-bg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--site-text);
+}
+.docs-step > :first-child,
+.docs-step > :first-child > :first-child {
+  margin-top: 0;
+}
+.docs-step :is(h2, h3, h4):first-child {
+  font-size: var(--sl-text-h4);
+  line-height: 1.75rem;
+}
+
+.sl-markdown-content .docs-shot img,
+.sl-markdown-content .themed img {
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+}
+figure.docs-shot {
+  margin: 1.5rem 0;
+}
+figure.docs-shot img {
+  display: block;
+  height: auto;
+}
+
+/* ---------- a product's first page: cards ---------- */
+
+.docs-start {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 2.5rem;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 40rem) {
+  .docs-start {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.sl-markdown-content * + .docs-start {
+  margin-top: 2rem;
+}
+.docs-start > li {
+  margin: 0;
+}
+.docs-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  height: 100%;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+  background: var(--site-card);
+  color: var(--site-muted);
+  text-decoration: none;
+  transition:
+    border-color var(--transition-duration-quick) var(--ease-site),
+    background-color var(--transition-duration-quick) var(--ease-site);
+}
+a.docs-card:hover,
+li.docs-card:hover {
+  border-color: var(--site-line-strong);
+}
+.docs-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--site-text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.docs-card-head .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--site-accent);
+}
+.docs-card-body {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+.docs-card-links {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0.25rem 0 0;
+  padding: 0 0 0 1.75rem;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+.docs-card-links a {
+  color: var(--site-muted);
+  text-decoration: none;
+}
+.docs-card-links a:hover {
+  color: var(--site-text);
+}
+
+/* ---------- title area ---------- */
+
+.content-panel:first-of-type {
+  border-bottom: 0;
+}
+
+/* Starlight's menu button, drawn like the other header buttons. */
+.sl-menu-button.sl-menu-button {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0.625rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  box-shadow: none;
+  color: var(--site-muted);
+}
+.sl-menu-button.sl-menu-button:hover {
+  background: var(--glass-hover);
+  color: var(--site-text);
+}
+.sl-menu-button.sl-menu-button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.sl-markdown-content blockquote:not(:where(.not-content *)) {
+  margin-inline: 1.5rem 0;
+  padding-inline-start: 0;
+  border-inline-start: 0;
+  color: var(--site-muted);
+}

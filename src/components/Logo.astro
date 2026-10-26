@@ -1,0 +1,32 @@
+---
+import { readFileSync } from "node:fs"
+import { createRequire } from "node:module"
+
+// The wordmark from the design system, unchanged but for its colours: the text follows the theme.
+const file = createRequire(import.meta.url).resolve(
+  "@zeabur/design-system/vendor/zeabur/logo-with-text.svg",
+)
+const svg = readFileSync(file, "utf8")
+  .replace(/ width="563" height="107"/, ' aria-hidden="true" class="logo-svg"')
+  .replaceAll('fill="white"', 'fill="currentColor"')
+  .replace('fill="#6300FF"', 'fill="var(--logo-violet)"')
+  .replace('fill="#FF4400"', 'fill="var(--logo-orangered)"')
+interface Props {
+  class?: string
+}
+---
+
+<span class:list={["logo", Astro.props.class]} role="img" aria-label="Zeabur" set:html={svg} />
+
+<style>
+  .logo {
+    display: inline-flex;
+    aspect-ratio: 563 / 107;
+    height: 1rem;
+    color: var(--text-main);
+  }
+  .logo :global(.logo-svg) {
+    width: 100%;
+    height: 100%;
+  }
+</style>

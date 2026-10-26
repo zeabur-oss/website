@@ -1,0 +1,47 @@
+---
+import Icon from "../Icon.astro"
+
+export type Card = {
+  icon: string
+  title: string
+  href: string
+  body?: string
+  links?: { label: string; href: string }[]
+}
+interface Props {
+  cards: Card[]
+}
+const { cards } = Astro.props
+---
+
+{cards.length > 0 && (
+  <ul class="docs-start not-content">
+    {cards.map((card) =>
+      card.links ? (
+        <li class="docs-card">
+          <a href={card.href} class="docs-card-head">
+            <Icon name={card.icon} />
+            {card.title}
+          </a>
+          <ul class="docs-card-links">
+            {card.links.map((l) => (
+              <li>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ) : (
+        <li>
+          <a href={card.href} class="docs-card">
+            <span class="docs-card-head">
+              <Icon name={card.icon} />
+              {card.title}
+            </span>
+            {card.body && <span class="docs-card-body">{card.body}</span>}
+          </a>
+        </li>
+      ),
+    )}
+  </ul>
+)}

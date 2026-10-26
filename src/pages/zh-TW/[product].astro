@@ -1,0 +1,10 @@
+---
+import ProductPage from "../../landing/ProductPage.astro"
+import { productIds, type ProductId } from "../../lib/chrome.ts"
+
+export function getStaticPaths() {
+  return productIds.map((product) => ({ params: { product } }))
+}
+---
+
+<ProductPage locale="zh-TW" id={Astro.params.product as ProductId} />

@@ -1,0 +1,23 @@
+---
+import type { ProductId } from "../../lib/chrome.ts"
+import Builder from "./Builder.astro"
+import Catalog from "./Catalog.astro"
+import Identity from "./Identity.astro"
+import Zeabur from "./Zeabur.astro"
+
+interface Props {
+  id: ProductId
+  class?: string
+}
+const images = { zeabur: Zeabur, identity: Identity, builder: Builder, catalog: Catalog }
+const Image = images[Astro.props.id]
+---
+
+<svg
+  class:list={["imagery", `imagery-${Astro.props.id}`, Astro.props.class]}
+  viewBox="0 0 480 320"
+  role="presentation"
+  aria-hidden="true"
+>
+  <Image />
+</svg>

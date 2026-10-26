@@ -1,0 +1,51 @@
+---
+// Zeabur Builder: each new commit on a branch becomes one image, and the newest one's tag and
+// digest land in the Build's status.
+const commits = [
+  { x: 84, sha: "a41f0c2" },
+  { x: 196, sha: "7d03b18" },
+  { x: 308, sha: "c95e2aa" },
+  { x: 410, sha: "3e1a9c2" },
+]
+const layers = [0, 1, 2]
+---
+
+<rect class="img-frame" x="16" y="16" width="448" height="288" rx="6"></rect>
+<text class="img-kind" x="32" y="46">
+  main
+</text>
+<path class="img-axis" d="M32 62 H452"></path>
+{commits.map((c, i) => {
+  const latest = i === commits.length - 1
+  return (
+    <g class:list={[latest && "img-latest"]}>
+      <circle class:list={["img-dot", latest && "img-dot-accent"]} cx={c.x} cy="62" r="7" />
+      <text class="img-kind" x={c.x} y="92" text-anchor="middle">
+        {c.sha}
+      </text>
+      <path class="img-guide" d={`M${c.x} 100 V118`} />
+      {layers.map((l) => (
+        <rect
+          class:list={["img-layer", latest ? "img-layer-new" : "img-layer-old"]}
+          style={`--i:${2 - l}`}
+          x={c.x - 42}
+          y={122 + l * 18}
+          width="84"
+          height="14"
+          rx="2"
+        />
+      ))}
+    </g>
+  )
+})}
+<path class="img-guide img-accent-stroke" d="M410 176 V208 H330 V222"></path>
+<rect class="img-card" x="168" y="222" width="280" height="66" rx="6"></rect>
+<text class="img-kind" x="182" y="244">
+  status.latestImage
+</text>
+<text class="img-name" x="182" y="262">
+  main-1761058800-3e1a9c2
+</text>
+<text class="img-kind img-faint" x="182" y="278">
+  @sha256:9f2c41e0…
+</text>

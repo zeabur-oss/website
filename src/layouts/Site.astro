@@ -1,0 +1,108 @@
+---
+import "../styles/landing.css"
+import { ClientRouter } from "astro:transitions"
+import SiteFooter from "../components/SiteFooter.astro"
+import SiteHeader from "../components/SiteHeader.astro"
+import Reveal from "../components/Reveal.astro"
+import { pathInLocale } from "../lib/chrome.ts"
+import { OG_HEIGHT, OG_WIDTH, ogLocale } from "../lib/seo.ts"
+import { locales, siteOrigin, type SiteLocale } from "../lib/urls.ts"
+
+interface Props {
+  locale: SiteLocale
+  title: string
+  description: string
+  section?: "home" | "products" | "docs" | "blog"
+  /** The page in each locale, when it is not the same path. */
+  alternates?: Partial<Record<SiteLocale, string>>
+  /** Path of the social image under the site, `/og/….png`. */
+  image?: string
+  type?: "website" | "article"
+  /** The languages the page exists in, when not all of them. The others are left out of hreflang. */
+  languages?: readonly SiteLocale[]
+  /** schema.org data for the page, without `@context`, `url` or `inLanguage`. */
+  schema?: Record<string, unknown>
+}
+const {
+  locale,
+  title,
+  description,
+  section,
+  alternates = {},
+  type = "website",
+  languages = locales,
+  schema = { "@type": "WebPage", name: title, description },
+} = Astro.props
+const image = Astro.props.image ?? "/og/zeabur.png"
+const here = Astro.url.pathname.replace(/\/$/, "") || "/"
+const href = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)
+const canonical = `${siteOrigin}${here}`
+const ld = JSON.stringify({
+  "@context": "https://schema.org",
+  ...schema,
+  url: canonical,
+  inLanguage: locale,
+})
+---
+
+<html lang={locale} data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {languages.map((l) => (
+      <link rel="alternate" hreflang={l} href={`${siteOrigin}${href(l)}`} />
+    ))}
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={`${siteOrigin}${href(languages.includes("en") ? "en" : languages[0]!)}`}
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Zeabur OSS"
+      href={`${locale === "en" ? "" : `/${locale}`}/blog/rss.xml`}
+    />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Zeabur OSS" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={ogLocale(locale)} />
+    {languages
+      .filter((l) => l !== locale)
+      .map((l) => (
+        <meta property="og:locale:alternate" content={ogLocale(l)} />
+      ))}
+    <meta property="og:image" content={`${siteOrigin}${image}`} />
+    <meta property="og:image:width" content={String(OG_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_HEIGHT)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" is:inline set:html={ld} />
+    <script is:inline>
+      try {
+        const stored = localStorage.getItem("starlight-theme")
+        document.documentElement.dataset.theme =
+          stored === "light" || stored === "dark"
+            ? stored
+            : matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark"
+      } catch {}
+    </script>
+    <Reveal />
+    <ClientRouter />
+  </head>
+  <body>
+    <SiteHeader locale={locale} section={section} alternates={alternates} />
+    <main class="site-main">
+      <slot />
+    </main>
+    <SiteFooter locale={locale} />
+  </body>
+</html>

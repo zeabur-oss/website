@@ -1,0 +1,59 @@
+---
+import Logo from "./Logo.astro"
+import { githubOrg } from "../lib/site.ts"
+import { blogUrl, chrome, productDocsUrl, productIds, productUrl } from "../lib/chrome.ts"
+import type { SiteLocale } from "../lib/urls.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = chrome[locale]
+const rss = `${blogUrl(locale)}/rss.xml`
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer-grid">
+    <div class="site-footer-brand">
+      <Logo />
+      <p>{t.footer.about}</p>
+      <p>© Zeabur · {t.footer.license}</p>
+    </div>
+    <div class="site-footer-cols">
+      <div>
+        <h2>{t.footer.products}</h2>
+        <ul>
+          {productIds.map((id) => (
+            <li>
+              <a href={productUrl(locale, id)}>{t.products[id].name}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2>{t.nav.docs}</h2>
+        <ul>
+          {productIds.map((id) => (
+            <li>
+              <a href={productDocsUrl(locale, id)}>{t.products[id].name}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2>{t.footer.resources}</h2>
+        <ul>
+          <li>
+            <a href={blogUrl(locale)}>{t.nav.blog}</a>
+          </li>
+          <li>
+            <a href={rss}>RSS</a>
+          </li>
+          <li>
+            <a href={githubOrg}>GitHub</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

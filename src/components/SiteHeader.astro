@@ -1,0 +1,149 @@
+---
+import ProductLink from "./ProductLink.astro"
+import Icon from "./Icon.astro"
+import Logo from "./Logo.astro"
+import ThemeToggle from "./ThemeToggle.astro"
+import { githubOrg } from "../lib/site.ts"
+import {
+  blogUrl,
+  chrome,
+  homeUrl,
+  pathInLocale,
+  productDocsUrl,
+  productIcon,
+  productIds,
+  productUrl,
+} from "../lib/chrome.ts"
+import { locales, type SiteLocale } from "../lib/urls.ts"
+
+interface Props {
+  locale: SiteLocale
+  /** Which part of the site the page belongs to. */
+  section?: "home" | "products" | "docs" | "blog"
+  /** The page in each locale, when it is not the same path. */
+  alternates?: Partial<Record<SiteLocale, string>>
+  /** Inside Starlight's own header bar, which supplies the outer element and padding. */
+  docs?: boolean
+}
+const { locale, section, alternates = {}, docs = false } = Astro.props
+const Outer = docs ? "div" : "header"
+const t = chrome[locale]
+const here = Astro.url.pathname.replace(/\/$/, "") || "/"
+const langHref = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)
+const current = (on: boolean) => (on ? "true" : undefined)
+---
+
+<Outer class:list={[docs ? "docs-header" : "site-header"]}>
+  <div class="site-header-row">
+    <a href={homeUrl(locale)} class="brand" aria-label={`Zeabur OSS, ${t.nav.home}`}>
+      <Logo />
+      <span class="brand-oss" translate="no">
+        OSS
+      </span>
+    </a>
+    <nav class="site-nav" aria-label="Zeabur OSS">
+      <details class="menu" data-menu>
+        <summary aria-current={current(section === "products")}>
+          {t.nav.products}
+          <Icon name="caret-down" class="caret" />
+        </summary>
+        <div class="menu-panel products-panel">
+          {productIds.map((id) => (
+            <ProductLink
+              id={id}
+              href={productUrl(locale, id)}
+              current={here === productUrl(locale, id)}
+              name={t.products[id].name}
+              line={t.products[id].line}
+            />
+          ))}
+        </div>
+      </details>
+      <a
+        href={productDocsUrl(locale, "zeabur")}
+        class="site-nav-link"
+        aria-current={current(section === "docs")}
+      >
+        {t.nav.docs}
+      </a>
+      <a href={blogUrl(locale)} class="site-nav-link" aria-current={current(section === "blog")}>
+        {t.nav.blog}
+      </a>
+    </nav>
+    {Astro.slots.has("search") && (
+      <div class="site-search">
+        <slot name="search" />
+      </div>
+    )}
+    <div class="site-tools">
+      <details class="menu lang" data-menu>
+        <summary aria-label={t.nav.language}>
+          <Icon name="translate" />
+          <span class="lang-name">{t.lang}</span>
+        </summary>
+        <div class="menu-panel end">
+          {locales.map((l) => (
+            <a
+              href={langHref(l)}
+              hreflang={l}
+              lang={l}
+              aria-current={l === locale ? "page" : undefined}
+            >
+              {chrome[l].lang}
+            </a>
+          ))}
+        </div>
+      </details>
+      <ThemeToggle label={t.nav.theme} />
+      <a href={githubOrg} class="icon-button github" aria-label={t.nav.github}>
+        <Icon name="github-logo" />
+      </a>
+      <slot name="end" />
+      <details class="menu mobile-menu" data-menu>
+        <summary class="icon-button" aria-label={t.nav.menu}>
+          <Icon name="list" />
+        </summary>
+        <div class="menu-panel">
+          <p class="group-label">{t.nav.products}</p>
+          {productIds.map((id) => (
+            <a href={productUrl(locale, id)}>
+              <Icon name={productIcon[id]} />
+              {t.products[id].name}
+            </a>
+          ))}
+          <p class="group-label">Zeabur OSS</p>
+          <a href={productDocsUrl(locale, "zeabur")}>
+            <Icon name="book-open" />
+            {t.nav.docs}
+          </a>
+          <a href={blogUrl(locale)}>
+            <Icon name="article" />
+            {t.nav.blog}
+          </a>
+          <a href={githubOrg}>
+            <Icon name="github-logo" />
+            GitHub
+          </a>
+        </div>
+      </details>
+    </div>
+  </div>
+</Outer>
+
+<script>
+  // One menu open at a time; a click outside or Escape closes it.
+  function closeMenus(except?: Element) {
+    for (const menu of document.querySelectorAll<HTMLDetailsElement>("[data-menu][open]")) {
+      if (menu !== except) menu.open = false
+    }
+  }
+  document.addEventListener("click", (event) => {
+    const target = event.target as Element
+    const menu = target.closest("[data-menu]")
+    closeMenus(menu ?? undefined)
+    if (menu && target.closest(".menu-panel a")) (menu as HTMLDetailsElement).open = false
+  })
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenus()
+  })
+</script>

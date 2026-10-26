@@ -1,0 +1,179 @@
+---
+import Icon from "../components/Icon.astro"
+import Imagery from "../components/imagery/Imagery.astro"
+import Site from "../layouts/Site.astro"
+import { chrome, productIcon, productIds, productUrl } from "../lib/chrome.ts"
+import { githubOrg } from "../lib/site.ts"
+import { organization } from "../lib/seo.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { landingCopy } from "./copy.ts"
+import Shot from "./Shot.astro"
+import StartWays from "./StartWays.astro"
+import SectionHead from "./blocks/SectionHead.astro"
+import { featureCopy, features } from "./features.ts"
+import { sizes, siteShot } from "./shots.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = landingCopy[locale]
+const names = chrome[locale].products
+const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
+const shot = (id: string) => siteShot(locale, id)
+---
+
+<Site
+  locale={locale}
+  title={t.title}
+  description={t.description}
+  section="home"
+  image={`/og/home/${locale}.png`}
+  schema={{
+    "@type": "WebSite",
+    name: "Zeabur OSS",
+    description: t.description,
+    publisher: organization,
+  }}
+>
+  <section class="wrap hero home-hero">
+    <div class="grid12">
+      <div class="hero-text stagger">
+        <h1 class="display">{t.hero.title}</h1>
+        <p class="lead">{t.hero.lead}</p>
+        <div class="actions">
+          <a href={zeaburDocs("get-started/quickstart")} class="button primary">
+            {t.hero.start}
+            <Icon name="arrow-right" class="go" />
+          </a>
+          <a href={`${githubOrg}/zeabur`} class="button">
+            <Icon name="github-logo" />
+            {t.hero.source}
+          </a>
+        </div>
+      </div>
+      <dl class="facts" data-reveal style="--i:3">
+        {t.facts.map((f) => (
+          <div>
+            <dt>{f.label}</dt>
+            <dd>{f.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <div class="hero-shot" data-reveal style="--i:4">
+      <Shot
+        {...shot("project")}
+        alt={t.shots.project}
+        caption={t.shots.project}
+        sizes={sizes.full}
+        eager
+      />
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="projects">
+    <SectionHead id="projects" title={t.projects.title} lead={t.projects.lead} />
+    <ul class="product-grid">
+      {productIds.map((id, i) => (
+        <li data-reveal style={`--i:${i}`}>
+          <a href={productUrl(locale, id)} class="product-card">
+            <div class="art">
+              <Imagery id={id} />
+            </div>
+            <div class="product-card-text">
+              <div class="product-card-title">
+                <span class="mark">
+                  <Icon name={productIcon[id]} />
+                </span>
+                <h3>{names[id].name}</h3>
+              </div>
+              <p class="body">{t[id].summary}</p>
+              <span class="go-row">
+                {t.projects.more}
+                <Icon name="arrow-right" class="go" />
+              </span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="wrap section" aria-labelledby="zeabur-title">
+    <SectionHead id="zeabur-title" title={t.zeabur.name} tail={t.zeabur.tagline} />
+    <div class="grid12 split">
+      <div class="split-text" data-reveal>
+        <ul class="points">
+          {t.zeabur.points.map((p) => (
+            <li>{p}</li>
+          ))}
+        </ul>
+        <div class="more-links">
+          <a href={`${productUrl(locale, "zeabur")}#features`} class="more">
+            {featureCopy[locale].all(features.length)}
+            <Icon name="arrow-right" class="go" />
+          </a>
+          <a href={zeaburDocs()} class="more">
+            {t.zeabur.docs}
+            <Icon name="arrow-right" class="go" />
+          </a>
+        </div>
+      </div>
+      <div class="split-media" data-reveal style="--i:1">
+        <Shot
+          {...shot("diagnosis")}
+          alt={t.shots.diagnosis}
+          caption={t.shots.diagnosis}
+          sizes={sizes.wide}
+        />
+      </div>
+    </div>
+    <div class="pair">
+      <div data-reveal>
+        <Shot
+          {...shot("database")}
+          alt={t.shots.database}
+          caption={t.shots.database}
+          sizes={sizes.half}
+        />
+      </div>
+      <div data-reveal style="--i:1">
+        <Shot
+          {...shot("cluster")}
+          alt={t.shots.cluster}
+          caption={t.shots.cluster}
+          sizes={sizes.half}
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="start">
+    <SectionHead id="start" title={t.start.title} lead={t.start.lead} />
+    <StartWays locale={locale} />
+    <div class="hero-shot" data-reveal>
+      <Shot
+        {...shot("installer")}
+        alt={t.shots.installer}
+        caption={t.shots.installer}
+        sizes={sizes.full}
+      />
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="leave">
+    <div class="grid12 leave">
+      <h2 id="leave" data-reveal>
+        {t.leave.title}
+      </h2>
+      <div data-reveal style="--i:1">
+        <p class="lead">{t.leave.body}</p>
+        <a href={zeaburDocs("leave/uninstall")} class="more">
+          {t.leave.link}
+          <Icon name="arrow-right" class="go" />
+        </a>
+      </div>
+    </div>
+  </section>
+</Site>

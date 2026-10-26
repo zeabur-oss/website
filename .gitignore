@@ -1,0 +1,13 @@
+node_modules
+.DS_Store
+.direnv
+/.astro
+/.cache
+/.local
+/.shots
+/content
+/src/content/docs
+/public/docs-assets
+/public/shots
+/public/og
+/dist

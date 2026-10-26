@@ -1,0 +1,73 @@
+---
+import Icon from "../Icon.astro"
+
+// Previous and next stay inside the repository (src/route-data.ts). Small, so the page ends on
+// its own content rather than on two large cards.
+const { pagination } = Astro.locals.starlightRoute
+const { prev, next } = pagination
+---
+
+<nav
+  class="pager print:hidden"
+  aria-label={`${Astro.locals.t("page.previousLink")} / ${Astro.locals.t("page.nextLink")}`}
+>
+  {prev ? (
+    <a href={prev.href} rel="prev">
+      <span class="pager-label">
+        <Icon name="arrow-left" />
+        {Astro.locals.t("page.previousLink")}
+      </span>
+      <span class="pager-title">{prev.label}</span>
+    </a>
+  ) : (
+    <span />
+  )}
+  {next && (
+    <a href={next.href} rel="next">
+      <span class="pager-label">
+        {Astro.locals.t("page.nextLink")}
+        <Icon name="arrow-right" />
+      </span>
+      <span class="pager-title">{next.label}</span>
+    </a>
+  )}
+</nav>
+
+<style>
+  .pager {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: border-color var(--transition-duration-quick) var(--ease-site);
+  }
+  a:hover {
+    border-color: var(--site-line-strong);
+  }
+  [rel="next"] {
+    grid-column: 2;
+    align-items: flex-end;
+    text-align: end;
+  }
+  .pager-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--site-faint);
+  }
+  .pager-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--site-text);
+  }
+</style>

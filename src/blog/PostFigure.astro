@@ -1,0 +1,15 @@
+---
+// A diagram in a post, drawn like the product images.
+import OssMap from "../components/imagery/OssMap.astro"
+
+interface Props {
+  name: "oss-map"
+  label: string
+}
+const figures = { "oss-map": OssMap }
+const Figure = figures[Astro.props.name]
+---
+
+<figure class="post-figure">
+  <Figure label={Astro.props.label} />
+</figure>

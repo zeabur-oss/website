@@ -1,0 +1,17 @@
+---
+// A heading's Chinese words, each kept on one line. From engawa's landing (Apache-2.0).
+import { chineseTextSegments } from "./chinese-text.ts"
+
+interface Props {
+  text: string
+  locale: string
+}
+const { text, locale } = Astro.props
+const plain = locale === "en" || !/\p{Script=Han}/u.test(text)
+---
+
+{plain
+  ? text
+  : chineseTextSegments(text, locale).map((word) =>
+      word.trim() ? <span class="zh-word">{word}</span> : word,
+    )}

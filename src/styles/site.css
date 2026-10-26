@@ -1,0 +1,585 @@
+/* The site's own layer on the design system, shared by the landing, the product pages, the blog
+   and the docs: surfaces, type, the container, header and footer, buttons, motion. */
+
+:root {
+  --site-bg: light-dark(rgb(var(--white)), rgb(var(--zGray-900)));
+  --site-bg-soft: light-dark(rgb(250 250 251), rgb(29 28 32));
+  --site-card: light-dark(rgb(var(--white)), rgb(31 30 34));
+  --site-card-hover: light-dark(rgb(249 248 250), rgb(37 35 41));
+  --site-line: light-dark(rgb(232 231 235), rgb(52 49 58));
+  --site-line-strong: light-dark(rgb(var(--zGray-200)), rgb(var(--zGray-700)));
+  --site-text: light-dark(rgb(24 23 27), rgb(240 239 242));
+  --site-muted: light-dark(rgb(92 89 98), rgb(176 173 182));
+  --site-faint: light-dark(rgb(110 107 116), rgb(146 142 153));
+  --site-accent: var(--violet-accent);
+  --site-accent-soft: light-dark(rgb(99 0 255 / 0.07), rgb(164 105 255 / 0.14));
+
+  --header-height: 3.5rem;
+  --container: 1240px;
+  --gutter: 1rem;
+  --section-space: 3.5rem;
+
+  --fs-display: clamp(2.25rem, 1.55rem + 2.9vw, 4rem);
+  --fs-h2: clamp(1.75rem, 1.45rem + 1.25vw, 2.5rem);
+  --fs-h3: 1.125rem;
+  --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+
+  /* Motion, from zeabur.com: one ease, short reveals that run once. */
+  --ease-site: cubic-bezier(0.22, 1, 0.36, 1);
+  --reveal-duration: 500ms;
+  --reveal-distance: 14px;
+  --reveal-stagger: 60ms;
+  --hero-duration: 600ms;
+  --hero-distance: 12px;
+  --hero-stagger: 40ms;
+  --hero-blur: 3px;
+}
+@media (min-width: 768px) {
+  :root {
+    --gutter: 3rem;
+    --section-space: 6rem;
+  }
+}
+
+::selection {
+  background: var(--selection);
+}
+
+.theme-dark {
+  display: none;
+}
+:root[data-theme="dark"] .theme-light {
+  display: none;
+}
+:root[data-theme="dark"] .theme-dark {
+  display: block;
+}
+:root[data-theme="dark"] .icon.theme-dark {
+  display: inline;
+}
+
+.icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+}
+
+.wrap {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- header ---------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--header-height);
+  background: color-mix(in srgb, var(--site-bg) 88%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--site-line);
+  view-transition-name: site-header;
+}
+.site-header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+}
+/* The same bar as the docs header (Starlight's padding and sidebar width), so nothing in it moves
+   between the landing and the docs. */
+.site-header .site-header-row {
+  padding-inline: 1rem;
+}
+@media (min-width: 50rem) {
+  .site-header .site-header-row {
+    padding-inline: 1.5rem;
+  }
+  .site-header .brand {
+    min-width: 13.5rem;
+  }
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--site-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.brand .logo {
+  height: 1rem;
+}
+.brand-oss {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--site-muted);
+}
+.site-nav {
+  display: none;
+  align-items: center;
+  gap: 0.125rem;
+}
+@media (min-width: 900px) {
+  .site-nav {
+    display: flex;
+  }
+}
+.site-nav-link,
+.menu > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 2.25rem;
+  padding-inline: 0.75rem;
+  border-radius: var(--radius-md);
+  color: var(--site-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color var(--transition-duration-quick) var(--ease-site),
+    background-color var(--transition-duration-quick) var(--ease-site);
+}
+.site-nav-link:hover,
+.menu > summary:hover,
+.menu[open] > summary {
+  color: var(--site-text);
+  background: var(--glass-hover);
+}
+.site-nav-link[aria-current="page"],
+.site-nav-link[aria-current="true"] {
+  color: var(--site-text);
+  font-weight: 500;
+}
+.site-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--site-muted);
+  cursor: pointer;
+  transition:
+    color var(--transition-duration-quick) var(--ease-site),
+    background-color var(--transition-duration-quick) var(--ease-site);
+}
+.icon-button:hover {
+  color: var(--site-text);
+  background: var(--glass-hover);
+}
+.site-tools .icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Dropdowns: <details> with a panel under the summary. */
+.menu {
+  position: relative;
+}
+.menu > summary {
+  list-style: none;
+}
+.menu > summary::-webkit-details-marker {
+  display: none;
+}
+.menu > summary .caret {
+  width: 0.75rem;
+  height: 0.75rem;
+  transition: rotate var(--transition-duration-quick) var(--ease-site);
+}
+.menu[open] > summary .caret {
+  rotate: 180deg;
+}
+.menu-panel {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  z-index: 60;
+  min-width: 10rem;
+  padding: 0.25rem;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+  background: var(--site-card);
+  box-shadow: var(--shadow-float);
+  animation: menu-in var(--transition-duration-quick) var(--ease-site);
+}
+.menu-panel.end {
+  right: 0;
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+.menu-panel a {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.4375rem 0.625rem;
+  border-radius: var(--radius-md);
+  color: var(--site-muted);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+.menu-panel a:hover {
+  background: var(--glass-hover);
+  color: var(--site-text);
+}
+.menu-panel a[aria-current] {
+  color: var(--site-text);
+  font-weight: 500;
+}
+.products-panel {
+  left: 0;
+  width: 25rem;
+  display: grid;
+  gap: 0.125rem;
+}
+.products-panel a {
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.625rem;
+  color: var(--site-text);
+  font-weight: 400;
+}
+.products-panel a[aria-current] {
+  background: var(--glass-hover);
+  font-weight: 400;
+}
+.products-panel .mark {
+  margin-top: 0.125rem;
+}
+.products-panel .product-text {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+.products-panel .product-name {
+  font-weight: 500;
+}
+.products-panel .product-line {
+  color: var(--site-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+/* A product's icon on a small tile. */
+.mark {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--site-line);
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+}
+.mark .icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* Small screens: one menu button opens the whole navigation. */
+.mobile-menu {
+  display: block;
+}
+@media (min-width: 900px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+.mobile-menu .menu-panel {
+  position: fixed;
+  top: var(--header-height);
+  left: 0;
+  right: 0;
+  border-radius: 0;
+  border-inline: 0;
+  padding: 0.5rem var(--gutter) 1rem;
+  max-height: calc(100dvh - var(--header-height));
+  overflow-y: auto;
+}
+.mobile-menu .menu-panel a {
+  padding: 0.625rem 0.5rem;
+  font-size: 0.9375rem;
+}
+.mobile-menu .group-label {
+  padding: 0.75rem 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  color: var(--site-faint);
+}
+@media (max-width: 479px) {
+  .lang-name {
+    display: none;
+  }
+}
+
+/* ---------- footer ---------- */
+
+.site-footer {
+  border-top: 1px solid var(--site-line);
+  padding-block: 3rem;
+  font-size: 0.875rem;
+  color: var(--site-muted);
+  view-transition-name: site-footer;
+}
+.site-footer-grid {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .site-footer-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 1.5rem;
+  }
+  .site-footer-brand {
+    grid-column: 1 / 5;
+  }
+  .site-footer-cols {
+    grid-column: 7 / 13;
+  }
+}
+.site-footer-brand p {
+  margin-top: 0.75rem;
+  max-width: 22rem;
+  line-height: 1.6;
+}
+.site-footer-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+.site-footer h2 {
+  margin-bottom: 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--site-text);
+}
+.site-footer ul {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.site-footer a {
+  color: var(--site-muted);
+  text-decoration: none;
+}
+.site-footer a:hover {
+  color: var(--site-text);
+}
+
+/* ---------- buttons ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  padding: 0 1rem 1px;
+  border: 1px solid var(--secondary-outline);
+  border-radius: var(--radius-md);
+  background: linear-gradient(var(--secondary-from), var(--secondary-to));
+  box-shadow:
+    inset 0 1px 0 var(--secondary-edge),
+    inset 0 -2px 0 light-dark(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.3));
+  color: var(--site-text);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--transition-duration-quick) var(--ease-site),
+    translate var(--transition-duration-micro) var(--ease-site);
+}
+.button:hover {
+  background: linear-gradient(var(--secondary-hover-from), var(--secondary-hover-to));
+}
+.button:active {
+  translate: 0 1px;
+  box-shadow: inset 0 1px 0 var(--secondary-edge);
+}
+.button.primary {
+  border-color: rgb(var(--zViolet-600));
+  background: linear-gradient(var(--primary-from), var(--primary-to));
+  box-shadow:
+    inset 0 1px 0 var(--button-edge),
+    inset 0 -2px 0 rgb(var(--zViolet-700) / 0.6);
+  color: var(--on-primary);
+}
+.button.primary:hover {
+  background: linear-gradient(var(--primary-hover-from), var(--primary-hover-to));
+}
+.button.primary:active {
+  box-shadow: inset 0 1px 0 var(--button-edge);
+}
+.button .icon {
+  width: 1rem;
+  height: 1rem;
+  transition: translate var(--transition-duration-fast) var(--ease-site);
+}
+.button:hover .icon.go,
+.more:hover .icon.go,
+a:hover > .go-row .icon.go {
+  translate: 3px 0;
+}
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--site-text);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+.more .icon {
+  width: 0.9375rem;
+  height: 0.9375rem;
+  transition: translate var(--transition-duration-fast) var(--ease-site);
+}
+
+/* ---------- motion ---------- */
+
+/* Sections rise into place once as they enter the viewport. The script that adds .reveal-ready
+   runs before paint, so without it nothing stays hidden. */
+.reveal-ready [data-reveal] {
+  opacity: 0;
+  translate: 0 var(--reveal-distance);
+  transition:
+    opacity var(--reveal-duration) var(--ease-site),
+    translate var(--reveal-duration) var(--ease-site);
+  transition-delay: calc(var(--i, 0) * var(--reveal-stagger));
+}
+.reveal-ready [data-reveal].is-in {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* The first screen: its lines come in one after another. */
+.reveal-ready .stagger > * {
+  opacity: 0;
+  translate: 0 var(--hero-distance);
+  filter: blur(var(--hero-blur));
+  transition:
+    opacity var(--hero-duration) var(--ease-site),
+    translate var(--hero-duration) var(--ease-site),
+    filter var(--hero-duration) var(--ease-site);
+  transition-delay: calc(var(--i, 0) * var(--hero-stagger));
+}
+.reveal-ready .stagger.is-in > * {
+  opacity: 1;
+  translate: 0 0;
+  filter: none;
+}
+
+/* Page changes (Astro's view transitions): the header, the sidebar and the footer stay put, the
+   page content fades out and the new one rises 4px as it fades in, as in the Zeabur web app.
+   The landing and the docs name their content differently, so going between them fades one out
+   and the other in where each stands instead of stretching one box into the other. The docs
+   sidebar, which only one side has, fades with the content. */
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-group(site-header),
+::view-transition-new(site-header),
+::view-transition-group(docs-sidebar),
+::view-transition-old(docs-sidebar),
+::view-transition-new(docs-sidebar),
+::view-transition-group(site-footer),
+::view-transition-new(site-footer) {
+  animation: none;
+}
+::view-transition-old(site-header),
+::view-transition-old(site-footer) {
+  display: none;
+}
+::view-transition-group(page),
+::view-transition-group(docs-page) {
+  animation-duration: var(--transition-duration-fast);
+  animation-timing-function: var(--ease-site);
+}
+::view-transition-old(page),
+::view-transition-old(docs-page),
+::view-transition-old(docs-sidebar):only-child {
+  animation: site-page-out var(--transition-duration-quick) var(--ease-site) both;
+}
+::view-transition-new(page),
+::view-transition-new(docs-page) {
+  animation: site-page-in var(--transition-duration-fast) var(--ease-site) both;
+}
+::view-transition-new(docs-sidebar):only-child {
+  animation: site-fade-in var(--transition-duration-fast) var(--ease-site) both;
+}
+@keyframes site-page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes site-page-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-ready [data-reveal],
+  .reveal-ready .stagger > * {
+    opacity: 1;
+    translate: none;
+    filter: none;
+    transition: none;
+  }
+  ::view-transition-group(page),
+  ::view-transition-group(docs-page) {
+    animation: none;
+  }
+  ::view-transition-new(page),
+  ::view-transition-new(docs-page),
+  ::view-transition-new(docs-sidebar):only-child {
+    animation: site-fade-in var(--transition-duration-quick) linear both;
+  }
+  ::view-transition-old(page),
+  ::view-transition-old(docs-page),
+  ::view-transition-old(docs-sidebar):only-child {
+    animation: none;
+    opacity: 0;
+  }
+  .menu-panel {
+    animation: none;
+  }
+  .button,
+  .button .icon,
+  .more .icon {
+    transition: none;
+  }
+}
+@keyframes site-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.zh-word {
+  white-space: nowrap;
+}

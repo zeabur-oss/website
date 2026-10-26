@@ -1,0 +1,50 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Packages (bun.lock), action digests, flake.lock (lock file maintenance) and the docs refs in docs.lock.json.",
+  "extends": [
+    "config:recommended",
+    ":semanticCommitTypeAll(chore)",
+    "helpers:pinGitHubActionDigests"
+  ],
+  "timezone": "Asia/Taipei",
+  "schedule": ["* 0-5 * * 1"],
+  "labels": ["dependencies"],
+  "commitBody": "Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>",
+  "enabledManagers": ["bun", "github-actions", "nix", "custom.regex"],
+  "minimumReleaseAge": "7 days",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["* 0-5 * * 1"]
+  },
+  "packageRules": [
+    {
+      "description": "One pull request for compatible package updates; majors stay separate.",
+      "matchManagers": ["bun"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "packages (non-major)"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github actions"
+    },
+    {
+      "description": "One pull request moves every docs ref, with no publish delay.",
+      "matchFileNames": ["docs.lock.json"],
+      "groupName": "docs",
+      "minimumReleaseAge": null
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The commit each repository's docs are taken from.",
+      "managerFilePatterns": ["/^docs\\.lock\\.json$/"],
+      "matchStrings": [
+        "\"github\": \"(?<depName>[^\"]+)\",\\s*\"ref\": \"(?<currentDigest>[0-9a-f]{40})\""
+      ],
+      "packageNameTemplate": "https://github.com/{{{depName}}}",
+      "currentValueTemplate": "main",
+      "datasourceTemplate": "git-refs"
+    }
+  ]
+}

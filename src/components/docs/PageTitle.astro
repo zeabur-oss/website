@@ -1,0 +1,47 @@
+---
+import { Aside } from "@astrojs/starlight/components"
+
+// The title, the description as the lead, and a notice when the page is not in the reader's
+// language (scripts/sync-docs.ts falls back to another one).
+const notices: Record<string, Record<string, string>> = {
+  en: { "zh-TW": "This page is only available in Traditional Chinese for now." },
+  "zh-TW": { en: "這一頁還沒有繁體中文版，以下是英文原文。" },
+  "zh-CN": {
+    en: "这一页还没有简体中文版，以下是英文原文。",
+    "zh-TW": "这一页还没有简体中文版，以下是繁体中文版。",
+  },
+}
+const { entry, lang } = Astro.locals.starlightRoute
+const data = entry.data as { title: string; description?: string; contentLocale?: string }
+const notice = data.contentLocale && notices[lang]?.[data.contentLocale]
+---
+
+<h1 id="_top">{data.title}</h1>
+{data.description && <p class="lead">{data.description}</p>}
+{notice && (
+  <div class="notice">
+    <Aside type="note">{notice}</Aside>
+  </div>
+)}
+
+<style>
+  h1 {
+    margin-top: 1rem;
+    font-size: clamp(1.75rem, 1.5rem + 1vw, 2.25rem);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--sl-color-white);
+    text-wrap: balance;
+  }
+  .lead {
+    margin-top: 0.75rem;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 40rem;
+  }
+  .notice {
+    margin-top: 1.25rem;
+  }
+</style>

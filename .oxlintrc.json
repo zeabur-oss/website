@@ -1,0 +1,37 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["@zeabur/design-system/lint"],
+  "rules": {
+    "zeabur/no-unguarded-motion": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "@base-ui/react",
+              "@base-ui/react/*",
+              "@radix-ui/*",
+              "radix-ui",
+              "@headlessui/*",
+              "framer-motion",
+              "motion",
+              "motion/*"
+            ],
+            "message": "The site is plain Astro and CSS. Motion goes through src/components/Reveal.astro and the motion tokens of @zeabur/design-system."
+          }
+        ]
+      }
+    ]
+  },
+  "ignorePatterns": [
+    "dist",
+    "content",
+    "public",
+    ".astro",
+    ".cache",
+    ".local",
+    ".shots",
+    "src/content/docs"
+  ]
+}
