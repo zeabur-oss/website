@@ -73,16 +73,8 @@
   border: 1px solid var(--site-line);
   border-radius: var(--radius-lg);
 }
-.prose :is(.post-shots, .post-figure) {
+.prose .post-figure {
   margin-block: 2em;
-}
-.prose .post-shots {
-  display: grid;
-  gap: 1rem;
-}
-.prose .shot img {
-  border: 0;
-  border-radius: 0;
 }
 .prose table {
   width: 100%;
@@ -129,10 +121,10 @@
     text-decoration-color: #999;
     text-decoration-thickness: 0.5pt;
   }
-  .prose :is(.post-shots, .post-figure, .shot, img, figure) {
+  .prose :is(.post-figure, img, figure) {
     break-inside: avoid;
   }
-  .prose :is(.post-shots, .post-figure) {
+  .prose .post-figure {
     margin-block: 1.4em;
   }
   .prose pre {
