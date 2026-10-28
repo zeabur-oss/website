@@ -9,12 +9,13 @@ export const siteShot = (locale: string, id: string) => ({
 })
 
 /**
- * Screenshots from Zeabur's docs, taken by its scripts/shots.sh. The docs are taken light only.
- * Undefined when the build has no such shot.
+ * Screenshots from Zeabur's docs, taken by its scripts/docs-shots.sh: the dark one where the
+ * release took it, else the light one in both themes. Undefined when the build has no such shot.
  */
 export const docsShot = (locale: string, id: string) => {
-  const shot = findShot("zeabur", locale, "light", id)
-  return shot && { light: shot.src, dark: shot.src }
+  const light = findShot("zeabur", locale, "light", id)
+  const dark = findShot("zeabur", locale, "dark", id)
+  return light && { light: light.src, dark: (dark ?? light).src }
 }
 
 /** Zeabur Identity's sign-in pages, from its docs. */
