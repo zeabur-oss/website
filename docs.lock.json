@@ -4,7 +4,8 @@
       "name": "zeabur",
       "label": "Zeabur",
       "github": "zeabur-oss/zeabur",
-      "ref": "4efd8d2bdb42412898bbda75b813b66df33cd3cc"
+      "ref": "4efd8d2bdb42412898bbda75b813b66df33cd3cc",
+      "shots": "v0.1.1"
     },
     {
       "name": "identity",
