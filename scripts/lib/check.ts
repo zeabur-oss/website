@@ -1,6 +1,6 @@
 import { z } from "zod"
 import type { RepoFiles } from "../../src/mdx/links.ts"
-import { checkPage, shotsSchema, type Shot } from "./check-page.ts"
+import { checkPage } from "./check-page.ts"
 import { isLocaleName, readRepoDocs, readYaml, reservedNames } from "./docs.ts"
 import type { Add, Finding } from "./findings.ts"
 import type { Snapshot } from "./repos.ts"
@@ -110,11 +110,9 @@ export function checkRepo(snap: Snapshot, options: CheckOptions = {}): Finding[]
   }
 
   // Pages
-  const shots = readYaml<Shot[]>(snap, "docs/shots.yaml")
-  const shotList = shots ? shotsSchema.safeParse(shots) : undefined
   for (const page of docs.pages) {
     for (const [locale, path] of Object.entries(page.files)) {
-      if (path) checkPage(snap, repoFiles, page.files.en, locale, path, shotList?.data, add)
+      if (path) checkPage(snap, repoFiles, page.files.en, locale, path, add)
     }
   }
 

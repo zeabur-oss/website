@@ -20,7 +20,6 @@ nix develop -c sh -c 'bun install && bun run build && bun run preview'   # http:
 docs.lock.json              the repositories and the commit (later, the tag) of each
 scripts/sync-docs.ts        docs/ of each locked repository -> content/ (not committed)
 scripts/docs-check.ts       checks a repository's docs/ (see below)
-scripts/shots.sh            screenshots for local preview (see below)
 scripts/serve.ts            static server for dist/
 scripts/review.ts           full-page screenshots at 390, 1440 and 1960 px, light and dark
 astro.config.ts             Astro and Starlight: locales, redirects, Markdown plugins
@@ -67,19 +66,15 @@ A translation names the English file it was made from with `source:` in its fron
 
 ## Components
 
-A docs page may use `Callout`, `Tabs`/`Tab`, `Steps`/`Step` and `Screenshot`, with the props in
+A docs page may use `Callout`, `Tabs`/`Tab` and `Steps`/`Step`, with the props in
 `src/docs-components/registry.ts`. Pages do not import anything.
 
-`<Screenshot id="installer-host" alt="…" />`, or the image URL
-`https://oss.zeabur.com/shots/<repo>/<locale>/light/<id>.avif`, shows the screenshot for the
-page's language, and the English one when that language has none. The ids are the ones in the
-repository's `docs/shots.yaml`.
+## Images
 
-Screenshots are not committed. For a local preview, `scripts/shots.sh` clones each repository from GitHub at its
-locked ref to `.cache/shots-src/` and runs that repository's
-`scripts/docs-shots.sh` into `.shots/<repo>/`; the build copies them to `/shots/`. Once releases
-publish `docs-shots-<tag>.tar`, a `shots` field in `docs.lock.json` makes the sync download it
-instead.
+A page shows an image with a relative Markdown image, `![…](../images/shots/<id>.avif)`, as on
+GitHub. The sync copies the files under `docs/` to `public/docs-assets/<repo>/`, and the site
+points each image at its copy, served as it is. An AVIF is a screenshot taken at twice the pixel
+density and shows at half its size.
 
 ## docs-check
 
@@ -93,7 +88,7 @@ locale names) in page paths, relative links and images to files that do not exis
 are not published, published pages that are gone without a `redirects.yaml` entry, redirects to
 unpublished pages, frontmatter fields other than `title`, `description` (and `source` in
 translations), `import`/`export`, unknown components, props that are not literals or do not match
-the registry, screenshot ids missing from `shots.yaml`, GitHub URLs of docs pages, and relative
+the registry, GitHub URLs of docs pages, and relative
 links to files outside `docs/`. It lists stale translations and
 pages that are not published.
 

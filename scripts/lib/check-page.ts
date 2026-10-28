@@ -1,4 +1,4 @@
-// One page in one locale: frontmatter, translation freshness, links, screenshots and components.
+// One page in one locale: frontmatter, translation freshness, links, images and components.
 import { createProcessor } from "@mdx-js/mdx"
 import type { Root } from "mdast"
 import remarkGfm from "remark-gfm"
@@ -12,21 +12,10 @@ import {
   resolveImage,
   type RepoFiles,
 } from "../../src/mdx/links.ts"
-import { shotPattern } from "../../src/lib/urls.ts"
 import { readText, sourceHash, splitFrontmatter } from "./docs.ts"
 import type { Add } from "./findings.ts"
 import { props } from "./jsx-props.ts"
 import type { Snapshot } from "./repos.ts"
-
-export const shotsSchema = z.array(
-  z.looseObject({
-    id: z.string(),
-    locales: z.array(z.string()).optional(),
-    themes: z.array(z.string()).optional(),
-  }),
-)
-
-export type Shot = z.infer<typeof shotsSchema>[number]
 
 const parsers = {
   md: createProcessor({ format: "md", remarkPlugins: [remarkGfm] }),
@@ -39,7 +28,6 @@ export function checkPage(
   original: string | undefined,
   locale: string,
   path: string,
-  shots: Shot[] | undefined,
   add: Add,
 ) {
   const text = readText(snap, path)
@@ -96,36 +84,7 @@ export function checkPage(
     return
   }
 
-  const checkShot = (line: number | undefined, id: string, shotLocale?: string, theme?: string) => {
-    if (!shots)
-      return add(
-        "error",
-        "shots-missing",
-        path,
-        `screenshot ${id}, but there is no docs/shots.yaml`,
-        line,
-      )
-    const shot = shots.find((s) => s.id === id)
-    if (!shot)
-      return add("error", "shot-unknown", path, `screenshot ${id} is not in docs/shots.yaml`, line)
-    if (
-      shotLocale &&
-      shot.locales &&
-      !shot.locales.includes(shotLocale) &&
-      !shot.locales.includes("en")
-    ) {
-      add("error", "shot-locale", path, `screenshot ${id} is not taken in ${shotLocale}`, line)
-    }
-    if (theme && theme !== "light" && !(shot.themes ?? ["light"]).includes(theme)) {
-      add("error", "shot-theme", path, `screenshot ${id} has no ${theme} theme`, line)
-    }
-  }
   const checkRef = (href: string, line: number | undefined, image: boolean) => {
-    const shot = shotPattern.exec(href)
-    if (shot) {
-      if (shot[1] === snap.repo.name) checkShot(line, shot[4]!, locale, shot[3])
-      return
-    }
     const github = githubDocsLink(href)
     if (github) {
       const own = github.github === snap.repo.github
@@ -241,18 +200,6 @@ export function checkPage(
             `<${name}> ${z.prettifyError(result.error).replaceAll("\n", " ")}`,
             line,
           )
-        } else if (name === "Screenshot") {
-          const shot = result.data as {
-            id: string
-            repo?: string
-            locale?: string
-            theme?: string
-            dark?: boolean
-          }
-          if (!shot.repo || shot.repo === snap.repo.name) {
-            checkShot(line, shot.id, shot.locale ?? locale, shot.theme)
-            if (shot.dark) checkShot(line, shot.id, shot.locale ?? locale, "dark")
-          }
         }
         break
       }

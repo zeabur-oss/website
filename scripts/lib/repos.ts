@@ -7,8 +7,6 @@ export type LockRepo = {
   label: string
   github: string
   ref: string
-  /** A release tag whose `docs-shots-<tag>.tar` asset holds the screenshots. */
-  shots?: string
 }
 
 export type Snapshot = {

@@ -11,7 +11,7 @@ import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
 import SectionHead from "./blocks/SectionHead.astro"
 import { featureCopy, features } from "./features.ts"
-import { sizes, siteShot } from "./shots.ts"
+import { shot, sizes } from "./shots.ts"
 
 interface Props {
   locale: SiteLocale
@@ -19,7 +19,6 @@ interface Props {
 const { locale } = Astro.props
 const t = landingCopy[locale]
 const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
-const shot = (id: string) => siteShot(locale, id)
 ---
 
 <Site
@@ -64,7 +63,7 @@ const shot = (id: string) => siteShot(locale, id)
     </div>
     <div class="mt-12 md:mt-18" data-reveal style="--i:4">
       <Shot
-        {...shot("project")}
+        src={shot(locale, "project")}
         alt={t.shots.project}
         caption={t.shots.project}
         sizes={sizes.full}
@@ -131,7 +130,7 @@ const shot = (id: string) => siteShot(locale, id)
       </div>
       <div class="lg:col-[5/13]" data-reveal style="--i:1">
         <Shot
-          {...shot("diagnosis")}
+          src={shot(locale, "diagnosis")}
           alt={t.shots.diagnosis}
           caption={t.shots.diagnosis}
           sizes={sizes.wide}
@@ -141,7 +140,7 @@ const shot = (id: string) => siteShot(locale, id)
     <div class="mt-12 grid gap-10 md:grid-cols-2 md:gap-6">
       <div data-reveal>
         <Shot
-          {...shot("database")}
+          src={shot(locale, "database")}
           alt={t.shots.database}
           caption={t.shots.database}
           sizes={sizes.half}
@@ -149,7 +148,7 @@ const shot = (id: string) => siteShot(locale, id)
       </div>
       <div data-reveal style="--i:1">
         <Shot
-          {...shot("cluster")}
+          src={shot(locale, "cluster")}
           alt={t.shots.cluster}
           caption={t.shots.cluster}
           sizes={sizes.half}
@@ -163,7 +162,7 @@ const shot = (id: string) => siteShot(locale, id)
     <StartWays locale={locale} />
     <div class="mt-12 md:mt-18" data-reveal>
       <Shot
-        {...shot("installer")}
+        src={shot(locale, "installer")}
         alt={t.shots.installer}
         caption={t.shots.installer}
         sizes={sizes.full}

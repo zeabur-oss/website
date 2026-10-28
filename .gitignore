@@ -4,10 +4,8 @@ node_modules
 /.astro
 /.cache
 /.local
-/.shots
 /content
 /src/content/docs
 /public/docs-assets
-/public/shots
 /public/og
 /dist

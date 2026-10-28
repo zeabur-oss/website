@@ -389,15 +389,12 @@ starlight-toc a[aria-current="true"] {
   line-height: 1.75rem;
 }
 
-.sl-markdown-content .docs-shot img,
+.sl-markdown-content p > img,
 .sl-markdown-content .themed img {
   border: 1px solid var(--site-line);
   border-radius: var(--radius-lg);
 }
-figure.docs-shot {
-  margin: 1.5rem 0;
-}
-figure.docs-shot img {
+.sl-markdown-content p > img {
   display: block;
   height: auto;
 }

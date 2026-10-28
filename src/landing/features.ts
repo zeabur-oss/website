@@ -1078,7 +1078,7 @@ export const features: Feature[] = [
 
 type Chapter = {
   group: GroupId
-  shot: { from: "site" | "docs" | "identity"; id: string }
+  shot: { from: "docs" | "identity"; id: string }
   words: Record<SiteLocale, { title: string; body: string; alt: string }>
 }
 
@@ -1086,7 +1086,7 @@ type Chapter = {
 export const chapters: Chapter[] = [
   {
     group: "deploy",
-    shot: { from: "site", id: "change-review" },
+    shot: { from: "docs", id: "change-review" },
     words: {
       "zh-TW": {
         title: "改之前，先看會發生什麼",
@@ -1128,7 +1128,7 @@ export const chapters: Chapter[] = [
   },
   {
     group: "data",
-    shot: { from: "site", id: "database" },
+    shot: { from: "docs", id: "database" },
     words: {
       "zh-TW": {
         title: "資料庫和備份放在一起",
@@ -1149,7 +1149,7 @@ export const chapters: Chapter[] = [
   },
   {
     group: "diagnose",
-    shot: { from: "site", id: "diagnosis" },
+    shot: { from: "docs", id: "diagnosis" },
     words: {
       "zh-TW": {
         title: "用一般話說哪裡壞了",
@@ -1191,7 +1191,7 @@ export const chapters: Chapter[] = [
   },
   {
     group: "cluster",
-    shot: { from: "site", id: "cluster" },
+    shot: { from: "docs", id: "cluster" },
     words: {
       "zh-TW": {
         title: "叢集本身也看得到",

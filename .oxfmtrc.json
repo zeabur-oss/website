@@ -10,7 +10,6 @@
     "dist",
     ".cache",
     ".local",
-    ".shots",
     "public",
     ".astro",
     "src/content/docs"

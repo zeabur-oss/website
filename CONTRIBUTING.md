@@ -93,9 +93,9 @@ Fix a docs page in its own repository, then move that repository's ref in `docs.
 
 ## Copy
 
-The landing copy is in `src/landing/copy.ts`. Its screenshots come from `docs/images/site/` in the
-zeabur repository (`scripts/docs-shots.sh docs/site-shots.yaml` there), taken at twice the pixel density: keep every
-product image at least twice its CSS width, with `width`, `height` and `sizes`. Write zh-TW first,
+The landing copy is in `src/landing/copy.ts`. Its screenshots are the docs screenshots of the
+zeabur repository (`docs/images/shots/`, from its `docs/shots.yaml`), taken at twice the pixel
+density: show every product image at half its width or less, with `sizes`. Write zh-TW first,
 then zh-CN (mainland usage), then English, and keep the three saying the same things. Say what the
 product does for the reader in concrete terms. No marketing words, no "not X but Y", no hedging
 paragraphs.
