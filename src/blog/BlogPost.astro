@@ -60,7 +60,9 @@ const image = `/og/blog/${locale}/${slug}.png`
     <h1 class="display">
       <HeadingText text={title} locale={locale} />
     </h1>
-    <p class="lead">{description}</p>
+    <p class="lead">
+      <HeadingText text={description} locale={locale} />
+    </p>
     <p class="meta">
       <span>
         {t.published} <time datetime={pubDate.toISOString()}>{date.format(pubDate)}</time>

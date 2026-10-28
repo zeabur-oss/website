@@ -1,5 +1,7 @@
 ---
 // A heading's Chinese words, each kept on one line. From engawa's landing (Apache-2.0).
+// The <wbr> between words gives Safari a break point: it won't break between two nowrap spans
+// under word-break: keep-all, so a title would otherwise wrap only at its spaces.
 import { chineseTextSegments } from "./chinese-text.ts"
 
 interface Props {
@@ -12,6 +14,13 @@ const plain = locale === "en" || !/\p{Script=Han}/u.test(text)
 
 {plain
   ? text
-  : chineseTextSegments(text, locale).map((word) =>
-      word.trim() ? <span class="zh-word">{word}</span> : word,
+  : chineseTextSegments(text, locale).map((word, i) =>
+      word.trim() ? (
+        <Fragment>
+          {i > 0 && <wbr />}
+          <span class="zh-word">{word}</span>
+        </Fragment>
+      ) : (
+        word
+      ),
     )}
