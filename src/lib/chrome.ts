@@ -1,18 +1,7 @@
 // The words around every page: header, footer, the product list. Product pages and the landing
 // have their own copy in src/landing/.
+import type { ProductId } from "./products.ts"
 import type { SiteLocale } from "./urls.ts"
-import { docsUrl, localePrefix } from "./urls.ts"
-
-export const productIds = ["zeabur", "identity", "builder", "catalog"] as const
-export type ProductId = (typeof productIds)[number]
-
-/** One Phosphor icon per product, the same in the header, the docs and the product pages. */
-export const productIcon: Record<ProductId, string> = {
-  zeabur: "squares-four",
-  identity: "fingerprint",
-  builder: "stack",
-  catalog: "check-square-offset",
-}
 
 type Chrome = {
   lang: string
@@ -167,15 +156,3 @@ const en: Chrome = {
 }
 
 export const chrome: Record<SiteLocale, Chrome> = { en, "zh-TW": zhTW, "zh-CN": zhCN }
-
-export const homeUrl = (locale: string) => localePrefix(locale) || "/"
-export const productUrl = (locale: string, id: ProductId) => `${localePrefix(locale)}/${id}`
-export const blogUrl = (locale: string) => `${localePrefix(locale)}/blog`
-export const productDocsUrl = (locale: string, id: ProductId) => docsUrl(locale, id)
-
-/** The same path in another locale: en has no prefix, the others are /zh-TW and /zh-CN. */
-export function pathInLocale(pathname: string, locale: string) {
-  const bare = pathname.replace(/^\/(zh-TW|zh-CN)(?=\/|$)/, "") || "/"
-  const prefix = localePrefix(locale)
-  return bare === "/" ? prefix || "/" : `${prefix}${bare}`.replace(/\/$/, "")
-}

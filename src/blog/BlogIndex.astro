@@ -1,8 +1,8 @@
 ---
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import type { SiteLocale } from "../lib/urls.ts"
-import { blogPath, dateFormat, postSlug, postsFor, postUrl } from "./blog.ts"
+import { blogUrl, type SiteLocale } from "../lib/urls.ts"
+import { dateFormat, postSlug, postsFor, postUrl } from "./blog.ts"
 import { blogCopy } from "./copy.ts"
 import HeadingText from "./HeadingText.astro"
 
@@ -27,7 +27,7 @@ const date = dateFormat(locale, "medium")
     <div class="hero-text stagger">
       <h1 class="display">{t.title}</h1>
       <p class="lead">{t.description}</p>
-      <a class="more" href={`${blogPath(locale)}/rss.xml`}>
+      <a class="more" href={`${blogUrl(locale)}/rss.xml`}>
         <Icon name="rss" />
         {t.rss}
       </a>

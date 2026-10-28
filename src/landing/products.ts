@@ -1,6 +1,6 @@
 // The product pages (/zeabur, /identity, /builder, /catalog) in each locale. zh-TW is written
 // first, then zh-CN and English; all three say the same things.
-import type { ProductId } from "../lib/chrome.ts"
+import type { ProductId } from "../lib/products.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 
 type Item = { tag: string; title: string; body: string }

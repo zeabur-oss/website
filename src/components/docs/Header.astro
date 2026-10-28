@@ -1,8 +1,7 @@
 ---
 import Search from "@astrojs/starlight/components/Search.astro"
 import SiteHeader from "../SiteHeader.astro"
-import { homeUrl } from "../../lib/chrome.ts"
-import { isSiteLocale, locales } from "../../lib/urls.ts"
+import { homeUrl, isSiteLocale, locales } from "../../lib/urls.ts"
 
 const { id, lang } = Astro.locals.starlightRoute
 const locale = isSiteLocale(lang) ? lang : "en"

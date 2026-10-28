@@ -4,17 +4,17 @@ import Icon from "./Icon.astro"
 import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
 import { githubOrg } from "../lib/site.ts"
+import { chrome } from "../lib/chrome.ts"
+import { productIcon, productIds } from "../lib/products.ts"
 import {
   blogUrl,
-  chrome,
+  docsUrl,
   homeUrl,
+  locales,
   pathInLocale,
-  productDocsUrl,
-  productIcon,
-  productIds,
   productUrl,
-} from "../lib/chrome.ts"
-import { locales, type SiteLocale } from "../lib/urls.ts"
+  type SiteLocale,
+} from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
@@ -64,7 +64,7 @@ const current = (on: boolean) => (on ? "true" : undefined)
         </div>
       </details>
       <a
-        href={productDocsUrl(locale, "zeabur")}
+        href={docsUrl(locale, "zeabur")}
         class="site-nav-link"
         aria-current={current(section === "docs")}
       >
@@ -116,7 +116,7 @@ const current = (on: boolean) => (on ? "true" : undefined)
             </a>
           ))}
           <p class="group-label">Zeabur {t.nav.openSource}</p>
-          <a href={productDocsUrl(locale, "zeabur")}>
+          <a href={docsUrl(locale, "zeabur")}>
             <Icon name="book-open" />
             {t.nav.docs}
           </a>

@@ -2,15 +2,9 @@
 import ProductLink from "../ProductLink.astro"
 import Default from "@astrojs/starlight/components/Sidebar.astro"
 import Icon from "../Icon.astro"
-import {
-  blogUrl,
-  chrome,
-  homeUrl,
-  productIcon,
-  productIds,
-  type ProductId,
-} from "../../lib/chrome.ts"
-import { docsUrl, isSiteLocale } from "../../lib/urls.ts"
+import { chrome } from "../../lib/chrome.ts"
+import { productIcon, productIds, type ProductId } from "../../lib/products.ts"
+import { blogUrl, docsUrl, homeUrl, isSiteLocale } from "../../lib/urls.ts"
 
 // The product whose docs these are, as a menu at the top, then that product's pages.
 const { lang, entry } = Astro.locals.starlightRoute

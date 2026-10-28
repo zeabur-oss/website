@@ -1,0 +1,9 @@
+---
+import BlogIndex from "../../../blog/BlogIndex.astro"
+import { localePaths, type SiteLocale } from "../../../lib/urls.ts"
+
+export const getStaticPaths = localePaths
+const { locale } = Astro.props as { locale: SiteLocale }
+---
+
+<BlogIndex locale={locale} />

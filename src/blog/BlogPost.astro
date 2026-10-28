@@ -2,10 +2,10 @@
 import { getCollection, render } from "astro:content"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import { blogPath, dateFormat, postLocale, postSlug, postsFor, postUrl, type Post } from "./blog.ts"
+import { dateFormat, postLocale, postSlug, postsFor, postUrl, type Post } from "./blog.ts"
 import { blogCopy } from "./copy.ts"
 import { organization } from "../lib/seo.ts"
-import { locales, siteOrigin } from "../lib/urls.ts"
+import { blogUrl, locales, siteOrigin } from "../lib/urls.ts"
 import HeadingText from "./HeadingText.astro"
 
 // The reading layout, after engawa's landing (src/components/BlogPost.astro, Apache-2.0): title,
@@ -27,7 +27,7 @@ const same = new Set((await getCollection("blog")).map((p) => p.id))
 const languages = locales.filter((l) => same.has(`${l}/${slug}`))
 // A language without this post switches to that language's blog.
 const alternates = Object.fromEntries(
-  locales.filter((l) => !languages.includes(l)).map((l) => [l, blogPath(l)]),
+  locales.filter((l) => !languages.includes(l)).map((l) => [l, blogUrl(l)]),
 )
 const image = `/og/blog/${locale}/${slug}.png`
 ---
@@ -53,7 +53,7 @@ const image = `/og/blog/${locale}/${slug}.png`
   }}
 >
   <header class="wrap hero post-head stagger">
-    <a class="back" href={blogPath(locale)}>
+    <a class="back" href={blogUrl(locale)}>
       <Icon name="arrow-left" />
       {t.back}
     </a>
@@ -111,7 +111,7 @@ const image = `/og/blog/${locale}/${slug}.png`
           </li>
         ))}
       </ul>
-      <a class="more" href={`${blogPath(locale)}/rss.xml`}>
+      <a class="more" href={`${blogUrl(locale)}/rss.xml`}>
         <Icon name="rss" />
         {t.rss}
       </a>

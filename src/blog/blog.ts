@@ -1,7 +1,7 @@
 // Posts by locale, after engawa's landing (src/lib/blog.ts, Apache-2.0): the first folder of a
 // post's id is its locale, the rest is its slug.
 import { getCollection, type CollectionEntry } from "astro:content"
-import { isSiteLocale, localePrefix, type SiteLocale } from "../lib/urls.ts"
+import { blogUrl, isSiteLocale, type SiteLocale } from "../lib/urls.ts"
 
 export type Post = CollectionEntry<"blog">
 
@@ -15,9 +15,7 @@ export function postLocale(id: string): SiteLocale {
 
 export const postSlug = (id: string) => id.split("/").slice(1).join("/")
 
-export const blogPath = (locale: string) => `${localePrefix(locale)}/blog`
-
-export const postUrl = (post: Post) => `${blogPath(postLocale(post.id))}/${postSlug(post.id)}`
+export const postUrl = (post: Post) => `${blogUrl(postLocale(post.id))}/${postSlug(post.id)}`
 
 /** A locale's posts, newest first. */
 export async function postsFor(locale: SiteLocale): Promise<Post[]> {

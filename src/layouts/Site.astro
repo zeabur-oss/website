@@ -4,9 +4,8 @@ import { ClientRouter } from "astro:transitions"
 import SiteFooter from "../components/SiteFooter.astro"
 import SiteHeader from "../components/SiteHeader.astro"
 import Reveal from "../components/Reveal.astro"
-import { pathInLocale } from "../lib/chrome.ts"
 import { OG_HEIGHT, OG_WIDTH, ogLocale } from "../lib/seo.ts"
-import { locales, siteOrigin, type SiteLocale } from "../lib/urls.ts"
+import { locales, pathInLocale, siteOrigin, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale

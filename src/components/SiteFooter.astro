@@ -1,8 +1,9 @@
 ---
 import Logo from "./Logo.astro"
 import { githubOrg } from "../lib/site.ts"
-import { blogUrl, chrome, productDocsUrl, productIds, productUrl } from "../lib/chrome.ts"
-import type { SiteLocale } from "../lib/urls.ts"
+import { chrome } from "../lib/chrome.ts"
+import { productIds } from "../lib/products.ts"
+import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
@@ -35,7 +36,7 @@ const rss = `${blogUrl(locale)}/rss.xml`
         <ul>
           {productIds.map((id) => (
             <li>
-              <a href={productDocsUrl(locale, id)}>{t.products[id].name}</a>
+              <a href={docsUrl(locale, id)}>{t.products[id].name}</a>
             </li>
           ))}
         </ul>
