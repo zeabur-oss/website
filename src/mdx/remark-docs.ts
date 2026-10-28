@@ -108,8 +108,9 @@ export function rewriteSrc(src: string, { page, repo, files }: Context): string 
   return path ? `/docs-assets/${repo.name}/${path}` : src
 }
 
-function attribute(name: string, value: string): MdxJsxAttribute {
-  return { type: "mdxJsxAttribute", name, value }
+function attribute(name: string, value: string | boolean): MdxJsxAttribute {
+  // A bare attribute, `<Screenshot dark />`, is true.
+  return { type: "mdxJsxAttribute", name, value: value === true ? null : String(value) }
 }
 
 function importNode(names: string[]): MdxjsEsm {
@@ -154,6 +155,8 @@ export function remarkDocs() {
         alt: image.alt ?? "",
         locale: context.page.contentLocale,
         theme: theme as "light" | "dark",
+        // A light shot shows its dark one in the dark theme, when the release took it.
+        ...(theme === "light" && { dark: true }),
       }
       let element: RootContent
       if (mdx) {
