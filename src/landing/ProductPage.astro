@@ -2,8 +2,7 @@
 import Icon from "../components/Icon.astro"
 import Imagery from "../components/imagery/Imagery.astro"
 import Site from "../layouts/Site.astro"
-import { chrome } from "../lib/chrome.ts"
-import { productIcon, type ProductId } from "../lib/products.ts"
+import { productIcon, productName, productVersion, type ProductId } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
@@ -25,7 +24,7 @@ interface Props {
 const { locale, id } = Astro.props
 const t = productCopy[locale][id]
 const home = landingCopy[locale]
-const name = chrome[locale].products[id].name
+const name = productName[id]
 const repo = `${githubOrg}/${id}`
 const docs = {
   zeabur: docsUrl(locale, "zeabur"),
@@ -81,7 +80,7 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
             <Icon name={productIcon[id]} />
           </span>
           {name}
-          <span class="pill">{t.status}</span>
+          <span class="pill">{productVersion[id]}</span>
         </p>
         <h1 class="display max-w-[14em] text-[clamp(2.125rem,1.6rem+2.2vw,3.5rem)]">
           <span class="text-site-faint zh:inline-block">{t.titleDim}</span>

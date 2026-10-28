@@ -2,7 +2,7 @@
 import Logo from "./Logo.astro"
 import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
-import { productIds } from "../lib/products.ts"
+import { productIds, productName } from "../lib/products.ts"
 import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
@@ -13,11 +13,11 @@ const t = chrome[locale]
 const columns = [
   {
     title: t.footer.products,
-    links: productIds.map((id) => ({ href: productUrl(locale, id), text: t.products[id].name })),
+    links: productIds.map((id) => ({ href: productUrl(locale, id), text: productName[id] })),
   },
   {
     title: t.nav.docs,
-    links: productIds.map((id) => ({ href: docsUrl(locale, id), text: t.products[id].name })),
+    links: productIds.map((id) => ({ href: docsUrl(locale, id), text: productName[id] })),
   },
   {
     title: t.footer.resources,

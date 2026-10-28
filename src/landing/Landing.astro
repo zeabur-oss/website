@@ -2,8 +2,7 @@
 import Icon from "../components/Icon.astro"
 import Imagery from "../components/imagery/Imagery.astro"
 import Site from "../layouts/Site.astro"
-import { chrome } from "../lib/chrome.ts"
-import { productIcon, productIds } from "../lib/products.ts"
+import { productIcon, productIds, productName } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
@@ -19,7 +18,6 @@ interface Props {
 }
 const { locale } = Astro.props
 const t = landingCopy[locale]
-const names = chrome[locale].products
 const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
 const shot = (id: string) => siteShot(locale, id)
 ---
@@ -92,7 +90,7 @@ const shot = (id: string) => siteShot(locale, id)
                 <span class="mark">
                   <Icon name={productIcon[id]} />
                 </span>
-                <h3>{names[id].name}</h3>
+                <h3>{productName[id]}</h3>
               </div>
               <p class="body flex-1">{t[id].summary}</p>
               <span class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium">
@@ -110,7 +108,7 @@ const shot = (id: string) => siteShot(locale, id)
   </section>
 
   <section class="wrap section" aria-labelledby="zeabur-title">
-    <SectionHead id="zeabur-title" title={t.zeabur.name} tail={t.zeabur.tagline} />
+    <SectionHead id="zeabur-title" title={productName.zeabur} tail={t.zeabur.tagline} />
     <div class="grid12 items-start">
       <div class="lg:col-[1/5]" data-reveal>
         <ul>

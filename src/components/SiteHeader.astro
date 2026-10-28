@@ -5,7 +5,7 @@ import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
 import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
-import { productIcon, productIds } from "../lib/products.ts"
+import { productIcon, productIds, productName } from "../lib/products.ts"
 import {
   blogUrl,
   docsUrl,
@@ -38,7 +38,7 @@ const mobileGroups = [
     links: productIds.map((id) => ({
       href: productUrl(locale, id),
       icon: productIcon[id],
-      text: t.products[id].name,
+      text: productName[id],
     })),
   },
   {
@@ -97,7 +97,7 @@ const mobileGroups = [
               id={id}
               href={productUrl(locale, id)}
               current={here === productUrl(locale, id)}
-              name={t.products[id].name}
+              name={productName[id]}
               line={t.products[id].line}
             />
           ))}

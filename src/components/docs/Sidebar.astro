@@ -3,7 +3,7 @@ import ProductLink from "../ProductLink.astro"
 import Default from "@astrojs/starlight/components/Sidebar.astro"
 import Icon from "../Icon.astro"
 import { chrome } from "../../lib/chrome.ts"
-import { productIcon, productIds, type ProductId } from "../../lib/products.ts"
+import { productIcon, productIds, productName, type ProductId } from "../../lib/products.ts"
 import { blogUrl, docsUrl, homeUrl, isSiteLocale } from "../../lib/urls.ts"
 
 // The product whose docs these are, as a menu at the top, then that product's pages.
@@ -19,7 +19,7 @@ const current = (entry.data as { repo?: string }).repo as ProductId | undefined
       <span class="mark size-7">
         <Icon name={productIcon[current]} class="size-4" />
       </span>
-      <span class="flex-1">{t.products[current].name}</span>
+      <span class="flex-1">{productName[current]}</span>
       <Icon name="caret-up-down" class="size-3.5 text-site-faint" />
     </summary>
     <div class="menu-panel right-0 left-0 grid gap-0.5">
@@ -28,7 +28,7 @@ const current = (entry.data as { repo?: string }).repo as ProductId | undefined
           id={id}
           href={docsUrl(locale, id)}
           current={id === current}
-          name={t.products[id].name}
+          name={productName[id]}
           line={t.products[id].short}
         />
       ))}

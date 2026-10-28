@@ -4,7 +4,7 @@ import { dateFormat, postSlug, postsFor } from "../../blog/blog.ts"
 import { blogCopy } from "../../blog/copy.ts"
 import { landingCopy } from "../../landing/copy.ts"
 import { chrome } from "../../lib/chrome.ts"
-import { productIds, type ProductId } from "../../lib/products.ts"
+import { productIds, productName, type ProductId } from "../../lib/products.ts"
 import { renderOg, type OgCard } from "../../lib/og.ts"
 import { summary } from "../../lib/seo.ts"
 import { locales, type SiteLocale } from "../../lib/urls.ts"
@@ -65,7 +65,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     if (!data.repo || (data.contentLocale ?? lang) !== lang) continue
     const words = chrome[lang]
     const product = (productIds as readonly string[]).includes(data.repo)
-      ? words.products[data.repo as ProductId].name
+      ? productName[data.repo as ProductId]
       : data.repo
     add(entry.id.toLowerCase(), {
       kicker: `${product} · ${words.nav.docs}`,

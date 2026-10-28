@@ -1,6 +1,6 @@
 import type { SiteLocale } from "../lib/urls.ts"
 
-type Product = { name: string; tagline: string; summary: string; points: string[]; docs: string }
+type Product = { tagline: string; summary: string; points: string[]; docs: string }
 type Way = { title: string; body: string; link: string }
 
 export type LandingCopy = {
@@ -11,9 +11,9 @@ export type LandingCopy = {
   shots: Record<"project" | "diagnosis" | "database" | "cluster" | "installer", string>
   projects: { title: string; lead: string; more: string }
   zeabur: Product
-  identity: Product & { signIn: string; adminSignIn: string }
-  builder: Product & { file: string }
-  catalog: Product & { file: string }
+  identity: Product
+  builder: Product
+  catalog: Product
   start: { title: string; lead: string; server: Way; cluster: Way; laptop: Way }
   leave: { title: string; body: string; link: string }
 }
@@ -50,7 +50,6 @@ const zhTW: LandingCopy = {
     more: "看看能做什麼",
   },
   zeabur: {
-    name: "Zeabur",
     tagline: "部署和管理服務的網頁介面",
     summary: "把叢集整理成專案和服務，說明哪裡出錯、該怎麼處理。",
     points: [
@@ -61,7 +60,6 @@ const zhTW: LandingCopy = {
     docs: "Zeabur 文件",
   },
   identity: {
-    name: "Zeabur Identity",
     tagline: "用通行密鑰登入 kubectl",
     summary: "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的 token。",
     points: [
@@ -70,11 +68,8 @@ const zhTW: LandingCopy = {
       "一個約 20 MB 的 pod，跑在它保護的叢集裡，不需要資料庫。",
     ],
     docs: "Identity 文件",
-    signIn: "登入頁：通行密鑰按鈕和「使用 GitHub 繼續」",
-    adminSignIn: "管理員登入頁：只能用通行密鑰",
   },
   builder: {
-    name: "Zeabur Builder",
     tagline: "推送 commit，拿到映像檔 digest",
     summary: "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。",
     points: [
@@ -82,10 +77,8 @@ const zhTW: LandingCopy = {
       "每個新 commit 建置一次，推到 registry，再把映像檔寫進 status.latestImage，交給你的部署工具。",
     ],
     docs: "Builder 文件",
-    file: "README.md 裡的 Build 範例",
   },
   catalog: {
-    name: "Zeabur Catalog",
     tagline: "測試過的元件與範本",
     summary: "叢集元件和應用程式範本，每一項都由 CI 安裝並測試。",
     points: [
@@ -94,7 +87,6 @@ const zhTW: LandingCopy = {
       "CI 會安裝並測試每一項。每次發版產生一份有簽章的 bundle。",
     ],
     docs: "Catalog 說明",
-    file: "components/certificates/cert-manager.yaml",
   },
   start: {
     title: "從手邊的環境開始",
@@ -153,7 +145,6 @@ const zhCN: LandingCopy = {
     more: "看看能做什么",
   },
   zeabur: {
-    name: "Zeabur",
     tagline: "部署和管理服务的 Web 界面",
     summary: "把集群整理成项目和服务，说明哪里出错、该怎么处理。",
     points: [
@@ -164,7 +155,6 @@ const zhCN: LandingCopy = {
     docs: "Zeabur 文档",
   },
   identity: {
-    name: "Zeabur Identity",
     tagline: "用通行密钥登录 kubectl",
     summary: "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的 token。",
     points: [
@@ -173,11 +163,8 @@ const zhCN: LandingCopy = {
       "一个约 20 MB 的 Pod，运行在它保护的集群里，不需要数据库。",
     ],
     docs: "Identity 文档",
-    signIn: "登录页：通行密钥按钮和“使用 GitHub 继续”",
-    adminSignIn: "管理员登录页：只能用通行密钥",
   },
   builder: {
-    name: "Zeabur Builder",
     tagline: "推送 commit，拿到镜像 digest",
     summary: "用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。",
     points: [
@@ -185,10 +172,8 @@ const zhCN: LandingCopy = {
       "每个新 commit 构建一次，推送到镜像仓库，再把镜像写进 status.latestImage，交给你的部署工具。",
     ],
     docs: "Builder 文档",
-    file: "README.md 里的 Build 示例",
   },
   catalog: {
-    name: "Zeabur Catalog",
     tagline: "经过测试的组件与模板",
     summary: "集群组件和应用模板，每一项都由 CI 安装并测试。",
     points: [
@@ -197,7 +182,6 @@ const zhCN: LandingCopy = {
       "CI 会安装并测试每一项。每次发版生成一份带签名的 bundle。",
     ],
     docs: "Catalog 说明",
-    file: "components/certificates/cert-manager.yaml",
   },
   start: {
     title: "从手头的环境开始",
@@ -262,7 +246,6 @@ const en: LandingCopy = {
     more: "See what it does",
   },
   zeabur: {
-    name: "Zeabur",
     tagline: "A web interface to deploy and run services",
     summary: "Shows the cluster as projects and services, what is wrong and what to do.",
     points: [
@@ -273,7 +256,6 @@ const en: LandingCopy = {
     docs: "Zeabur docs",
   },
   identity: {
-    name: "Zeabur Identity",
     tagline: "Sign in to kubectl with a passkey",
     summary:
       "kubectl signs in through your browser with a passkey and gets a token that expires in minutes.",
@@ -283,11 +265,8 @@ const en: LandingCopy = {
       "One pod of about 20 MB, running inside the cluster it protects, with no database.",
     ],
     docs: "Identity docs",
-    signIn: "Sign-in page with a passkey button and Continue with GitHub",
-    adminSignIn: "Admin sign-in page: passkey only",
   },
   builder: {
-    name: "Zeabur Builder",
     tagline: "Push a commit, get an image digest",
     summary: "A Kubernetes operator that builds container images from Git with BuildKit.",
     points: [
@@ -295,10 +274,8 @@ const en: LandingCopy = {
       "Each new commit is built and pushed to your registry. The image goes into status.latestImage for your rollout tool to pick up.",
     ],
     docs: "Builder docs",
-    file: "The Build example from README.md",
   },
   catalog: {
-    name: "Zeabur Catalog",
     tagline: "Tested components and templates",
     summary: "Cluster components and app templates, each installed and tested in CI.",
     points: [
@@ -307,7 +284,6 @@ const en: LandingCopy = {
       "CI installs and tests every one of them. Each release ships one signed bundle.",
     ],
     docs: "About Catalog",
-    file: "components/certificates/cert-manager.yaml",
   },
   start: {
     title: "Start with what you have",

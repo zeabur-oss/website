@@ -18,7 +18,7 @@ type Chrome = {
     openSource: string
   }
   /** `short` fits the docs sidebar's product menu in two lines. */
-  products: Record<ProductId, { name: string; line: string; short: string }>
+  products: Record<ProductId, { line: string; short: string }>
   footer: { about: string; license: string; products: string; resources: string; source: string }
 }
 
@@ -37,22 +37,18 @@ const zhTW: Chrome = {
   },
   products: {
     zeabur: {
-      name: "Zeabur",
       line: "在自己的叢集部署和管理服務的網頁介面",
       short: "部署和管理服務的網頁介面",
     },
     identity: {
-      name: "Zeabur Identity",
       line: "用通行密鑰登入 kubectl，權杖幾分鐘就到期",
       short: "用通行密鑰登入 kubectl",
     },
     builder: {
-      name: "Zeabur Builder",
       line: "推送 commit，拿到映像檔 digest",
       short: "從 commit 建置映像檔",
     },
     catalog: {
-      name: "Zeabur Catalog",
       line: "CI 測試過的叢集元件和應用程式範本",
       short: "測試過的元件和範本",
     },
@@ -81,22 +77,18 @@ const zhCN: Chrome = {
   },
   products: {
     zeabur: {
-      name: "Zeabur",
       line: "在自己的集群上部署和管理服务的 Web 界面",
       short: "部署和管理服务的 Web 界面",
     },
     identity: {
-      name: "Zeabur Identity",
       line: "用通行密钥登录 kubectl，令牌几分钟就过期",
       short: "用通行密钥登录 kubectl",
     },
     builder: {
-      name: "Zeabur Builder",
       line: "推送 commit，拿到镜像 digest",
       short: "从 commit 构建镜像",
     },
     catalog: {
-      name: "Zeabur Catalog",
       line: "经过 CI 测试的集群组件和应用模板",
       short: "测试过的组件和模板",
     },
@@ -125,22 +117,18 @@ const en: Chrome = {
   },
   products: {
     zeabur: {
-      name: "Zeabur",
       line: "A web interface to deploy and run services on your cluster",
       short: "Deploy and run services",
     },
     identity: {
-      name: "Zeabur Identity",
       line: "kubectl signs in with a passkey, tokens last minutes",
       short: "Passkey sign-in for kubectl",
     },
     builder: {
-      name: "Zeabur Builder",
       line: "Push a commit, get an image digest",
       short: "Build images from commits",
     },
     catalog: {
-      name: "Zeabur Catalog",
       line: "Cluster components and app templates, tested in CI",
       short: "Tested components and templates",
     },

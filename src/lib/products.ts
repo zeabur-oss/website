@@ -9,3 +9,19 @@ export const productIcon: Record<ProductId, string> = {
   builder: "stack",
   catalog: "check-square-offset",
 }
+
+/** Names are not translated. */
+export const productName: Record<ProductId, string> = {
+  zeabur: "Zeabur",
+  identity: "Zeabur Identity",
+  builder: "Zeabur Builder",
+  catalog: "Zeabur Catalog",
+}
+
+/** The version, or API version, each product page shows beside its name. */
+export const productVersion: Record<ProductId, string> = {
+  zeabur: "v0.1.0",
+  identity: "v0.1.0",
+  builder: "v1alpha1",
+  catalog: "v1",
+}
