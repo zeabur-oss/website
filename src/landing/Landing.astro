@@ -31,7 +31,9 @@ const shot = (id: string) => siteShot(locale, id)
   image={`/og/home/${locale}.png`}
   schema={{
     "@type": "WebSite",
-    name: "Zeabur OSS",
+    name: "Zeabur Open Source",
+    // The header mark in each locale, so a search in Chinese matches the site name too.
+    alternateName: ["Zeabur 開源", "Zeabur 开源"],
     description: t.description,
     publisher: organization,
   }}

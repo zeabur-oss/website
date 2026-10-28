@@ -25,6 +25,8 @@ type Chrome = {
     github: string
     menu: string
     home: string
+    /** The mark beside the Zeabur logo. */
+    openSource: string
   }
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { name: string; line: string; short: string }>
@@ -42,6 +44,7 @@ const zhTW: Chrome = {
     github: "GitHub",
     menu: "選單",
     home: "首頁",
+    openSource: "開源",
   },
   products: {
     zeabur: {
@@ -85,6 +88,7 @@ const zhCN: Chrome = {
     github: "GitHub",
     menu: "菜单",
     home: "首页",
+    openSource: "开源",
   },
   products: {
     zeabur: {
@@ -128,6 +132,7 @@ const en: Chrome = {
     github: "GitHub",
     menu: "Menu",
     home: "Home",
+    openSource: "Open Source",
   },
   products: {
     zeabur: {
