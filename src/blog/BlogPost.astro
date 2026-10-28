@@ -348,6 +348,22 @@ const image = `/og/blog/${locale}/${slug}.png`
   }
 
   @media print {
+    @page {
+      size: A4;
+      margin: 20mm 22mm 22mm;
+    }
+    /* Paper is light whichever theme is on screen; the tokens follow color-scheme. */
+    :global(:root),
+    :global(:root[data-theme="dark"]) {
+      color-scheme: light;
+      background: #fff;
+    }
+    :global(:root[data-theme="dark"] .theme-light) {
+      display: block;
+    }
+    :global(:root[data-theme="dark"] .theme-dark) {
+      display: none;
+    }
     :global(.site-header),
     :global(.site-footer),
     .back,
@@ -364,16 +380,64 @@ const image = `/og/blog/${locale}/${slug}.png`
       max-width: none;
       padding: 0;
     }
+    .post-head {
+      gap: 3mm;
+      margin-bottom: 8mm;
+      padding-bottom: 5mm;
+      border-bottom: 0.5pt solid #ccc;
+    }
+    .post-head > :global(*) {
+      opacity: 1 !important;
+      translate: none !important;
+      filter: none !important;
+    }
+    .post-head .display {
+      max-width: none;
+      font-size: 20pt;
+      line-height: 1.35;
+    }
+    .post-head .lead {
+      max-width: none;
+      font-size: 11pt;
+      line-height: 1.7;
+      color: #444;
+    }
+    .meta {
+      font-size: 8.5pt;
+      color: #666;
+    }
     .article::before {
       display: none;
     }
     .prose {
       max-width: none;
       font-size: 10.5pt;
+      line-height: 1.8;
       color: #111;
+      orphans: 2;
+      widows: 2;
+    }
+    .prose :global(> * + *) {
+      margin-top: 0.9em;
+    }
+    .prose :global(h2) {
+      margin-top: 1.8em;
+      font-size: 14pt;
+      line-height: 1.4;
     }
     .prose :global(:is(h2, h3)) {
       break-after: avoid;
+    }
+    .prose :global(a) {
+      color: inherit;
+      text-decoration-color: #999;
+      text-decoration-thickness: 0.5pt;
+    }
+    .prose :global(:is(.post-shots, .post-figure, .shot, img, figure)) {
+      break-inside: avoid;
+    }
+    .prose :global(:is(.post-shots, .post-figure)) {
+      margin-block: 1.4em;
     }
     .prose :global(pre) {
       white-space: pre-wrap;
@@ -414,4 +478,10 @@ const image = `/og/blog/${locale}/${slug}.png`
     update()
   }
   document.addEventListener("astro:page-load", track)
+  // Lazy screenshots below the fold would otherwise print as empty frames.
+  addEventListener("beforeprint", () => {
+    document.querySelectorAll<HTMLImageElement>('.prose img[loading="lazy"]').forEach((img) => {
+      img.loading = "eager"
+    })
+  })
 </script>
