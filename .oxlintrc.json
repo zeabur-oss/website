@@ -24,14 +24,5 @@
       }
     ]
   },
-  "ignorePatterns": [
-    "dist",
-    "content",
-    "public",
-    ".astro",
-    ".cache",
-    ".local",
-    ".shots",
-    "src/content/docs"
-  ]
+  "ignorePatterns": ["dist", "content", "public", ".astro", ".cache", ".local", "src/content/docs"]
 }

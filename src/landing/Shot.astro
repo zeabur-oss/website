@@ -1,45 +1,31 @@
 ---
 import { cn } from "cn"
-import { existsSync } from "node:fs"
-import { avifFileSize } from "../lib/avif.ts"
+import type { ShotImage } from "./shots.ts"
 
 interface Props {
-  light: string
-  dark: string
+  src: ShotImage
   alt: string
   sizes: string
   caption?: string
   eager?: boolean
   class?: string
 }
-const { light, dark, alt, sizes, caption, eager, class: className } = Astro.props
-// A shot that was not taken (see scripts/shots.sh) has no size, as in the docs pages.
-const size = existsSync(`public${light}`) ? avifFileSize(`public${light}`) : undefined
-const width = size?.[0]
-// The images are taken at twice the pixel density, so their CSS size is half their pixels.
-const attrs = {
-  alt,
-  sizes,
-  width: width && width / 2,
-  height: size && size[1] / 2,
-  decoding: "async",
-  loading: eager ? "eager" : "lazy",
-} as const
+const { src, alt, sizes, caption, eager, class: className } = Astro.props
+// Screenshots are taken at twice the pixel density, so their CSS size is half their pixels.
 ---
 
 <figure class={cn("shot", className)}>
   <div class="overflow-hidden rounded-lg border border-site-line bg-site-bg-soft">
     <img
-      class="theme-light h-auto w-full align-top"
-      src={light}
-      srcset={width ? `${light} ${width}w` : undefined}
-      {...attrs}
-    />
-    <img
-      class="theme-dark h-auto w-full align-top"
-      src={dark}
-      srcset={width ? `${dark} ${width}w` : undefined}
-      {...attrs}
+      class="h-auto w-full align-top"
+      src={src.src}
+      srcset={`${src.src} ${src.width}w`}
+      alt={alt}
+      width={src.width / 2}
+      height={src.height / 2}
+      sizes={sizes}
+      decoding="async"
+      loading={eager ? "eager" : "lazy"}
     />
   </div>
   {caption && (

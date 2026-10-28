@@ -152,20 +152,6 @@ describe("docs-check", () => {
     ])
   })
 
-  test("screenshots must be declared in shots.yaml", async () => {
-    const found = await check({
-      ...repo,
-      "docs/shots.yaml": "- id: home\n  path: /\n",
-      "docs/start/install.mdx": page(
-        '<Screenshot id="home" alt="Home" />\n\n<Screenshot id="nope" alt="x" />\n\n![x](https://oss.zeabur.com/shots/demo/en/dark/home.avif)',
-      ),
-    })
-    expect(found).toEqual([
-      "error shot-unknown docs/start/install.mdx:7",
-      "error shot-theme docs/start/install.mdx:9",
-    ])
-  })
-
   test("stale translations are listed", async () => {
     const original = repo["docs/start/install.mdx"]
     const fresh = page("安裝。", `title: 安裝\nsource: ${sourceHash(original)}`)

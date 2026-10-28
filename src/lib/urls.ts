@@ -14,14 +14,6 @@ export function docsUrl(locale: string, repo: string, slug = "index") {
   return `${localePrefix(locale)}/docs/${repo}${slug === "index" ? "" : `/${slug}`}`
 }
 
-export function shotUrl(repo: string, locale: string, theme: string, id: string) {
-  return `/shots/${repo}/${locale}/${theme}/${id}.avif`
-}
-
-/** `https://oss.zeabur.com/shots/<repo>/<locale>/<theme>/<id>.avif` */
-export const shotPattern =
-  /^https:\/\/oss\.zeabur\.com\/shots\/([a-z0-9-]+)\/([A-Za-z-]+)\/(light|dark)\/([a-z0-9-]+)\.avif$/
-
 /** Route params for a page in every locale: English at the root, the others under their prefix. */
 export const localePaths = () =>
   locales.map((locale) => ({

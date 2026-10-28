@@ -1,15 +1,14 @@
 import { readFileSync } from "node:fs"
 import { join, relative } from "node:path"
 import { parse } from "acorn"
-import type { Html, Image, Link, Root, RootContent } from "mdast"
-import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx"
+import type { Image, Link, Root } from "mdast"
 import type { MdxjsEsm } from "mdast-util-mdxjs-esm"
 import { visit } from "unist-util-visit"
 import type { VFile } from "vfile"
 import type { RepoLinks, SiteData, SitePage } from "../../scripts/sync-docs.ts"
 import { registry } from "../docs-components/registry.ts"
-import { screenshotHtml } from "../lib/shots.ts"
-import { docsUrl, localePrefix, locales, shotPattern } from "../lib/urls.ts"
+import { avifFileSize } from "../lib/avif.ts"
+import { docsUrl, localePrefix, locales } from "../lib/urls.ts"
 import {
   classifyLink,
   githubDocsLink,
@@ -108,11 +107,6 @@ export function rewriteSrc(src: string, { page, repo, files }: Context): string 
   return path ? `/docs-assets/${repo.name}/${path}` : src
 }
 
-function attribute(name: string, value: string | boolean): MdxJsxAttribute {
-  // A bare attribute, `<Screenshot dark />`, is true.
-  return { type: "mdxJsxAttribute", name, value: value === true ? null : String(value) }
-}
-
 function importNode(names: string[]): MdxjsEsm {
   const value = `import { ${names.join(", ")} } from ${JSON.stringify(components)}`
   return {
@@ -124,17 +118,23 @@ function importNode(names: string[]): MdxjsEsm {
   }
 }
 
+/** Screenshots are taken at twice the pixel density, so an AVIF shows at half its size. */
+function halfSize(src: string) {
+  if (!src.startsWith("/docs-assets/") || !src.endsWith(".avif")) return undefined
+  const [width, height] = avifFileSize(join(root, "public", src))
+  return { width: width / 2, height: height / 2 }
+}
+
 /**
- * Rewrites links and images of the pages that scripts/sync-docs.ts wrote, turns release
- * screenshots (`https://oss.zeabur.com/shots/…`) into the screenshot for the page's language, and
- * imports the registry's components an MDX page uses: pages never import anything themselves.
+ * Rewrites links and images of the pages that scripts/sync-docs.ts wrote, and imports the
+ * registry's components an MDX page uses: pages never import anything themselves.
  */
 export function remarkDocs() {
   return (tree: Root, file: VFile) => {
     const context = contextOf(file)
     if (!context) return
     const mdx = file.path.endsWith(".mdx")
-    visit(tree, (node, index, parent) => {
+    visit(tree, (node) => {
       if (node.type === "link" || node.type === "definition") {
         ;(node as Link).url = rewriteHref((node as Link).url, context)
         // rehypeDocsHtml must not rewrite this link a second time.
@@ -143,41 +143,9 @@ export function remarkDocs() {
       }
       if (node.type !== "image") return
       const image = node as Image
-      const shot = shotPattern.exec(image.url)
-      if (!shot || !parent || index === undefined) {
-        image.url = rewriteSrc(image.url, context)
-        return
-      }
-      const [, repo, , theme, id] = shot
-      const props = {
-        repo: repo!,
-        id: id!,
-        alt: image.alt ?? "",
-        locale: context.page.contentLocale,
-        theme: theme as "light" | "dark",
-        // A light shot shows its dark one in the dark theme, when the release took it.
-        ...(theme === "light" && { dark: true }),
-      }
-      let element: RootContent
-      if (mdx) {
-        const jsx: MdxJsxFlowElement = {
-          type: "mdxJsxFlowElement",
-          name: "Screenshot",
-          attributes: Object.entries(props).map(([k, v]) => attribute(k, v)),
-          children: [],
-        }
-        element = jsx
-      } else {
-        element = { type: "html", value: screenshotHtml(props, context.page) } satisfies Html
-      }
-      // An image alone in its paragraph replaces the paragraph, so no <figure> sits in a <p>.
-      if (parent.type === "paragraph" && parent.children.length === 1) {
-        Object.assign(parent, element)
-      } else {
-        parent.children[index] = (
-          element.type === "mdxJsxFlowElement" ? { ...element, type: "mdxJsxTextElement" } : element
-        ) as never
-      }
+      image.url = rewriteSrc(image.url, context)
+      const hProperties = { loading: "lazy", decoding: "async", ...halfSize(image.url) }
+      image.data = { ...image.data, hProperties: { ...image.data?.hProperties, ...hProperties } }
     })
     if (!mdx) return
     const used = new Set<string>()

@@ -1,5 +1,5 @@
-// Checks a repository's docs/ (nav.yaml, links, redirects, frontmatter, MDX components,
-// screenshots) and lists stale translations. Exits 1 on errors only.
+// Checks a repository's docs/ (nav.yaml, links, redirects, frontmatter, MDX components)
+// and lists stale translations. Exits 1 on errors only.
 //   bun scripts/docs-check.ts                            every repository in docs.lock.json
 //   bun scripts/docs-check.ts <dir> [--base <rev>]       a working tree, as each repository's CI does
 import { basename, resolve } from "node:path"

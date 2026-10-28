@@ -1,28 +1,29 @@
-import { findShot } from "../lib/shots.ts"
+import { existsSync } from "node:fs"
+import { join } from "node:path"
+import { avifFileSize } from "../lib/avif.ts"
 
-// Screenshots on the landing and the product pages, and the widths they are shown at.
+// Screenshots on the landing and the product pages, from the docs images sync-docs.ts copies to
+// public/docs-assets/, and the widths they are shown at.
 
-/** The site shots of the Zeabur web app, taken by zeabur's scripts/site-images.sh. */
-export const siteShot = (locale: string, id: string) => ({
-  light: `/docs-assets/zeabur/docs/images/site/${locale}/light/${id}.avif`,
-  dark: `/docs-assets/zeabur/docs/images/site/${locale}/dark/${id}.avif`,
-})
+export type ShotImage = { src: string; width: number; height: number }
 
-/**
- * Screenshots from Zeabur's docs, taken by its scripts/docs-shots.sh: the dark one where the
- * release took it, else the light one in both themes. Undefined when the build has no such shot.
- */
-export const docsShot = (locale: string, id: string) => {
-  const light = findShot("zeabur", locale, "light", id)
-  const dark = findShot("zeabur", locale, "dark", id)
-  return light && { light: light.src, dark: (dark ?? light).src }
+function image(repo: string, ...paths: string[]): ShotImage {
+  for (const path of paths) {
+    const src = `/docs-assets/${repo}/docs/${path}`
+    const file = join(process.cwd(), "public", src)
+    if (!existsSync(file)) continue
+    const [width, height] = avifFileSize(file)
+    return { src, width, height }
+  }
+  throw new Error(`${repo} has no docs/${paths.at(-1)}; run bun scripts/sync-docs.ts`)
 }
 
+/** A screenshot from Zeabur's docs, in `locale` or else in English. */
+export const shot = (locale: string, id: string) =>
+  image("zeabur", `${locale}/images/shots/${id}.avif`, `images/shots/${id}.avif`)
+
 /** Zeabur Identity's sign-in pages, from its docs. */
-export const identityShot = (name: string) => ({
-  light: `/docs-assets/identity/docs/images/${name}-light.avif`,
-  dark: `/docs-assets/identity/docs/images/${name}-dark.avif`,
-})
+export const identityShot = (name: string) => image("identity", `images/${name}-light.avif`)
 
 // The container is 1240px wide at most, with 16px or 48px gutters.
 export const sizes = {

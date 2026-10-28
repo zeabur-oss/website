@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs"
 
 /** Width and height from an AVIF's `ispe` box. */
-export function avifSize(bytes: Uint8Array): [number, number] | undefined {
+function avifSize(bytes: Uint8Array): [number, number] | undefined {
   for (let i = 0; i + 16 < bytes.length; i++) {
     if (
       bytes[i] === 0x69 &&

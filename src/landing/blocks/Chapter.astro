@@ -2,15 +2,14 @@
 // One job on a product page: a kicker, a title and a few lines beside one real screen.
 import Icon from "../../components/Icon.astro"
 import Shot from "../Shot.astro"
-import { sizes } from "../shots.ts"
+import { sizes, type ShotImage } from "../shots.ts"
 
 interface Props {
   id: string
   kicker: string
   title: string
   body: string
-  /** Left out when the build has no such shot; the text then stands alone. */
-  shot?: { light: string; dark: string; alt: string }
+  shot: { src: ShotImage; alt: string }
   link?: { href: string; text: string }
 }
 const { id, kicker, title, body, shot, link } = Astro.props
@@ -33,9 +32,7 @@ const { id, kicker, title, body, shot, link } = Astro.props
       </a>
     )}
   </div>
-  {shot && (
-    <div class="lg:col-[5/13]" data-reveal style="--i:1">
-      <Shot {...shot} sizes={sizes.wide} />
-    </div>
-  )}
+  <div class="lg:col-[5/13]" data-reveal style="--i:1">
+    <Shot {...shot} sizes={sizes.wide} />
+  </div>
 </article>

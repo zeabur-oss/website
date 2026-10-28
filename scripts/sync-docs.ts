@@ -1,13 +1,11 @@
 // Reads each repository's docs/ at the ref in docs.lock.json and writes what Starlight reads:
 // src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and content/nav.json (the sidebar),
-// and the images, screenshots and social images under public/.
+// and the images and social images under public/.
 //   bun scripts/sync-docs.ts
-import { $ } from "bun"
-import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
+import { copyFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { stringify as toYaml } from "yaml"
 import sharp from "sharp"
-import { avifSize } from "../src/lib/avif.ts"
 import { docsUrl, localePrefix } from "../src/lib/urls.ts"
 import {
   fallbackOrder,
@@ -17,7 +15,7 @@ import {
   splitFrontmatter,
   type RepoDocs,
 } from "./lib/docs.ts"
-import { readLock, root, snapshot, walk, type LockRepo, type Snapshot } from "./lib/repos.ts"
+import { readLock, root, snapshot, type LockRepo, type Snapshot } from "./lib/repos.ts"
 
 export type SitePage = {
   repo: string
@@ -130,38 +128,6 @@ function copyAssets(snap: Snapshot) {
   }
 }
 
-/**
- * Screenshots: the release's docs-shots-<tag>.tar when the lock names one, else what
- * scripts/shots.sh left in .shots/<repo>.
- */
-async function copyShots(repo: LockRepo, sizes: Record<string, [number, number]>) {
-  let from = join(root, ".shots", repo.name)
-  if (repo.shots) {
-    from = join(root, ".cache/shots", `${repo.name}-${repo.shots}`)
-    if (!existsSync(join(from, "manifest.json"))) {
-      mkdirSync(from, { recursive: true })
-      const url = `https://github.com/${repo.github}/releases/download/${repo.shots}/docs-shots-${repo.shots}.tar`
-      const response = await fetch(url)
-      if (!response.ok) throw new Error(`${url}: ${response.status}`)
-      const tar = join(from, "shots.tar")
-      writeFileSync(tar, new Uint8Array(await response.arrayBuffer()))
-      await $`tar -xf ${tar} -C ${from}`.quiet()
-      rmSync(tar)
-    }
-  }
-  const out = join(publicDir, "shots", repo.name)
-  rmSync(out, { recursive: true, force: true })
-  const files = walk(from).filter((p) => p.endsWith(".avif"))
-  for (const path of files) {
-    const name = path.slice(from.length + 1)
-    mkdirSync(dirname(join(out, name)), { recursive: true })
-    copyFileSync(path, join(out, name))
-    const size = avifSize(readFileSync(path))
-    if (size) sizes[`${repo.name}/${name.replace(/\.avif$/, "")}`] = size
-  }
-  return files.length
-}
-
 /** The social image of a repository: its README cover, dark, as the 1280 × 640 PNG crawlers read, the size of the covers. */
 async function writeSocialImage(snap: Snapshot) {
   const cover = join(snap.dir, "docs/images/cover-dark.avif")
@@ -179,7 +145,6 @@ export async function sync() {
   rmSync(pagesDir, { recursive: true, force: true })
   const nav: SiteNav = {}
   const site: SiteData = { repos: [], pages: {}, redirects: [] }
-  const sizes: Record<string, [number, number]> = {}
   const links: Record<string, RepoLinks> = {}
   for (const repo of lock) {
     const snap = await snapshot(repo)
@@ -228,16 +193,13 @@ export async function sync() {
     }
     copyAssets(snap)
     await writeSocialImage(snap)
-    const shots = await copyShots(repo, sizes)
     console.log(
       `${repo.name}@${repo.ref.slice(0, 8)}: ${docs.pages.length} pages` +
-        (docs.missing.length ? `, ${docs.missing.length} listed without a file` : "") +
-        `, ${shots} screenshots`,
+        (docs.missing.length ? `, ${docs.missing.length} listed without a file` : ""),
     )
   }
   writeFile(join(content, "site.json"), JSON.stringify(site, null, 2))
   writeFile(join(content, "links.json"), JSON.stringify(links))
-  writeFile(join(content, "shots.json"), JSON.stringify(sizes, null, 2))
   writeFile(join(content, "nav.json"), JSON.stringify(nav, null, 2))
 }
 

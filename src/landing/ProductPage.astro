@@ -16,7 +16,7 @@ import Chapter from "./blocks/Chapter.astro"
 import FeatureIndex from "./blocks/FeatureIndex.astro"
 import SectionHead from "./blocks/SectionHead.astro"
 import { chapters, featureCopy, features, groupNames } from "./features.ts"
-import { docsShot, identityShot, siteShot, sizes } from "./shots.ts"
+import { identityShot, shot, sizes } from "./shots.ts"
 
 interface Props {
   locale: SiteLocale
@@ -43,15 +43,10 @@ const file = {
 
 const f = featureCopy[locale]
 const productShots = productCopy[locale].identity.shots?.captions ?? {}
-const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) => {
-  if (shot.from === "identity")
-    return { ...identityShot(shot.id), alt: productShots[shot.id] ?? fallback }
-  if (shot.from === "docs") {
-    const docs = docsShot(locale, shot.id)
-    return docs && { ...docs, alt: fallback }
-  }
-  const known = home.shots as Record<string, string>
-  return { ...siteShot(locale, shot.id), alt: known[shot.id] ?? fallback }
+const known = home.shots as Record<string, string>
+const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => {
+  if (s.from === "identity") return { src: identityShot(s.id), alt: productShots[s.id] ?? fallback }
+  return { src: shot(locale, s.id), alt: known[s.id] ?? fallback }
 }
 ---
 
@@ -181,7 +176,7 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
         {["sign-in", "setup"].map((shot, i) => (
           <div data-reveal style={`--i:${i}`}>
             <Shot
-              {...identityShot(shot)}
+              src={identityShot(shot)}
               alt={t.shots!.captions[shot]!}
               caption={t.shots!.captions[shot]}
               sizes={sizes.half}
