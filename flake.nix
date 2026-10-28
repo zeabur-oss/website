@@ -41,6 +41,9 @@
             ];
 
             env = {
+              # The prebuilt native modules (sharp, @resvg/resvg-js) link libstdc++, which Nix's
+              # bun does not find on a non-NixOS host such as the GitHub runner.
+              LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [ pkgs.stdenv.cc.cc.lib ];
               # Chromium for the page review (scripts/review.ts). playwright-core in package.json
               # must match playwright-driver.version.
               PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers-chromium}";
