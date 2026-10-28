@@ -1,0 +1,45 @@
+---
+// Other posts in the same language, under a post.
+import Icon from "../components/Icon.astro"
+import { blogUrl, type SiteLocale } from "../lib/urls.ts"
+import { postUrl, type Post } from "./blog.ts"
+import { blogCopy } from "./copy.ts"
+import HeadingText from "./HeadingText.astro"
+
+interface Props {
+  posts: Post[]
+  locale: SiteLocale
+}
+const { posts, locale } = Astro.props
+const t = blogCopy[locale]
+---
+
+{posts.length > 0 && (
+  <section
+    class="wrap section grid justify-items-start gap-6 print:hidden"
+    aria-labelledby="more-posts"
+  >
+    <h2 id="more-posts" class="type-body font-semibold text-site-muted">
+      {t.more}
+    </h2>
+    <ul class="w-full border-t border-site-line">
+      {posts.map((p) => (
+        <li>
+          <a
+            href={postUrl(p)}
+            class="group grid gap-1.5 border-b border-site-line py-5 text-inherit no-underline"
+          >
+            <span class="text-xl font-semibold group-hover:text-site-accent">
+              <HeadingText text={p.data.title} locale={locale} />
+            </span>
+            <span class="body">{p.data.description}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <a class="more" href={`${blogUrl(locale)}/rss.xml`}>
+      <Icon name="rss" />
+      {t.rss}
+    </a>
+  </section>
+)}

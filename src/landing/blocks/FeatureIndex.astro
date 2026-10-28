@@ -15,36 +15,41 @@ const href = (doc: string) => {
   const [repo, ...rest] = doc.split("/")
   return docsUrl(locale, repo!, rest.join("/") || "index")
 }
+const featureName = "leading-normal font-semibold text-site-text no-underline"
 ---
 
-<div class="feature-index">
+<div>
   {groups.map((group) => {
     const items = features.filter((f) => f.group === group)
     return (
       <section
-        class="grid12 feature-group"
+        class="grid12 scroll-mt-[calc(var(--header-height)+1rem)] gap-y-5 border-t border-site-line py-8 first:border-t-0 first:pt-0"
         id={`features-${group}`}
         aria-labelledby={`features-${group}-title`}
       >
-        <h3 id={`features-${group}-title`} class="feature-group-title" data-reveal>
+        <h3
+          id={`features-${group}-title`}
+          class="flex items-baseline gap-2.5 type-heading lg:col-[1/5] lg:flex-col lg:gap-1"
+          data-reveal
+        >
           {names[group]}
-          <span class="count">{items.length}</span>
+          <span class="type-mono font-normal text-site-faint">{items.length}</span>
         </h3>
-        <ul class="feature-list">
+        <ul class="grid gap-x-6 gap-y-5 md:grid-cols-2 lg:col-[5/13]">
           {items.map((f) => {
             const [name, line, note] = f[locale]
             return (
-              <li>
+              <li class="grid content-start gap-1">
                 {f.doc ? (
-                  <a class="feature-name" href={href(f.doc)}>
+                  <a class={`${featureName} hover:text-site-accent`} href={href(f.doc)}>
                     {name}
                   </a>
                 ) : (
-                  <span class="feature-name">{name}</span>
+                  <span class={featureName}>{name}</span>
                 )}
                 <span class="body">{line}</span>
                 {note && (
-                  <span class="feature-note">
+                  <span class="type-body text-site-faint before:mr-2 before:inline-block before:size-1.5 before:rounded-full before:border before:border-current before:align-[0.1em] before:content-['']">
                     <span class="sr-only">{t.partial}: </span>
                     {note}
                   </span>

@@ -1,0 +1,70 @@
+---
+// A post's contents beside its text on wide screens, marking the section being read.
+import type { MarkdownHeading } from "astro"
+
+interface Props {
+  headings: MarkdownHeading[]
+  label: string
+}
+const { label } = Astro.props
+const toc = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3)
+---
+
+{toc.length > 1 && (
+  <nav
+    class="sticky top-[calc(var(--header-height)+2rem)] max-h-[calc(100vh-var(--header-height)-4rem)] w-[min(100%,16rem)] justify-self-end overflow-y-auto max-[1100px]:hidden print:hidden"
+    aria-label={label}
+    data-toc
+  >
+    <p class="mb-3 type-body font-semibold text-site-muted">{label}</p>
+    <ol class="grid gap-0.5">
+      {toc.map((h) => (
+        <li>
+          <a
+            href={`#${h.slug}`}
+            class:list={[
+              "block py-1.25 type-body text-site-faint no-underline transition-[color] duration-quick ease-(--ease-site) hover:text-site-text aria-[current=true]:font-medium aria-[current=true]:text-site-text",
+              h.depth === 3 && "pl-3",
+            ]}
+          >
+            {h.text}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}
+
+<script>
+  // The contents entry for the section being read: the last heading above the line under the header.
+  function track() {
+    const toc = document.querySelector<HTMLElement>("[data-toc]")
+    if (!toc) return
+    const links = [...toc.querySelectorAll<HTMLAnchorElement>("a")]
+    const targets = links
+      .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+      .filter((el): el is HTMLElement => el !== null)
+    let queued = false
+    const update = () => {
+      queued = false
+      let current = 0
+      targets.forEach((el, i) => {
+        if (el.getBoundingClientRect().top - 120 <= 0) current = i
+      })
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 4)
+        current = targets.length - 1
+      links.forEach((a, i) => a.setAttribute("aria-current", String(i === current)))
+    }
+    const queue = () => {
+      if (queued) return
+      queued = true
+      requestAnimationFrame(update)
+    }
+    const controller = new AbortController()
+    addEventListener("scroll", queue, { passive: true, signal: controller.signal })
+    addEventListener("resize", queue, { signal: controller.signal })
+    document.addEventListener("astro:before-swap", () => controller.abort(), { once: true })
+    update()
+  }
+  document.addEventListener("astro:page-load", track)
+</script>

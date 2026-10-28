@@ -27,19 +27,23 @@ const attrs = {
 ---
 
 <figure class:list={["shot", className]}>
-  <div class="shot-frame">
+  <div class="overflow-hidden rounded-lg border border-site-line bg-site-bg-soft">
     <img
-      class="theme-light"
+      class="theme-light h-auto w-full align-top"
       src={light}
       srcset={width ? `${light} ${width}w` : undefined}
       {...attrs}
     />
     <img
-      class="theme-dark"
+      class="theme-dark h-auto w-full align-top"
       src={dark}
       srcset={width ? `${dark} ${width}w` : undefined}
       {...attrs}
     />
   </div>
-  {caption && <figcaption>{caption}</figcaption>}
+  {caption && (
+    <figcaption class="mt-3 max-w-[44rem] text-sm leading-[1.6] text-site-muted">
+      {caption}
+    </figcaption>
+  )}
 </figure>

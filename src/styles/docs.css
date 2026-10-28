@@ -1,10 +1,15 @@
 /* Starlight in the design system's colours, type and radius, sharing the site's header, surfaces
    and page transition (site.css). Both themes come from light-dark(); data-theme only sets the
    colour scheme. Measurements behind the sizes: zeabur-notes/research/docs-visual-diff.md. */
+@layer base, starlight, theme, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
+/* Only the site's own components: words in the synced Markdown would become utilities otherwise. */
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
 @import "@zeabur/design-system/tokens.css";
 @import "@zeabur/design-system/fonts.css";
 @import "./site.css";
+@source "../components";
+@source "../docs-components";
 
 :root,
 ::backdrop {
@@ -110,45 +115,10 @@ body {
   border-inline-start: 0 !important;
 }
 
-.docs-header {
-  height: 100%;
-}
-.docs-header .site-header-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  height: 100%;
-}
-.docs-header .site-nav {
-  display: none;
-}
-.docs-header .site-search {
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
-}
-.docs-header .mobile-menu {
-  display: none;
-}
+/* The header bar is SiteHeader's; only Starlight's search box inside it is styled here. */
 @media (min-width: 50rem) {
-  .docs-header .brand {
-    min-width: calc(var(--sl-sidebar-width) - 2 * var(--sl-nav-pad-x));
-  }
-  .docs-header .site-search {
-    justify-content: flex-start;
-  }
   .docs-header site-search {
     width: min(20rem, 100%);
-  }
-}
-@media (min-width: 72rem) {
-  .docs-header .site-nav {
-    display: flex;
-  }
-}
-@media (max-width: 49.99rem) {
-  .docs-header .site-tools > :not(.theme-toggle) {
-    display: none;
   }
 }
 site-search > button[data-open-modal] {
@@ -197,7 +167,7 @@ site-search > button[data-open-modal] {
 .sidebar-content .top-level > li + li {
   margin-top: 0.25rem;
 }
-.sidebar-content summary {
+.sidebar-content .top-level summary {
   padding-block: 0.5rem 0.25rem;
 }
 .sidebar-content ul ul li {
@@ -233,7 +203,7 @@ starlight-toc a[aria-current="true"] {
   line-height: 1.8;
   color: var(--docs-prose);
 }
-.sl-markdown-content > * + :not(:where(.not-content *)) {
+.sl-markdown-content > * + :not(:where(.not-content, .not-content *)) {
   margin-top: 1.25rem;
 }
 .sl-markdown-content :is(h1, h2, h3, h4) {
@@ -430,80 +400,6 @@ figure.docs-shot {
 figure.docs-shot img {
   display: block;
   height: auto;
-}
-
-/* ---------- a product's first page: cards ---------- */
-
-.docs-start {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0 0 2.5rem;
-  padding: 0;
-  list-style: none;
-}
-@media (min-width: 40rem) {
-  .docs-start {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-.sl-markdown-content * + .docs-start {
-  margin-top: 2rem;
-}
-.docs-start > li {
-  margin: 0;
-}
-.docs-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  height: 100%;
-  padding: 1rem 1.125rem;
-  border: 1px solid var(--site-line);
-  border-radius: var(--radius-lg);
-  background: var(--site-card);
-  color: var(--site-muted);
-  text-decoration: none;
-  transition:
-    border-color var(--transition-duration-quick) var(--ease-site),
-    background-color var(--transition-duration-quick) var(--ease-site);
-}
-a.docs-card:hover,
-li.docs-card:hover {
-  border-color: var(--site-line-strong);
-}
-.docs-card-head {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  color: var(--site-text);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.4;
-  text-decoration: none;
-}
-.docs-card-head .icon {
-  width: 1.125rem;
-  height: 1.125rem;
-  color: var(--site-accent);
-}
-.docs-card-body {
-  font-size: 0.8125rem;
-  line-height: 1.6;
-}
-.docs-card-links {
-  display: grid;
-  gap: 0.125rem;
-  margin: 0.25rem 0 0;
-  padding: 0 0 0 1.75rem;
-  list-style: none;
-  font-size: 0.8125rem;
-}
-.docs-card-links a {
-  color: var(--site-muted);
-  text-decoration: none;
-}
-.docs-card-links a:hover {
-  color: var(--site-text);
 }
 
 /* ---------- title area ---------- */

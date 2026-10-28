@@ -12,33 +12,40 @@ interface Props {
   cards: Card[]
 }
 const { cards } = Astro.props
+const cardClass =
+  "flex h-full flex-col gap-1.5 rounded-lg border border-site-line bg-site-card px-4.5 py-4 text-site-muted no-underline transition-[border-color] duration-quick ease-(--ease-site) hover:border-site-line-strong"
+const headClass =
+  "flex items-center gap-2.5 text-sm leading-[1.4] font-semibold text-site-text no-underline"
+const iconClass = "size-4.5 text-site-accent"
 ---
 
 {cards.length > 0 && (
-  <ul class="docs-start not-content">
+  <ul class="not-content m-0 mb-10 grid list-none gap-3 p-0 min-[40rem]:grid-cols-2 [*+&]:mt-8">
     {cards.map((card) =>
       card.links ? (
-        <li class="docs-card">
-          <a href={card.href} class="docs-card-head">
-            <Icon name={card.icon} />
+        <li class={cardClass}>
+          <a href={card.href} class={headClass}>
+            <Icon name={card.icon} class={iconClass} />
             {card.title}
           </a>
-          <ul class="docs-card-links">
+          <ul class="mt-1 grid list-none gap-0.5 p-0 pl-7 type-body">
             {card.links.map((l) => (
               <li>
-                <a href={l.href}>{l.label}</a>
+                <a href={l.href} class="text-site-muted no-underline hover:text-site-text">
+                  {l.label}
+                </a>
               </li>
             ))}
           </ul>
         </li>
       ) : (
         <li>
-          <a href={card.href} class="docs-card">
-            <span class="docs-card-head">
-              <Icon name={card.icon} />
+          <a href={card.href} class={cardClass}>
+            <span class={headClass}>
+              <Icon name={card.icon} class={iconClass} />
               {card.title}
             </span>
-            {card.body && <span class="docs-card-body">{card.body}</span>}
+            {card.body && <span class="type-body">{card.body}</span>}
           </a>
         </li>
       ),

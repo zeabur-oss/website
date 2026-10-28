@@ -73,23 +73,23 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
     publisher: organization,
   }}
 >
-  <section class="wrap hero product-hero">
+  <section class="wrap hero">
     <div class="grid12">
-      <div class="hero-text stagger">
-        <p class="eyebrow">
+      <div class="stagger flex flex-col items-start gap-6 lg:col-[1/7] lg:self-center">
+        <p class="inline-flex items-center gap-2.5 type-body text-site-muted">
           <span class="mark">
             <Icon name={productIcon[id]} />
           </span>
           {name}
           <span class="pill">{t.status}</span>
         </p>
-        <h1 class="display">
-          <span class="dim">{t.titleDim}</span>
+        <h1 class="display max-w-[14em] text-[clamp(2.125rem,1.6rem+2.2vw,3.5rem)]">
+          <span class="text-site-faint zh:inline-block">{t.titleDim}</span>
           {locale === "en" ? " " : ""}
-          <span class="rest">{t.title}</span>
+          <span class="zh:inline-block">{t.title}</span>
         </h1>
-        <p class="lead">{t.sub}</p>
-        <div class="actions">
+        <p class="lead max-w-xl">{t.sub}</p>
+        <div class="mt-2 flex flex-wrap gap-3">
           <a href={docs} class="button primary">
             {t.docs}
             <Icon name="arrow-right" class="go" />
@@ -106,7 +106,7 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
           </a>
         )}
       </div>
-      <div class="hero-art art" data-reveal style="--i:2">
+      <div class="art lg:col-[7/13]" data-reveal style="--i:2">
         <Imagery id={id} />
       </div>
     </div>
@@ -114,10 +114,14 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
 
   <section class="wrap section" aria-labelledby="highlights">
     <SectionHead id="highlights" dim={t.highlights.titleDim} title={t.highlights.title} />
-    <ul class="cells">
+    <ul class="grid gap-x-6 md:grid-cols-3">
       {t.highlights.items.map((item, i) => (
-        <li class="cell" data-reveal style={`--i:${i}`}>
-          <span class="tag">{item.tag}</span>
+        <li
+          class="flex flex-col gap-2 border-t border-site-line pt-5 pb-8"
+          data-reveal
+          style={`--i:${i}`}
+        >
+          <span class="type-mono text-site-faint">{item.tag}</span>
           <h3>{item.title}</h3>
           <p class="body">{item.body}</p>
         </li>
@@ -127,9 +131,13 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
 
   <section class="wrap section" aria-labelledby="how">
     <SectionHead id="how" dim={t.how.titleDim} title={t.how.title} />
-    <ol class="steps">
+    <ol class="grid gap-x-6 [counter-reset:step] md:grid-cols-3">
       {t.how.steps.map((step, i) => (
-        <li data-reveal style={`--i:${i}`}>
+        <li
+          class="relative flex flex-col gap-2 border-t border-site-line pt-5 pb-8 [counter-increment:step] before:type-mono before:text-site-accent before:content-[counter(step,decimal-leading-zero)]"
+          data-reveal
+          style={`--i:${i}`}
+        >
           <h3>{step.title}</h3>
           <p class="body">{step.body}</p>
         </li>
@@ -169,7 +177,7 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
   {id === "identity" && t.shots && (
     <section class="wrap section" aria-labelledby="shots">
       <SectionHead id="shots" title={t.shots.title} />
-      <div class="duo">
+      <div class="grid gap-10 md:grid-cols-2 md:gap-6">
         {["sign-in", "setup"].map((shot, i) => (
           <div data-reveal style={`--i:${i}`}>
             <Shot
@@ -186,12 +194,17 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
 
   <section class="wrap section" aria-labelledby="details">
     <SectionHead id="details" title={t.details.title} />
-    <div class="spec-scroll" data-reveal>
-      <table class="spec">
+    <div class="-mx-(--gutter) overflow-x-auto px-(--gutter)" data-reveal>
+      <table class="w-full min-w-[36rem] border-collapse text-base">
         <thead>
           <tr>
             {t.details.cols.map((c) => (
-              <th scope="col">{c}</th>
+              <th
+                scope="col"
+                class="border-b border-site-line-strong pr-4 pb-3 text-left type-body font-medium text-site-faint"
+              >
+                {c}
+              </th>
             ))}
           </tr>
         </thead>
@@ -199,7 +212,15 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
           {t.details.rows.map((row) => (
             <tr>
               {row.map((cell, i) => (
-                <td class:list={[id === "catalog" && i === 0 && "mono"]}>{cell}</td>
+                <td
+                  class:list={[
+                    "border-b border-site-line py-3.5 pr-4 align-top leading-[1.55] text-site-muted",
+                    i === 0 && "text-site-text",
+                    i === 0 && (id === "catalog" ? "type-mono" : "font-medium"),
+                  ]}
+                >
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
@@ -211,17 +232,21 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
   <section class="wrap section" aria-labelledby="start">
     {file ? (
       <div class="grid12">
-        <div class="start-text" data-reveal>
+        <div class="flex flex-col items-start gap-4 lg:col-[1/6]" data-reveal>
           <h2 id="start">{t.start.title}</h2>
           <p class="lead">{t.start.sub}</p>
-          <div class="actions">
+          <div class="mt-4 flex flex-wrap gap-3">
             <a href={docs} class="button primary">
               {t.start.cta}
               <Icon name="arrow-right" class="go" />
             </a>
           </div>
         </div>
-        <pre class="file start-side" data-reveal style="--i:1"><code>{file}</code></pre>
+        <pre
+          class="min-w-0 self-start overflow-x-auto rounded-lg border border-site-line bg-site-bg-soft px-5 py-4 type-mono leading-[1.65] lg:col-[6/13]"
+          data-reveal
+          style="--i:1"
+        ><code>{file}</code></pre>
       </div>
     ) : (
       <>

@@ -16,32 +16,17 @@ const data = entry.data as { title: string; description?: string; contentLocale?
 const notice = data.contentLocale && notices[lang]?.[data.contentLocale]
 ---
 
-<h1 id="_top">{data.title}</h1>
-{data.description && <p class="lead">{data.description}</p>}
+<h1
+  id="_top"
+  class="mt-4 text-[clamp(1.75rem,1.5rem+1vw,2.25rem)] leading-[1.2] font-semibold tracking-[-0.02em] text-balance text-(--sl-color-white)"
+>
+  {data.title}
+</h1>
+{data.description && (
+  <p class="mt-3 max-w-[40rem] text-lg leading-[1.7] text-secondary">{data.description}</p>
+)}
 {notice && (
-  <div class="notice">
+  <div class="mt-5">
     <Aside type="note">{notice}</Aside>
   </div>
 )}
-
-<style>
-  h1 {
-    margin-top: 1rem;
-    font-size: clamp(1.75rem, 1.5rem + 1vw, 2.25rem);
-    line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    color: var(--sl-color-white);
-    text-wrap: balance;
-  }
-  .lead {
-    margin-top: 0.75rem;
-    font-size: 1.125rem;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    max-width: 40rem;
-  }
-  .notice {
-    margin-top: 1.25rem;
-  }
-</style>
