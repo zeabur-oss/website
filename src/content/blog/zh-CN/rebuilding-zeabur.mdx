@@ -26,10 +26,9 @@ Zeabur 2.0 的改造很早就开始了。1.0 会把每个服务的配置存在�
 把通行密钥登录、短期令牌和 Kubernetes 授权串起来，是开发过程中很让人兴奋的一步：每个人用自己的账号登录，能做什么由 Kubernetes RBAC 决定；管理员有专用账号，只能用通行密钥登录，令牌 5 分钟过期。这套流程也能接入 kubectl 和其他支持 OpenID Connect 的工具，团队成员各自登录，减少共用长期管理员凭据的情况。
 
 <PostShots
-  locale="zh-CN"
   shots={[
-    { id: "existing-namespaces", from: "docs", alt: "“项目”页的“其他 Namespace”列出集群中尚未成为项目的 Namespace" },
-    { id: "sign-in", from: "identity", alt: "日常登录：通行密钥按钮和“使用 GitHub 继续”" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/existing-namespaces.avif", alt: "“项目”页的“其他 Namespace”列出集群中尚未成为项目的 Namespace" },
+    { src: "/blog/rebuilding-zeabur/sign-in.avif", alt: "日常登录：通行密钥按钮和“使用 GitHub 继续”" },
   ]}
 />
 
@@ -56,10 +55,9 @@ Zeabur 2.0 的改造很早就开始了。1.0 会把每个服务的配置存在�
 新版本还没部署成功时，旧版本可能仍在提供服务，界面需要把这两件事讲清楚；原因相同的消息，应该归并在一起，让人先找到要处理的问题。多人协作时，你正在调整副本数，同事可能同时在更新镜像，所以我们做了“检查变更”：先看要修改的内容，确认后再应用；如果这段时间里对象已经被改过，就重新读取当前状态。由 Helm、Argo CD 或 Flux 管理的配置，也会标出来源，方便回到原来的工具里修改。
 
 <PostShots
-  locale="zh-CN"
   shots={[
-    { id: "diagnosis", alt: "worker 服务反复崩溃时的诊断页面" },
-    { id: "change-review", alt: "保存环境变量前的检查页面，列出 NODE_ENV 的改动" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/diagnosis.avif", alt: "worker 服务反复崩溃时的诊断页面" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/change-review.avif", alt: "保存环境变量前的检查页面，列出 NODE_ENV 的改动" },
   ]}
 />
 
@@ -70,10 +68,9 @@ Zeabur 2.0 的改造很早就开始了。1.0 会把每个服务的配置存在�
 AI Agent 协助完成了大量研究、实现和测试工作，也让这些实验可以更快地反复尝试。但产品要怎么用、哪里值得继续改，仍然需要我们亲自操作和审查。有时功能已经做完，卡住人的却是一个看不懂的名称，或者不知道下一步该点哪里。
 
 <PostShots
-  locale="zh-CN"
   shots={[
-    { id: "service-logs", from: "docs", alt: "服务的日志选项卡，顶部可切换副本，列出一个副本的输出，并按错误、警告、信息筛选" },
-    { id: "git-builds", from: "docs", alt: "服务的构建标签页，列出最新镜像和构建记录" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/service-logs.avif", alt: "服务的日志选项卡，顶部可切换副本，列出一个副本的输出，并按错误、警告、信息筛选" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/git-builds.avif", alt: "服务的构建标签页，列出最新镜像和构建记录" },
   ]}
 />
 
@@ -84,11 +81,10 @@ AI Agent 协助完成了大量研究、实现和测试工作，也让这些实�
 Zeabur Installer 把准备环境的经验整理成网页流程：先检查主机、磁盘和端口，再设置访问地址、选择组件，确认资源需求和安装内容后才执行。Kubernetes 的安全配置、Secret 静态加密，以及监控和安全组件的选择，都放进了这个流程。安装完成后，接着注册第一位管理员的通行密钥，就能打开 Zeabur、创建第一个项目。
 
 <PostShots
-  locale="zh-CN"
   shots={[
-    { id: "installer-host", alt: "安装程序第一步：主机检查结果" },
-    { id: "installer-components", alt: "安装程序的组件步骤：选择精简、标准或加固组合" },
-    { id: "installer-done", alt: "安装完成：用一次性链接注册第一位管理员的通行密钥" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/installer-host.avif", alt: "安装程序第一步：主机检查结果" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/installer-components.avif", alt: "安装程序的组件步骤：选择精简、标准或加固组合" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/installer-done.avif", alt: "安装完成：用一次性链接注册第一位管理员的通行密钥" },
   ]}
 />
 
@@ -99,9 +95,8 @@ Zeabur Installer 把准备环境的经验整理成网页流程：先检查主机
 做到这里，已经可以从一台空服务器开始，一路安装、登录、部署到备份；以前反复讨论的问题，现在可以自己动手用上了，这是整个开发过程里最有成就感的时刻。
 
 <PostShots
-  locale="zh-CN"
   shots={[
-    { id: "database-overview", from: "docs", alt: "PostgreSQL 数据库 orders 的概览和连接信息" },
+    { src: "/blog/rebuilding-zeabur/zh-CN/database-overview.avif", alt: "PostgreSQL 数据库 orders 的概览和连接信息" },
   ]}
 />
 
