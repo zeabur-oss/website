@@ -45,7 +45,10 @@ const productShots = productCopy[locale].identity.shots?.captions ?? {}
 const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) => {
   if (shot.from === "identity")
     return { ...identityShot(shot.id), alt: productShots[shot.id] ?? fallback }
-  if (shot.from === "docs") return { ...docsShot(locale, shot.id), alt: fallback }
+  if (shot.from === "docs") {
+    const docs = docsShot(locale, shot.id)
+    return docs && { ...docs, alt: fallback }
+  }
   const known = home.shots as Record<string, string>
   return { ...siteShot(locale, shot.id), alt: known[shot.id] ?? fallback }
 }

@@ -1,4 +1,4 @@
-import { shotUrl } from "../lib/urls.ts"
+import { findShot } from "../lib/shots.ts"
 
 // Screenshots on the landing and the product pages, and the widths they are shown at.
 
@@ -8,11 +8,14 @@ export const siteShot = (locale: string, id: string) => ({
   dark: `/docs-assets/zeabur/docs/images/site/${locale}/dark/${id}.avif`,
 })
 
-/** Screenshots from Zeabur's docs, taken by its scripts/shots.sh. The docs are taken light only. */
-export const docsShot = (locale: string, id: string) => ({
-  light: shotUrl("zeabur", locale, "light", id),
-  dark: shotUrl("zeabur", locale, "light", id),
-})
+/**
+ * Screenshots from Zeabur's docs, taken by its scripts/shots.sh. The docs are taken light only.
+ * Undefined when the build has no such shot.
+ */
+export const docsShot = (locale: string, id: string) => {
+  const shot = findShot("zeabur", locale, "light", id)
+  return shot && { light: shot.src, dark: shot.src }
+}
 
 /** Zeabur Identity's sign-in pages, from its docs. */
 export const identityShot = (name: string) => ({
