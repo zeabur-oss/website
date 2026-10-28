@@ -8,7 +8,7 @@ export async function feed(locale: SiteLocale) {
   const t = blogCopy[locale]
   const posts = await postsFor(locale)
   return rss({
-    title: `Zeabur OSS · ${t.title}`,
+    title: `Zeabur Open Source · ${t.title}`,
     description: t.description,
     site: siteOrigin,
     trailingSlash: false,

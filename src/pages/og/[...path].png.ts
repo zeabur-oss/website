@@ -30,14 +30,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const home = landingCopy[locale]
     const date = dateFormat(locale, "long")
     add(`home/${locale}`, {
-      kicker: "Zeabur OSS",
+      kicker: "Zeabur Open Source",
       title: home.hero.title,
       sub: home.description,
       han: han(locale),
     })
     add(`404/${locale}`, { kicker: "404", ...notFound[locale], han: han(locale) })
     add(`blog/${locale}/index`, {
-      kicker: "Zeabur OSS",
+      kicker: "Zeabur Open Source",
       title: t.title,
       sub: t.description,
       han: han(locale),

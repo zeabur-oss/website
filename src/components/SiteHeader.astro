@@ -35,13 +35,13 @@ const current = (on: boolean) => (on ? "true" : undefined)
 
 <Outer class:list={[docs ? "docs-header" : "site-header"]}>
   <div class="site-header-row">
-    <a href={homeUrl(locale)} class="brand" aria-label={`Zeabur OSS, ${t.nav.home}`}>
+    <a href={homeUrl(locale)} class="brand" aria-label={`Zeabur Open Source, ${t.nav.home}`}>
       <Logo />
       <span class="brand-oss" translate="no">
-        OSS
+        Open Source
       </span>
     </a>
-    <nav class="site-nav" aria-label="Zeabur OSS">
+    <nav class="site-nav" aria-label="Zeabur Open Source">
       <details class="menu" data-menu>
         <summary aria-current={current(section === "products")}>
           {t.nav.products}
@@ -68,6 +68,10 @@ const current = (on: boolean) => (on ? "true" : undefined)
       </a>
       <a href={blogUrl(locale)} class="site-nav-link" aria-current={current(section === "blog")}>
         {t.nav.blog}
+      </a>
+      <a href="https://zeabur.com" class="site-nav-link">
+        {t.nav.hosted}
+        <Icon name="arrow-up-right" />
       </a>
     </nav>
     {Astro.slots.has("search") && (
@@ -111,7 +115,7 @@ const current = (on: boolean) => (on ? "true" : undefined)
               {t.products[id].name}
             </a>
           ))}
-          <p class="group-label">Zeabur OSS</p>
+          <p class="group-label">Zeabur Open Source</p>
           <a href={productDocsUrl(locale, "zeabur")}>
             <Icon name="book-open" />
             {t.nav.docs}
@@ -123,6 +127,10 @@ const current = (on: boolean) => (on ? "true" : undefined)
           <a href={githubOrg}>
             <Icon name="github-logo" />
             GitHub
+          </a>
+          <a href="https://zeabur.com">
+            <Icon name="arrow-up-right" />
+            {t.nav.hosted}
           </a>
         </div>
       </details>

@@ -31,7 +31,7 @@ const shot = (id: string) => siteShot(locale, id)
   image={`/og/home/${locale}.png`}
   schema={{
     "@type": "WebSite",
-    name: "Zeabur OSS",
+    name: "Zeabur Open Source",
     description: t.description,
     publisher: organization,
   }}
@@ -39,6 +39,7 @@ const shot = (id: string) => siteShot(locale, id)
   <section class="wrap hero home-hero">
     <div class="grid12">
       <div class="hero-text stagger">
+        <p class="eyebrow">{t.hero.eyebrow}</p>
         <h1 class="display">{t.hero.title}</h1>
         <p class="lead">{t.hero.lead}</p>
         <div class="actions">

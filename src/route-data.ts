@@ -128,7 +128,7 @@ async function searchHead(route: StarlightRouteData, pathname: string) {
       description,
       inLanguage: contentLocale,
       url: canonical,
-      isPartOf: { "@type": "WebSite", name: "Zeabur OSS", url: siteOrigin },
+      isPartOf: { "@type": "WebSite", name: "Zeabur Open Source", url: siteOrigin },
       publisher: organization,
     }),
   )
