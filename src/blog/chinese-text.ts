@@ -1,4 +1,3 @@
-// From engawa's landing (src/lib/chinese-text.mjs, Apache-2.0).
 const segmenters = new Map<string, Intl.Segmenter>()
 
 /**

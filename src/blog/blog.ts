@@ -1,5 +1,4 @@
-// Posts by locale, after engawa's landing (src/lib/blog.ts, Apache-2.0): the first folder of a
-// post's id is its locale, the rest is its slug.
+// The first folder of a post's id is its locale, the rest is its slug.
 import { getCollection, type CollectionEntry } from "astro:content"
 import { blogUrl, isSiteLocale, type SiteLocale } from "../lib/urls.ts"
 

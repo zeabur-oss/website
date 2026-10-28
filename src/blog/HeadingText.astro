@@ -1,7 +1,5 @@
 ---
-// A heading's Chinese words, each kept on one line. From engawa's landing (Apache-2.0).
-// The <wbr> between words gives Safari a break point: it won't break between two nowrap spans
-// under word-break: keep-all, so a title would otherwise wrap only at its spaces.
+// Keeps each Chinese word on one line; <wbr> lets Safari break between words.
 import { chineseTextSegments } from "./chinese-text.ts"
 
 interface Props {

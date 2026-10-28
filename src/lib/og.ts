@@ -1,6 +1,5 @@
-// Social images, after engawa's landing (src/lib/og.ts, Apache-2.0): satori lays the
-// card out with the text turned into outlines, resvg makes the PNG. The card follows the repository
-// covers in public/og: a dark frame on a hatched ground, the logo, then the words.
+// Social images: satori lays out the card with its text as outlines, resvg makes the PNG. The card
+// follows the repository covers in public/og.
 import { Resvg } from "@resvg/resvg-js"
 import { readFile } from "node:fs/promises"
 import { createRequire } from "node:module"
