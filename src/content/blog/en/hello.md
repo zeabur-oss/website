@@ -1,7 +1,7 @@
 ---
 title: The blog is open
 description: Releases, design changes and the problems we run into will be written up here first.
-pubDate: 2026-10-24
+pubDate: 2026-10-28
 draft: true
 ---
 

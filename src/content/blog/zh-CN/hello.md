@@ -1,7 +1,7 @@
 ---
 title: 博客开张了
 description: 之后发版、改设计、踩到坑，都会先写在这里。
-pubDate: 2026-10-24
+pubDate: 2026-10-28
 draft: true
 ---
 
