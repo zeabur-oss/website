@@ -76,8 +76,7 @@ page's language, and the English one when that language has none. The ids are th
 repository's `docs/shots.yaml`.
 
 Screenshots are not committed. For a local preview, `scripts/shots.sh` clones each repository from GitHub at its
-locked ref to `.cache/shots-src/`, links the local design system there when `.local` holds a
-package, and runs that repository's
+locked ref to `.cache/shots-src/` and runs that repository's
 `scripts/docs-shots.sh` into `.shots/<repo>/`; the build copies them to `/shots/`. Once releases
 publish `docs-shots-<tag>.tar`, a `shots` field in `docs.lock.json` makes the sync download it
 instead.
@@ -100,15 +99,7 @@ pages that are not published.
 
 ## Design system
 
-The site uses `@zeabur/design-system`, pinned to a commit in `package.json` like `zeabur/web`. To
-build against a local checkout (`../design-system`) instead, for example before a commit is pushed:
-
-```sh
-nix develop -c scripts/link-design-system.sh [path]
-```
-
-This packs the checkout into `.local/` and points `package.json` and `bun.lock` at it. Do not commit
-those two changes; `git checkout package.json bun.lock && bun install` returns to the pin.
+The site uses `@zeabur/design-system`, pinned to a commit in `package.json` like `zeabur/web`.
 
 ## Licence
 

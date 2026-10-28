@@ -28,7 +28,7 @@
     "@mdx-js/mdx": "3.1.1",
     "@phosphor-icons/core": "2.1.1",
     "@resvg/resvg-js": "2.6.2",
-    "@zeabur/design-system": "git+ssh://git@github.com/zeabur-oss/design-system.git#28c09304b3bc9e581a5632997ba6c6f6d239195d",
+    "@zeabur/design-system": "github:zeabur-oss/design-system#28c09304b3bc9e581a5632997ba6c6f6d239195d",
     "acorn": "8.19.0",
     "astro": "7.4.0",
     "rehype-raw": "7.0.0",

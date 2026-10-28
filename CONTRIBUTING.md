@@ -84,9 +84,7 @@ Packages are managed with Bun: `package.json` pins exact versions, `bun.lock` is
 delay as the other zeabur-oss repositories. No package is listed in `trustedDependencies`, so no
 install script runs. Licences must be OSI-approved.
 
-`@zeabur/design-system` is a Git dependency pinned to a commit. To try a design-system change
-before it is pushed, `scripts/link-design-system.sh` links a local checkout; run `bun install`
-afterwards to return to the pin.
+`@zeabur/design-system` is a Git dependency pinned to a commit.
 
 ## Product documentation
 
