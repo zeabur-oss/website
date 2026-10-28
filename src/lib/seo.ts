@@ -41,6 +41,10 @@ export function jsonLd(data: Record<string, unknown>) {
   return {
     tag: "script" as const,
     attrs: { type: "application/ld+json" },
-    content: JSON.stringify({ "@context": "https://schema.org", ...data }),
+    // Starlight writes content as-is, so a `</script>` in a description would end the tag.
+    content: JSON.stringify({ "@context": "https://schema.org", ...data }).replaceAll(
+      "<",
+      "\\u003c",
+    ),
   }
 }
