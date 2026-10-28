@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 // A post's contents beside its text on wide screens, marking the section being read.
 import type { MarkdownHeading } from "astro"
 
@@ -22,10 +23,10 @@ const toc = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3)
         <li>
           <a
             href={`#${h.slug}`}
-            class:list={[
+            class={cn(
               "block py-1.25 type-body text-site-faint no-underline transition-[color] duration-quick ease-(--ease-site) hover:text-site-text aria-[current=true]:font-medium aria-[current=true]:text-site-text",
               h.depth === 3 && "pl-3",
-            ]}
+            )}
           >
             {h.text}
           </a>

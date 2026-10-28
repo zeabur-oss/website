@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 // Zeabur Catalog: capabilities by upstream, each tested by CI. The recommended ones for a
 // single node are filled in; one chosen entry is marked.
 const entries = [
@@ -27,9 +28,9 @@ const y0 = 26
   const y = y0 + Math.floor(i / 4) * (h + gap)
   const chosen = i === 1
   return (
-    <g class:list={["img-tile", chosen && "img-chosen"]} style={`--i:${i}`}>
+    <g class={cn("img-tile", chosen && "img-chosen")} style={`--i:${i}`}>
       <rect
-        class:list={["img-box", chosen && "img-box-accent"]}
+        class={cn("img-box", chosen && "img-box-accent")}
         x={x}
         y={y}
         width={w}
@@ -47,7 +48,7 @@ const y0 = 26
       )}
       <g class="img-check">
         <path
-          class:list={["img-tick", chosen && "img-accent-stroke"]}
+          class={cn("img-tick", chosen && "img-accent-stroke")}
           d={`M${x + 10} ${y + 66} l4 4 l8 -9`}
         />
         <text class="img-kind" x={x + 28} y={y + 70}>

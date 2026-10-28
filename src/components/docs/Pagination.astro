@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import Icon from "../Icon.astro"
 
 // Previous and next stay inside the repository (src/route-data.ts). Small, so the page ends on
@@ -27,7 +28,7 @@ const title = "text-sm leading-[1.4] font-medium text-site-text"
     <span />
   )}
   {next && (
-    <a href={next.href} rel="next" class={`${link} col-start-2 items-end text-end`}>
+    <a href={next.href} rel="next" class={cn(link, "col-start-2 items-end text-end")}>
       <span class={label}>
         {Astro.locals.t("page.nextLink")}
         <Icon name="arrow-right" />

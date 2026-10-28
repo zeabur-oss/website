@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 // Every feature in groups, one line each, after the Apple and Tailscale feature lists: a name, what
 // it does, and what is missing when it is not finished.
 import { features, groupNames, featureCopy, type GroupId } from "../features.ts"
@@ -41,7 +42,7 @@ const featureName = "leading-normal font-semibold text-site-text no-underline"
             return (
               <li class="grid content-start gap-1">
                 {f.doc ? (
-                  <a class={`${featureName} hover:text-site-accent`} href={href(f.doc)}>
+                  <a class={cn(featureName, "hover:text-site-accent")} href={href(f.doc)}>
                     {name}
                   </a>
                 ) : (

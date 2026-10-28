@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import { existsSync } from "node:fs"
 import { avifFileSize } from "../lib/avif.ts"
 
@@ -26,7 +27,7 @@ const attrs = {
 } as const
 ---
 
-<figure class:list={["shot", className]}>
+<figure class={cn("shot", className)}>
   <div class="overflow-hidden rounded-lg border border-site-line bg-site-bg-soft">
     <img
       class="theme-light h-auto w-full align-top"

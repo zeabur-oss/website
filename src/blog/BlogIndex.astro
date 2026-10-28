@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
 import { blogUrl, type SiteLocale } from "../lib/urls.ts"
@@ -45,10 +46,10 @@ const date = dateFormat(locale, "medium")
           <li data-reveal style={`--i:${Math.min(i, 4)}`}>
             <a
               href={postUrl(post)}
-              class:list={[
+              class={cn(
                 "group grid grid-cols-[minmax(0,1fr)] gap-2 border-b border-site-line py-6 text-inherit no-underline lg:grid-cols-[7.5rem_minmax(0,1fr)_auto] lg:items-baseline lg:gap-x-8",
                 i === 0 && "pt-0",
-              ]}
+              )}
               data-slug={postSlug(post.id)}
             >
               <time class="type-mono text-site-faint" datetime={post.data.pubDate.toISOString()}>

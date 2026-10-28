@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import ProductLink from "./ProductLink.astro"
 import Icon from "./Icon.astro"
 import Logo from "./Logo.astro"
@@ -53,25 +54,23 @@ const mobileGroups = [
 ---
 
 <Outer
-  class:list={[
+  class={cn(
     docs
       ? "docs-header h-full"
       : "sticky top-0 z-50 h-(--header-height) print:hidden border-b border-site-line bg-[color-mix(in_srgb,var(--site-bg)_88%,transparent)] [backdrop-filter:saturate(1.4)_blur(12px)] [view-transition-name:site-header]",
-  ]}
+  )}
 >
   <!-- The same bar as the docs header (Starlight's padding and sidebar width), so nothing in it
        moves between the landing and the docs. -->
-  <div
-    class:list={["flex h-full items-center gap-4 text-sm font-normal", !docs && "px-4 docs:px-6"]}
-  >
+  <div class={cn("flex h-full items-center gap-4 text-sm font-normal", !docs && "px-4 docs:px-6")}>
     <a
       href={homeUrl(locale)}
-      class:list={[
+      class={cn(
         "inline-flex items-center gap-2 whitespace-nowrap text-site-text no-underline",
         docs
           ? "docs:min-w-[calc(var(--sl-sidebar-width)-2*var(--sl-nav-pad-x))]"
           : "docs:min-w-[13.5rem]",
-      ]}
+      )}
       aria-label={`Zeabur ${t.nav.openSource}, ${t.nav.home}`}
     >
       <Logo />
@@ -80,7 +79,7 @@ const mobileGroups = [
       </span>
     </a>
     <nav
-      class:list={["hidden items-center gap-0.5", docs ? "docs-wide:flex" : "nav:flex"]}
+      class={cn("hidden items-center gap-0.5", docs ? "docs-wide:flex" : "nav:flex")}
       aria-label={`Zeabur ${t.nav.openSource}`}
     >
       <details class="menu group" data-menu>
@@ -120,7 +119,7 @@ const mobileGroups = [
       </div>
     )}
     <div class="ml-auto flex items-center gap-1 [&_.icon]:size-4">
-      <details class:list={["menu", docs && "max-docs:hidden"]} data-menu>
+      <details class={cn("menu", docs && "max-docs:hidden")} data-menu>
         <summary class="nav-item" aria-label={t.nav.language}>
           <Icon name="translate" />
           <span class="max-[30rem]:hidden">{t.lang}</span>
@@ -141,7 +140,7 @@ const mobileGroups = [
       <ThemeToggle label={t.nav.theme} />
       <a
         href={githubOrg}
-        class:list={["icon-button", docs && "max-docs:hidden"]}
+        class={cn("icon-button", docs && "max-docs:hidden")}
         aria-label={t.nav.github}
       >
         <Icon name="github-logo" />

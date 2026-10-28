@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Imagery from "../components/imagery/Imagery.astro"
 import Site from "../layouts/Site.astro"
@@ -212,11 +213,11 @@ const chapterShot = (shot: (typeof chapters)[number]["shot"], fallback: string) 
             <tr>
               {row.map((cell, i) => (
                 <td
-                  class:list={[
+                  class={cn(
                     "border-b border-site-line py-3.5 pr-4 align-top leading-[1.55] text-site-muted",
                     i === 0 && "text-site-text",
                     i === 0 && (id === "catalog" ? "type-mono" : "font-medium"),
-                  ]}
+                  )}
                 >
                   {cell}
                 </td>
