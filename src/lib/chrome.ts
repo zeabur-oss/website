@@ -88,7 +88,7 @@ const zhCN: Chrome = {
     github: "GitHub",
     menu: "菜单",
     home: "首页",
-    openSource: "Open Source",
+    openSource: "开源",
   },
   products: {
     zeabur: {
