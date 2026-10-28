@@ -5,7 +5,6 @@ pubDate: 2026-10-28
 ---
 
 import PostFigure from "../../../blog/PostFigure.astro"
-import PostShots from "../../../blog/PostShots.astro"
 
 Zeabur is now open source. We took what four years of building and running a deployment platform taught us, combined it with our research into security and usability, and rebuilt Zeabur as something you can host yourself. Put it on your own server or Kubernetes cluster, keep deploying and managing services the way you're used to, and read or change the code.
 
@@ -25,12 +24,9 @@ Next came permissions. When a user clicks Restart or opens a configuration, whos
 
 Connecting passkey sign-in and short-lived tokens to Kubernetes authorization was one of the most exciting steps in the project. Everyone signs in with their own account, and Kubernetes RBAC decides what they can do. Admins get a dedicated account that can only sign in with a passkey, and its token expires after 5 minutes. The same flow works with kubectl and other tools that support OpenID Connect, so each team member signs in as themselves and the team depends less on shared, long-lived admin credentials.
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/en/existing-namespaces.avif", alt: "Other namespaces on the Projects page lists namespaces in the cluster that aren't projects yet" },
-    { src: "/blog/rebuilding-zeabur/sign-in.avif", alt: "Everyday sign-in: a passkey button and Continue with GitHub" },
-  ]}
-/>
+![Other namespaces on the Projects page lists namespaces in the cluster that aren't projects yet](/blog/rebuilding-zeabur/en/existing-namespaces.avif)
+
+![Everyday sign-in: a passkey button and Continue with GitHub](/blog/rebuilding-zeabur/sign-in.avif)
 
 While we researched 2.0, we kept hardening the original Zeabur, for example by adding passkey sign-in and moving some sensitive data onto users' own servers. That pushed us to design 2.0 so the platform stores as little data and holds as few permissions as it can.
 
@@ -54,12 +50,9 @@ As we used it more, we spent more time on what happens after a service goes live
 
 When a new version hasn't deployed yet, the old one may still be serving traffic, and the interface has to make both facts clear. Messages with the same cause should be grouped, so people find the problem to fix first. With several people working at once, you might be changing the replica count while a colleague updates the image. So we built Review changes: you see what's about to change and apply it once you confirm. If the object changed in the meantime, Zeabur reads the current state again. Settings managed by Helm, Argo CD or Flux show where they come from, so you can go back to that tool to change them.
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/en/diagnosis.avif", alt: "Diagnosis for a worker service that keeps crashing" },
-    { src: "/blog/rebuilding-zeabur/en/change-review.avif", alt: "The review before saving environment variables, showing the change to NODE_ENV" },
-  ]}
-/>
+![Diagnosis for a worker service that keeps crashing](/blog/rebuilding-zeabur/en/diagnosis.avif)
+
+![The review before saving environment variables, showing the change to NODE_ENV](/blog/rebuilding-zeabur/en/change-review.avif)
 
 With more apps running, builds were next. Pushing code to Git, building an image and deploying it is how many Zeabur users already work. We kept that flow and built a separate project for it, [Zeabur Builder](https://github.com/zeabur-oss/builder). It keeps each project's build environment and cache apart, sorts out the network and storage access builds need, and passes build variables in as BuildKit secrets.
 
@@ -67,12 +60,9 @@ Back in the interface, users pick Dockerfile or Railpack, set the repository, bu
 
 AI agents helped with much of the research, implementation and testing, and let us iterate on these experiments faster. Deciding how the product should be used and what's worth improving still took us using and reviewing it ourselves. Sometimes a feature was done and what stopped people was a name they didn't understand, or not knowing what to click next.
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/en/service-logs.avif", alt: "The service's Logs tab, with a replica selector at the top, output from one replica, and filters for errors, warnings, and info" },
-    { src: "/blog/rebuilding-zeabur/en/git-builds.avif", alt: "The service's Builds tab, showing the latest image and build history" },
-  ]}
-/>
+![The service's Logs tab, with a replica selector at the top, output from one replica, and filters for errors, warnings, and info](/blog/rebuilding-zeabur/en/service-logs.avif)
+
+![The service's Builds tab, showing the latest image and build history](/blog/rebuilding-zeabur/en/git-builds.avif)
 
 ## From the first server to looking after your data
 
@@ -80,13 +70,11 @@ With service management mostly in place, the questions spread to what comes befo
 
 Zeabur Installer turns what we learned about preparing environments into a web-based flow. It checks the host, disks and ports, then you set the URL and pick components, and it runs only after you've confirmed the resource requirements and what will be installed. Kubernetes security settings, encryption of Secrets at rest, and the choice of monitoring and security components are all part of that flow. When it finishes, you register the first admin's passkey, open Zeabur and create your first project.
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/en/installer-host.avif", alt: "Installer step one: host check results" },
-    { src: "/blog/rebuilding-zeabur/en/installer-components.avif", alt: "Installer components step: choose the minimal, standard or hardened set" },
-    { src: "/blog/rebuilding-zeabur/en/installer-done.avif", alt: "Installation complete: register the first admin's passkey with a one-time link" },
-  ]}
-/>
+![Installer step one: host check results](/blog/rebuilding-zeabur/en/installer-host.avif)
+
+![Installer components step: choose the minimal, standard or hardened set](/blog/rebuilding-zeabur/en/installer-components.avif)
+
+![Installation complete: register the first admin's passkey with a one-time link](/blog/rebuilding-zeabur/en/installer-done.avif)
 
 App templates sent us back into the details of data and maintenance. Familiar apps like n8n, Dify and WordPress each have data that must not be lost, things a backup has to include, upgrade steps, and conditions for adding instances. We put that research and the deployment configuration into [Zeabur Catalog](https://github.com/zeabur-oss/catalog), with shared cluster components managed separately, so a deployment that starts from a template has something to look up and change later.
 
@@ -94,11 +82,7 @@ Database work runs from creation and connection through to backup and restore. Z
 
 At this point you can start from an empty server and go all the way through installing, signing in, deploying and backing up. Problems we had discussed over and over were now things we could use ourselves, and that was the most rewarding part of the whole project.
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/en/database-overview.avif", alt: "Overview and connection details for the orders PostgreSQL database" },
-  ]}
-/>
+![Overview and connection details for the orders PostgreSQL database](/blog/rebuilding-zeabur/en/database-overview.avif)
 
 <PostFigure
   name="oss-map"

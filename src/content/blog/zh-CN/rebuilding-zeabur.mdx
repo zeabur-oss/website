@@ -5,7 +5,6 @@ pubDate: 2026-10-28
 ---
 
 import PostFigure from "../../../blog/PostFigure.astro"
-import PostShots from "../../../blog/PostShots.astro"
 
 Zeabur 开源了。我们把这四年开发和运维部署平台积累的经验，结合对安全性与使用体验的研究，重新实现了一个可以自托管的 Zeabur。你可以把它部署在自己的服务器或 Kubernetes 集群里，继续用熟悉的方式部署和管理服务，也可以阅读、修改它的代码。
 
@@ -25,12 +24,9 @@ Zeabur 2.0 的改造很早就开始了。1.0 会把每个服务的配置存在�
 
 把通行密钥登录、短期令牌和 Kubernetes 授权串起来，是开发过程中很让人兴奋的一步：每个人用自己的账号登录，能做什么由 Kubernetes RBAC 决定；管理员有专用账号，只能用通行密钥登录，令牌 5 分钟过期。这套流程也能接入 kubectl 和其他支持 OpenID Connect 的工具，团队成员各自登录，减少共用长期管理员凭据的情况。
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/zh-CN/existing-namespaces.avif", alt: "“项目”页的“其他 Namespace”列出集群中尚未成为项目的 Namespace" },
-    { src: "/blog/rebuilding-zeabur/sign-in.avif", alt: "日常登录：通行密钥按钮和“使用 GitHub 继续”" },
-  ]}
-/>
+![“项目”页的“其他 Namespace”列出集群中尚未成为项目的 Namespace](/blog/rebuilding-zeabur/zh-CN/existing-namespaces.avif)
+
+![日常登录：通行密钥按钮和“使用 GitHub 继续”](/blog/rebuilding-zeabur/sign-in.avif)
 
 在研究 2.0 的同时，原来的 Zeabur 也在持续加强安全性，比如支持通行密钥登录，以及把部分敏感数据改存到用户自己的服务器上。这也让我们在设计 2.0 时，尽量让平台少存数据、少拿权限。
 
@@ -54,12 +50,9 @@ Zeabur 2.0 的改造很早就开始了。1.0 会把每个服务的配置存在�
 
 新版本还没部署成功时，旧版本可能仍在提供服务，界面需要把这两件事讲清楚；原因相同的消息，应该归并在一起，让人先找到要处理的问题。多人协作时，你正在调整副本数，同事可能同时在更新镜像，所以我们做了“检查变更”：先看要修改的内容，确认后再应用；如果这段时间里对象已经被改过，就重新读取当前状态。由 Helm、Argo CD 或 Flux 管理的配置，也会标出来源，方便回到原来的工具里修改。
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/zh-CN/diagnosis.avif", alt: "worker 服务反复崩溃时的诊断页面" },
-    { src: "/blog/rebuilding-zeabur/zh-CN/change-review.avif", alt: "保存环境变量前的检查页面，列出 NODE_ENV 的改动" },
-  ]}
-/>
+![worker 服务反复崩溃时的诊断页面](/blog/rebuilding-zeabur/zh-CN/diagnosis.avif)
+
+![保存环境变量前的检查页面，列出 NODE_ENV 的改动](/blog/rebuilding-zeabur/zh-CN/change-review.avif)
 
 部署的应用多了，接下来要处理的是构建。从 Git 提交代码、生成镜像，再部署到服务，是很多 Zeabur 用户已经习惯的工作方式。我们保留了这个流程，另外做了独立的 [Zeabur Builder](https://github.com/zeabur-oss/builder)：把各个项目的构建环境和缓存隔离开，梳理构建所需的网络和存储权限，并通过 BuildKit 的 secret 机制传入构建变量。
 
@@ -67,12 +60,9 @@ Zeabur 2.0 的改造很早就开始了。1.0 会把每个服务的配置存在�
 
 AI Agent 协助完成了大量研究、实现和测试工作，也让这些实验可以更快地反复尝试。但产品要怎么用、哪里值得继续改，仍然需要我们亲自操作和审查。有时功能已经做完，卡住人的却是一个看不懂的名称，或者不知道下一步该点哪里。
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/zh-CN/service-logs.avif", alt: "服务的日志选项卡，顶部可切换副本，列出一个副本的输出，并按错误、警告、信息筛选" },
-    { src: "/blog/rebuilding-zeabur/zh-CN/git-builds.avif", alt: "服务的构建标签页，列出最新镜像和构建记录" },
-  ]}
-/>
+![服务的日志选项卡，顶部可切换副本，列出一个副本的输出，并按错误、警告、信息筛选](/blog/rebuilding-zeabur/zh-CN/service-logs.avif)
+
+![服务的构建标签页，列出最新镜像和构建记录](/blog/rebuilding-zeabur/zh-CN/git-builds.avif)
 
 ## 从第一台服务器，到数据的长期维护
 
@@ -80,13 +70,11 @@ AI Agent 协助完成了大量研究、实现和测试工作，也让这些实�
 
 Zeabur Installer 把准备环境的经验整理成网页流程：先检查主机、磁盘和端口，再设置访问地址、选择组件，确认资源需求和安装内容后才执行。Kubernetes 的安全配置、Secret 静态加密，以及监控和安全组件的选择，都放进了这个流程。安装完成后，接着注册第一位管理员的通行密钥，就能打开 Zeabur、创建第一个项目。
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/zh-CN/installer-host.avif", alt: "安装程序第一步：主机检查结果" },
-    { src: "/blog/rebuilding-zeabur/zh-CN/installer-components.avif", alt: "安装程序的组件步骤：选择精简、标准或加固组合" },
-    { src: "/blog/rebuilding-zeabur/zh-CN/installer-done.avif", alt: "安装完成：用一次性链接注册第一位管理员的通行密钥" },
-  ]}
-/>
+![安装程序第一步：主机检查结果](/blog/rebuilding-zeabur/zh-CN/installer-host.avif)
+
+![安装程序的组件步骤：选择精简、标准或加固组合](/blog/rebuilding-zeabur/zh-CN/installer-components.avif)
+
+![安装完成：用一次性链接注册第一位管理员的通行密钥](/blog/rebuilding-zeabur/zh-CN/installer-done.avif)
 
 应用模板则让我们重新研究数据和维护的细节。n8n、Dify、WordPress 这些熟悉的应用，各自有不能丢失的数据、备份需要包含的内容、升级步骤，以及增加实例的条件。我们把研究结果和部署配置整理进 [Zeabur Catalog](https://github.com/zeabur-oss/catalog)，把集群共用组件分开管理，让从模板开始的部署，后续也有可以查阅和修改的依据。
 
@@ -94,11 +82,7 @@ Zeabur Installer 把准备环境的经验整理成网页流程：先检查主机
 
 做到这里，已经可以从一台空服务器开始，一路安装、登录、部署到备份；以前反复讨论的问题，现在可以自己动手用上了，这是整个开发过程里最有成就感的时刻。
 
-<PostShots
-  shots={[
-    { src: "/blog/rebuilding-zeabur/zh-CN/database-overview.avif", alt: "PostgreSQL 数据库 orders 的概览和连接信息" },
-  ]}
-/>
+![PostgreSQL 数据库 orders 的概览和连接信息](/blog/rebuilding-zeabur/zh-CN/database-overview.avif)
 
 <PostFigure
   name="oss-map"
