@@ -35,13 +35,17 @@ const current = (on: boolean) => (on ? "true" : undefined)
 
 <Outer class:list={[docs ? "docs-header" : "site-header"]}>
   <div class="site-header-row">
-    <a href={homeUrl(locale)} class="brand" aria-label={`Zeabur Open Source, ${t.nav.home}`}>
+    <a
+      href={homeUrl(locale)}
+      class="brand"
+      aria-label={`Zeabur ${t.nav.openSource}, ${t.nav.home}`}
+    >
       <Logo />
       <span class="brand-oss" translate="no">
-        Open Source
+        {t.nav.openSource}
       </span>
     </a>
-    <nav class="site-nav" aria-label="Zeabur Open Source">
+    <nav class="site-nav" aria-label={`Zeabur ${t.nav.openSource}`}>
       <details class="menu" data-menu>
         <summary aria-current={current(section === "products")}>
           {t.nav.products}
@@ -111,7 +115,7 @@ const current = (on: boolean) => (on ? "true" : undefined)
               {t.products[id].name}
             </a>
           ))}
-          <p class="group-label">Zeabur Open Source</p>
+          <p class="group-label">Zeabur {t.nav.openSource}</p>
           <a href={productDocsUrl(locale, "zeabur")}>
             <Icon name="book-open" />
             {t.nav.docs}

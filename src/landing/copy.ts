@@ -6,8 +6,7 @@ type Way = { title: string; body: string; link: string }
 export type LandingCopy = {
   title: string
   description: string
-  /** `eyebrow` says what the site is: the open-source Zeabur, not a new product. */
-  hero: { eyebrow: string; title: string; lead: string; start: string; source: string }
+  hero: { title: string; lead: string; start: string; source: string }
   facts: { label: string; value: string }[]
   shots: Record<"project" | "diagnosis" | "database" | "cluster" | "installer", string>
   projects: { title: string; lead: string; more: string }
@@ -24,7 +23,6 @@ const zhTW: LandingCopy = {
   description:
     "在自己的 Kubernetes 上部署和管理服務。Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 都採 Apache-2.0 授權。",
   hero: {
-    eyebrow: "Zeabur 開源專案・裝在你自己的伺服器上",
     title: "在自己的 Kubernetes 上部署和管理服務",
     lead: "Zeabur 把叢集整理成專案和服務，用白話說明哪裡出了問題。改設定前，先列出這次會寫入哪些欄位，確認後才套用。整套都裝在你自己的伺服器上。",
     start: "在一台伺服器安裝",
@@ -129,7 +127,6 @@ const zhCN: LandingCopy = {
   description:
     "在自己的 Kubernetes 上部署和管理服务。Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 均采用 Apache-2.0 许可证。",
   hero: {
-    eyebrow: "Zeabur 开源项目・装在你自己的服务器上",
     title: "在自己的 Kubernetes 上部署和管理服务",
     lead: "Zeabur 把集群整理成项目和服务，用大白话说明哪里出了问题。改配置前，先列出这次会写入哪些字段，确认后才应用。整套都装在你自己的服务器上。",
     start: "在一台服务器上安装",
@@ -233,7 +230,6 @@ const en: LandingCopy = {
   description:
     "Deploy and run services on your own Kubernetes. Zeabur, Zeabur Identity, Zeabur Builder and Zeabur Catalog are Apache-2.0 licensed.",
   hero: {
-    eyebrow: "Open-source Zeabur, on your own servers",
     title: "Deploy and run services on your own Kubernetes",
     lead: "Zeabur shows your cluster as projects and services and tells you in plain words what's wrong. Before a change goes in, you see the exact fields it writes, then you apply it. It all runs on your own servers.",
     start: "Install on one server",

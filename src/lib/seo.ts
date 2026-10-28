@@ -32,9 +32,8 @@ export function summary(body: string, max = 160) {
 export const organization = {
   "@type": "Organization",
   name: "Zeabur",
-  url: "https://zeabur.com",
+  url: githubOrg,
   logo: `${siteOrigin}/favicon.svg`,
-  sameAs: [githubOrg],
 }
 
 /** A JSON-LD `<script>` for Starlight's head list. */
