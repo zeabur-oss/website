@@ -69,10 +69,6 @@ const current = (on: boolean) => (on ? "true" : undefined)
       <a href={blogUrl(locale)} class="site-nav-link" aria-current={current(section === "blog")}>
         {t.nav.blog}
       </a>
-      <a href="https://zeabur.com" class="site-nav-link">
-        {t.nav.hosted}
-        <Icon name="arrow-up-right" />
-      </a>
     </nav>
     {Astro.slots.has("search") && (
       <div class="site-search">
@@ -127,10 +123,6 @@ const current = (on: boolean) => (on ? "true" : undefined)
           <a href={githubOrg}>
             <Icon name="github-logo" />
             GitHub
-          </a>
-          <a href="https://zeabur.com">
-            <Icon name="arrow-up-right" />
-            {t.nav.hosted}
           </a>
         </div>
       </details>
