@@ -1,0 +1,20 @@
+---
+import BlogPost from "../../../blog/BlogPost.astro"
+import { postSlug, postsFor } from "../../../blog/blog.ts"
+import { localePaths } from "../../../lib/urls.ts"
+
+export async function getStaticPaths() {
+  const pages = await Promise.all(
+    localePaths().map(async ({ params, props }) =>
+      (await postsFor(props.locale)).map((post) => ({
+        params: { ...params, slug: postSlug(post.id) },
+        props: { post },
+      })),
+    ),
+  )
+  return pages.flat()
+}
+const { post } = Astro.props
+---
+
+<BlogPost post={post} />

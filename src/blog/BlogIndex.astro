@@ -1,8 +1,9 @@
 ---
+import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import type { SiteLocale } from "../lib/urls.ts"
-import { blogPath, dateFormat, postSlug, postsFor, postUrl } from "./blog.ts"
+import { blogUrl, type SiteLocale } from "../lib/urls.ts"
+import { dateFormat, postSlug, postsFor, postUrl } from "./blog.ts"
 import { blogCopy } from "./copy.ts"
 import HeadingText from "./HeadingText.astro"
 
@@ -23,32 +24,39 @@ const date = dateFormat(locale, "medium")
   image={`/og/blog/${locale}/index.png`}
   schema={{ "@type": "Blog", name: `${t.title} · Zeabur Open Source`, description: t.description }}
 >
-  <section class="wrap hero blog-head">
-    <div class="hero-text stagger">
-      <h1 class="display">{t.title}</h1>
-      <p class="lead">{t.description}</p>
-      <a class="more" href={`${blogPath(locale)}/rss.xml`}>
+  <section class="wrap hero pb-0">
+    <div class="stagger flex flex-col items-start gap-6">
+      <h1 class="display max-w-[14em]">{t.title}</h1>
+      <p class="lead max-w-xl">{t.description}</p>
+      <a class="more mt-1" href={`${blogUrl(locale)}/rss.xml`}>
         <Icon name="rss" />
         {t.rss}
       </a>
     </div>
   </section>
 
-  <section class="wrap section blog-list" aria-label={t.title}>
+  <section class="wrap section before:mt-(--section-space)" aria-label={t.title}>
     {posts.length === 0 ? (
-      <p class="lead blog-empty" data-reveal>
+      <p class="lead max-w-xl" data-reveal>
         {t.empty}
       </p>
     ) : (
-      <ol class="posts">
+      <ol>
         {posts.map((post, i) => (
           <li data-reveal style={`--i:${Math.min(i, 4)}`}>
-            <a href={postUrl(post)} class="post-row" data-slug={postSlug(post.id)}>
-              <time datetime={post.data.pubDate.toISOString()}>
+            <a
+              href={postUrl(post)}
+              class={cn(
+                "group grid grid-cols-[minmax(0,1fr)] gap-2 border-b border-site-line py-6 text-inherit no-underline lg:grid-cols-[7.5rem_minmax(0,1fr)_auto] lg:items-baseline lg:gap-x-8",
+                i === 0 && "pt-0",
+              )}
+              data-slug={postSlug(post.id)}
+            >
+              <time class="type-mono text-site-faint" datetime={post.data.pubDate.toISOString()}>
                 {date.format(post.data.pubDate)}
               </time>
-              <span class="post-text">
-                <span class="post-title">
+              <span class="grid gap-2">
+                <span class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[clamp(1.25rem,1.1rem+0.6vw,1.625rem)] leading-[1.3] font-semibold tracking-[-0.015em] group-hover:text-site-accent zh:tracking-normal">
                   <span>
                     <HeadingText text={post.data.title} locale={locale} />
                   </span>
@@ -56,7 +64,10 @@ const date = dateFormat(locale, "medium")
                 </span>
                 <span class="body">{post.data.description}</span>
               </span>
-              <Icon name="arrow-right" class="go" />
+              <Icon
+                name="arrow-right"
+                class="hidden size-4.5 text-site-faint transition-[translate,color] duration-fast ease-(--ease-site) group-hover:translate-x-[3px] group-hover:text-site-text lg:block"
+              />
             </a>
           </li>
         ))}
@@ -64,85 +75,3 @@ const date = dateFormat(locale, "medium")
     )}
   </section>
 </Site>
-
-<style>
-  .blog-head {
-    padding-bottom: 0;
-  }
-  .blog-head .more {
-    margin-top: 0.25rem;
-  }
-  .blog-list::before {
-    margin-top: var(--section-space);
-  }
-  .blog-empty {
-    max-width: 36rem;
-  }
-  .posts {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .post-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.5rem;
-    padding-block: 1.5rem;
-    border-bottom: 1px solid var(--site-line);
-    color: inherit;
-    text-decoration: none;
-  }
-  li:first-child .post-row {
-    padding-top: 0;
-  }
-  @media (min-width: 1024px) {
-    .post-row {
-      grid-template-columns: 7.5rem minmax(0, 1fr) auto;
-      column-gap: 2rem;
-      align-items: baseline;
-    }
-  }
-  time {
-    font-family: var(--font-stack-mono);
-    font-size: 0.8125rem;
-    color: var(--site-faint);
-  }
-  .post-text {
-    display: grid;
-    gap: 0.5rem;
-  }
-  .post-title {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 0.75rem;
-    font-size: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
-    font-weight: 600;
-    line-height: 1.3;
-    letter-spacing: -0.015em;
-  }
-  :lang(zh) .post-title {
-    letter-spacing: 0;
-  }
-  .post-row :global(.go) {
-    display: none;
-    width: 1.125rem;
-    height: 1.125rem;
-    color: var(--site-faint);
-    transition:
-      translate var(--transition-duration-fast) var(--ease-site),
-      color var(--transition-duration-fast) var(--ease-site);
-  }
-  @media (min-width: 1024px) {
-    .post-row :global(.go) {
-      display: block;
-    }
-  }
-  .post-row:hover .post-title {
-    color: var(--site-accent);
-  }
-  .post-row:hover :global(.go) {
-    translate: 3px 0;
-    color: var(--site-text);
-  }
-</style>

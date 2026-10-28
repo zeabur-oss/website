@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 // A section's heading: an optional kicker, the title with an optional dim half, and a lead.
 // After zeabur.com's LandingSectionHeader (eyebrow, title, description, left or centred).
 interface Props {
@@ -17,23 +18,26 @@ const { id, title, dim, tail, lead, kicker, align = "start" } = Astro.props
 const gap = dim && !/[　-鿿＀-￯]$/u.test(dim) ? " " : ""
 ---
 
-<header class:list={["section-head", align === "center" && "section-head-center"]} data-reveal>
-  {kicker && <p class="kicker">{kicker}</p>}
+<header
+  class={cn("mb-10 max-w-[46rem] md:mb-14", align === "center" && "mx-auto text-center")}
+  data-reveal
+>
+  {kicker && <p class="kicker mb-4">{kicker}</p>}
   <h2 id={id}>
     {tail ? (
       <>
         {`${title} `}
-        <span class="dim">{tail}</span>
+        <span class="text-site-faint zh:inline-block">{tail}</span>
       </>
     ) : dim ? (
       <>
-        <span class="dim">{dim}</span>
+        <span class="text-site-faint zh:inline-block">{dim}</span>
         {gap}
-        <span class="rest">{title}</span>
+        <span class="zh:inline-block">{title}</span>
       </>
     ) : (
       title
     )}
   </h2>
-  {lead && <p class="lead">{lead}</p>}
+  {lead && <p class="lead mt-4">{lead}</p>}
 </header>

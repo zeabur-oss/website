@@ -1,0 +1,9 @@
+---
+import Landing from "../../landing/Landing.astro"
+import { localePaths, type SiteLocale } from "../../lib/urls.ts"
+
+export const getStaticPaths = localePaths
+const { locale } = Astro.props as { locale: SiteLocale }
+---
+
+<Landing locale={locale} />

@@ -1,59 +1,57 @@
 ---
 import Logo from "./Logo.astro"
 import { githubOrg } from "../lib/site.ts"
-import { blogUrl, chrome, productDocsUrl, productIds, productUrl } from "../lib/chrome.ts"
-import type { SiteLocale } from "../lib/urls.ts"
+import { chrome } from "../lib/chrome.ts"
+import { productIds, productName } from "../lib/products.ts"
+import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
 }
 const { locale } = Astro.props
 const t = chrome[locale]
-const rss = `${blogUrl(locale)}/rss.xml`
+const columns = [
+  {
+    title: t.footer.products,
+    links: productIds.map((id) => ({ href: productUrl(locale, id), text: productName[id] })),
+  },
+  {
+    title: t.nav.docs,
+    links: productIds.map((id) => ({ href: docsUrl(locale, id), text: productName[id] })),
+  },
+  {
+    title: t.footer.resources,
+    links: [
+      { href: blogUrl(locale), text: t.nav.blog },
+      { href: `${blogUrl(locale)}/rss.xml`, text: "RSS" },
+      { href: githubOrg, text: "GitHub" },
+    ],
+  },
+]
 ---
 
-<footer class="site-footer">
-  <div class="wrap site-footer-grid">
-    <div class="site-footer-brand">
+<footer class="border-t border-site-line py-12 print:hidden text-sm text-site-muted [view-transition-name:site-footer]">
+  <div class="wrap grid gap-8 md:grid-cols-12 md:gap-x-6">
+    <div class="md:col-[1/5]">
       <Logo />
-      <p>{t.footer.about}</p>
-      <p>© Zeabur · {t.footer.license}</p>
+      <p class="mt-3 max-w-[22rem] leading-[1.6]">{t.footer.about}</p>
+      <p class="mt-3 max-w-[22rem] leading-[1.6]">© Zeabur · {t.footer.license}</p>
     </div>
-    <div class="site-footer-cols">
-      <div>
-        <h2>{t.footer.products}</h2>
-        <ul>
-          {productIds.map((id) => (
-            <li>
-              <a href={productUrl(locale, id)}>{t.products[id].name}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h2>{t.nav.docs}</h2>
-        <ul>
-          {productIds.map((id) => (
-            <li>
-              <a href={productDocsUrl(locale, id)}>{t.products[id].name}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h2>{t.footer.resources}</h2>
-        <ul>
-          <li>
-            <a href={blogUrl(locale)}>{t.nav.blog}</a>
-          </li>
-          <li>
-            <a href={rss}>RSS</a>
-          </li>
-          <li>
-            <a href={githubOrg}>GitHub</a>
-          </li>
-        </ul>
-      </div>
+    <div class="grid grid-cols-3 gap-6 md:col-[7/13]">
+      {columns.map(({ title, links }) => (
+        <div>
+          <h2 class="mb-3 type-body font-medium tracking-normal text-site-text">{title}</h2>
+          <ul class="m-0 grid list-none gap-2 p-0">
+            {links.map(({ href, text }) => (
+              <li>
+                <a href={href} class="text-site-muted no-underline hover:text-site-text">
+                  {text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   </div>
 </footer>

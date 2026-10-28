@@ -31,6 +31,7 @@
     "@zeabur/design-system": "github:zeabur-oss/design-system#28c09304b3bc9e581a5632997ba6c6f6d239195d",
     "acorn": "8.19.0",
     "astro": "7.4.0",
+    "cn": "0.5.0",
     "rehype-raw": "7.0.0",
     "remark-gfm": "4.0.1",
     "satori": "0.62.0",

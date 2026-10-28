@@ -1,6 +1,6 @@
 // The product pages (/zeabur, /identity, /builder, /catalog) in each locale. zh-TW is written
 // first, then zh-CN and English; all three say the same things.
-import type { ProductId } from "../lib/chrome.ts"
+import type { ProductId } from "../lib/products.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 
 type Item = { tag: string; title: string; body: string }
@@ -8,8 +8,6 @@ type Step = { title: string; body: string }
 
 export type ProductCopy = {
   meta: { title: string; description: string }
-  kind: string
-  status: string
   titleDim: string
   title: string
   sub: string
@@ -19,7 +17,7 @@ export type ProductCopy = {
   how: { titleDim: string; title: string; steps: Step[] }
   shots?: { title: string; captions: Record<string, string> }
   details: { title: string; cols: string[]; rows: string[][] }
-  start: { title: string; sub: string; cta: string; file?: string }
+  start: { title: string; sub: string; cta: string }
 }
 
 const zhTW: Record<ProductId, ProductCopy> = {
@@ -29,8 +27,6 @@ const zhTW: Record<ProductId, ProductCopy> = {
       description:
         "Zeabur 把 Namespace 整理成專案和服務，用登入者自己的權限讀寫叢集。改設定前先列出會寫入的欄位，確認後才套用。",
     },
-    kind: "網頁介面",
-    status: "v0.1.0",
     titleDim: "在自己的叢集上，",
     title: "用專案和服務管理 Kubernetes",
     sub: "Zeabur 直接讀取 Kubernetes 物件，把 Namespace 整理成專案和服務，說明哪裡出了問題。改設定前，先列出這次會寫入哪些欄位，確認後才套用。",
@@ -103,8 +99,6 @@ const zhTW: Record<ProductId, ProductCopy> = {
       description:
         "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的權杖。管理員有專用帳號，只能用通行密鑰登入。",
     },
-    kind: "登入",
-    status: "v0.1.0",
     titleDim: "刪掉 admin.conf，",
     title: "用通行密鑰登入叢集",
     sub: "kubectl 會打開瀏覽器，你用 Touch ID、Windows Hello 或安全金鑰登入，拿到幾分鐘就到期的權杖。權杖由 Kubernetes 自己驗證，Zeabur Identity 不在請求路徑上。",
@@ -192,8 +186,6 @@ const zhTW: Record<ProductId, ProductCopy> = {
       description:
         "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。每個新 commit 建置一次，推到 registry，再把映像檔寫進 status.latestImage。",
     },
-    kind: "建置",
-    status: "v1alpha1",
     titleDim: "推送 commit，",
     title: "拿到映像檔 digest",
     sub: "Zeabur Builder 是用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。每個新 commit 建置一次，推到 registry，再把映像檔寫進 status.latestImage，交給你的部署工具。",
@@ -265,7 +257,6 @@ const zhTW: Record<ProductId, ProductCopy> = {
       title: "一個 Build，對應一個儲存庫",
       sub: "Build 寫出 Git 儲存庫和建置方式。沒寫 ref 時跟著預設分支，status.resolvedRef 會寫出是哪一個分支。",
       cta: "閱讀 Builder 文件",
-      file: "README.md 裡的 Build 範例",
     },
   },
   catalog: {
@@ -274,8 +265,6 @@ const zhTW: Record<ProductId, ProductCopy> = {
       description:
         "叢集元件和應用程式範本的目錄。每一項寫明用哪個 chart、哪個版本、哪些 values 和原因，由 CI 安裝並測試。",
     },
-    kind: "目錄",
-    status: "v1",
     titleDim: "叢集該裝什麼，",
     title: "先在 CI 裡裝過一次",
     sub: "Zeabur Catalog 是叢集元件和應用程式範本的目錄。每一項寫明用哪個 chart、哪個版本、哪些 values，以及為什麼這樣選。CI 會安裝並測試每一項。",
@@ -335,7 +324,6 @@ const zhTW: Record<ProductId, ProductCopy> = {
       title: "讀一個元件檔",
       sub: "每個元件都長這樣：說明為什麼推薦、授權、依賴哪些能力，以及要裝的 chart 和版本。",
       cta: "閱讀 Catalog 說明",
-      file: "components/certificates/cert-manager.yaml",
     },
   },
 }
@@ -347,8 +335,6 @@ const zhCN: Record<ProductId, ProductCopy> = {
       description:
         "Zeabur 把 Namespace 整理成项目和服务，用登录者自己的权限读写集群。改配置前先列出会写入的字段，确认后才应用。",
     },
-    kind: "Web 界面",
-    status: "v0.1.0",
     titleDim: "在自己的集群上，",
     title: "用项目和服务管理 Kubernetes",
     sub: "Zeabur 直接读取 Kubernetes 对象，把 Namespace 整理成项目和服务，说明哪里出了问题。改配置前，先列出这次会写入哪些字段，确认后才应用。",
@@ -421,8 +407,6 @@ const zhCN: Record<ProductId, ProductCopy> = {
       description:
         "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的令牌。管理员有专用账号，只能用通行密钥登录。",
     },
-    kind: "登录",
-    status: "v0.1.0",
     titleDim: "删掉 admin.conf，",
     title: "用通行密钥登录集群",
     sub: "kubectl 会打开浏览器，你用 Touch ID、Windows Hello 或安全密钥登录，拿到几分钟就过期的令牌。令牌由 Kubernetes 自己验证，Zeabur Identity 不在请求路径上。",
@@ -507,8 +491,6 @@ const zhCN: Record<ProductId, ProductCopy> = {
       description:
         "用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。每个新 commit 构建一次，推送到镜像仓库，再把镜像写进 status.latestImage。",
     },
-    kind: "构建",
-    status: "v1alpha1",
     titleDim: "推送 commit，",
     title: "拿到镜像 digest",
     sub: "Zeabur Builder 是用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。每个新 commit 构建一次，推送到镜像仓库，再把镜像写进 status.latestImage，交给你的部署工具。",
@@ -580,7 +562,6 @@ const zhCN: Record<ProductId, ProductCopy> = {
       title: "一个 Build，对应一个仓库",
       sub: "Build 写明 Git 仓库和构建方式。没写 ref 时跟随默认分支，status.resolvedRef 会写出是哪个分支。",
       cta: "阅读 Builder 文档",
-      file: "README.md 中的 Build 示例",
     },
   },
   catalog: {
@@ -589,8 +570,6 @@ const zhCN: Record<ProductId, ProductCopy> = {
       description:
         "集群组件和应用模板的目录。每一项写明用哪个 chart、哪个版本、哪些 values 和原因，由 CI 安装并测试。",
     },
-    kind: "目录",
-    status: "v1",
     titleDim: "集群该装什么，",
     title: "先在 CI 里装过一次",
     sub: "Zeabur Catalog 是集群组件和应用模板的目录。每一项写明用哪个 chart、哪个版本、哪些 values，以及为什么这样选。CI 会安装并测试每一项。",
@@ -650,7 +629,6 @@ const zhCN: Record<ProductId, ProductCopy> = {
       title: "读一个组件文件",
       sub: "每个组件都是这样：说明为什么推荐、许可证、依赖哪些能力，以及要装的 chart 和版本。",
       cta: "阅读 Catalog 说明",
-      file: "components/certificates/cert-manager.yaml",
     },
   },
 }
@@ -662,8 +640,6 @@ const en: Record<ProductId, ProductCopy> = {
       description:
         "Zeabur shows namespaces as projects and services and works with the signed-in person's own rights. A change lists the fields it writes and applies when you confirm.",
     },
-    kind: "Web interface",
-    status: "v0.1.0",
     titleDim: "On your own cluster,",
     title: "run Kubernetes as projects and services.",
     sub: "Zeabur reads Kubernetes objects directly, shows each namespace as a project with its services, and tells you what is wrong. A change first lists the fields it will write, and applies when you confirm.",
@@ -748,8 +724,6 @@ const en: Record<ProductId, ProductCopy> = {
       description:
         "kubectl signs in through your browser with a passkey and gets a token that expires in minutes. Admins have their own accounts, passkey only.",
     },
-    kind: "Sign-in",
-    status: "v0.1.0",
     titleDim: "Delete admin.conf.",
     title: "Sign in to your cluster with a passkey.",
     sub: "kubectl opens your browser, you sign in with Touch ID, Windows Hello or a security key, and get a token that expires in minutes. Kubernetes checks the token itself; Zeabur Identity is never in the path of your requests.",
@@ -849,8 +823,6 @@ const en: Record<ProductId, ProductCopy> = {
       description:
         "A Kubernetes operator that builds container images from Git with BuildKit. Each new commit is built once, pushed, and written to status.latestImage.",
     },
-    kind: "Builds",
-    status: "v1alpha1",
     titleDim: "Push a commit,",
     title: "get an image digest.",
     sub: "Zeabur Builder is a Kubernetes operator that builds container images from Git with BuildKit. Each new commit is built once and pushed to your registry, and the image goes into status.latestImage for your rollout tool.",
@@ -925,7 +897,6 @@ const en: Record<ProductId, ProductCopy> = {
       title: "One Build per repository",
       sub: "A Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.",
       cta: "Read the Builder docs",
-      file: "The Build example from README.md",
     },
   },
   catalog: {
@@ -934,8 +905,6 @@ const en: Record<ProductId, ProductCopy> = {
       description:
         "A catalog of cluster components and app templates. Each says which chart, which version, which values and why, and CI installs and tests it.",
     },
-    kind: "Catalog",
-    status: "v1",
     titleDim: "What a cluster needs,",
     title: "installed once in CI first.",
     sub: "Zeabur Catalog lists cluster components and app templates. Each entry says which chart, which version, which values, and why. CI installs and tests every one of them.",
@@ -998,7 +967,6 @@ const en: Record<ProductId, ProductCopy> = {
       title: "Read one component file",
       sub: "Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install.",
       cta: "About Catalog",
-      file: "components/certificates/cert-manager.yaml",
     },
   },
 }

@@ -16,20 +16,25 @@ interface Props {
 const { id, kicker, title, body, shot, link } = Astro.props
 ---
 
-<article class="grid12 split chapter" aria-labelledby={id}>
-  <div class="split-text" data-reveal>
+<article class="grid12 items-start [&+&]:mt-16 md:[&+&]:mt-24" aria-labelledby={id}>
+  <div class="lg:col-[1/5]" data-reveal>
     <p class="kicker">{kicker}</p>
-    <h3 id={id}>{title}</h3>
+    <h3
+      id={id}
+      class="my-3 text-[clamp(1.375rem,1.25rem+0.5vw,1.75rem)] leading-[1.3] text-balance"
+    >
+      {title}
+    </h3>
     <p class="body">{body}</p>
     {link && (
-      <a href={link.href} class="more more-down">
+      <a href={link.href} class="more more-down mt-5">
         {link.text}
         <Icon name="arrow-down" class="go" />
       </a>
     )}
   </div>
   {shot && (
-    <div class="split-media" data-reveal style="--i:1">
+    <div class="lg:col-[5/13]" data-reveal style="--i:1">
       <Shot {...shot} sizes={sizes.wide} />
     </div>
   )}

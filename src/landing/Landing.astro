@@ -2,10 +2,10 @@
 import Icon from "../components/Icon.astro"
 import Imagery from "../components/imagery/Imagery.astro"
 import Site from "../layouts/Site.astro"
-import { chrome, productIcon, productIds, productUrl } from "../lib/chrome.ts"
+import { productIcon, productIds, productName } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
 import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
@@ -18,7 +18,6 @@ interface Props {
 }
 const { locale } = Astro.props
 const t = landingCopy[locale]
-const names = chrome[locale].products
 const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
 const shot = (id: string) => siteShot(locale, id)
 ---
@@ -38,12 +37,12 @@ const shot = (id: string) => siteShot(locale, id)
     publisher: organization,
   }}
 >
-  <section class="wrap hero home-hero">
+  <section class="wrap hero">
     <div class="grid12">
-      <div class="hero-text stagger">
-        <h1 class="display">{t.hero.title}</h1>
-        <p class="lead">{t.hero.lead}</p>
-        <div class="actions">
+      <div class="stagger flex flex-col items-start gap-6 lg:col-[1/9]">
+        <h1 class="display max-w-[14em]">{t.hero.title}</h1>
+        <p class="lead max-w-xl">{t.hero.lead}</p>
+        <div class="mt-2 flex flex-wrap gap-3">
           <a href={zeaburDocs("get-started/quickstart")} class="button primary">
             {t.hero.start}
             <Icon name="arrow-right" class="go" />
@@ -54,16 +53,16 @@ const shot = (id: string) => siteShot(locale, id)
           </a>
         </div>
       </div>
-      <dl class="facts" data-reveal style="--i:3">
+      <dl class="lg:col-[9/13] lg:self-end" data-reveal style="--i:3">
         {t.facts.map((f) => (
-          <div>
-            <dt>{f.label}</dt>
-            <dd>{f.value}</dd>
+          <div class="border-t border-site-line py-3 last:border-b">
+            <dt class="type-body text-site-faint">{f.label}</dt>
+            <dd class="mt-0.5 text-base leading-[1.55]">{f.value}</dd>
           </div>
         ))}
       </dl>
     </div>
-    <div class="hero-shot" data-reveal style="--i:4">
+    <div class="mt-12 md:mt-18" data-reveal style="--i:4">
       <Shot
         {...shot("project")}
         alt={t.shots.project}
@@ -76,24 +75,30 @@ const shot = (id: string) => siteShot(locale, id)
 
   <section class="wrap section" aria-labelledby="projects">
     <SectionHead id="projects" title={t.projects.title} lead={t.projects.lead} />
-    <ul class="product-grid">
+    <ul class="grid gap-6 md:grid-cols-2">
       {productIds.map((id, i) => (
         <li data-reveal style={`--i:${i}`}>
-          <a href={productUrl(locale, id)} class="product-card">
-            <div class="art">
+          <a
+            href={productUrl(locale, id)}
+            class="group flex h-full flex-col overflow-hidden rounded-xl border border-site-line bg-site-card text-inherit no-underline transition-[border-color,background-color] duration-fast ease-(--ease-site) hover:border-site-line-strong hover:bg-site-card-hover"
+          >
+            <div class="art mx-2 mt-2 rounded-[calc(var(--radius-xl)-0.375rem)]">
               <Imagery id={id} />
             </div>
-            <div class="product-card-text">
-              <div class="product-card-title">
+            <div class="flex flex-1 flex-col gap-2 px-6 pt-5 pb-6">
+              <div class="flex items-center gap-2.5">
                 <span class="mark">
                   <Icon name={productIcon[id]} />
                 </span>
-                <h3>{names[id].name}</h3>
+                <h3>{productName[id]}</h3>
               </div>
-              <p class="body">{t[id].summary}</p>
-              <span class="go-row">
+              <p class="body flex-1">{t[id].summary}</p>
+              <span class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium">
                 {t.projects.more}
-                <Icon name="arrow-right" class="go" />
+                <Icon
+                  name="arrow-right"
+                  class="transition-[translate] duration-fast ease-(--ease-site) group-hover:translate-x-[3px]"
+                />
               </span>
             </div>
           </a>
@@ -103,15 +108,17 @@ const shot = (id: string) => siteShot(locale, id)
   </section>
 
   <section class="wrap section" aria-labelledby="zeabur-title">
-    <SectionHead id="zeabur-title" title={t.zeabur.name} tail={t.zeabur.tagline} />
-    <div class="grid12 split">
-      <div class="split-text" data-reveal>
-        <ul class="points">
+    <SectionHead id="zeabur-title" title={productName.zeabur} tail={t.zeabur.tagline} />
+    <div class="grid12 items-start">
+      <div class="lg:col-[1/5]" data-reveal>
+        <ul>
           {t.zeabur.points.map((p) => (
-            <li>{p}</li>
+            <li class="border-t border-site-line py-3.5 leading-[1.65] first:border-t-0 first:pt-0">
+              {p}
+            </li>
           ))}
         </ul>
-        <div class="more-links">
+        <div class="mt-5 flex flex-wrap gap-x-7 gap-y-3">
           <a href={`${productUrl(locale, "zeabur")}#features`} class="more">
             {featureCopy[locale].all(features.length)}
             <Icon name="arrow-right" class="go" />
@@ -122,7 +129,7 @@ const shot = (id: string) => siteShot(locale, id)
           </a>
         </div>
       </div>
-      <div class="split-media" data-reveal style="--i:1">
+      <div class="lg:col-[5/13]" data-reveal style="--i:1">
         <Shot
           {...shot("diagnosis")}
           alt={t.shots.diagnosis}
@@ -131,7 +138,7 @@ const shot = (id: string) => siteShot(locale, id)
         />
       </div>
     </div>
-    <div class="pair">
+    <div class="mt-12 grid gap-10 md:grid-cols-2 md:gap-6">
       <div data-reveal>
         <Shot
           {...shot("database")}
@@ -154,7 +161,7 @@ const shot = (id: string) => siteShot(locale, id)
   <section class="wrap section" aria-labelledby="start">
     <SectionHead id="start" title={t.start.title} lead={t.start.lead} />
     <StartWays locale={locale} />
-    <div class="hero-shot" data-reveal>
+    <div class="mt-12 md:mt-18" data-reveal>
       <Shot
         {...shot("installer")}
         alt={t.shots.installer}
@@ -165,13 +172,13 @@ const shot = (id: string) => siteShot(locale, id)
   </section>
 
   <section class="wrap section" aria-labelledby="leave">
-    <div class="grid12 leave">
-      <h2 id="leave" data-reveal>
+    <div class="grid12 items-start">
+      <h2 id="leave" class="lg:col-[1/6]" data-reveal>
         {t.leave.title}
       </h2>
-      <div data-reveal style="--i:1">
+      <div class="lg:col-[7/13]" data-reveal style="--i:1">
         <p class="lead">{t.leave.body}</p>
-        <a href={zeaburDocs("leave/uninstall")} class="more">
+        <a href={zeaburDocs("leave/uninstall")} class="more mt-5">
           {t.leave.link}
           <Icon name="arrow-right" class="go" />
         </a>

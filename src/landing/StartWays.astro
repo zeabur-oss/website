@@ -17,14 +17,17 @@ const ways = [
 ]
 ---
 
-<ul class="cells">
+<ul class="grid gap-x-6 md:grid-cols-3">
   {ways.map(({ way, href, icon }, i) => (
     <li data-reveal style={`--i:${i}`}>
-      <a href={href} class="cell">
-        <Icon name={icon} class="icon-lead" />
+      <a
+        href={href}
+        class="flex flex-col gap-2 border-t border-site-line pt-5 pb-8 text-inherit no-underline transition-[border-color] duration-fast ease-(--ease-site) hover:border-t-site-text"
+      >
+        <Icon name={icon} class="mb-2 size-5 text-site-accent" />
         <h3>{way.title}</h3>
-        <p class="body">{way.body}</p>
-        <span class="more">
+        <p class="body flex-1">{way.body}</p>
+        <span class="more mt-2">
           {way.link}
           <Icon name="arrow-right" class="go" />
         </span>

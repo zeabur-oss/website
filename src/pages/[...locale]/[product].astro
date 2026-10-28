@@ -1,0 +1,14 @@
+---
+import ProductPage from "../../landing/ProductPage.astro"
+import { productIds } from "../../lib/products.ts"
+import { localePaths } from "../../lib/urls.ts"
+
+export function getStaticPaths() {
+  return localePaths().flatMap(({ params, props }) =>
+    productIds.map((product) => ({ params: { ...params, product }, props: { ...props, product } })),
+  )
+}
+const { locale, product } = Astro.props
+---
+
+<ProductPage locale={locale} id={product} />

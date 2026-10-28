@@ -1,5 +1,6 @@
 ---
-import type { ProductId } from "../../lib/chrome.ts"
+import { cn } from "cn"
+import type { ProductId } from "../../lib/products.ts"
 import Builder from "./Builder.astro"
 import Catalog from "./Catalog.astro"
 import Identity from "./Identity.astro"
@@ -14,7 +15,7 @@ const Image = images[Astro.props.id]
 ---
 
 <svg
-  class:list={["imagery", `imagery-${Astro.props.id}`, Astro.props.class]}
+  class={cn("imagery", `imagery-${Astro.props.id}`, Astro.props.class)}
   viewBox="0 0 480 320"
   role="presentation"
   aria-hidden="true"

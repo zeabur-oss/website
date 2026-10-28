@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import { readFileSync } from "node:fs"
 import { createRequire } from "node:module"
 
@@ -16,7 +17,7 @@ interface Props {
 }
 ---
 
-<span class:list={["logo", Astro.props.class]} role="img" aria-label="Zeabur" set:html={svg} />
+<span class={cn("logo", Astro.props.class)} role="img" aria-label="Zeabur" set:html={svg} />
 
 <style>
   .logo {

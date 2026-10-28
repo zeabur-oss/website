@@ -1,6 +1,6 @@
 ---
 // One project in the header's and the docs sidebar's project menus.
-import { productIcon, type ProductId } from "../lib/chrome.ts"
+import { productIcon, type ProductId } from "../lib/products.ts"
 import Icon from "./Icon.astro"
 
 interface Props {
@@ -13,12 +13,16 @@ interface Props {
 const { id, href, current, name, line } = Astro.props
 ---
 
-<a href={href} aria-current={current ? "page" : undefined}>
-  <span class="mark">
+<a
+  href={href}
+  aria-current={current ? "page" : undefined}
+  class="flex items-start gap-3 rounded-md p-2.5 text-sm font-normal text-site-text no-underline hover:bg-glass-hover aria-[current=page]:bg-glass-hover"
+>
+  <span class="mark mt-0.5">
     <Icon name={productIcon[id]} />
   </span>
-  <span class="product-text">
-    <span class="product-name">{name}</span>
-    <span class="product-line">{line}</span>
+  <span class="grid min-w-0 gap-0.5">
+    <span class="font-medium">{name}</span>
+    <span class="type-body text-site-muted">{line}</span>
   </span>
 </a>

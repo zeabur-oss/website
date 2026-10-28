@@ -1,20 +1,21 @@
 ---
+import { cn } from "cn"
 import ProductLink from "./ProductLink.astro"
 import Icon from "./Icon.astro"
 import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
 import { githubOrg } from "../lib/site.ts"
+import { chrome } from "../lib/chrome.ts"
+import { productIcon, productIds, productName } from "../lib/products.ts"
 import {
   blogUrl,
-  chrome,
+  docsUrl,
   homeUrl,
+  locales,
   pathInLocale,
-  productDocsUrl,
-  productIcon,
-  productIds,
   productUrl,
-} from "../lib/chrome.ts"
-import { locales, type SiteLocale } from "../lib/urls.ts"
+  type SiteLocale,
+} from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
@@ -31,61 +32,99 @@ const t = chrome[locale]
 const here = Astro.url.pathname.replace(/\/$/, "") || "/"
 const langHref = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)
 const current = (on: boolean) => (on ? "true" : undefined)
+const navLink = "nav-item aria-[current=true]:font-medium aria-[current=true]:text-site-text"
+const mobileGroups = [
+  {
+    label: t.nav.products,
+    links: productIds.map((id) => ({
+      href: productUrl(locale, id),
+      icon: productIcon[id],
+      text: productName[id],
+    })),
+  },
+  {
+    label: `Zeabur ${t.nav.openSource}`,
+    links: [
+      { href: docsUrl(locale, "zeabur"), icon: "book-open", text: t.nav.docs },
+      { href: blogUrl(locale), icon: "article", text: t.nav.blog },
+      { href: githubOrg, icon: "github-logo", text: "GitHub" },
+    ],
+  },
+]
 ---
 
-<Outer class:list={[docs ? "docs-header" : "site-header"]}>
-  <div class="site-header-row">
+<Outer
+  class={cn(
+    docs
+      ? "docs-header h-full"
+      : "sticky top-0 z-50 h-(--header-height) print:hidden border-b border-site-line bg-[color-mix(in_srgb,var(--site-bg)_88%,transparent)] [backdrop-filter:saturate(1.4)_blur(12px)] [view-transition-name:site-header]",
+  )}
+>
+  <!-- The same bar as the docs header (Starlight's padding and sidebar width), so nothing in it
+       moves between the landing and the docs. -->
+  <div class={cn("flex h-full items-center gap-4 text-sm font-normal", !docs && "px-4 docs:px-6")}>
     <a
       href={homeUrl(locale)}
-      class="brand"
+      class={cn(
+        "inline-flex items-center gap-2 whitespace-nowrap text-site-text no-underline",
+        docs
+          ? "docs:min-w-[calc(var(--sl-sidebar-width)-2*var(--sl-nav-pad-x))]"
+          : "docs:min-w-[13.5rem]",
+      )}
       aria-label={`Zeabur ${t.nav.openSource}, ${t.nav.home}`}
     >
       <Logo />
-      <span class="brand-oss" translate="no">
+      <span class="text-base leading-none font-medium text-site-muted" translate="no">
         {t.nav.openSource}
       </span>
     </a>
-    <nav class="site-nav" aria-label={`Zeabur ${t.nav.openSource}`}>
-      <details class="menu" data-menu>
-        <summary aria-current={current(section === "products")}>
+    <nav
+      class={cn("hidden items-center gap-0.5", docs ? "docs-wide:flex" : "nav:flex")}
+      aria-label={`Zeabur ${t.nav.openSource}`}
+    >
+      <details class="menu group" data-menu>
+        <summary class="nav-item" aria-current={current(section === "products")}>
           {t.nav.products}
-          <Icon name="caret-down" class="caret" />
+          <Icon
+            name="caret-down"
+            class="size-3 transition-[rotate] duration-quick ease-(--ease-site) group-open:rotate-180"
+          />
         </summary>
-        <div class="menu-panel products-panel">
+        <div class="menu-panel left-0 grid w-[25rem] gap-0.5">
           {productIds.map((id) => (
             <ProductLink
               id={id}
               href={productUrl(locale, id)}
               current={here === productUrl(locale, id)}
-              name={t.products[id].name}
+              name={productName[id]}
               line={t.products[id].line}
             />
           ))}
         </div>
       </details>
       <a
-        href={productDocsUrl(locale, "zeabur")}
-        class="site-nav-link"
+        href={docsUrl(locale, "zeabur")}
+        class={navLink}
         aria-current={current(section === "docs")}
       >
         {t.nav.docs}
       </a>
-      <a href={blogUrl(locale)} class="site-nav-link" aria-current={current(section === "blog")}>
+      <a href={blogUrl(locale)} class={navLink} aria-current={current(section === "blog")}>
         {t.nav.blog}
       </a>
     </nav>
     {Astro.slots.has("search") && (
-      <div class="site-search">
+      <div class="flex flex-1 justify-end docs:justify-start">
         <slot name="search" />
       </div>
     )}
-    <div class="site-tools">
-      <details class="menu lang" data-menu>
-        <summary aria-label={t.nav.language}>
+    <div class="ml-auto flex items-center gap-1 [&_.icon]:size-4">
+      <details class={cn("menu", docs && "max-docs:hidden")} data-menu>
+        <summary class="nav-item" aria-label={t.nav.language}>
           <Icon name="translate" />
-          <span class="lang-name">{t.lang}</span>
+          <span class="max-[30rem]:hidden">{t.lang}</span>
         </summary>
-        <div class="menu-panel end">
+        <div class="menu-panel right-0">
           {locales.map((l) => (
             <a
               href={langHref(l)}
@@ -99,37 +138,34 @@ const current = (on: boolean) => (on ? "true" : undefined)
         </div>
       </details>
       <ThemeToggle label={t.nav.theme} />
-      <a href={githubOrg} class="icon-button github" aria-label={t.nav.github}>
+      <a
+        href={githubOrg}
+        class={cn("icon-button", docs && "max-docs:hidden")}
+        aria-label={t.nav.github}
+      >
         <Icon name="github-logo" />
       </a>
-      <slot name="end" />
-      <details class="menu mobile-menu" data-menu>
-        <summary class="icon-button" aria-label={t.nav.menu}>
-          <Icon name="list" />
-        </summary>
-        <div class="menu-panel">
-          <p class="group-label">{t.nav.products}</p>
-          {productIds.map((id) => (
-            <a href={productUrl(locale, id)}>
-              <Icon name={productIcon[id]} />
-              {t.products[id].name}
-            </a>
-          ))}
-          <p class="group-label">Zeabur {t.nav.openSource}</p>
-          <a href={productDocsUrl(locale, "zeabur")}>
-            <Icon name="book-open" />
-            {t.nav.docs}
-          </a>
-          <a href={blogUrl(locale)}>
-            <Icon name="article" />
-            {t.nav.blog}
-          </a>
-          <a href={githubOrg}>
-            <Icon name="github-logo" />
-            GitHub
-          </a>
-        </div>
-      </details>
+      {!docs && (
+        // Small screens: one menu button opens the whole navigation. The docs have Starlight's.
+        <details class="menu nav:hidden" data-menu>
+          <summary class="icon-button" aria-label={t.nav.menu}>
+            <Icon name="list" />
+          </summary>
+          <div class="menu-panel fixed top-(--header-height) right-0 left-0 max-h-[calc(100dvh-var(--header-height))] overflow-y-auto rounded-none border-x-0 px-(--gutter) pt-2 pb-4">
+            {mobileGroups.map(({ label, links }) => (
+              <>
+                <p class="px-2 pt-3 pb-1 type-meta text-site-faint">{label}</p>
+                {links.map(({ href, icon, text }) => (
+                  <a href={href} class="px-2 py-2.5">
+                    <Icon name={icon} />
+                    {text}
+                  </a>
+                ))}
+              </>
+            ))}
+          </div>
+        </details>
+      )}
     </div>
   </div>
 </Outer>

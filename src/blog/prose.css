@@ -1,0 +1,142 @@
+/* A post's text, written in Markdown, so styled by element rather than with utilities; and how it
+   prints. Outside any layer, so it wins over the utilities on the components inside a post. */
+
+.prose {
+  max-width: 44rem;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--site-text);
+}
+:lang(zh) .prose {
+  line-height: 1.85;
+}
+.prose > * + * {
+  margin-top: 1.1em;
+}
+.prose :is(h2, h3) {
+  scroll-margin-top: calc(var(--header-height) + 2rem);
+  font-weight: 600;
+  text-wrap: balance;
+}
+.prose h2 {
+  margin-top: 2.2em;
+  font-size: clamp(1.5rem, 1.35rem + 0.6vw, 1.875rem);
+  line-height: 1.25;
+}
+.prose h3 {
+  margin-top: 1.8em;
+  font-size: 1.25rem;
+}
+.prose a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--site-accent) 55%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.prose a:hover {
+  color: var(--site-accent);
+  text-decoration-color: currentColor;
+}
+.prose :is(ul, ol) {
+  padding-left: 1.3em;
+}
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
+.prose li + li {
+  margin-top: 0.4em;
+}
+.prose blockquote {
+  margin-inline: 1.5rem 0;
+  color: var(--site-muted);
+}
+.prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-sm);
+  font-size: 0.86em;
+  overflow-wrap: anywhere;
+}
+.prose pre {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+  font-size: 0.84375rem;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+.prose img {
+  height: auto;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+}
+.prose :is(.post-shots, .post-figure) {
+  margin-block: 2em;
+}
+.prose .post-shots {
+  display: grid;
+  gap: 1rem;
+}
+.prose .shot img {
+  border: 0;
+  border-radius: 0;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+.prose :is(th, td) {
+  padding: 0.625rem 0.875rem 0.625rem 0;
+  border-bottom: 1px solid var(--site-line);
+  text-align: left;
+  vertical-align: top;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--site-line);
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 20mm 22mm 22mm;
+  }
+  .prose {
+    max-width: none;
+    font-size: 10.5pt;
+    line-height: 1.8;
+    color: #111;
+    orphans: 2;
+    widows: 2;
+  }
+  .prose > * + * {
+    margin-top: 0.9em;
+  }
+  .prose h2 {
+    margin-top: 1.8em;
+    font-size: 14pt;
+    line-height: 1.4;
+  }
+  .prose :is(h2, h3) {
+    break-after: avoid;
+  }
+  .prose a {
+    color: inherit;
+    text-decoration-color: #999;
+    text-decoration-thickness: 0.5pt;
+  }
+  .prose :is(.post-shots, .post-figure, .shot, img, figure) {
+    break-inside: avoid;
+  }
+  .prose :is(.post-shots, .post-figure) {
+    margin-block: 1.4em;
+  }
+  .prose pre {
+    white-space: pre-wrap;
+    break-inside: avoid;
+  }
+}

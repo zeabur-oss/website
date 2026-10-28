@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 // Zeabur Builder: each new commit on a branch becomes one image, and the newest one's tag and
 // digest land in the Build's status.
 const commits = [
@@ -18,15 +19,15 @@ const layers = [0, 1, 2]
 {commits.map((c, i) => {
   const latest = i === commits.length - 1
   return (
-    <g class:list={[latest && "img-latest"]}>
-      <circle class:list={["img-dot", latest && "img-dot-accent"]} cx={c.x} cy="62" r="7" />
+    <g class={latest ? "img-latest" : undefined}>
+      <circle class={cn("img-dot", latest && "img-dot-accent")} cx={c.x} cy="62" r="7" />
       <text class="img-kind" x={c.x} y="92" text-anchor="middle">
         {c.sha}
       </text>
       <path class="img-guide" d={`M${c.x} 100 V118`} />
       {layers.map((l) => (
         <rect
-          class:list={["img-layer", latest ? "img-layer-new" : "img-layer-old"]}
+          class={cn("img-layer", latest ? "img-layer-new" : "img-layer-old")}
           style={`--i:${2 - l}`}
           x={c.x - 42}
           y={122 + l * 18}

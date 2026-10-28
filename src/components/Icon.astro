@@ -1,4 +1,5 @@
 ---
+import { cn } from "cn"
 import { iconBody, type IconWeight } from "../lib/icons.ts"
 
 interface Props {
@@ -10,7 +11,7 @@ const { name, weight, class: className } = Astro.props
 ---
 
 <svg
-  class:list={["icon", className]}
+  class={cn("icon", className)}
   viewBox="0 0 256 256"
   fill="currentColor"
   aria-hidden="true"

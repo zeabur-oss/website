@@ -4,7 +4,8 @@
 //   bun scripts/docs-check.ts <dir> [--base <rev>]       a working tree, as each repository's CI does
 import { basename, resolve } from "node:path"
 import { parseArgs } from "node:util"
-import { checkRepo, type Finding } from "./lib/check.ts"
+import { checkRepo } from "./lib/check.ts"
+import type { Finding } from "./lib/findings.ts"
 import { fromDirectory, fromRevision, readLock, snapshot, type Snapshot } from "./lib/repos.ts"
 
 const { values, positionals } = parseArgs({
