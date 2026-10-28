@@ -9,7 +9,8 @@ interface Props {
   kicker: string
   title: string
   body: string
-  shot: { light: string; dark: string; alt: string }
+  /** Left out when the build has no such shot; the text then stands alone. */
+  shot?: { light: string; dark: string; alt: string }
   link?: { href: string; text: string }
 }
 const { id, kicker, title, body, shot, link } = Astro.props
@@ -27,7 +28,9 @@ const { id, kicker, title, body, shot, link } = Astro.props
       </a>
     )}
   </div>
-  <div class="split-media" data-reveal style="--i:1">
-    <Shot {...shot} sizes={sizes.wide} />
-  </div>
+  {shot && (
+    <div class="split-media" data-reveal style="--i:1">
+      <Shot {...shot} sizes={sizes.wide} />
+    </div>
+  )}
 </article>

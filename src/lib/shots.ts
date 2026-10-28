@@ -9,13 +9,15 @@ function load() {
   return sizes!
 }
 
-/** The shot in `locale`, or in English when it was taken for fewer locales. */
-function findShot(repo: string, locale: string, theme: string, id: string) {
+/**
+ * The shot in `locale`, or in English when it was taken for fewer locales; undefined when the
+ * build has neither, such as before the repository's release publishes its screenshots.
+ */
+export function findShot(repo: string, locale: string, theme: string, id: string) {
   for (const l of [locale, "en"]) {
     const size = load()[`${repo}/${l}/${theme}/${id}`]
     if (size) return { src: shotUrl(repo, l, theme, id), width: size[0], height: size[1] }
   }
-  return { src: shotUrl(repo, locale, theme, id), width: undefined, height: undefined }
 }
 
 export type ScreenshotProps = {
@@ -32,7 +34,8 @@ const escape = (s: string) =>
 
 /**
  * A docs screenshot. Shots are taken at twice the pixel density, so the CSS size is half the
- * file's, and the image never shows wider than that.
+ * file's, and the image never shows wider than that. A shot the build does not have is left out
+ * rather than shown as a broken image; with `dark`, a missing theme shows the other in both.
  */
 export function screenshotHtml(
   props: ScreenshotProps,
@@ -40,15 +43,15 @@ export function screenshotHtml(
 ) {
   const repo = props.repo ?? page.repo
   const locale = props.locale ?? page.contentLocale
-  const img = (theme: string, className: string) => {
-    const shot = findShot(repo, locale, theme, props.id)
-    const size = shot.width
-      ? ` width="${shot.width / 2}" height="${shot.height! / 2}" style="max-width:min(100%,${shot.width / 2}px)"`
-      : ""
-    return `<img src="${shot.src}" alt="${escape(props.alt)}"${size} loading="lazy" decoding="async" class="${className}">`
-  }
-  const body = props.dark
-    ? img("light", "theme-light") + img("dark", "theme-dark")
-    : img(props.theme ?? "light", "")
-  return `<figure class="docs-shot">${body}</figure>`
+  const find = (theme: string) => findShot(repo, locale, theme, props.id)
+  const img = (shot: NonNullable<ReturnType<typeof findShot>>, className: string) =>
+    `<img src="${shot.src}" alt="${escape(props.alt)}" width="${shot.width / 2}" height="${shot.height / 2}" style="max-width:min(100%,${shot.width / 2}px)" loading="lazy" decoding="async" class="${className}">`
+  const [light, dark] = props.dark ? [find("light"), find("dark")] : [find(props.theme ?? "light")]
+  const body =
+    light && dark
+      ? img(light, "theme-light") + img(dark, "theme-dark")
+      : light || dark
+        ? img((light ?? dark)!, "")
+        : ""
+  return body ? `<figure class="docs-shot">${body}</figure>` : ""
 }
