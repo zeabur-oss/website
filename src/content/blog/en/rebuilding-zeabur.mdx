@@ -25,6 +25,14 @@ Next came permissions. When a user clicks Restart or opens a configuration, whos
 
 Connecting passkey sign-in and short-lived tokens to Kubernetes authorization was one of the most exciting steps in the project. Everyone signs in with their own account, and Kubernetes RBAC decides what they can do. Admins get a dedicated account that can only sign in with a passkey, and its token expires after 5 minutes. The same flow works with kubectl and other tools that support OpenID Connect, so each team member signs in as themselves and the team depends less on shared, long-lived admin credentials.
 
+<PostShots
+  locale="en"
+  shots={[
+    { id: "existing-namespaces", from: "docs", alt: "Other namespaces on the Projects page lists namespaces in the cluster that aren't projects yet" },
+    { id: "sign-in", from: "identity", alt: "Everyday sign-in: a passkey button and Continue with GitHub" },
+  ]}
+/>
+
 While we researched 2.0, we kept hardening the original Zeabur, for example by adding passkey sign-in and moving some sensitive data onto users' own servers. That pushed us to design 2.0 so the platform stores as little data and holds as few permissions as it can.
 
 Then came the security incident. After weighing the rework and maintenance the existing system would need, we decided to shut down the hosted platform. Users told us they hoped Zeabur would be open-sourced, and we weren't ready to let go of research that was starting to pay off. So we reorganized it into an open-source version you can host yourself, and that we'll keep improving.
@@ -61,6 +69,14 @@ Back in the interface, users pick Dockerfile or Railpack, set the repository, bu
 
 AI agents helped with much of the research, implementation and testing, and let us iterate on these experiments faster. Deciding how the product should be used and what's worth improving still took us using and reviewing it ourselves. Sometimes a feature was done and what stopped people was a name they didn't understand, or not knowing what to click next.
 
+<PostShots
+  locale="en"
+  shots={[
+    { id: "service-logs", from: "docs", alt: "The service's Logs tab, with a replica selector at the top, output from one replica, and filters for errors, warnings, and info" },
+    { id: "git-builds", from: "docs", alt: "The service's Builds tab, showing the latest image and build history" },
+  ]}
+/>
+
 ## From the first server to looking after your data
 
 With service management mostly in place, the questions spread to what comes before and after. How does someone with a single server get started? After deploying, how is data kept, and how do you restore it when something goes wrong? Hosting it yourself means dealing with all of this, so we added an installer, component choices and backup workflows.
@@ -81,6 +97,15 @@ App templates sent us back into the details of data and maintenance. Familiar ap
 Database work runs from creation and connection through to backup and restore. Zeabur creates the database through the matching operator and passes its connection details to your app. Once you set a backup destination, you can see each run's result, and when you need to, restore into a new database, check its contents, and then plan the switchover. Volume and cluster backups each connect to a suitable tool. By the time someone actually needs to restore, they usually have plenty else to deal with. Having the source, destination, status and steps laid out ahead of time saves them from hunting for them in the moment.
 
 At this point you can start from an empty server and go all the way through installing, signing in, deploying and backing up. Problems we had discussed over and over were now things we could use ourselves, and that was the most rewarding part of the whole project.
+
+<PostShots
+  locale="en"
+  shots={[
+    { id: "database-overview", from: "docs", alt: "Overview and connection details for the orders PostgreSQL database" },
+    { id: "backup-schedule-form", from: "docs", alt: "Schedule form set to 03:00 UTC daily, 7 days of retention, and the entire cluster" },
+    { id: "backup-restore", from: "docs", alt: "Restore form with a project from the backup selected and a new project name filled in" },
+  ]}
+/>
 
 <PostFigure
   name="oss-map"
