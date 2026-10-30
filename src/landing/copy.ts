@@ -38,7 +38,8 @@ const zhTW: LandingCopy = {
   ],
   shots: {
     project: "shop 專案的地圖。worker 反覆崩潰，所以排在「需要處理」的第一列。",
-    diagnosis: "worker 重新啟動了 14 次。錯誤在重新啟動前那一次的記錄裡，旁邊就是開啟記錄的按鈕。",
+    diagnosis:
+      "worker 重新啟動了 14 次。錯誤在重新啟動前那一次執行的日誌裡，旁邊就是開啟日誌的按鈕。",
     database:
       "只有一個執行個體的 PostgreSQL。它故障時沒有其他執行個體接手，所以 Zeabur 提醒你設定備份。",
     cluster: "叢集頁：Kubernetes 1.34 即將停止支援、節點記憶體用到 91%、磁碟用到 88%。",
@@ -65,7 +66,7 @@ const zhTW: LandingCopy = {
     points: [
       "kubectl 會打開瀏覽器，用 Touch ID、Windows Hello 或安全金鑰登入，拿到幾分鐘就到期的 token。",
       "管理員有專用帳號，只能用通行密鑰登入，token 5 分鐘到期，工作時會自動換新。",
-      "一個約 20 MB 的 pod，跑在它保護的叢集裡，不需要資料庫。",
+      "一個約 20 MB 的 Pod，在它保護的叢集裡執行，不需要資料庫。",
     ],
     docs: "Identity 文件",
   },
@@ -90,7 +91,7 @@ const zhTW: LandingCopy = {
   },
   start: {
     title: "從手邊的環境開始",
-    lead: "三種裝法開啟的是同一套介面，差別在 Zeabur 跑在哪裡、用誰的憑證。",
+    lead: "三種裝法開啟的是同一套介面，差別在 Zeabur 在哪裡執行、用誰的憑證。",
     server: {
       title: "一台 Linux 伺服器",
       body: "Zeabur Installer 的網頁介面會檢查伺服器、讓你選元件，一次裝好 RKE2、Zeabur Identity 和 Zeabur。",
@@ -262,7 +263,7 @@ const en: LandingCopy = {
     points: [
       "kubectl opens your browser. You sign in with Touch ID, Windows Hello or a security key and get a token that expires in minutes.",
       "Admins have their own accounts, passkey only, with tokens that last 5 minutes and renew while they work.",
-      "One pod of about 20 MB, running inside the cluster it protects, with no database.",
+      "One Pod of about 20 MB, running inside the cluster it protects, with no database.",
     ],
     docs: "Identity docs",
   },
