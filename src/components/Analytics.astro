@@ -1,0 +1,42 @@
+---
+// PostHog web analytics without cookies or storage (cookieless_mode "always"): visitors are
+// counted with a hash PostHog makes on its servers, so no banner is needed.
+---
+
+<script>
+  const repoLink = /^https:\/\/github\.com\/zeabur-oss(?:\/([^/?#]+)(\/releases)?)?(?:[/?#]|$)/
+
+  async function start() {
+    const { posthog } = await import("posthog-js/dist/module.no-external")
+    posthog.init("phc_y9PL4GYTjevBtUAceV8DVxywipRZ7JLP9ijAFWqy5uUx", {
+      api_host: "https://us.i.posthog.com",
+      cookieless_mode: "always",
+      person_profiles: "never",
+      capture_pageview: "history_change",
+      disable_session_recording: true,
+      disable_surveys: true,
+      disable_product_tours: true,
+      disable_conversations: true,
+      advanced_disable_flags: true,
+    })
+
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Element)) return
+      const copy = event.target.closest(".expressive-code .copy button")
+      if (copy) {
+        const language = copy.closest("figure")?.querySelector("pre")?.dataset.language
+        posthog.capture("code_copied", { language })
+        return
+      }
+      const href = event.target.closest("a")?.href
+      const repo = href && repoLink.exec(href)
+      if (!repo) return
+      posthog.capture(repo[2] ? "releases_clicked" : "github_clicked", { repo: repo[1] })
+    })
+  }
+
+  if (location.hostname === "oss.zeabur.com") {
+    if ("requestIdleCallback" in window) requestIdleCallback(() => void start())
+    else setTimeout(() => void start(), 1)
+  }
+</script>

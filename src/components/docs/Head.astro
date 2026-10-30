@@ -2,6 +2,7 @@
 import Default from "@astrojs/starlight/components/Head.astro"
 import { ClientRouter } from "astro:transitions"
 import Reveal from "../Reveal.astro"
+import Analytics from "../Analytics.astro"
 import { iconDataUri } from "../../lib/icons.ts"
 
 const icons = `:root{--icon-arrow-right:${iconDataUri("arrow-right")}}`
@@ -10,4 +11,5 @@ const icons = `:root{--icon-arrow-right:${iconDataUri("arrow-right")}}`
 <Default />
 <style is:inline set:html={icons} />
 <Reveal />
+<Analytics />
 <ClientRouter />
