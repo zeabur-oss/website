@@ -96,7 +96,7 @@ pages that are not published.
 
 The site uses `@zeabur/design-system`, pinned to a commit in `package.json` like `zeabur/web`.
 
-## Licence
+## License
 
 Apache-2.0. Contributions are accepted under the [Developer Certificate of Origin](DCO); see
 [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -14,7 +14,7 @@ Removing that layer touches the architecture, the deploy pipeline and the interf
 
 ## Looking for new approaches inside Kubernetes
 
-We started by taking another look at what the Kubernetes ecosystem already offers. Domains, certificates, storage, monitoring and databases each have mature solutions. We noted where each one fits, installed and combined them, and watched for what needed adjusting. Some things the platform used to maintain itself could simply be handed to existing components. The remaining work was connecting them into actions users can easily understand.
+We started by taking another look at what the Kubernetes ecosystem already offers. Domains, certificates, storage, monitoring and databases each have mature solutions. We noted where each one fits, installed and combined them, and watched for what needed adjusting. Some things the platform used to maintain itself could be handed directly to existing components. The remaining work was connecting them into actions that are easy for users to understand.
 
 One experiment dropped the duplicate records in our database. Zeabur reads the configuration the cluster is actually using and works out services, domains, environment variables and volumes from how the resources relate to each other.
 
