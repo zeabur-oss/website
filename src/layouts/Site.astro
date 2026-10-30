@@ -4,6 +4,7 @@ import { ClientRouter } from "astro:transitions"
 import SiteFooter from "../components/SiteFooter.astro"
 import SiteHeader from "../components/SiteHeader.astro"
 import Reveal from "../components/Reveal.astro"
+import Analytics from "../components/Analytics.astro"
 import { OG_HEIGHT, OG_WIDTH, ogLocale } from "../lib/seo.ts"
 import { locales, pathInLocale, siteOrigin, type SiteLocale } from "../lib/urls.ts"
 
@@ -95,6 +96,7 @@ const ld = JSON.stringify({
       } catch {}
     </script>
     <Reveal />
+    <Analytics />
     <ClientRouter />
   </head>
   <body>
