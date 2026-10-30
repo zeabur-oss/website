@@ -31,6 +31,9 @@ jobs:
         env:
           # The docs sync reads each locked repository's tarball from GitHub.
           GITHUB_TOKEN: ${{ github.token }}
+          # PostHog's project key (repository variable POSTHOG_KEY), only in builds that deploy;
+          # without it the site sends nothing.
+          PUBLIC_POSTHOG_KEY: ${{ github.event_name != 'pull_request' && vars.POSTHOG_KEY || '' }}
         run: nix develop --command sh -c 'bun install --frozen-lockfile && bun run build'
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0

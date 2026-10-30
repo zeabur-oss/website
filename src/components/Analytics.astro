@@ -1,14 +1,37 @@
 ---
 // PostHog web analytics without cookies or storage (cookieless_mode "always"): visitors are
-// counted with a hash PostHog makes on its servers, so no banner is needed.
+// counted with a hash PostHog makes on its servers, so no banner is needed. Only a build with
+// PUBLIC_POSTHOG_KEY (the deploy on main, .github/workflows/pages.yml) sends anything.
 ---
 
 <script>
   const repoLink = /^https:\/\/github\.com\/zeabur-oss(?:\/([^/?#]+)(\/releases)?)?(?:[/?#]|$)/
 
-  async function start() {
+  // Which block was copied: the heading above it, the tab it sits in, its place on the page and
+  // its first line. The code is the docs' own, never anything a visitor typed.
+  function codeBlock(button: HTMLElement) {
+    const block = button.closest(".expressive-code")!
+    const blocks = [...document.querySelectorAll("main .expressive-code")]
+    const heading = [...document.querySelectorAll("main :is(h2, h3)[id]")]
+      .filter((h) => h.compareDocumentPosition(block) & Node.DOCUMENT_POSITION_FOLLOWING)
+      .at(-1)
+    const panel = block.closest("[role=tabpanel]")
+    const tab = panel && document.getElementById(panel.getAttribute("aria-labelledby") ?? "")
+    return {
+      language: block.querySelector("pre")?.dataset.language,
+      heading: heading?.id,
+      tab: tab?.textContent?.trim(),
+      index: blocks.indexOf(block),
+      first_line: (button.dataset.code ?? "")
+        .split(/[\n\u007f]/)[0]!
+        .trim()
+        .slice(0, 120),
+    }
+  }
+
+  async function start(key: string) {
     const { posthog } = await import("posthog-js/dist/module.no-external")
-    posthog.init("phc_y9PL4GYTjevBtUAceV8DVxywipRZ7JLP9ijAFWqy5uUx", {
+    posthog.init(key, {
       api_host: "https://us.i.posthog.com",
       cookieless_mode: "always",
       person_profiles: "never",
@@ -22,10 +45,9 @@
 
     document.addEventListener("click", (event) => {
       if (!(event.target instanceof Element)) return
-      const copy = event.target.closest(".expressive-code .copy button")
+      const copy = event.target.closest<HTMLElement>(".expressive-code .copy button")
       if (copy) {
-        const language = copy.closest("figure")?.querySelector("pre")?.dataset.language
-        posthog.capture("code_copied", { language })
+        posthog.capture("code_copied", codeBlock(copy))
         return
       }
       const href = event.target.closest("a")?.href
@@ -35,8 +57,6 @@
     })
   }
 
-  if (location.hostname === "oss.zeabur.com") {
-    if ("requestIdleCallback" in window) requestIdleCallback(() => void start())
-    else setTimeout(() => void start(), 1)
-  }
+  const key = import.meta.env.PUBLIC_POSTHOG_KEY
+  if (key) void start(key)
 </script>
