@@ -53,7 +53,8 @@ as their content, and no gaps inside Chinese text.
 
 A comment says what the code cannot: a quirk and its cause, a workaround, or the source behind
 behaviour that must not change. Usually one line; no design rationale, history, measurements or
-restatements of the code. Never cite something you have not read; write "not verified" instead.
+restatements of the code. Cite only what you have read. Do not cite an unread source; if it
+matters, note it in internal docs or an issue.
 
 ## Toolchain
 
@@ -93,12 +94,10 @@ Fix a docs page in its own repository, then move that repository's ref in `docs.
 
 ## Copy
 
-The landing copy is in `src/landing/copy.ts`. Its screenshots are the docs screenshots of the
-zeabur repository (`docs/images/shots/`, from its `docs/shots.yaml`), taken at twice the pixel
-density: show every product image at half its width or less, with `sizes`. Write zh-TW first,
-then zh-CN (mainland usage), then English, and keep the three saying the same things. Say what the
-product does for the reader in concrete terms. No marketing words, no "not X but Y", no hedging
-paragraphs.
+The landing copy is in `src/landing/copy.ts`, in en, zh-TW and zh-CN. Write it by the
+[`zeabur-writing`](.claude/skills/zeabur-writing/SKILL.md) skill. Its screenshots are the docs
+screenshots of the zeabur repository (`docs/images/shots/`, from its `docs/shots.yaml`), taken at
+twice the pixel density: show every product image at half its width or less, with `sizes`.
 
-Drafts (`draft: true`) show in `bun run dev` only. `BLOG_DRAFTS=1 bun run build` keeps them in a
-build for review.
+Blog drafts (`draft: true`) show in `bun run dev` only. `BLOG_DRAFTS=1 bun run build` keeps them
+in a build for review.

@@ -12,6 +12,10 @@
     ".local",
     "public",
     ".astro",
-    "src/content/docs"
+    "src/content/docs",
+    ".claude/skills/no-ai-flavour",
+    ".claude/skills/story-writing",
+    ".claude/skills/zeabur-oss-*",
+    ".claude/skills/zeabur-writing"
   ]
 }
