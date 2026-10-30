@@ -1,6 +1,6 @@
 ---
 name: story-writing
-description: Write or revise a narrative article (blog post, launch announcement, retrospective, founder letter) so it moves the reader and reads as written by a person. Use when drafting such a piece, when the user asks for 起承轉合, 脈絡, 敘事, or 感動, or when revising one that "reads like AI" (AI 味).
+description: Write or revise a narrative or technical article (blog post, launch announcement, retrospective, founder letter, an explanation of a design or an incident) so it moves the reader, holds up to a check of its sources and figures, and reads as written by a person. Use when drafting such a piece, when the user asks for 起承轉合, 脈絡, 敘事, or 感動, or when revising one that "reads like AI" (AI 味).
 ---
 
 # Story writing
@@ -11,6 +11,8 @@ A narrative article earns its reader with a **spine** (one change the reader sho
 
 - **Revise** (the article exists, someone else wrote it): first read the author's own style guide or two of their published posts, and match that voice rather than a generic blog voice. The author's sentences are the default. Change the fewest sentences that fix a real problem; keep their facts, framing and voice. Propose before applying unless told to apply, and report every changed sentence as before → after. A rewrite of a whole section is a proposal, never an edit.
 - **Draft** (nothing exists yet): follow the steps in order.
+
+A technical article (how a design works, why it was chosen, an incident, a comparison or a benchmark) also follows [`technical-articles.md`](technical-articles.md): examples that carry the reasoning, citations opened and checked, measurements with their conditions.
 
 In both modes, every fact, feeling, number and person comes from the author or the source material. Where a passage needs a detail you lack (who was there, what broke, how long it took), ask for it; a placeholder question beats an invented scene.
 

@@ -11,7 +11,7 @@
       "source": "zeabur-oss/skills",
       "sourceType": "github",
       "skillPath": "skills/story-writing/SKILL.md",
-      "computedHash": "9ed7dc7df4c353aff245f6f102cdaad8516fddef03a5d849d59fdd547b7a0805"
+      "computedHash": "bdb29dd3afb05afd0abdb036a7b8b9e575892049d1fca64c9b1f51c85bc37116"
     },
     "zeabur-oss-dependencies": {
       "source": "zeabur-oss/skills",
@@ -35,7 +35,7 @@
       "source": "zeabur-oss/skills",
       "sourceType": "github",
       "skillPath": "skills/zeabur-writing/SKILL.md",
-      "computedHash": "fbdebdf3f371df5984fcfe8c78104224bbaee76cd9459ec3f8d379fa3a73439f"
+      "computedHash": "cf4256eb7cbf86fc861b26e1fa97a590f3af2659e08de106d2121bbb94278103"
     }
   }
 }
