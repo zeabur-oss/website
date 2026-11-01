@@ -3,6 +3,8 @@ name: story-writing
 description: Write or revise a narrative or technical article (blog post, launch announcement, retrospective, founder letter, an explanation of a design or an incident) so it moves the reader, holds up to a check of its sources and figures, and reads as written by a person. Use when drafting such a piece, when the user asks for 起承轉合, 脈絡, 敘事, or 感動, or when revising one that "reads like AI" (AI 味).
 ---
 
+<!-- Edit this in zeabur-oss/skills (skills/story-writing/SKILL.md); the weekly skills sync overwrites the copy in other repositories. -->
+
 # Story writing
 
 A narrative article earns its reader with a **spine** (one change the reader should feel), a **turn** (the moment the story bends), and **specifics** only the author could know. Structure it as 起承轉合, then sweep it for AI tells.

@@ -3,6 +3,8 @@ name: no-ai-flavour
 description: Keep code comments, copy and visuals free of the generic "AI-made" feel (AI 味) — over-explained comments, design rationale in code, filler phrasing, macOS window dots, fake terminals, glow-on-dot-grid cards. Use when writing or reviewing code comments, UI copy, READMEs, illustrations, covers or landing visuals, and when briefing agents that will.
 ---
 
+<!-- Edit this in zeabur-oss/skills (skills/no-ai-flavour/SKILL.md); the weekly skills sync overwrites the copy in other repositories. -->
+
 # No AI flavour
 
 ## Comments
