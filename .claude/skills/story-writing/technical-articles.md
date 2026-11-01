@@ -1,3 +1,5 @@
+<!-- Edit this in zeabur-oss/skills (skills/story-writing/technical-articles.md); the weekly skills sync overwrites the copy in other repositories. -->
+
 # Technical articles
 
 A technical article explains how something works and why it is built that way: a design, a

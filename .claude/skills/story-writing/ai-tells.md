@@ -1,3 +1,5 @@
+<!-- Edit this in zeabur-oss/skills (skills/story-writing/ai-tells.md); the weekly skills sync overwrites the copy in other repositories. -->
+
 # AI tells in narrative Chinese prose
 
 Each entry is a pattern to find and the fix. One hit can be coincidence; a cluster is the tell. This file holds what shows up most in narrative and launch posts. The general tells (grandiose framing, vague attribution, copula avoidance, emoji, Markdown leaks) are in the `zeabur-writing` skill's `ai-tells.md`.
