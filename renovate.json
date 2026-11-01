@@ -28,6 +28,11 @@
       "groupName": "github actions"
     },
     {
+      "description": "The pins of zeabur-oss/.github move in the Pins workflow, after each push to its main.",
+      "matchPackageNames": ["zeabur-oss/.github"],
+      "enabled": false
+    },
+    {
       "description": "One pull request moves every docs ref, with no publish delay.",
       "matchFileNames": ["docs.lock.json"],
       "groupName": "docs",
