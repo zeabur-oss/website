@@ -4,25 +4,25 @@
       "name": "zeabur",
       "label": "Zeabur",
       "github": "zeabur-oss/zeabur",
-      "ref": "e6ff19589800831fc3841225b4a2b24196b10873"
+      "ref": "92b7bebf03007c23e187565b0b97594246f3f61f"
     },
     {
       "name": "identity",
       "label": "Identity",
       "github": "zeabur-oss/identity",
-      "ref": "38f3abf8b88c42c08f4ab1d1faa64fed33a81127"
+      "ref": "428b8342c48e3eb7b7cb4ffa500c1deb42fdf06c"
     },
     {
       "name": "builder",
       "label": "Builder",
       "github": "zeabur-oss/builder",
-      "ref": "16a18991ca7539c9c457f6286bf645cbd0313b5a"
+      "ref": "042b56c71cb6295af53138c8abe6538196ca5225"
     },
     {
       "name": "catalog",
       "label": "Catalog",
       "github": "zeabur-oss/catalog",
-      "ref": "35762f9ee5aea06210bd047cc67bbd2f6dddc87a"
+      "ref": "7fb1f2ef9516af6eb5d1ef3a6cdf972507301d70"
     }
   ]
 }
