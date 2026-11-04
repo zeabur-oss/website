@@ -71,3 +71,11 @@ test("language links and hreflang alternates go to built pages", () => {
   }
   expect(missing).toEqual([])
 })
+
+test("every link in llms.txt is a built page", () => {
+  const text = readFileSync(join(import.meta.dir, "..", "public", "llms.txt"), "utf8")
+  const missing = [...text.matchAll(/\]\(https:\/\/oss\.zeabur\.com(\/[^)]*)\)/g)]
+    .map(([, path]) => path!)
+    .filter((path) => !existsSync(join(dist, path, "index.html")))
+  expect(missing).toEqual([])
+})
