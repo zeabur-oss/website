@@ -5,12 +5,6 @@
   "enabledManagers": ["bun", "github-actions", "nix", "custom.regex"],
   "packageRules": [
     {
-      "description": "One pull request for compatible package updates; majors stay separate.",
-      "matchManagers": ["bun"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "packages (non-major)"
-    },
-    {
       "description": "One pull request moves every docs ref, with no publish delay.",
       "matchFileNames": ["docs.lock.json"],
       "groupName": "docs",
