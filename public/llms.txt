@@ -7,7 +7,8 @@ Install on one Linux server (systemd, amd64 or arm64) with `zeabur-installer`. T
 ## Install
 
 - [Install Zeabur on a single server](https://oss.zeabur.com/docs/zeabur/get-started/quickstart): Server requirements, the one-line command that opens the installer web interface, and each step of it.
-- [Install with a config file and commands](https://oss.zeabur.com/docs/zeabur/get-started/advanced-install): The config file, `plan`, `apply`, and a prompt for AI agents that installs over SSH.
+- [Install with an AI Agent](https://oss.zeabur.com/docs/zeabur/get-started/ai-agent): Key sign-in over SSH and the prompt that has an AI agent install Zeabur with `plan` and `apply`, then hand over the registration link.
+- [Install with a config file and commands](https://oss.zeabur.com/docs/zeabur/get-started/advanced-install): The config file, `plan` and `apply`.
 - [Personal use: install on a small machine](https://oss.zeabur.com/docs/zeabur/get-started/personal): KubeSolo on a machine with 1.5 GiB of memory.
 - [Install Zeabur in an existing cluster](https://oss.zeabur.com/docs/zeabur/get-started/install): Helm chart and Zeabur Identity client for a cluster you already have.
 
