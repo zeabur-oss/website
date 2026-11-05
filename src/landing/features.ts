@@ -962,7 +962,7 @@ export const features: Feature[] = [
   },
   {
     group: "install",
-    doc: "zeabur/get-started/advanced-install",
+    doc: "zeabur/install/config-file",
     "zh-TW": ["設定檔安裝", "plan 先看會做什麼，apply 安裝，中斷後從斷掉的地方繼續。"],
     "zh-CN": ["配置文件安装", "plan 先看会做什么，apply 安装，中断后从断掉的地方继续。"],
     en: ["Install from a file", "plan shows what happens, apply does it, and a rerun resumes."],
@@ -986,7 +986,7 @@ export const features: Feature[] = [
   },
   {
     group: "install",
-    doc: "zeabur/get-started/install",
+    doc: "zeabur/install/existing-cluster",
     "zh-TW": ["裝進既有 Kubernetes", "已經有叢集時，用 Helm chart 安裝。"],
     "zh-CN": ["装进已有 Kubernetes", "已经有集群时，用 Helm chart 安装。"],
     en: ["Into your cluster", "Already have one? Install the Helm chart."],
@@ -1033,7 +1033,7 @@ export const features: Feature[] = [
   },
   {
     group: "install",
-    doc: "zeabur/get-started/install",
+    doc: "zeabur/install/existing-cluster",
     "zh-TW": ["用 GitOps 管 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
     "zh-CN": ["用 GitOps 管理 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
     en: ["Zeabur by GitOps", "Deploy Zeabur's chart with Argo CD or Flux."],
