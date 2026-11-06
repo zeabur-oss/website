@@ -32,7 +32,8 @@
   async function start(key: string) {
     const { posthog } = await import("posthog-js/dist/module.no-external")
     posthog.init(key, {
-      api_host: "https://us.i.posthog.com",
+      api_host: "https://oss-nori.zeabur.com",
+      ui_host: "https://us.posthog.com",
       cookieless_mode: "always",
       person_profiles: "never",
       capture_pageview: "history_change",
