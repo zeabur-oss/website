@@ -32,14 +32,14 @@ Open every screenshot it saves.
 ## Product documentation
 
 The docs pages are not written here. Each repository keeps its own `docs/`, and
-`docs.lock.json` pins the commit the site builds from.
+`docs.lock.json` pins each one to a release tag (`v0.2.0`), never a commit. The product pages and the landing page show the same tags.
 
 1. Fix the page in its own repository.
 2. Run `bun scripts/docs-check.ts <checkout>` and fix every error before that repository's pull
    request. It also lists stale translations; each repository's CI adds `--base <rev>`.
-3. After it merges, move the repository's `ref` in `docs.lock.json` here.
+3. The fix reaches the site with that repository's next release. Renovate moves the tag here.
 
-`bun scripts/docs-check.ts` with no argument checks every repository at its locked ref.
+`bun scripts/docs-check.ts` with no argument checks every repository at its locked tag.
 
 ## Landing and product pages
 

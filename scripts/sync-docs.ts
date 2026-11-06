@@ -1,4 +1,4 @@
-// Reads each repository's docs/ at the ref in docs.lock.json and writes what Starlight reads:
+// Reads each repository's docs/ at the tag in docs.lock.json and writes what Starlight reads:
 // src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and content/nav.json (the sidebar),
 // and the images and social images under public/.
 //   bun scripts/sync-docs.ts
@@ -194,7 +194,7 @@ export async function sync() {
     copyAssets(snap)
     await writeSocialImage(snap)
     console.log(
-      `${repo.name}@${repo.ref.slice(0, 8)}: ${docs.pages.length} pages` +
+      `${repo.name}@${repo.ref}: ${docs.pages.length} pages` +
         (docs.missing.length ? `, ${docs.missing.length} listed without a file` : ""),
     )
   }

@@ -33,7 +33,7 @@ for (const { snap, base } of targets) {
   const count = (level: Finding["level"]) => findings.filter((f) => f.level === level).length
   errors += count("error")
   console.log(
-    `${snap.repo.name}@${snap.repo.ref.slice(0, 8)}: ${count("error")} errors, ` +
+    `${snap.repo.name}@${snap.repo.ref}: ${count("error")} errors, ` +
       `${count("stale")} stale translations, ${count("warning")} warnings`,
   )
   for (const f of findings) {
