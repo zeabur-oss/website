@@ -1,7 +1,7 @@
 import { releaseTag } from "../lib/products.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 
-const zeaburVersion = releaseTag("zeabur").slice(1)
+const zeaburVersion = releaseTag("zeabur")
 
 type Product = { tagline: string; summary: string; points: string[]; docs: string }
 type Way = { title: string; body: string; link: string }
@@ -33,7 +33,7 @@ const zhTW: LandingCopy = {
   },
   facts: [
     { label: "授權", value: "Apache-2.0" },
-    { label: "版本", value: `${zeaburVersion}，映像檔已發佈，API 可能再調整` },
+    { label: "版本", value: zeaburVersion },
     {
       label: "裝在哪裡",
       value: "一台 Linux 伺服器、既有的 Kubernetes 叢集，或用 zeaburctl 在自己的電腦開啟",
@@ -130,7 +130,7 @@ const zhCN: LandingCopy = {
   },
   facts: [
     { label: "许可证", value: "Apache-2.0" },
-    { label: "版本", value: `${zeaburVersion}，镜像已发布，API 可能还会调整` },
+    { label: "版本", value: zeaburVersion },
     {
       label: "装在哪里",
       value: "一台 Linux 服务器、现有的 Kubernetes 集群，或用 zeaburctl 在自己的电脑上打开",
@@ -225,7 +225,7 @@ const en: LandingCopy = {
   },
   facts: [
     { label: "License", value: "Apache-2.0" },
-    { label: "Version", value: `${zeaburVersion}, images published. The API may change` },
+    { label: "Version", value: zeaburVersion },
     {
       label: "Runs on",
       value:
