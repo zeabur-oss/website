@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "The shared preset of zeabur-oss, plus packages (bun.lock), flake.lock (lock file maintenance) and the docs refs in docs.lock.json.",
+  "description": "The shared preset of zeabur-oss, plus packages (bun.lock), flake.lock (lock file maintenance) and the release tags in docs.lock.json.",
   "extends": ["github>zeabur-oss/.github"],
   "enabledManagers": ["bun", "github-actions", "nix", "custom.regex"],
   "packageRules": [
@@ -11,7 +11,7 @@
       "groupName": "packages (non-major)"
     },
     {
-      "description": "One pull request moves every docs ref, with no publish delay.",
+      "description": "One pull request moves every docs tag, with no publish delay.",
       "matchFileNames": ["docs.lock.json"],
       "groupName": "docs",
       "minimumReleaseAge": null
@@ -20,14 +20,13 @@
   "customManagers": [
     {
       "customType": "regex",
-      "description": "The commit each repository's docs are taken from.",
+      "description": "The release each repository's docs are taken from.",
       "managerFilePatterns": ["/^docs\\.lock\\.json$/"],
       "matchStrings": [
-        "\"github\": \"(?<depName>[^\"]+)\",\\s*\"ref\": \"(?<currentDigest>[0-9a-f]{40})\""
+        "\"github\": \"(?<depName>[^\"]+)\",\\s*\"tag\": \"(?<currentValue>v[^\"]+)\""
       ],
-      "packageNameTemplate": "https://github.com/{{{depName}}}",
-      "currentValueTemplate": "main",
-      "datasourceTemplate": "git-refs"
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     }
   ]
 }

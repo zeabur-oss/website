@@ -6,6 +6,7 @@ export type LockRepo = {
   name: string
   label: string
   github: string
+  /** The release tag in docs.lock.json, or the commit a local check reads. */
   ref: string
 }
 
@@ -19,8 +20,19 @@ export type Snapshot = {
 
 export const root = resolve(import.meta.dirname, "../..")
 
+type LockEntry = Omit<LockRepo, "ref"> & { tag: string }
+
+/** docs.lock.json names a release tag per repository, like v0.2.0 or v0.2.0-beta.2. */
 export function readLock(path = join(root, "docs.lock.json")): LockRepo[] {
-  return JSON.parse(readFileSync(path, "utf8")).repos
+  const entries: LockEntry[] = JSON.parse(readFileSync(path, "utf8")).repos
+  const repos: LockRepo[] = []
+  for (const { tag, ...repo } of entries) {
+    if (!/^v\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?$/.test(tag)) {
+      throw new Error(`docs.lock.json: ${repo.name} needs a release tag like v0.2.0, not "${tag}"`)
+    }
+    repos.push({ ...repo, ref: tag })
+  }
+  return repos
 }
 
 /** Gets `docs/` and `README.md` of a repository at its locked ref, from GitHub's tarball. */

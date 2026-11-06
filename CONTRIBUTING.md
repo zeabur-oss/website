@@ -89,8 +89,11 @@ install script runs. Licenses must be OSI-approved.
 
 ## Product documentation
 
-Fix a docs page in its own repository, then move that repository's ref in `docs.lock.json`. Run
-`bun scripts/docs-check.ts <checkout>` there before you open the pull request.
+`docs.lock.json` pins each repository's docs to a release tag, and the product pages and the
+landing page show the same version. Renovate opens a pull request when a repository publishes a full
+release. Fix a docs page in its own repository and run `bun scripts/docs-check.ts <checkout>` there
+before you open the pull request. The fix reaches the
+site with that repository's next release; a docs-only patch release is fine.
 
 ## Copy
 
