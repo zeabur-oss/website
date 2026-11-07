@@ -4,7 +4,7 @@ import { visit } from "unist-util-visit"
 import type { VFile } from "vfile"
 
 const notesClass =
-  "grid gap-[0.6em] group-has-checked/terms:mt-[0.2em] group-has-checked/terms:mb-[1.4em] print:hidden"
+  "grid gap-[0.6em] overflow-clip group-has-checked/terms:mt-[0.2em] group-has-checked/terms:mb-[1.4em] print:hidden"
 
 function element(
   name: string,
