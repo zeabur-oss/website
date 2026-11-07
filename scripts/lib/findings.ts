@@ -29,6 +29,7 @@ export type FindingCode =
   | "link-github-docs"
   | "link-github-docs-other"
   | "link-github-own"
+  | "image-outside-docs"
   | "link-missing"
   | "link-unpublished"
   | "import-export"

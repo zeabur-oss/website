@@ -9,6 +9,7 @@ import {
   classifyLink,
   githubDocsLink,
   githubFileLink,
+  isDocsAsset,
   resolveImage,
   type RepoFiles,
 } from "../../src/mdx/links.ts"
@@ -111,7 +112,16 @@ export function checkPage(
       return
     }
     const target = classifyLink(href, path, repoFiles)
-    if (target.kind === "missing") {
+    if (image && (target.kind === "file" || target.kind === "dir") && !isDocsAsset(target.path)) {
+      // Only files under docs/ are copied to /docs-assets/, where the site serves images from.
+      add(
+        "error",
+        "image-outside-docs",
+        path,
+        `${href} is ${target.path}, outside docs/, so the site cannot show it; move it under docs/`,
+        line,
+      )
+    } else if (target.kind === "missing") {
       if (image && resolveImage(target.path, repoFiles)) return
       add(
         "error",

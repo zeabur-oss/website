@@ -91,6 +91,21 @@ describe("docs-check", () => {
     ])
   })
 
+  test("an image outside docs/ is not served", async () => {
+    const { "docs/index.mdx": _, ...rest } = repo
+    const found = await check({
+      ...rest,
+      "assets/logo.png": "png",
+      "docs/images/x.png": "png",
+      "docs/start/install.mdx": page("![a](../../assets/logo.png) ![b](../images/x.png)"),
+      "README.md": "# Demo\n\n![a](assets/logo.png) ![b](docs/images/x.png)\n",
+    })
+    expect(found).toEqual([
+      "error image-outside-docs README.md:3",
+      "error image-outside-docs docs/start/install.mdx:5",
+    ])
+  })
+
   test("pages and the README link to the repository's files relatively", async () => {
     // Without docs/index.mdx the README is the home page, so it is checked too.
     const { "docs/index.mdx": _, ...rest } = repo
