@@ -1,18 +1,18 @@
 ---
 // The explanation of a Term, placed below its paragraph by remarkTerms. The rule below opens it
-// when its Term's checkbox is checked. The note grows and shrinks in height instead of moving,
-// so it never covers the paragraph and the text below it follows smoothly.
+// when its Term's checkbox is checked. The note wipes open and shut in height without fading or
+// moving, so its text stays legible as it appears and it never covers the paragraph.
 interface Props {
   word: string
   id: string
 }
 const { word, id } = Astro.props
-const open = `.term-block:has(#${id}:checked) #${id}-note { grid-template-rows: 1fr; opacity: 1; visibility: visible }`
+const open = `.term-block:has(#${id}:checked) #${id}-note { grid-template-rows: 1fr; visibility: visible }`
 ---
 
 <div
   id={`${id}-note`}
-  class="invisible grid grid-rows-[0fr] opacity-0 motion-safe:transition-[grid-template-rows,opacity,visibility] motion-safe:duration-200 motion-safe:ease-[ease] print:hidden!"
+  class="invisible grid grid-rows-[0fr] motion-safe:transition-[grid-template-rows,visibility] motion-safe:duration-200 motion-safe:ease-[cubic-bezier(0.2,0,0,1)] print:hidden!"
 >
   <div class="min-h-0 overflow-hidden">
     <aside class="mt-[0.2em] mb-[0.4em] border-t-2 border-site-accent bg-site-bg-soft px-[1em] py-[0.8em] text-[0.92em] text-site-muted">

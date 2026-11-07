@@ -110,5 +110,5 @@ explanation below its paragraph and assigns IDs at build time; keep `id` out of 
 `Term.astro` renders a checkbox styled as the arrow icon, and its label makes the word clickable.
 `TermNote.astro` renders the explanation with a CSS rule that opens it when that checkbox is
 checked. Notes stay in article order, several can be open, and none needs JavaScript. A note
-grows in height and fades in over 200ms, and closing reverses it. The note never moves, so it
-never covers the paragraph. Reduced-motion settings turn both off.
+wipes open in height over 200ms without fading, and closing reverses it. The note never moves,
+so it never covers the paragraph. Reduced-motion settings turn the motion off.
