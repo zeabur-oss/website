@@ -169,6 +169,16 @@ export function checkPage(
       case "image":
         checkRef(node.url, line, true)
         break
+      case "imageReference":
+        // The site rewrites a definition as a link, so the image would point to a GitHub page.
+        add(
+          "error",
+          "image-reference",
+          path,
+          `![${node.alt ?? ""}][${node.identifier}] is a reference-style image; write it inline`,
+          line,
+        )
+        break
       case "html":
         for (const m of node.value.matchAll(/\s(href|src|srcset)="([^"]+)"/g)) {
           checkRef(m[2]!.split(/[\s,]+/)[0]!, line, m[1] !== "href")

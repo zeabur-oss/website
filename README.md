@@ -89,7 +89,7 @@ are not published, published pages that are gone without a `redirects.yaml` entr
 unpublished pages, frontmatter fields other than `title`, `description` (and `source` in
 translations), `import`/`export`, unknown components, props that are not literals or do not match
 the registry, GitHub URLs of docs pages, and GitHub URLs of files in the page's own
-repository, and images outside `docs/`, which the site does not serve. It lists stale translations and
+repository, and images outside `docs/` or written by reference, which the site does not serve. It lists stale translations and
 pages that are not published.
 
 ## Design system
