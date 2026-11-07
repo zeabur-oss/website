@@ -104,3 +104,12 @@ twice the pixel density: show every product image at half its width or less, wit
 
 Blog drafts (`draft: true`) show in `bun run dev` only. `BLOG_DRAFTS=1 bun run build` keeps them
 in a build for review.
+
+Use `<Term word="…">explanation</Term>` for inline blog annotations. `remarkTerms` moves each
+explanation below its paragraph and assigns IDs at build time. `Term.astro` renders a checkbox
+styled as the arrow icon; its label also makes the word clickable. `TermNote.astro` renders the
+explanation. Tailwind handles appearance, layout, focus, and motion. The plugin emits one CSS
+rule per post to connect checked inputs to their notes. Multiple annotations stay in article
+order and can remain open together without JavaScript. Keep `id` out of posts; the plugin supplies it.
+Opening uses a 200ms slide and fade through `@starting-style`. Closing only fades, so the note
+does not move over the paragraph. Reduced-motion settings disable both transitions.

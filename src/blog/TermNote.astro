@@ -1,0 +1,15 @@
+---
+interface Props {
+  word: string
+  id: string
+}
+const { word, id } = Astro.props
+---
+
+<aside
+  id={`${id}-note`}
+  class="term-note translate-y-0 border-t-2 border-site-accent bg-site-bg-soft px-[1em] py-[0.8em] text-[0.92em] text-site-muted opacity-[var(--term-opacity,0)] [display:var(--term-display,none)] motion-safe:transition-[display,opacity,translate] motion-safe:transition-discrete motion-safe:duration-200 motion-safe:ease-[ease] starting:-translate-y-[0.4em] starting:opacity-0 print:hidden!"
+>
+  <span class="mb-[0.2em] block font-semibold text-site-text">{word}</span>
+  <slot />
+</aside>
