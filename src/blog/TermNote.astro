@@ -1,9 +1,13 @@
 ---
+// The explanation of a Term, placed below its paragraph by remarkTerms. The rule below opens it
+// when its Term's checkbox is checked. It sets only custom properties, so the classes keep the
+// @starting-style values that animate the opening.
 interface Props {
   word: string
   id: string
 }
 const { word, id } = Astro.props
+const open = `.term-block:has(#${id}:checked) #${id}-note { --term-display: block; --term-opacity: 1 }`
 ---
 
 <aside
@@ -13,3 +17,4 @@ const { word, id } = Astro.props
   <span class="mb-[0.2em] block font-semibold text-site-text">{word}</span>
   <slot />
 </aside>
+<style is:inline set:html={open}></style>
