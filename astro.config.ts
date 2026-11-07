@@ -10,6 +10,7 @@ import { starlightIcons } from "./src/lib/icons.ts"
 import { githubOrg } from "./src/lib/site.ts"
 import { docsUrl, localePrefix, locales, siteOrigin } from "./src/lib/urls.ts"
 import { rehypeReferences } from "./src/blog/rehype-references.ts"
+import { remarkTerms } from "./src/blog/remark-terms.ts"
 import { rehypeDocsHtml } from "./src/mdx/rehype-docs-html.ts"
 import { remarkDocs } from "./src/mdx/remark-docs.ts"
 
@@ -45,7 +46,7 @@ export default defineConfig({
   redirects,
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkDocs],
+      remarkPlugins: [remarkDocs, remarkTerms],
       rehypePlugins: [rehypeDocsHtml, rehypeReferences],
       smartypants: false,
     }),

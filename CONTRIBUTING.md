@@ -104,3 +104,11 @@ twice the pixel density: show every product image at half its width or less, wit
 
 Blog drafts (`draft: true`) show in `bun run dev` only. `BLOG_DRAFTS=1 bun run build` keeps them
 in a build for review.
+
+Use `<Term word="…">explanation</Term>` for inline blog annotations. `remarkTerms` moves each
+explanation below its paragraph and assigns IDs at build time; keep `id` out of posts.
+`Term.astro` renders a checkbox styled as the arrow icon, and its label makes the word clickable.
+`TermNote.astro` renders the explanation with a CSS rule that opens it when that checkbox is
+checked. Notes stay in article order, several can be open, and none needs JavaScript. A note
+wipes open in height over 200ms without fading, and closing reverses it. The note never moves,
+so it never covers the paragraph. Reduced-motion settings turn the motion off.

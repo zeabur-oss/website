@@ -1,110 +1,21 @@
 ---
-// A term the reader can tap for its explanation, like 報導者's annotations. The explanation opens
-// below the paragraph so the sentence itself is never split.
-import Icon from "../components/Icon.astro"
+import { iconDataUri } from "../lib/icons.ts"
 
 interface Props {
   word: string
+  id: string
 }
-const id = `term-${Math.random().toString(36).slice(2, 8)}`
+const { word, id } = Astro.props
+const caret = iconDataUri("caret-circle-down")
 ---
 
-<button type="button" class="term-word" aria-expanded="false" aria-controls={id}>
-  {Astro.props.word}
-  <Icon name="caret-circle-down" class="term-caret" />
-</button>
-<span class="term-note" id={id} hidden>
-  <span class="term-note-word">{Astro.props.word}</span>
-  <slot />
-</span>
-
-<script>
-  document.addEventListener("click", (event) => {
-    const button = (event.target as Element).closest?.(".term-word")
-    const note = document.getElementById(button?.getAttribute("aria-controls") ?? "")
-    if (!button || !note) return
-    const open = button.getAttribute("aria-expanded") !== "true"
-    button.setAttribute("aria-expanded", String(open))
-    note.hidden = !open
-    if (!open) return
-
-    const block = button.closest("p, li") ?? button.parentElement!
-    let notes = block.nextElementSibling
-    if (!notes?.classList.contains("term-notes")) {
-      notes = document.createElement("div")
-      notes.className = "term-notes"
-      block.after(notes)
-    }
-    for (const word of block.querySelectorAll(".term-word")) {
-      const own = document.getElementById(word.getAttribute("aria-controls") ?? "")
-      if (own && (own === note || own.parentElement === notes)) notes.append(own)
-    }
-  })
-</script>
-
-<style is:global>
-  .term-word {
-    display: inline;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--site-accent);
-    font: inherit;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  .term-caret {
-    display: inline-block;
-    width: 1.05em;
-    height: 1.05em;
-    margin-left: 0.12em;
-    vertical-align: -0.15em;
-    transition: transform 200ms ease;
-  }
-  .term-word[aria-expanded="true"] .term-caret {
-    transform: rotate(180deg);
-  }
-  .term-notes {
-    display: grid;
-    gap: 0.6em;
-    margin: 0.2em 0 1.4em;
-  }
-  .term-note:not([hidden]) {
-    display: block;
-    padding: 0.8em 1em;
-    border-top: 2px solid var(--site-accent);
-    background: var(--site-bg-soft);
-    color: var(--site-muted);
-    font-size: 0.92em;
-    animation: term-open 200ms ease;
-  }
-  .term-note-word {
-    display: block;
-    margin-bottom: 0.2em;
-    color: var(--site-text);
-    font-weight: 600;
-  }
-  @keyframes term-open {
-    from {
-      opacity: 0;
-      transform: translateY(-0.4em);
-    }
-  }
-  @media print {
-    .term-word {
-      color: inherit;
-    }
-    .term-caret,
-    .term-notes,
-    .term-note {
-      display: none !important;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .term-caret,
-    .term-note:not([hidden]) {
-      transition: none;
-      animation: none;
-    }
-  }
-</style>
+<label class="term-word cursor-pointer whitespace-nowrap text-site-accent has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-site-accent print:text-inherit">
+  {word}
+  <input
+    type="checkbox"
+    id={id}
+    aria-controls={`${id}-note`}
+    class="term-toggle m-0 ml-[0.12em] inline-block size-[1.05em] cursor-pointer appearance-none border-0 bg-current p-0 align-[-0.15em] mask-contain mask-center mask-no-repeat [mask-image:var(--term-icon)] checked:rotate-180 motion-safe:transition-transform motion-safe:duration-200 forced-colors:appearance-auto forced-colors:bg-transparent forced-colors:[mask-image:none] forced-colors:checked:rotate-0 print:hidden"
+    style={{ "--term-icon": caret }}
+  />
+</label>

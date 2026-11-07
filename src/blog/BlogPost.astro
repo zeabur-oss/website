@@ -12,6 +12,7 @@ import HeadingText from "./HeadingText.astro"
 import MorePosts from "./MorePosts.astro"
 import OpenSource from "./covers/OpenSource.astro"
 import PostToc from "./PostToc.astro"
+import TermNote from "./TermNote.astro"
 
 // Title, dates, the text in one 44rem column with its contents beside it, then the other posts.
 interface Props {
@@ -99,7 +100,7 @@ const image = `/og/blog/${locale}/${slug}.png`
 
   <article class="wrap section grid items-start gap-12 before:col-span-full before:mt-10 before:mb-2 grid-cols-[minmax(0,1fr)] min-[1100px]:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] print:max-w-none print:p-0 print:before:hidden">
     <div class="prose">
-      <Content />
+      <Content components={{ TermNote }} />
     </div>
     <PostToc headings={headings} label={t.toc} />
   </article>
