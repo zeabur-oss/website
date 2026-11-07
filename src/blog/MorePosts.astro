@@ -4,7 +4,6 @@ import Icon from "../components/Icon.astro"
 import { blogUrl, type SiteLocale } from "../lib/urls.ts"
 import { postUrl, type Post } from "./blog.ts"
 import { blogCopy } from "./copy.ts"
-import HeadingText from "./HeadingText.astro"
 
 interface Props {
   posts: Post[]
@@ -29,8 +28,8 @@ const t = blogCopy[locale]
             href={postUrl(p)}
             class="group grid gap-1.5 border-b border-site-line py-5 text-inherit no-underline"
           >
-            <span class="text-xl font-semibold group-hover:text-site-accent">
-              <HeadingText text={p.data.title} locale={locale} />
+            <span class="text-xl font-semibold text-balance group-hover:text-site-accent">
+              {p.data.title}
             </span>
             <span class="body">{p.data.description}</span>
           </a>

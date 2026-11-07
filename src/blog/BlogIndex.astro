@@ -5,7 +5,6 @@ import Site from "../layouts/Site.astro"
 import { blogUrl, type SiteLocale } from "../lib/urls.ts"
 import { dateFormat, postSlug, postsFor, postUrl } from "./blog.ts"
 import { blogCopy } from "./copy.ts"
-import HeadingText from "./HeadingText.astro"
 
 interface Props {
   locale: SiteLocale
@@ -57,9 +56,7 @@ const date = dateFormat(locale, "medium")
               </time>
               <span class="grid gap-2">
                 <span class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[clamp(1.25rem,1.1rem+0.6vw,1.625rem)] leading-[1.3] font-semibold tracking-[-0.015em] group-hover:text-site-accent zh:tracking-normal">
-                  <span>
-                    <HeadingText text={post.data.title} locale={locale} />
-                  </span>
+                  <span class="text-balance">{post.data.title}</span>
                   {post.data.draft && <span class="pill">{t.draft}</span>}
                 </span>
                 <span class="body">{post.data.description}</span>

@@ -8,7 +8,6 @@ import { authors } from "./authors.ts"
 import { blogCopy } from "./copy.ts"
 import { organization } from "../lib/seo.ts"
 import { blogUrl, locales, siteOrigin } from "../lib/urls.ts"
-import HeadingText from "./HeadingText.astro"
 import MorePosts from "./MorePosts.astro"
 import OpenSource from "./covers/OpenSource.astro"
 import PostToc from "./PostToc.astro"
@@ -65,10 +64,10 @@ const image = `/og/blog/${locale}/${slug}.png`
       {t.back}
     </a>
     <h1 class="display max-w-[18em] text-[clamp(2rem,1.6rem+1.8vw,3.25rem)] print:max-w-none print:text-[20pt] print:leading-[1.35]">
-      <HeadingText text={title} locale={locale} />
+      {title}
     </h1>
     <p class="lead max-w-[40rem] print:max-w-none print:text-[11pt] print:leading-[1.7] print:text-[#444]">
-      <HeadingText text={description} locale={locale} />
+      {description}
     </p>
     <p class="flex flex-wrap items-center gap-x-6 gap-y-1 type-body text-site-faint print:text-[8.5pt] print:text-[#666]">
       <a
