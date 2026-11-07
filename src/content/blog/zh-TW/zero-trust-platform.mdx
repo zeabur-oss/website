@@ -1,0 +1,205 @@
+---
+title: 打造 Zero-Trust PaaS
+description: 在平台上刪掉一個 Deployment，實際上用的是誰的權限？從這個操作開始，看看 Zeabur 開源版怎麼把 OIDC 登入和 Kubernetes 的 RBAC 接起來。
+pubDate: 2026-11-07
+author: pan93412
+---
+
+import Term from "../../../blog/Term.astro"
+import PostFigure from "../../../blog/PostFigure.astro"
+
+假如你在平台上按下「刪除服務」，平台會怎麼幫你刪掉 Kubernetes 裡的 Deployment？
+
+最直覺的做法，是給平台一個能操作叢集的 <Term word="ServiceAccount">Kubernetes 給程式用的帳號。程式拿著這個帳號的權杖呼叫 Kubernetes API，能做哪些事由叢集裡的 RBAC 設定決定。</Term>。平台先檢查你能不能刪這個服務，通過之後，再用自己的 ServiceAccount 呼叫 Kubernetes API。如果這個帳號可以操作所有 <Term word="Namespace">Kubernetes 用來分隔資源的空間，像是 `dev`、`production`。權限可以只開放到某個 Namespace。</Term>，那使用者最後能做什麼，就得靠平台的權限檢查來限制。
+
+Zeabur 開源版直接讓 Kubernetes 處理這件事：使用者登入後，它就拿著使用者的權杖呼叫同一個 API。如果使用者只能刪 `dev` Namespace 裡的 Deployment，那這位使用者透過 Zeabur 開源版刪除 `production` 裡的 Deployment 時，<Term word="kube-apiserver">Kubernetes 的 API 伺服器。不管是 `kubectl` 還是其他程式，讀寫叢集資源的請求都要經過它，由它確認身分、檢查權限。</Term> 就會依 <Term word="RBAC">Role-Based Access Control，依角色控制存取。Kubernetes 用 Role、ClusterRole 寫明能對哪些資源做哪些操作，再用 RoleBinding、ClusterRoleBinding 把角色交給使用者或群組。</Term> 拒絕這個請求[^user-client]。
+
+## 平台被入侵，為什麼會影響到客戶？
+
+2026 年 10 月，短短一個月內就有好幾個開發平台被入侵。Wiz 統計，當月至少有九個 AI 開發平台公布資安事件，攻擊者找的幾乎都是平台保存的環境變數，特別是 AI 服務的 API key[^wiz-black-october]。
+
+Zeabur 是其中一個。攻擊者取得一份沒有到期時間的叢集管理權杖，一路走到平台資料庫，外洩 321,810 個帳號的資料和 3,218,965 筆環境變數紀錄[^zeabur-october]。一週後，Railway 的攻擊者從建置基礎設施提升權限，再拿到 CI 環境的認證資訊，解密了一部分加密保存的環境變數，最多約 10 萬個 workspace 受影響[^railway]。到了月底，Northflank 控制平面保存的 secret 也被解密，有客戶回報 AI API key 遭到盜用，Northflank 只能請所有客戶假設環境變數都已外洩，全部輪替[^northflank]。
+
+這些事以前也發生過。Zeabur 8 月的入口是使用者容器裡的漏洞，攻擊者最後走到正式資料庫，拿到專案環境變數的名稱與值[^zeabur-august]。Vercel 的入口是員工用的第三方 AI 工具[^vercel]，CircleCI 是工程師筆電上的惡意程式[^circleci]，GitHub 整合則是 Heroku 和 Travis CI 保存的 OAuth 權杖被盜[^github]。Codecov 的上傳工具被竄改後，直接在客戶的 CI 環境裡把環境變數傳出去[^codecov]。
+
+入口各不相同，攻擊者要的東西卻都一樣。**平台保存著客戶的資料，也握有存取客戶資源的認證資訊**。而這些資料通常只靠平台裡的另一把鑰匙保護：Zeabur 的叢集管理權杖、Railway 的 CI 認證資訊。加密也擋不住，因為解密用的金鑰同樣在平台手上，Railway、Northflank 的環境變數都被解開，CircleCI 的加密金鑰則直接從執行中的行程被取出。
+
+**攻擊者只要打穿平台，就能拿平台的身分讀到所有客戶的資料**。平台被攻陷，就等於客戶被攻陷。
+
+## 讓使用者不必信任平台
+
+NIST SP 800-207 描述的 Zero Trust，是不因為請求來自內網，或使用的是公司的裝置，就直接信任它。存取資源前還是要認證、授權，並且只給操作需要的權限[^nist]。
+
+把這個原則套在平台自己身上：**使用者不必信任平台**。平台不持有一份能操作所有客戶資源的認證資訊，而是拿著使用者的權限，替使用者操作——每個請求能不能做，由資源那一端依使用者的身分判斷。
+
+這樣**就算攻擊者打穿了平台，手上也沒有一把萬能鑰匙**。能碰到的，只有正在使用平台的人的權杖，權限不會超過那個人本來能做的事，也都有到期時間。CircleCI 在事故後建議改用 <Term word="OIDC">OpenID Connect，建立在 OAuth 2.0 上的登入標準。確認使用者身分、簽發權杖的一方叫 issuer，它會公開驗章用的公開金鑰，收到權杖的服務驗過簽章，就知道權杖是誰發的、發給誰。CI 用的 OIDC 權杖由 CI 平台簽發，很快就到期，雲端服務驗章後才給存取權，CI 裡就不必存放長期有效的金鑰。</Term> 權杖、減少儲存長效認證資訊，也是同一個方向[^circleci]。
+
+回到前面刪 Deployment 的例子，Zeabur 開源版直接用使用者的權杖操作，就不用另外保管一份能操作所有 Namespace 的共用認證資訊。你用 Zeabur 開源版和自己用 kubectl，會經過同一套 RBAC。
+
+理論是這樣，實務上在 Kubernetes 要怎麼做到？
+
+## Kubernetes 怎麼知道權杖是誰的？
+
+先假設 Alice 已經登入，拿到一個簽過章的 <Term word="JWT">JSON Web Token，常見的權杖格式。內容是一段 JSON，寫著使用者名稱、群組、到期時間等資訊，再加上簽發者的簽章。</Term>。這個權杖裡有使用者名稱和群組，但 kube-apiserver 要怎麼確定這是 Alice，而不是有人自己編了一個權杖就送過來？
+
+Kubernetes 原本就支援 OIDC 認證[^authentication]。叢集管理員會設定它信任哪個 issuer，也就是簽發權杖的認證伺服器。kube-apiserver 使用這個 issuer 的公開金鑰驗章，再把權杖的 claim 對應成 Kubernetes 的使用者和群組。如果權杖過期，或不是信任的 issuer 簽的，就不能通過認證。
+
+接著才是 RBAC。比如 Alice 屬於 `dev` 群組，管理員給這個群組操作 `dev` Namespace 的權限，那 Alice 就能在這個 Namespace 裡操作資源。RBAC 的權限會累加，沒有 deny 規則，所以如果管理員又從其他綁定給了 Alice 更大的權限，Alice 也會一起拿到[^rbac]。
+
+Zeabur 開源版只需要把 Alice 的權杖放進請求裡，不用自己再存一份 Alice 能操作哪些 Namespace 的名單。
+
+<PostFigure
+  name="trust-structure"
+  label="左邊是平台用自己的 ServiceAccount 呼叫 kube-apiserver，能碰到每個 Namespace。右邊是 Zeabur 開源版轉交 Alice 的權杖，kube-apiserver 驗證權杖、再依 RBAC 判斷，dev 可以、production 被拒絕"
+/>
+
+上圖右邊就是這個流程。Zeabur Identity 負責讓使用者登入並簽發權杖，Zeabur 開源版轉交權杖，kube-apiserver 驗章後執行 RBAC 檢查。左邊則是由平台持有共用高權限認證資訊、再自行檢查使用者權限的做法。
+
+### 把 Zeabur Identity 的使用者接到 RBAC
+
+Zeabur Identity 是 Zeabur 開源版的 OIDC issuer，登入以<Term word="通行密鑰">Passkey。用手機或電腦的指紋、臉部辨識或螢幕鎖登入，不用密碼。私鑰只留在裝置裡，網站只存公開金鑰，而且通行密鑰綁定網站的網域，假網站拿不到能用的登入憑證。</Term>為主。它記錄使用者和群組，至於每個群組能操作哪些 Kubernetes 資源，就由叢集管理員設定[^users]。
+
+`zeabur-identityctl kube-config` 會產生 kube-apiserver 使用的 `AuthenticationConfiguration`。比如 Zeabur Identity 的 `alice` 會對應成 Kubernetes 裡的 `zeabur:alice`，`dev` 群組會變成 `zeabur:dev`。加上 `zeabur:` 字首之後，這套對應產生的身分就不會和 `system:` 開頭的內建身分混在一起[^identity-config]。
+
+所以，如果你要讓 `dev` 群組編輯 `dev` Namespace，就可以建立這個 RoleBinding。Zeabur Identity 的文件也建議綁群組，不要一個使用者一個使用者地綁[^users]：
+
+```sh
+kubectl create rolebinding dev-edit --clusterrole=edit --group=zeabur:dev -n dev
+```
+
+之後 Alice 登入，權杖裡有 `dev` 群組，kube-apiserver 就會透過這個綁定給 Alice 對應的權限。Zeabur Identity 自己的 ServiceAccount 不能建立 RBAC 物件，也沒有 `impersonate`。它能讀的 Secret 只有自己的那幾份，而且要指名讀取。預設的管理員綁定，是叢集管理員安裝時用自己的權限套用的[^identity-rbac]。
+
+## 誰發卡？誰開門？
+
+如果前面的 issuer、驗章和 RBAC 有點抽象，可以把它想成飯店房卡。
+
+Zeabur Identity 是櫃檯，你用通行密鑰登入，就像拿證件辦理入住。櫃檯發一張寫著「Alice、dev 團隊」的房卡給你。kube-apiserver 是門鎖，它會檢查這張卡是不是櫃檯發的，再查 dev 團隊可以進哪些房間（RBAC）。Zeabur 開源版則是幫你拿卡跑腿的人，用你的卡開門，不另外帶一把能開所有房間的鑰匙。
+
+不過這張卡要多久才過期呢？如果它可以一直用，平台拿到之後就能一直代你操作。Zeabur Identity 的一般存取權杖預設 10 分鐘到期，管理員帳號的預設 5 分鐘。工作階段內可以用更新權杖換新卡，所以不必每 10 分鐘按一次通行密鑰。不過工作階段預設閒置 1 小時就會結束，而且不論怎麼續，預設最長都是登入後 12 小時[^admin-sessions]。
+
+Kubernetes v1.34 起穩定支援的 Structured Authentication Configuration，可以用 <Term word="CEL">Common Expression Language，Google 設計的運算式語言。Kubernetes 用它在設定裡寫條件，例如檢查權杖裡某個 claim 的值。它只能算出結果，不能執行任意程式。</Term> 檢查權杖的 claim[^kep-3331]。Zeabur Identity 產生的設定就會讓 kube-apiserver 檢查權杖壽命，`exp - iat` 超過上限的權杖會被拒絕[^identity-config]。
+
+<PostFigure
+  name="hotel-keycard"
+  label="櫃檯是 Zeabur Identity，確認通行密鑰後發房卡。跑腿的人是 Zeabur 開源版，沒有萬能鑰匙。門鎖是 kube-apiserver，dev 房間開得了，production 開不了"
+/>
+
+> 存取權杖用的是 RFC 9068 的 JWT 格式，裡面一定有 `client_id` claim[^rfc9068]。Zeabur Identity 產生的 kube-apiserver 設定會檢查這個 claim，藉此拒絕 ID token[^identity-config]。
+
+如果平台裡的權杖被偷走，攻擊者就能在有效期間拿它操作 Alice 有權限的資源。如果偷到的是管理員的權杖，能做的事情就更多。所以 Zeabur Identity 的管理員帳號只能用通行密鑰登入，權杖帶有 `zeabur:admins` 群組，安裝時綁到 `cluster-admin`[^identity-rbac]。平常工作建議用另一個一般帳號，需要做叢集管理時，才用管理員帳號登入[^admin-sessions]。
+
+issuer 的簽章金鑰同樣需要保護。kube-apiserver 是依照 Zeabur Identity 簽的身分來授權，如果有人能冒發「這是 Alice」的權杖，就能取得 Alice 對應的權限。
+
+順帶一提，Zeabur Identity 本身是一個小小的 Pod，登入後的記憶體用量在 30 MiB 以內，也沒有自己的資料庫。使用者、認證資訊和工作階段都存成 Kubernetes 的自訂資源[^identity-architecture]。
+
+## 平台要怎麼變成 OAuth client？
+
+Zeabur 開源版是 Zeabur Identity 的 OAuth client[^rfc6749]，登入使用 authorization code flow 加 <Term word="PKCE">Proof Key for Code Exchange。登入開始時，client 先送出一個隨機值的雜湊，之後拿授權碼換權杖時，要出示原本的隨機值。授權碼就算被攔截，沒有這個值也換不到權杖。</Term>[^rfc7636]，相關安全設定參照 RFC 9700[^rfc9700][^auth-client]。先把它註冊成 <Term word="confidential client">能安全保存 client secret 的 OAuth client，通常是在伺服器上執行的程式，換權杖時要出示 client secret。相對的是 public client，像瀏覽器裡的單頁應用或手機 App，程式碼在使用者手上，藏不住密鑰。</Term>[^installation]：
+
+```sh
+zeabur-identityctl client create zeabur \
+  --type confidential \
+  --audience kubernetes \
+  --display-name Zeabur \
+  --redirect-uri https://zeabur.example.com/auth/callback \
+  --home-url https://zeabur.example.com/ \
+  | kubectl apply -f -
+```
+
+登入流程大概長這樣：
+
+<PostFigure
+  name="login-flow"
+  label="瀏覽器、Zeabur 開源版、Zeabur Identity 和 kube-apiserver 四條線：通行密鑰登入、用 code 和 PKCE 換權杖，之後每個請求都帶使用者的權杖，快到期時換新"
+/>
+
+虛線是登入時才有的往返。登入之後只剩最下面那兩條實線：Zeabur 開源版每個請求都帶著你的權杖直接問 kube-apiserver。
+
+需要知道你是誰的時候，例如讀取帳號資料，Zeabur 開源版會用 `SelfSubjectReview` 問 kube-apiserver「這份權杖對應誰」，不自己解讀 ID token 來決定使用者身分[^auth-client][^adapter]。
+
+負責呼叫 Kubernetes API 的是 `zeabur-kube` crate。建立 client 時使用當事人的權杖——唯一的例外是終端機，會用 Zeabur 開源版自己的 ServiceAccount[^user-client]。Zeabur 開源版的 ServiceAccount 只綁了一個 Role，用來在終端機專用的 Namespace 裡開 Pod、連進去執行命令[^terminal-rbac]。比如你可以用下面這個指令，檢查它有沒有冒用其他使用者的權限：
+
+```sh
+kubectl auth can-i impersonate users --as=system:serviceaccount:zeabur:zeabur
+```
+
+這個指令問的是 `impersonate users`，其他資源的權限則要換成對應的操作查詢。如果叢集管理員另外替這個 ServiceAccount 綁了角色，查到的結果也會跟著改變。
+
+讀取 Secret 時也是用使用者的權杖。列表只顯示名稱、類型和 key 數量，要顯示值的時候才向 Kubernetes 讀取[^ui-copy]，所以能不能看到內容，是看這個使用者有沒有讀取 Secret 的權限[^adapter][^objects]。
+
+那權限不夠的時候呢？Zeabur 開源版不會換成自己的身分重試。kube-apiserver 拒絕之後，介面會列出這個操作缺少哪些權限，以及 Kubernetes 的原始回應，請使用者找管理員處理[^refused]。在叢集頁面，還能直接複製需要的 ClusterRole 交給管理員[^forbidden]。
+
+![一般帳號檢視節點時權限不足：展開細節後，列出缺少的權限 list nodes、HTTP 狀態碼 403 和 Kubernetes 的回應，下方可以複製 ClusterRole](/blog/zero-trust-platform/refused.avif)
+
+需要親自做叢集管理工作的人，就登出後改用管理員帳號，按一次通行密鑰登入。操作結果還是由這份權杖對應的 RBAC 決定[^admin-sessions]。
+
+![Zeabur Identity 的登入頁，繼續前往 Zeabur，主要按鈕是使用通行密鑰登入](/blog/zero-trust-platform/sign-in.avif)
+
+Zeabur 開源版沒有另外保存一份專案資料，專案就是 Kubernetes 裡的 Namespace。移除 Zeabur 開源版後，工作負載還在，也能繼續用 kubectl、Helm 或原本的 GitOps 工具操作[^uninstall]。如果要停用某個使用者的存取，就修改對應的 RBAC 綁定。
+
+[Zeabur 開源版](https://github.com/zeabur-oss/zeabur)和 [Zeabur Identity](https://github.com/zeabur-oss/identity) 都已公開在 GitHub。有興趣的話，可以從一台伺服器開始裝起來試試。
+
+[^zeabur-october]: Zeabur, “Zeabur 2026 年十月資安事件（初步報告）,” Zeabur Blog, Oct. 19, 2026. [Online]. Available: https://zeabur.com/zh-TW/blogs/october-2026-security-incident (accessed Nov. 7, 2026).
+
+[^zeabur-august]: Zeabur, "Zeabur August 2026 security incident," Zeabur Blog, Sep. 7, 2026. [Online]. Available: https://zeabur.com/blogs/august-2026-security-incident (accessed Oct. 17, 2026).
+
+[^vercel]: Vercel, "Vercel April 2026 security incident," Vercel Knowledge Base, Apr. 2026. [Online]. Available: https://vercel.com/kb/bulletin/vercel-april-2026-security-incident (accessed Oct. 17, 2026).
+
+[^circleci]: CircleCI, "CircleCI Jan 4, 2023 security incident report," CircleCI Blog, Jan. 12, 2023. [Online]. Available: https://circleci.com/blog/jan-4-2023-incident-report/ (accessed Oct. 17, 2026).
+
+[^github]: GitHub, "Security alert: Attack campaign involving stolen OAuth user tokens issued to two third-party integrators," GitHub Blog, Apr. 15, 2022. [Online]. Available: https://github.blog/2022-04-15-security-alert-stolen-oauth-user-tokens/ (accessed Oct. 17, 2026).
+
+[^codecov]: Codecov, "Bash Uploader security update," Codecov, Apr. 2021. [Online]. Available: https://about.codecov.io/security-update/ (accessed Oct. 17, 2026).
+
+[^nist]: S. Rose, O. Borchert, S. Mitchell, and S. Connelly, "Zero trust architecture," National Institute of Standards and Technology, Gaithersburg, MD, USA, NIST SP 800-207, Aug. 2020, doi: 10.6028/NIST.SP.800-207.
+
+[^authentication]: The Kubernetes Authors, "Authenticating," Kubernetes Documentation. [Online]. Available: https://kubernetes.io/docs/reference/access-authn-authz/authentication/
+
+[^rbac]: The Kubernetes Authors, "Using RBAC authorization," Kubernetes Documentation. [Online]. Available: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+
+[^kep-3331]: The Kubernetes Authors, "KEP-3331: Structured authentication config," Kubernetes Contributors. [Online]. Available: https://www.kubernetes.dev/resources/keps/3331/ (accessed Oct. 16, 2026).
+
+[^users]: Zeabur, “新增與管理使用者,” Zeabur Identity documentation. [Online]. Available: https://github.com/zeabur-oss/identity/blob/d4263d1e0089ba6754ce21693489716fa4831617/docs/zh-TW/users/manage-users.mdx (accessed Nov. 7, 2026).
+
+[^identity-config]: Zeabur, “Zeabur Identity: kube-apiserver configuration,” source code. [Online]. Available: https://github.com/zeabur-oss/identity/blob/d4263d1e0089ba6754ce21693489716fa4831617/crates/zeabur-identity-k8s/src/kube_config.rs (accessed Nov. 7, 2026).
+
+[^identity-rbac]: Zeabur, “Zeabur Identity: deployment RBAC,” source code. [Online]. Available: https://github.com/zeabur-oss/identity/blob/d4263d1e0089ba6754ce21693489716fa4831617/crates/zeabur-identity-k8s/src/rbac.rs (accessed Nov. 7, 2026).
+
+[^admin-sessions]: Zeabur, “Admin accounts and sessions,” Zeabur Identity documentation. [Online]. Available: https://github.com/zeabur-oss/identity/blob/d4263d1e0089ba6754ce21693489716fa4831617/docs/users/admin-sessions.mdx (accessed Nov. 7, 2026).
+
+[^identity-architecture]: Zeabur, “Zeabur Identity architecture,” Zeabur Identity documentation. [Online]. Available: https://github.com/zeabur-oss/identity/blob/d4263d1e0089ba6754ce21693489716fa4831617/docs/reference/architecture.mdx (accessed Nov. 7, 2026).
+
+[^rfc9068]: V. Bertocci, "JSON Web Token (JWT) profile for OAuth 2.0 access tokens," IETF, RFC 9068, Oct. 2021. [Online]. Available: https://www.rfc-editor.org/rfc/rfc9068
+
+[^rfc6749]: D. Hardt, Ed., "The OAuth 2.0 authorization framework," IETF, RFC 6749, Oct. 2012. [Online]. Available: https://www.rfc-editor.org/rfc/rfc6749
+
+[^rfc7636]: N. Sakimura, Ed., J. Bradley, and N. Agarwal, "Proof Key for Code Exchange by OAuth public clients," IETF, RFC 7636, Sep. 2015. [Online]. Available: https://www.rfc-editor.org/rfc/rfc7636
+
+[^rfc9700]: T. Lodderstedt, J. Bradley, A. Labunets, and D. Fett, "Best current practice for OAuth 2.0 security," IETF, RFC 9700, Jan. 2025. [Online]. Available: https://www.rfc-editor.org/rfc/rfc9700
+
+[^installation]: Zeabur, “Install Zeabur in an existing cluster,” installation documentation. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/docs/install/existing-cluster.mdx (accessed Nov. 7, 2026).
+
+[^auth-client]: Zeabur, “Zeabur as a confidential OAuth 2.0 client of Zeabur Identity,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-auth/src/client.rs (accessed Nov. 7, 2026).
+
+[^user-client]: Zeabur, “zeabur-kube: Identity and UserClient,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-kube/src/lib.rs (accessed Nov. 7, 2026).
+
+[^adapter]: Zeabur, “zeabur-kube: secret_summaries, whoami, reveal_secret,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-kube/src/adapter.rs (accessed Nov. 7, 2026).
+
+[^objects]: Zeabur, “zeabur-kube: hide_secret_values,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-kube/src/objects.rs (accessed Nov. 7, 2026).
+
+[^terminal-rbac]: Zeabur, “Terminal RBAC,” Helm chart template. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/deploy/chart/zeabur/templates/terminals.yaml (accessed Nov. 7, 2026).
+
+[^refused]: Zeabur, “Refused: missing permissions and Kubernetes response,” interface source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/web/src/components/refused.tsx (accessed Nov. 7, 2026).
+
+[^forbidden]: Zeabur, “Cluster forbidden page: copy ClusterRole,” interface source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/web/src/routes/cluster/forbidden.tsx (accessed Nov. 7, 2026).
+
+[^ui-copy]: Zeabur, “Interface text (zh-TW),” interface source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/web/src/i18n/zh-TW.ts (accessed Nov. 7, 2026).
+
+[^uninstall]: Zeabur, “Remove Zeabur and keep services running,” documentation. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/docs/leave/uninstall.mdx (accessed Nov. 7, 2026).
+
+[^wiz-black-october]: B. Read and R. McCarthy, "“Black October” for AI developer platforms," Wiz Blog, Oct. 30, 2026. [Online]. Available: https://www.wiz.io/blog/black-october-for-ai-developer-platforms (accessed Nov. 7, 2026).
+
+[^railway]: J. Cooper and A. Saraceno, "Preliminary report: Oct 21st security incident," Railway Blog, Oct. 22, 2026. [Online]. Available: https://blog.railway.com/p/preliminary-report-october-security-incident (accessed Nov. 7, 2026).
+
+[^northflank]: Northflank, "Security incident," Northflank Status, Nov. 6, 2026. [Online]. Available: https://status.northflank.com/ (accessed Nov. 7, 2026).
+

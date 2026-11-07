@@ -1,0 +1,293 @@
+---
+// Zeabur Identity as the front desk, kube-apiserver as the door lock, Zeabur as the runner who
+// opens doors with the guest's own card.
+import Icon from "../../components/Icon.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import FigArrow from "./FigArrow.astro"
+import FigNode from "./FigNode.astro"
+import { figureCopy } from "./text.ts"
+
+interface Props {
+  label: string
+  locale: SiteLocale
+}
+
+const copy = {
+  "zh-TW": {
+    actors: [
+      { icon: "user", name: "客人", kind: "使用者", note: "帶著通行密鑰" },
+      { icon: "fingerprint", name: "櫃檯", kind: "Zeabur Identity", note: "核對身分，發房卡" },
+      {
+        icon: "person-simple-walk",
+        name: "跑腿的人",
+        kind: "Zeabur 開源版",
+        note: "拿你的房卡去開門",
+      },
+      { icon: "lock-key", name: "門鎖", kind: "kube-apiserver", note: "驗卡後依 RBAC 開門" },
+    ],
+    hands: [
+      { label: "通行密鑰", icon: "fingerprint" },
+      { label: "房卡", icon: "identification-card" },
+      { label: "出示房卡", icon: "identification-card" },
+    ],
+    card: {
+      title: "房卡就是存取權杖",
+      note: "卡上只寫「這是 Alice，屬於 dev 群組」",
+      items: [
+        { icon: "timer", kind: "一般帳號", name: "10 分鐘到期" },
+        { icon: "timer", kind: "管理員帳號", name: "5 分鐘到期", note: "多帶 admins 群組" },
+      ],
+    },
+    rooms: {
+      title: "門鎖開哪些房間",
+      note: "依卡上的群組查 RBAC",
+      items: [
+        { icon: "door-open", kind: "dev 的房間", name: "開門", note: "dev Namespace 裡的服務" },
+        {
+          icon: "door",
+          kind: "production 的房間",
+          name: "打不開",
+          note: "沒有這裡的 RoleBinding",
+          accent: true,
+        },
+      ],
+    },
+    notes: [
+      "櫃檯事先把公開金鑰交給門鎖，門鎖自己驗卡，開門不必問櫃檯。",
+      "對照：平台用自己的高權限 ServiceAccount，就像跑腿的人身上掛著整棟飯店的萬能鑰匙。",
+    ],
+  },
+  en: {
+    actors: [
+      { icon: "user", name: "Guest", kind: "User", note: "Has a passkey" },
+      {
+        icon: "fingerprint",
+        name: "Front desk",
+        kind: "Zeabur Identity",
+        note: "Checks who you are, issues the key card",
+      },
+      {
+        icon: "person-simple-walk",
+        name: "Runner",
+        kind: "Zeabur Open Source",
+        note: "Opens doors with your key card",
+      },
+      {
+        icon: "lock-key",
+        name: "Door lock",
+        kind: "kube-apiserver",
+        note: "Checks the card, then opens by RBAC",
+      },
+    ],
+    hands: [
+      { label: "Passkey", icon: "fingerprint" },
+      { label: "Key card", icon: "identification-card" },
+      { label: "Shows the key card", icon: "identification-card" },
+    ],
+    card: {
+      title: "The key card is the access token",
+      note: "All it says is “Alice, dev group”",
+      items: [
+        { icon: "timer", kind: "Regular account", name: "Expires in 10 minutes" },
+        {
+          icon: "timer",
+          kind: "Admin account",
+          name: "Expires in 5 minutes",
+          note: "Also carries the admins group",
+        },
+      ],
+    },
+    rooms: {
+      title: "Which rooms the lock opens",
+      note: "Looks up RBAC for the card's groups",
+      items: [
+        {
+          icon: "door-open",
+          kind: "dev rooms",
+          name: "Opens",
+          note: "Services in the dev Namespace",
+        },
+        {
+          icon: "door",
+          kind: "production rooms",
+          name: "Stays locked",
+          note: "No RoleBinding here",
+          accent: true,
+        },
+      ],
+    },
+    notes: [
+      "The front desk gives the lock its public key in advance, so the lock checks cards on its own without calling the desk.",
+      "Compare: a platform that uses its own high-privilege ServiceAccount is a runner carrying a master key to the whole hotel.",
+    ],
+  },
+  "zh-CN": {
+    actors: [
+      { icon: "user", name: "客人", kind: "用户", note: "带着通行密钥" },
+      { icon: "fingerprint", name: "前台", kind: "Zeabur Identity", note: "核对身份，发房卡" },
+      {
+        icon: "person-simple-walk",
+        name: "跑腿的人",
+        kind: "Zeabur 开源版",
+        note: "拿你的房卡去开门",
+      },
+      { icon: "lock-key", name: "门锁", kind: "kube-apiserver", note: "验卡后按 RBAC 开门" },
+    ],
+    hands: [
+      { label: "通行密钥", icon: "fingerprint" },
+      { label: "房卡", icon: "identification-card" },
+      { label: "出示房卡", icon: "identification-card" },
+    ],
+    card: {
+      title: "房卡就是访问令牌",
+      note: "卡上只写“这是 Alice，属于 dev 组”",
+      items: [
+        { icon: "timer", kind: "普通账号", name: "10 分钟过期" },
+        { icon: "timer", kind: "管理员账号", name: "5 分钟过期", note: "多带 admins 组" },
+      ],
+    },
+    rooms: {
+      title: "门锁开哪些房间",
+      note: "按卡上的组查 RBAC",
+      items: [
+        { icon: "door-open", kind: "dev 的房间", name: "开门", note: "dev Namespace 里的服务" },
+        {
+          icon: "door",
+          kind: "production 的房间",
+          name: "打不开",
+          note: "这里没有 RoleBinding",
+          accent: true,
+        },
+      ],
+    },
+    notes: [
+      "前台事先把公钥交给门锁，门锁自己验卡，开门不用问前台。",
+      "对照：平台用自己的高权限 ServiceAccount，就像跑腿的人身上挂着整栋酒店的万能钥匙。",
+    ],
+  },
+}
+const t = figureCopy(copy, Astro.props.locale)
+const last = t.actors.length - 1
+---
+
+<div class="fig" role="group" aria-label={Astro.props.label}>
+  <div class="hotel-actors">
+    {t.actors.map((actor, i) => (
+      <>
+        {i > 0 && <FigArrow dir="flow" label={t.hands[i - 1]?.label} icon={t.hands[i - 1]?.icon} />}
+        <div class="hotel-actor">
+          <span class="hotel-via">
+            {i > 0 && (
+              <>
+                <Icon name={t.hands[i - 1]?.icon ?? ""} />
+                {t.hands[i - 1]?.label}
+              </>
+            )}
+          </span>
+          <FigNode
+            icon={actor.icon}
+            name={actor.name}
+            kind={actor.kind}
+            note={actor.note}
+            mono={i === last}
+            accent={i === last}
+            stack
+          />
+        </div>
+      </>
+    ))}
+  </div>
+  <div class="hotel-results">
+    {[t.card, t.rooms].map((group) => (
+      <div class="fig-group">
+        <span class="fig-name">{group.title}</span>
+        <span class="fig-note hotel-group-note">{group.note}</span>
+        <div class="hotel-items">
+          {group.items.map((item) => (
+            <FigNode
+              icon={item.icon}
+              kind={item.kind}
+              name={item.name}
+              note={"note" in item ? item.note : undefined}
+              accent={"accent" in item && item.accent}
+              stack
+            />
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+  <div class="hotel-notes">
+    {t.notes.map((note) => (
+      <p class="fig-note">{note}</p>
+    ))}
+  </div>
+</div>
+
+<style>
+  .hotel-actors,
+  .hotel-results {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hotel-results {
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .hotel-group-note {
+    display: block;
+  }
+  .hotel-items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .hotel-notes {
+    display: grid;
+    gap: 2px;
+    margin-top: 16px;
+    padding-top: 10px;
+    border-top: 1px solid var(--site-line);
+  }
+  .prose .hotel-notes p {
+    margin: 0;
+  }
+  .hotel-actor {
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+  .hotel-via {
+    display: none;
+  }
+  @container (min-width: 540px) {
+    .hotel-actors {
+      grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr) 22px minmax(0, 1fr) 22px minmax(
+          0,
+          1fr
+        );
+    }
+    .hotel-actors :global(.fig-arrow-label) {
+      display: none;
+    }
+    .hotel-actors :global(.fig-arrow-flow) {
+      padding: 22px 0 0;
+    }
+    .hotel-via {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 22px;
+      color: var(--site-muted);
+      font-size: 12.5px;
+    }
+    .hotel-via :global(.icon) {
+      width: 1em;
+      height: 1em;
+    }
+    .hotel-results {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+  }
+</style>
