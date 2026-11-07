@@ -4,7 +4,7 @@ export const authors = {
     handle: "@pan93412",
     name: "Yi-Jyun Pan",
     url: "https://pan93.com",
-    avatar: "/blog/authors/pan93412.jpg",
+    avatar: "/blog/authors/pan93412.avif",
   },
 }
 
