@@ -41,7 +41,7 @@ const copies = new Set(
 export default defineConfig({
   site: siteOrigin,
   trailingSlash: "never",
-  build: { format: "directory" },
+  build: { format: "directory", concurrency: 8 },
   redirects,
   markdown: {
     processor: unified({
