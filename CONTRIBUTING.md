@@ -109,6 +109,6 @@ Use `<Term word="…">explanation</Term>` for inline blog annotations. `remarkTe
 explanation below its paragraph and assigns IDs at build time; keep `id` out of posts.
 `Term.astro` renders a checkbox styled as the arrow icon, and its label makes the word clickable.
 `TermNote.astro` renders the explanation with a CSS rule that opens it when that checkbox is
-checked. Notes stay in article order, several can be open, and none needs JavaScript. Opening
-slides down and fades in over 200ms, and closing reverses it. The notes container clips the
-motion, so a note never moves over the paragraph. Reduced-motion settings turn both off.
+checked. Notes stay in article order, several can be open, and none needs JavaScript. A note
+grows in height and fades in over 200ms, and closing reverses it. The note never moves, so it
+never covers the paragraph. Reduced-motion settings turn both off.

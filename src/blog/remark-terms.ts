@@ -3,9 +3,6 @@ import type { MdxJsxAttribute, MdxJsxFlowElement } from "mdast-util-mdx-jsx"
 import { visit } from "unist-util-visit"
 import type { VFile } from "vfile"
 
-const notesClass =
-  "grid gap-[0.6em] overflow-clip group-has-checked/terms:mt-[0.2em] group-has-checked/terms:mb-[1.4em] print:hidden"
-
 function element(
   name: string,
   attributes: MdxJsxFlowElement["attributes"],
@@ -43,8 +40,8 @@ export function remarkTerms() {
       if (!notes.length) return
       parent.children[index] = element(
         "div",
-        [attribute("class", "term-block group/terms")],
-        [paragraph, element("div", [attribute("class", notesClass)], notes)],
+        [attribute("class", "term-block")],
+        [paragraph, ...notes],
       )
       return index + 1
     })
