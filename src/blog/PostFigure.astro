@@ -1,6 +1,8 @@
 ---
 // A diagram in a post, drawn like the product images.
+import BuildQueue from "../components/imagery/BuildQueue.astro"
 import OssMap from "../components/imagery/OssMap.astro"
+import TestedOn from "../components/imagery/TestedOn.astro"
 import { isSiteLocale } from "../lib/urls.ts"
 import HotelKeycard from "./figures/HotelKeycard.astro"
 import LoginFlow from "./figures/LoginFlow.astro"
@@ -8,15 +10,17 @@ import TrustStructure from "./figures/TrustStructure.astro"
 import "./figures/figures.css"
 
 interface Props {
-  name: "oss-map" | "trust-structure" | "login-flow" | "hotel-keycard"
+  name: "oss-map" | "build-queue" | "tested-on" | "trust-structure" | "login-flow" | "hotel-keycard"
   label: string
 }
 const { name, label } = Astro.props
 const locale = isSiteLocale(Astro.params.locale) ? Astro.params.locale : "en"
 ---
 
-<figure class="post-figure">
+<figure class="post-figure" data-reveal>
   {name === "oss-map" && <OssMap label={label} />}
+  {name === "build-queue" && <BuildQueue label={label} />}
+  {name === "tested-on" && <TestedOn label={label} />}
   {name === "trust-structure" && <TrustStructure label={label} locale={locale} />}
   {name === "login-flow" && <LoginFlow label={label} locale={locale} />}
   {name === "hotel-keycard" && <HotelKeycard label={label} locale={locale} />}

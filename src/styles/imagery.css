@@ -163,11 +163,89 @@
   opacity: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* Build queue: the runs arrive in the order they were sent, then the running one's bar fills. */
+.img-q-lane {
+  fill: none;
+  stroke: var(--img-line-strong);
+  stroke-dasharray: 4 4;
+}
+.img-q-track {
+  fill: var(--img-line);
+}
+.img-q-progress {
+  fill: var(--img-accent);
+  transform-box: fill-box;
+  transform-origin: left center;
+  scale: 0.62 1;
+  transition: scale 1600ms linear 800ms;
+}
+.img-q-arrow {
+  fill: none;
+  stroke: var(--img-line-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: opacity 300ms var(--ease-site) 700ms;
+}
+.imagery-queue .img-q {
+  transition:
+    opacity 350ms var(--ease-site),
+    translate 450ms var(--ease-site);
+  transition-delay: calc(100ms + var(--i) * 200ms);
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-queue .img-q {
+  opacity: 0;
+  translate: 40px 0;
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-queue .img-q-progress {
+  scale: 0 1;
+  transition: none;
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-queue .img-q-arrow {
+  opacity: 0;
+}
+
+/* testedOn: the file's digest reaches each run, each is marked, then the match lands in testedOn. */
+.img-fan {
+  fill: none;
+  stroke: var(--img-line-strong);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 400ms var(--ease-site);
+  transition-delay: calc(150ms + var(--i) * 150ms);
+}
+.imagery-tested .img-mark {
+  transition: opacity 250ms var(--ease-site);
+  transition-delay: calc(650ms + var(--i) * 150ms);
+}
+.img-result-link {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 350ms var(--ease-site) 1150ms;
+}
+.imagery-tested .img-result {
+  transition:
+    opacity 300ms var(--ease-site) 1400ms,
+    translate 300ms var(--ease-site) 1400ms;
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-tested .img-fan,
+.reveal-ready [data-reveal]:not(.is-in) .imagery-tested .img-result-link {
+  stroke-dashoffset: 1;
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-tested .img-mark {
+  opacity: 0;
+}
+.reveal-ready [data-reveal]:not(.is-in) .imagery-tested .img-result {
+  opacity: 0;
+  translate: 0 -6px;
+}
+
+@media print, (prefers-reduced-motion: reduce) {
   .imagery * {
     transition: none !important;
   }
   .reveal-ready [data-reveal]:not(.is-in) .imagery * {
+    stroke-dashoffset: 0 !important;
     opacity: 1 !important;
     translate: none !important;
     scale: none !important;
