@@ -1,0 +1,391 @@
+---
+// Sign-in as zeabur-auth does it (authorization code, PKCE S256, state in a sealed cookie), then
+// requests with the user's access token, and a refresh within the session.
+import Icon from "../../components/Icon.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import { figureCopy } from "./text.ts"
+
+interface Props {
+  label: string
+  locale: SiteLocale
+}
+
+// Lanes: 0 browser, 1 Zeabur, 2 Zeabur Identity, 3 kube-apiserver.
+type Step = {
+  from: number
+  to: number
+  text: string
+  note?: string
+  icon?: string
+  token?: boolean
+}
+type Phase = { title: string; icon: string; steps: Step[] }
+
+const copy = {
+  "zh-TW": {
+    lanes: [
+      { name: "瀏覽器", icon: "browser" },
+      { name: "Zeabur 開源版", icon: "app-window" },
+      { name: "Zeabur Identity", icon: "fingerprint" },
+      { name: "kube-apiserver", icon: "shield-check" },
+    ],
+    phases: [
+      {
+        title: "登入",
+        icon: "sign-in",
+        steps: [
+          { from: 0, to: 1, text: "開啟 Zeabur 開源版" },
+          { from: 1, to: 0, text: "轉到 Zeabur Identity" },
+          { from: 0, to: 2, text: "用通行密鑰登入", icon: "fingerprint" },
+          { from: 2, to: 0, text: "帶著一次性的 code 轉回" },
+          { from: 0, to: 1, text: "交出 code" },
+          { from: 1, to: 2, text: "用 code 換權杖", note: "附上 PKCE 和 client secret" },
+          { from: 2, to: 1, text: "存取權杖、更新權杖", icon: "identification-card" },
+          {
+            from: 1,
+            to: 0,
+            text: "工作階段 cookie",
+            note: "權杖留在伺服器，不交給瀏覽器",
+            icon: "cookie",
+          },
+        ],
+      },
+      {
+        title: "每個操作",
+        icon: "cursor-click",
+        steps: [
+          { from: 0, to: 1, text: "操作請求", icon: "cookie" },
+          {
+            from: 1,
+            to: 3,
+            text: "帶你的存取權杖呼叫 API",
+            note: "由 RBAC 決定能不能做",
+            icon: "identification-card",
+            token: true,
+          },
+          { from: 3, to: 1, text: "結果，或 403" },
+        ],
+      },
+      {
+        title: "權杖快到期時",
+        icon: "arrows-clockwise",
+        steps: [
+          { from: 1, to: 2, text: "用更新權杖換新", note: "到期前 1 分鐘" },
+          { from: 2, to: 1, text: "新的存取權杖、更新權杖", icon: "identification-card" },
+        ],
+      },
+    ] satisfies Phase[],
+  },
+  en: {
+    lanes: [
+      { name: "Browser", icon: "browser" },
+      { name: "Zeabur Open Source", icon: "app-window" },
+      { name: "Zeabur Identity", icon: "fingerprint" },
+      { name: "kube-apiserver", icon: "shield-check" },
+    ],
+    phases: [
+      {
+        title: "Sign in",
+        icon: "sign-in",
+        steps: [
+          { from: 0, to: 1, text: "Open Zeabur" },
+          { from: 1, to: 0, text: "Redirect to Zeabur Identity" },
+          { from: 0, to: 2, text: "Sign in with a passkey", icon: "fingerprint" },
+          { from: 2, to: 0, text: "Redirect back with a one-time code" },
+          { from: 0, to: 1, text: "Hand over the code" },
+          {
+            from: 1,
+            to: 2,
+            text: "Exchange the code for tokens",
+            note: "With PKCE and the client secret",
+          },
+          { from: 2, to: 1, text: "Access and refresh tokens", icon: "identification-card" },
+          {
+            from: 1,
+            to: 0,
+            text: "Session cookie",
+            note: "The tokens stay on the server, never in the browser",
+            icon: "cookie",
+          },
+        ],
+      },
+      {
+        title: "Every action",
+        icon: "cursor-click",
+        steps: [
+          { from: 0, to: 1, text: "Request", icon: "cookie" },
+          {
+            from: 1,
+            to: 3,
+            text: "Call the API with your access token",
+            note: "RBAC decides whether it's allowed",
+            icon: "identification-card",
+            token: true,
+          },
+          { from: 3, to: 1, text: "Result, or 403" },
+        ],
+      },
+      {
+        title: "Before the token expires",
+        icon: "arrows-clockwise",
+        steps: [
+          {
+            from: 1,
+            to: 2,
+            text: "Trade the refresh token for new ones",
+            note: "1 minute before expiry",
+          },
+          { from: 2, to: 1, text: "New access and refresh tokens", icon: "identification-card" },
+        ],
+      },
+    ] satisfies Phase[],
+  },
+  "zh-CN": {
+    lanes: [
+      { name: "浏览器", icon: "browser" },
+      { name: "Zeabur 开源版", icon: "app-window" },
+      { name: "Zeabur Identity", icon: "fingerprint" },
+      { name: "kube-apiserver", icon: "shield-check" },
+    ],
+    phases: [
+      {
+        title: "登录",
+        icon: "sign-in",
+        steps: [
+          { from: 0, to: 1, text: "打开 Zeabur 开源版" },
+          { from: 1, to: 0, text: "跳转到 Zeabur Identity" },
+          { from: 0, to: 2, text: "用通行密钥登录", icon: "fingerprint" },
+          { from: 2, to: 0, text: "带着一次性的 code 跳回" },
+          { from: 0, to: 1, text: "交出 code" },
+          { from: 1, to: 2, text: "用 code 换令牌", note: "附上 PKCE 和 client secret" },
+          { from: 2, to: 1, text: "访问令牌、刷新令牌", icon: "identification-card" },
+          {
+            from: 1,
+            to: 0,
+            text: "会话 cookie",
+            note: "令牌留在服务器，不交给浏览器",
+            icon: "cookie",
+          },
+        ],
+      },
+      {
+        title: "每次操作",
+        icon: "cursor-click",
+        steps: [
+          { from: 0, to: 1, text: "操作请求", icon: "cookie" },
+          {
+            from: 1,
+            to: 3,
+            text: "带着你的访问令牌调用 API",
+            note: "由 RBAC 决定能不能做",
+            icon: "identification-card",
+            token: true,
+          },
+          { from: 3, to: 1, text: "结果，或 403" },
+        ],
+      },
+      {
+        title: "令牌快过期时",
+        icon: "arrows-clockwise",
+        steps: [
+          { from: 1, to: 2, text: "用刷新令牌换新的", note: "过期前 1 分钟" },
+          { from: 2, to: 1, text: "新的访问令牌、刷新令牌", icon: "identification-card" },
+        ],
+      },
+    ] satisfies Phase[],
+  },
+}
+const t = figureCopy(copy, Astro.props.locale)
+let row = 1
+const rows = t.phases.map((phase, i) => ({
+  ...phase,
+  number: i + 1,
+  row: ++row,
+  steps: phase.steps.map((step: Step) => ({ ...step, row: ++row })),
+}))
+const span = (s: Step) => `${Math.min(s.from, s.to) + 1} / span ${Math.abs(s.to - s.from) + 1}`
+---
+
+<div class="fig" role="group" aria-label={Astro.props.label}>
+  <div class="seq">
+    {t.lanes.map((lane, i) => (
+      <>
+        <div class="fig-card seq-lane" style={`grid-column: ${i + 1}`}>
+          <span class="fig-icon">
+            <Icon name={lane.icon} />
+          </span>
+          {lane.name === "kube-apiserver" ? (
+            <span class="fig-mono">
+              kube-
+              <wbr />
+              apiserver
+            </span>
+          ) : (
+            lane.name
+          )}
+        </div>
+        <div
+          class="seq-life"
+          style={`grid-column: ${i + 1}; grid-row: 2 / ${row + 1}`}
+          aria-hidden="true"
+        />
+      </>
+    ))}
+    {rows.map((phase) => (
+      <>
+        <div class="seq-phase" style={`grid-row: ${phase.row}`}>
+          <span class="seq-num">{phase.number}</span>
+          <Icon name={phase.icon} />
+          {phase.title}
+        </div>
+        {phase.steps.map((s) => (
+          <div
+            class:list={["seq-msg", s.token && "seq-token"]}
+            data-dir={s.to > s.from ? "right" : "left"}
+            style={`grid-row: ${s.row}; grid-column: ${span(s)}; --span: ${Math.abs(s.to - s.from) + 1}`}
+          >
+            <span class="seq-text">
+              {s.icon && <Icon name={s.icon} />}
+              {s.text}
+            </span>
+            {s.note && <span class="seq-note">{s.note}</span>}
+            <span class="seq-arrow" aria-hidden="true" />
+          </div>
+        ))}
+      </>
+    ))}
+  </div>
+</div>
+
+<style>
+  .seq {
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 0;
+    row-gap: 6px;
+  }
+  .seq-lane {
+    display: grid;
+    justify-items: center;
+    gap: 4px;
+    grid-row: 1;
+    z-index: 1;
+    margin-inline: 4px;
+    padding: 8px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: center;
+  }
+  .seq-lane .fig-mono {
+    font-size: 12px;
+  }
+  @container (max-width: 400px) {
+    .seq-lane {
+      font-size: 12px;
+    }
+    .seq-lane .fig-mono {
+      font-size: 10.5px;
+    }
+  }
+  .seq-life {
+    justify-self: center;
+    width: 0;
+    margin-top: -6px;
+    border-left: 1px solid var(--site-line-strong);
+  }
+  .seq-phase {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    grid-column: 1 / -1;
+    z-index: 1;
+    justify-self: start;
+    margin-top: 14px;
+    padding: 2px 8px 2px 2px;
+    border: 1px solid var(--site-line);
+    border-radius: 999px;
+    background: var(--site-card);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .seq-num {
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--site-text);
+    color: var(--site-bg);
+    font-size: 11.5px;
+  }
+  .seq-phase :global(.icon),
+  .seq-text :global(.icon) {
+    width: 1em;
+    height: 1em;
+    flex: none;
+  }
+  .seq-phase :global(.icon) {
+    color: var(--site-muted);
+  }
+  .seq-msg {
+    display: grid;
+    position: relative;
+    z-index: 1;
+    padding: 0 6px 10px;
+    text-align: center;
+  }
+  .seq-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    justify-self: center;
+    padding: 0 4px;
+    background: var(--site-bg-soft);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .seq-note {
+    justify-self: center;
+    padding: 0 4px;
+    background: var(--site-bg-soft);
+    color: var(--site-muted);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  .seq-arrow {
+    position: absolute;
+    right: calc(100% / var(--span) / 2);
+    bottom: 4px;
+    left: calc(100% / var(--span) / 2);
+    border-top: 1px solid var(--site-muted);
+  }
+  .seq-arrow::after {
+    position: absolute;
+    top: -4.5px;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid var(--site-muted);
+    border-right: 1px solid var(--site-muted);
+    content: "";
+  }
+  [data-dir="right"] .seq-arrow::after {
+    right: 0;
+    rotate: 45deg;
+  }
+  [data-dir="left"] .seq-arrow::after {
+    left: 0;
+    rotate: -135deg;
+  }
+  .seq-token .seq-arrow,
+  .seq-token .seq-arrow::after {
+    border-color: var(--site-accent);
+  }
+  .seq-token .seq-arrow {
+    border-top-width: 1.5px;
+  }
+  .seq-token .seq-text {
+    color: var(--site-accent);
+  }
+</style>

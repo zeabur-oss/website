@@ -1,0 +1,190 @@
+---
+// Who kube-apiserver sees: a platform with its own ServiceAccount, or the user whose token
+// Zeabur Identity signed and Zeabur passes on.
+import Icon from "../../components/Icon.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import FigArrow from "./FigArrow.astro"
+import FigNode from "./FigNode.astro"
+import { figureCopy } from "./text.ts"
+
+interface Props {
+  label: string
+  locale: SiteLocale
+}
+
+const copy = {
+  "zh-TW": {
+    userKind: "使用者",
+    decides: "在這裡判斷權限",
+    allow: "允許",
+    deny: "拒絕",
+    columns: [
+      {
+        title: "平台用自己的 ServiceAccount",
+        user: { name: "Alice", note: "登入平台" },
+        toPlatform: "請求",
+        platform: { kind: "平台", name: "自己判斷 Alice 能做什麼" },
+        toApi: "平台自己的權杖",
+        toApiIcon: "key",
+        api: { name: "看到的是平台", note: "ServiceAccount 能操作所有 Namespace" },
+        production: true,
+        note: "平台的檢查一出錯或被入侵，什麼都擋不住",
+      },
+      {
+        title: "Zeabur 開源版轉交使用者的權杖",
+        user: { name: "Alice", note: "用通行密鑰登入 Zeabur Identity" },
+        toPlatform: "Alice 的權杖",
+        platform: { kind: "Zeabur 開源版", name: "原封不動轉交" },
+        toApi: "同一份權杖",
+        toApiIcon: "identification-card",
+        api: { name: "看到的是 Alice", note: "驗過簽章，依 Alice 和 dev 群組的 RBAC 判斷" },
+        production: false,
+        note: "dev 群組沒有 production 的 RoleBinding",
+      },
+    ],
+  },
+  en: {
+    userKind: "User",
+    decides: "Permissions decided here",
+    allow: "Allowed",
+    deny: "Denied",
+    columns: [
+      {
+        title: "The platform uses its own ServiceAccount",
+        user: { name: "Alice", note: "Signs in to the platform" },
+        toPlatform: "Request",
+        platform: { kind: "Platform", name: "Decides on its own what Alice can do" },
+        toApi: "The platform's own token",
+        toApiIcon: "key",
+        api: { name: "Sees the platform", note: "The ServiceAccount can act on every Namespace" },
+        production: true,
+        note: "If the platform's check is wrong or the platform is breached, nothing stops the request",
+      },
+      {
+        title: "Zeabur Open Source passes on the user's token",
+        user: { name: "Alice", note: "Signs in to Zeabur Identity with a passkey" },
+        toPlatform: "Alice's token",
+        platform: { kind: "Zeabur Open Source", name: "Passes it on unchanged" },
+        toApi: "The same token",
+        toApiIcon: "identification-card",
+        api: {
+          name: "Sees Alice",
+          note: "Checks the signature, then RBAC for Alice and the dev group",
+        },
+        production: false,
+        note: "The dev group has no RoleBinding in production",
+      },
+    ],
+  },
+  "zh-CN": {
+    userKind: "用户",
+    decides: "在这里判断权限",
+    allow: "允许",
+    deny: "拒绝",
+    columns: [
+      {
+        title: "平台用自己的 ServiceAccount",
+        user: { name: "Alice", note: "登录平台" },
+        toPlatform: "请求",
+        platform: { kind: "平台", name: "自己判断 Alice 能做什么" },
+        toApi: "平台自己的令牌",
+        toApiIcon: "key",
+        api: { name: "看到的是平台", note: "ServiceAccount 能操作所有 Namespace" },
+        production: true,
+        note: "平台的检查一旦出错或被入侵，什么都拦不住",
+      },
+      {
+        title: "Zeabur 开源版转交用户的令牌",
+        user: { name: "Alice", note: "用通行密钥登录 Zeabur Identity" },
+        toPlatform: "Alice 的令牌",
+        platform: { kind: "Zeabur 开源版", name: "原样转交" },
+        toApi: "同一个令牌",
+        toApiIcon: "identification-card",
+        api: { name: "看到的是 Alice", note: "验证签名后，按 Alice 和 dev 组的 RBAC 判断" },
+        production: false,
+        note: "dev 组在 production 没有 RoleBinding",
+      },
+    ],
+  },
+}
+const t = figureCopy(copy, Astro.props.locale)
+---
+
+<div class="fig" role="group" aria-label={Astro.props.label}>
+  <div class="trust">
+    {t.columns.map((c, i) => (
+      <div class="trust-col">
+        <div class="fig-title trust-title">{c.title}</div>
+        <FigNode icon="user" kind={t.userKind} name={c.user.name} note={c.user.note} />
+        <FigArrow label={c.toPlatform} icon={i === 1 ? "identification-card" : undefined} />
+        <FigNode
+          icon="app-window"
+          kind={c.platform.kind}
+          name={c.platform.name}
+          accent={i === 0}
+          tag={i === 0 ? t.decides : undefined}
+        />
+        <FigArrow label={c.toApi} icon={c.toApiIcon} />
+        <FigNode
+          icon="shield-check"
+          kind="kube-apiserver"
+          mono
+          name={c.api.name}
+          note={c.api.note}
+          accent={i === 1}
+          tag={i === 1 ? t.decides : undefined}
+        />
+        <FigArrow />
+        <div class="fig-group trust-result">
+          {[
+            ["dev", true],
+            ["production", c.production],
+          ].map(([ns, ok]) => (
+            <span class="trust-row">
+              <span class="fig-mono">{ns}</span>
+              <span class:list={["fig-verdict", ok ? "fig-verdict-yes" : "fig-verdict-no"]}>
+                <Icon name={ok ? "check-circle" : "x-circle"} />
+                {ok ? t.allow : t.deny}
+              </span>
+            </span>
+          ))}
+          <span class="fig-note">{c.note}</span>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .trust {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .trust-col {
+    display: grid;
+    grid-template-rows: auto auto auto auto auto auto auto 1fr;
+  }
+  @container (min-width: 540px) {
+    .trust {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 24px;
+    }
+    .trust-col {
+      grid-row: span 8;
+      grid-template-rows: subgrid;
+    }
+  }
+  .trust-title {
+    margin-bottom: 10px;
+  }
+  .trust-result {
+    display: grid;
+    gap: 4px;
+  }
+  .trust-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+</style>
