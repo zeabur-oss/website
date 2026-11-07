@@ -4,11 +4,13 @@ import "./prose.css"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
 import { dateFormat, postLocale, postSlug, postsFor, type Post } from "./blog.ts"
+import { authors } from "./authors.ts"
 import { blogCopy } from "./copy.ts"
 import { organization } from "../lib/seo.ts"
 import { blogUrl, locales, siteOrigin } from "../lib/urls.ts"
 import HeadingText from "./HeadingText.astro"
 import MorePosts from "./MorePosts.astro"
+import OpenSource from "./covers/OpenSource.astro"
 import PostToc from "./PostToc.astro"
 
 // Title, dates, the text in one 44rem column with its contents beside it, then the other posts.
@@ -21,7 +23,9 @@ const t = blogCopy[locale]
 const { Content, headings } = await render(post)
 const others = (await postsFor(locale)).filter((p) => p.id !== post.id).slice(0, 4)
 const date = dateFormat(locale, "long")
-const { title, description, pubDate, updatedDate, draft } = post.data
+const { title, description, pubDate, updatedDate, draft, cover } = post.data
+const author = authors[post.data.author]
+const Cover = cover && { "open-source": OpenSource }[cover]
 const slug = postSlug(post.id)
 const same = new Set((await getCollection("blog")).map((p) => p.id))
 const languages = locales.filter((l) => same.has(`${l}/${slug}`))
@@ -48,7 +52,7 @@ const image = `/og/blog/${locale}/${slug}.png`
     datePublished: pubDate.toISOString(),
     dateModified: (updatedDate ?? pubDate).toISOString(),
     image: `${siteOrigin}${image}`,
-    author: organization,
+    author: { "@type": "Person", name: author.name, alternateName: author.handle, url: author.url },
     publisher: organization,
   }}
 >
@@ -67,6 +71,14 @@ const image = `/og/blog/${locale}/${slug}.png`
       <HeadingText text={description} locale={locale} />
     </p>
     <p class="flex flex-wrap items-center gap-x-6 gap-y-1 type-body text-site-faint print:text-[8.5pt] print:text-[#666]">
+      <a
+        class="inline-flex items-center gap-2 text-site-muted no-underline hover:text-site-text"
+        href={author.url}
+        rel="author"
+      >
+        <img class="size-6 rounded-full" src={author.avatar} alt="" width="24" height="24" />
+        {author.handle}
+      </a>
       <span>
         {t.published} <time datetime={pubDate.toISOString()}>{date.format(pubDate)}</time>
       </span>
@@ -78,6 +90,12 @@ const image = `/og/blog/${locale}/${slug}.png`
       {draft && <span class="pill">{t.draft}</span>}
     </p>
   </header>
+
+  {Cover && (
+    <div class="wrap pt-10 print:hidden">
+      <Cover locale={locale} />
+    </div>
+  )}
 
   <article class="wrap section grid items-start gap-12 before:col-span-full before:mt-10 before:mb-2 min-[1100px]:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] print:max-w-none print:p-0 print:before:hidden">
     <div class="prose">
