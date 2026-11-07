@@ -1,0 +1,78 @@
+---
+// Catalog 0.4.0: a passing run counts toward testedOn only when its sourceDigest equals the
+// digest of the component file as it is now.
+interface Props {
+  label: string
+}
+const runs = [
+  { on: "K3s", digest: "4b1e…", why: "", counts: true },
+  { on: "RKE2", digest: "9a0c…", why: "older file", counts: false },
+  { on: "KubeSolo", digest: "none", why: "no digest", counts: false },
+]
+const y = (i: number) => 44 + i * 56
+const mid = (i: number) => y(i) + 21
+---
+
+<svg class="imagery imagery-tested" viewBox="0 0 560 232" role="img" aria-label={Astro.props.label}>
+  <rect class="img-frame" x="16" y="16" width="528" height="200" rx="6"></rect>
+
+  <rect class="img-card" x="32" y="92" width="122" height="54" rx="6"></rect>
+  <text class="img-kind" x="44" y="112">
+    zot, now
+  </text>
+  <text class="img-name" x="44" y="132">
+    digest 4b1e…
+  </text>
+
+  {runs.map((r, i) => (
+    <g style={`--i: ${i}`}>
+      <path class="img-fan" pathLength="1" d={`M154 119 C 172 119, 168 ${mid(i)}, 188 ${mid(i)}`} />
+      <rect
+        class={r.counts ? "img-box img-box-accent" : "img-box"}
+        x="188"
+        y={y(i)}
+        width="168"
+        height="42"
+        rx="6"
+      />
+      <text class={r.counts ? "img-name" : "img-name img-faint"} x="200" y={y(i) + 26}>
+        {r.on}
+      </text>
+      <text
+        class={r.counts ? "img-kind" : "img-kind img-faint"}
+        x="344"
+        y={y(i) + 25}
+        text-anchor="end"
+      >
+        {r.digest}
+      </text>
+      <g class="img-mark">
+        {r.counts ? (
+          <path class="img-tick img-accent-stroke" d={`M370 ${mid(i)} l4 4 l8 -9`} />
+        ) : (
+          <path class="img-tick" d={`M371 ${mid(i) - 5} l9 9 M380 ${mid(i) - 5} l-9 9`} />
+        )}
+        {r.why && (
+          <text class="img-kind img-faint" x="390" y={mid(i) + 4}>
+            {r.why}
+          </text>
+        )}
+      </g>
+    </g>
+  ))}
+
+  <path
+    class="img-result-link img-link img-accent-stroke"
+    pathLength="1"
+    d={`M390 ${mid(0)} H448`}
+  ></path>
+  <g class="img-result">
+    <rect class="img-card" x="448" y="40" width="84" height="50" rx="6"></rect>
+    <text class="img-kind" x="460" y="60">
+      testedOn
+    </text>
+    <text class="img-name" x="460" y="78">
+      K3s
+    </text>
+  </g>
+</svg>
