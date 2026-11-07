@@ -11,6 +11,8 @@ export type BlogCopy = {
   more: string
   empty: string
   draft: string
+  references: string
+  backToCitation: (n: string) => string
 }
 
 export const blogCopy: Record<SiteLocale, BlogCopy> = {
@@ -25,6 +27,8 @@ export const blogCopy: Record<SiteLocale, BlogCopy> = {
     more: "其他文章",
     empty: "還沒有文章。第一篇寫好後會出現在這裡，也可以先用 RSS 訂閱。",
     draft: "草稿",
+    references: "參考文獻",
+    backToCitation: (n) => `返回引用處 ${n}`,
   },
   "zh-CN": {
     title: "博客",
@@ -37,6 +41,8 @@ export const blogCopy: Record<SiteLocale, BlogCopy> = {
     more: "其他文章",
     empty: "还没有文章。第一篇写好后会出现在这里，也可以先用 RSS 订阅。",
     draft: "草稿",
+    references: "参考文献",
+    backToCitation: (n) => `返回引用处 ${n}`,
   },
   en: {
     title: "Blog",
@@ -49,5 +55,7 @@ export const blogCopy: Record<SiteLocale, BlogCopy> = {
     more: "More posts",
     empty: "No posts yet. The first one will show up here; you can subscribe with RSS already.",
     draft: "Draft",
+    references: "References",
+    backToCitation: (n) => `Back to citation ${n}`,
   },
 }

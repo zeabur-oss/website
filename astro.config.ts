@@ -9,6 +9,7 @@ import type { SiteData } from "./scripts/sync-docs.ts"
 import { starlightIcons } from "./src/lib/icons.ts"
 import { githubOrg } from "./src/lib/site.ts"
 import { docsUrl, localePrefix, locales, siteOrigin } from "./src/lib/urls.ts"
+import { rehypeReferences } from "./src/blog/rehype-references.ts"
 import { rehypeDocsHtml } from "./src/mdx/rehype-docs-html.ts"
 import { remarkDocs } from "./src/mdx/remark-docs.ts"
 
@@ -45,7 +46,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [remarkDocs],
-      rehypePlugins: [rehypeDocsHtml],
+      rehypePlugins: [rehypeDocsHtml, rehypeReferences],
       smartypants: false,
     }),
   },

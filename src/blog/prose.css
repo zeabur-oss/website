@@ -92,6 +92,37 @@
   border-top: 1px solid var(--site-line);
 }
 
+/* Citations: a small numbered tag in the text, the list of references at the foot of the post. */
+.prose sup a {
+  padding: 0 0.2em;
+  border-radius: var(--radius-sm);
+  background: var(--site-accent-soft);
+  font-size: 0.8em;
+  text-decoration: none;
+}
+.prose .footnotes {
+  margin-top: 3em;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--site-line-strong);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--site-muted);
+}
+.prose .footnotes ol {
+  padding-left: 2.25em;
+}
+.prose .footnotes h2 {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--site-text);
+}
+.prose .footnotes a {
+  overflow-wrap: anywhere;
+}
+
 @media print {
   @page {
     size: A4;
@@ -130,5 +161,14 @@
   .prose pre {
     white-space: pre-wrap;
     break-inside: avoid;
+  }
+  .prose .footnotes {
+    font-size: 8pt;
+  }
+  .prose .footnotes li {
+    break-inside: avoid;
+  }
+  .prose [data-footnote-backref] {
+    display: none;
   }
 }
