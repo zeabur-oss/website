@@ -37,6 +37,28 @@ test("docs text links stay on the site", () => {
   expect(wrong).toEqual([])
 })
 
+test("docs text links to a locked repository at its locked ref, not main", () => {
+  expect(existsSync(dist), "run `bun run build` first").toBe(true)
+  const lock: { repos: { github: string }[] } = JSON.parse(
+    readFileSync(join(import.meta.dir, "..", "docs.lock.json"), "utf8"),
+  )
+  const locked = new Set(lock.repos.map((r) => r.github))
+  const wrong: string[] = []
+  for (const page of pages(join(dist))) {
+    const html = readFileSync(page, "utf8")
+    const start = html.indexOf('class="sl-markdown-content')
+    if (start < 0) continue
+    const end = html.indexOf("<footer", start)
+    const text = html.slice(start, end < 0 ? undefined : end)
+    for (const [, href, github] of text.matchAll(
+      /href="(https:\/\/github\.com\/(zeabur-oss\/[^/"]+)\/(?:blob|tree)\/main\/[^"]*)"/g,
+    )) {
+      if (locked.has(github!)) wrong.push(`${page.slice(dist.length)}: ${href}`)
+    }
+  }
+  expect(wrong).toEqual([])
+})
+
 test("every page's social image is built", () => {
   const missing: string[] = []
   for (const page of [...pages(dist), join(dist, "404.html")]) {

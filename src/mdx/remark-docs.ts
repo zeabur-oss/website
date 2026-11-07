@@ -73,10 +73,20 @@ function siteUrlOfGithub(href: string, locale: string) {
   return docsUrl(locale, repo.name, slug) + link.hash
 }
 
+/** A GitHub URL into a locked repository at `main`, at the locked ref instead. */
+function lockedRefOfGithub(href: string) {
+  const match = /^https:\/\/github\.com\/(zeabur-oss\/[^/#?]+)\/(blob|tree)\/main\/(.*)$/.exec(href)
+  if (!match) return undefined
+  const [, github, kind, rest] = match
+  const repo = Object.values(load().links).find((r) => r.github === github)
+  return repo && `https://github.com/${github}/${kind}/${repo.ref}/${rest}`
+}
+
 /**
  * The site URL for a link in a page. Pages, and files under docs/, stay on the site. Only links
  * to the rest of the repository go to GitHub at the locked ref; docs-check fails on those,
- * except in the README.
+ * except in the README. A GitHub URL into a locked repository at `main` moves to the locked ref
+ * too, so the page links to the files of the release it documents.
  */
 export function rewriteHref(href: string, { page, repo, files }: Context): string {
   const target = classifyLink(href, page.source, files)
@@ -84,7 +94,7 @@ export function rewriteHref(href: string, { page, repo, files }: Context): strin
     case "anchor":
       return href
     case "external":
-      return siteUrlOfGithub(href, page.locale) ?? href
+      return siteUrlOfGithub(href, page.locale) ?? lockedRefOfGithub(href) ?? href
     case "site":
       return (localePrefix(page.locale) + target.path).replace(/(.)\/$/, "$1") + target.hash
     case "page":
