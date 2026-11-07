@@ -1,6 +1,6 @@
 // Social images: satori lays out the card with its text as outlines, resvg makes the PNG. The card
 // follows the repository covers in public/og.
-import { Resvg } from "@resvg/resvg-js"
+import { renderAsync } from "@resvg/resvg-js"
 import { readFile } from "node:fs/promises"
 import { createRequire } from "node:module"
 import { dirname, join } from "node:path"
@@ -219,5 +219,11 @@ export async function renderOg(card: OgCard): Promise<Buffer> {
     height: OG_HEIGHT,
     fonts,
   })
-  return new Resvg(svg, { fitTo: { mode: "width", value: OG_WIDTH } }).render().asPng()
+  // satori has already turned the text into paths, so resvg needs no fonts; scanning the system's
+  // takes it about 400ms per card.
+  const png = await renderAsync(svg, {
+    fitTo: { mode: "width", value: OG_WIDTH },
+    font: { loadSystemFonts: false },
+  })
+  return png.asPng()
 }
