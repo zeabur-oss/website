@@ -26,10 +26,16 @@ const githubFile =
  * shows that page itself, so the link should not leave the site.
  */
 export function githubDocsLink(href: string) {
+  const link = githubFileLink(href)
+  if (link && link.path !== "README.md" && !/^docs\/.+\.mdx?$/.test(link.path)) return undefined
+  return link
+}
+
+/** A link written as a GitHub URL to any file or folder of a zeabur-oss repository. */
+export function githubFileLink(href: string) {
   const match = githubFile.exec(href)
   if (!match) return undefined
   const [, github, path, hash = ""] = match
-  if (path !== "README.md" && !/^docs\/.+\.mdx?$/.test(path!)) return undefined
   return { github: github!, path: path!, hash }
 }
 

@@ -28,7 +28,7 @@ export type FindingCode =
   | "parse-error"
   | "link-github-docs"
   | "link-github-docs-other"
-  | "link-outside-docs"
+  | "link-github-own"
   | "link-missing"
   | "link-unpublished"
   | "import-export"

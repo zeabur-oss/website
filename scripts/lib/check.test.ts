@@ -70,33 +70,36 @@ describe("docs-check", () => {
     ])
   })
 
-  test("links that would send readers to GitHub", async () => {
+  test("GitHub URLs of docs pages and of the repository's own files", async () => {
     const files = {
       ...repo,
       LICENSE: "Apache",
       "src/main.rs": "fn main() {}",
-      "docs/examples/a.yaml": "a: 1",
       "docs/start/install.mdx": page(
-        "[a](../../LICENSE) [b](../../src) [c](../examples/a.yaml) " +
-          "[d](https://github.com/zeabur-oss/demo/blob/main/docs/start/quickstart.mdx) " +
-          "[e](https://github.com/zeabur-oss/identity/blob/main/docs/clients.md#cli) " +
-          "[f](https://github.com/zeabur-oss/demo/blob/main/src/main.rs)",
+        "[a](https://github.com/zeabur-oss/demo/blob/main/docs/start/quickstart.mdx) " +
+          "[b](https://github.com/zeabur-oss/identity/blob/main/docs/clients.md#cli) " +
+          "[c](https://github.com/zeabur-oss/demo/blob/main/src/main.rs#L1) " +
+          "[d](https://github.com/zeabur-oss/demo/tree/main/src) " +
+          "[e](https://github.com/zeabur-oss/identity/blob/main/CONTRIBUTING.md)",
       ),
     }
     expect(await check(files)).toEqual([
-      "error link-outside-docs docs/start/install.mdx:5",
-      "error link-outside-docs docs/start/install.mdx:5",
       "error link-github-docs docs/start/install.mdx:5",
       "error link-github-docs-other docs/start/install.mdx:5",
+      "error link-github-own docs/start/install.mdx:5",
+      "error link-github-own docs/start/install.mdx:5",
     ])
   })
 
-  test("the README may link to files outside docs/", async () => {
+  test("pages and the README link to the repository's files relatively", async () => {
+    // Without docs/index.mdx the README is the home page, so it is checked too.
     const { "docs/index.mdx": _, ...rest } = repo
     const found = await check({
       ...rest,
       LICENSE: "Apache",
       "src/main.rs": "fn main() {}",
+      "docs/examples/a.yaml": "a: 1",
+      "docs/start/install.mdx": page("[a](../../LICENSE) [b](../../src) [c](../examples/a.yaml)"),
       "README.md": "# Demo\n\n[a](LICENSE) [b](src) [c](src/main.rs#L1) [d](MISSING.md)\n",
     })
     expect(found).toEqual(["error link-missing README.md:3"])

@@ -74,9 +74,8 @@ function siteUrlOfGithub(href: string, locale: string) {
 }
 
 /**
- * The site URL for a link in a page. Pages, and files under docs/, stay on the site. Only links
- * to the rest of the repository go to GitHub at the locked ref; docs-check fails on those,
- * except in the README.
+ * The site URL for a link in a page. Pages, and files under docs/, stay on the site. Links to the
+ * rest of the repository go to GitHub at the locked ref.
  */
 export function rewriteHref(href: string, { page, repo, files }: Context): string {
   const target = classifyLink(href, page.source, files)

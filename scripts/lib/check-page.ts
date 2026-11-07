@@ -8,7 +8,7 @@ import { htmlElements, registry, type ComponentName } from "../../src/docs-compo
 import {
   classifyLink,
   githubDocsLink,
-  isDocsAsset,
+  githubFileLink,
   resolveImage,
   type RepoFiles,
 } from "../../src/mdx/links.ts"
@@ -98,19 +98,20 @@ export function checkPage(
       )
       return
     }
-    const target = classifyLink(href, path, repoFiles)
-    if (target.kind === "file" || target.kind === "dir") {
-      // The README is also read on GitHub, where these links work; the site rewrites them.
-      if (isReadme || isDocsAsset(target.path)) return
+    const file = githubFileLink(href)
+    if (file?.github === snap.repo.github) {
       add(
         "error",
-        "link-outside-docs",
+        "link-github-own",
         path,
-        `${href} is ${target.path}, outside docs/, so the site would send readers to ` +
-          "GitHub; link to a docs page, or write the full GitHub URL when the reader needs the source",
+        `${href} is ${file.path} of this repository; write a relative link, which opens the ` +
+          "release the docs describe",
         line,
       )
-    } else if (target.kind === "missing") {
+      return
+    }
+    const target = classifyLink(href, path, repoFiles)
+    if (target.kind === "missing") {
       if (image && resolveImage(target.path, repoFiles)) return
       add(
         "error",
