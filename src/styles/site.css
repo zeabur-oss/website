@@ -403,6 +403,7 @@
   }
 }
 
-.zh-word {
-  white-space: nowrap;
+.zh-words {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
