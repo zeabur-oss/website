@@ -20,6 +20,9 @@ const blog = defineCollection({
     updatedDate: z.coerce.date().optional(),
     /** Left out of production builds; shown by `astro dev` and BLOG_DRAFTS=1. */
     draft: z.boolean().default(false),
+    author: z.enum(["pan93412"]).default("pan93412"),
+    /** A cover under the title, from src/blog/covers. */
+    cover: z.enum(["open-source"]).optional(),
   }),
 })
 
