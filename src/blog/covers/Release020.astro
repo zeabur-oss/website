@@ -1,0 +1,260 @@
+---
+// The cover of the 0.2.0 post: a few things the release brought, framed like the repository
+// covers. Specimens quote the product's own strings (web/src/i18n, zeabur-installer) in the way
+// the product shows them.
+import Logo from "../../components/Logo.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import "./cover.css"
+
+interface Props {
+  locale: SiteLocale
+}
+type Specimen =
+  | { kind: "build"; title: string; reason: string; link: string }
+  | { kind: "port"; note: string; button: string }
+  | { kind: "update"; title: string; notes: string; guide: string }
+  | { kind: "mono"; lines: string[] }
+type Tile = {
+  area: string
+  big: string
+  small: string
+  size?: "hero"
+  specimen?: Specimen
+}
+
+const plan: Specimen = {
+  kind: "mono",
+  lines: [
+    "$ zeabur-installer plan",
+    "Changes since the last apply (by zeabur-installer 0.1.1)",
+    "  Zeabur    v0.1.1 -> v0.2.0",
+  ],
+}
+const copy: Record<SiteLocale, Tile[]> = {
+  "zh-TW": [
+    {
+      area: "hero",
+      size: "hero",
+      big: "0.2.0",
+      small: "Zeabur 第一個正式版。Builder 0.1.2、Identity 0.1.2 和 Catalog 0.4.0 一起發布。",
+    },
+    {
+      area: "oom",
+      big: "建置失敗，先說原因",
+      small: "記憶體不夠時，一句話告訴你去哪裡調。",
+      specimen: {
+        kind: "build",
+        title: "建置失敗",
+        reason: "建置用完了記憶體。請調高這個專案的建置記憶體，或把建置的內容縮小。",
+        link: "開啟建置設定",
+      },
+    },
+    { area: "plan", big: "plan", small: "動手之前，先列出這次 apply 會改什麼。", specimen: plan },
+    {
+      area: "port",
+      big: "連接埠不用猜",
+      small: "照映像檔宣告的連接埠建議，由你確認。",
+      specimen: {
+        kind: "port",
+        note: "映像檔宣告了連接埠 3000。",
+        button: "用連接埠 3000 新增私有位址",
+      },
+    },
+    {
+      area: "update",
+      big: "有新版會告訴你",
+      small: "叢集頁面附上發行說明和升級方式。",
+      specimen: {
+        kind: "update",
+        title: "Zeabur 0.2.0 已推出",
+        notes: "發行說明",
+        guide: "升級方式",
+      },
+    },
+  ],
+  "zh-CN": [
+    {
+      area: "hero",
+      size: "hero",
+      big: "0.2.0",
+      small: "Zeabur 第一个正式版。Builder 0.1.2、Identity 0.1.2 和 Catalog 0.4.0 一起发布。",
+    },
+    {
+      area: "oom",
+      big: "构建失败，先说原因",
+      small: "内存不够时，一句话告诉你去哪里调。",
+      specimen: {
+        kind: "build",
+        title: "构建失败",
+        reason: "构建用完了内存。请调高这个项目的构建内存，或把构建的内容缩小。",
+        link: "打开构建设置",
+      },
+    },
+    { area: "plan", big: "plan", small: "动手之前，先列出这次 apply 会改什么。", specimen: plan },
+    {
+      area: "port",
+      big: "端口不用猜",
+      small: "按镜像声明的端口建议，由你确认。",
+      specimen: { kind: "port", note: "镜像声明了端口 3000。", button: "用端口 3000 添加私有地址" },
+    },
+    {
+      area: "update",
+      big: "有新版本会告诉你",
+      small: "集群页面附上发布说明和升级方法。",
+      specimen: {
+        kind: "update",
+        title: "Zeabur 0.2.0 已发布",
+        notes: "发布说明",
+        guide: "升级方法",
+      },
+    },
+  ],
+  en: [
+    {
+      area: "hero",
+      size: "hero",
+      big: "0.2.0",
+      small:
+        "Zeabur's first stable release. Builder 0.1.2, Identity 0.1.2 and Catalog 0.4.0 ship with it.",
+    },
+    {
+      area: "oom",
+      big: "Failed builds say why",
+      small: "Out of memory? One sentence says where to raise it.",
+      specimen: {
+        kind: "build",
+        title: "Build failed",
+        reason:
+          "The build ran out of memory. Raise this project's build memory, or make the build smaller.",
+        link: "Open build settings",
+      },
+    },
+    {
+      area: "plan",
+      big: "plan",
+      small: "Lists what this apply will change, before it does.",
+      specimen: plan,
+    },
+    {
+      area: "port",
+      big: "No guessing the port",
+      small: "It suggests the port your image declares. You confirm.",
+      specimen: {
+        kind: "port",
+        note: "The image declares port 3000.",
+        button: "Add a private address on port 3000",
+      },
+    },
+    {
+      area: "update",
+      big: "Told when it's out",
+      small: "The cluster page links the release notes and how to upgrade.",
+      specimen: {
+        kind: "update",
+        title: "Zeabur 0.2.0 is out",
+        notes: "Release notes",
+        guide: "How to upgrade",
+      },
+    },
+  ],
+}
+const tiles = copy[Astro.props.locale]
+---
+
+<div class="cover-frame release-cover" data-reveal>
+  <span class="cross cross-tl" aria-hidden="true"></span>
+  <span class="cross cross-tr" aria-hidden="true"></span>
+  <span class="cross cross-bl" aria-hidden="true"></span>
+  <span class="cross cross-br" aria-hidden="true"></span>
+  <ul class="cover-wall">
+    {tiles.map((t, i) => (
+      <li
+        class:list={["tile", t.size && `tile-${t.size}`]}
+        style={`grid-area: ${t.area}; --i: ${i}`}
+        data-area={t.area}
+      >
+        {t.size === "hero" && <Logo class="tile-logo" />}
+        <p class:list={["tile-big", t.area === "plan" && "mono"]}>{t.big}</p>
+        <p class="tile-small">{t.small}</p>
+        {t.specimen?.kind === "build" && (
+          <div class="specimen" aria-hidden="true">
+            <p class="sp-title">{t.specimen.title}</p>
+            <p class="sp-error">
+              {t.specimen.reason} <span class="sp-link">{t.specimen.link}</span>
+            </p>
+          </div>
+        )}
+        {t.specimen?.kind === "port" && (
+          <div class="specimen sp-row" aria-hidden="true">
+            <span class="sp-muted">{t.specimen.note}</span>
+            <span class="sp-button">{t.specimen.button}</span>
+          </div>
+        )}
+        {t.specimen?.kind === "update" && (
+          <div class="specimen sp-row sp-split" aria-hidden="true">
+            <span class="sp-title">{t.specimen.title}</span>
+            <span class="sp-actions">
+              <span class="sp-plain">{t.specimen.notes} ↗</span>
+              <span class="sp-button">{t.specimen.guide}</span>
+            </span>
+          </div>
+        )}
+        {t.specimen?.kind === "mono" && (
+          <div class="specimen sp-mono" aria-hidden="true">
+            {t.specimen.lines.map((line) => (
+              <span
+                class:list={[
+                  "sp-line",
+                  line.startsWith("  ") && "sp-indent",
+                  line.startsWith("$") && "sp-muted",
+                ]}
+              >
+                {line.trim()}
+              </span>
+            ))}
+          </div>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .release-cover .cover-wall {
+    grid-template-areas:
+      "hero"
+      "oom"
+      "plan";
+  }
+  .tile:is([data-area="port"], [data-area="update"]) {
+    display: none;
+  }
+  @media (min-width: 720px) {
+    .release-cover .cover-wall {
+      grid-template-columns: minmax(0, 1.15fr) repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "hero oom plan"
+        "hero port update";
+    }
+    .tile:is([data-area="port"], [data-area="update"]) {
+      display: flex;
+    }
+  }
+
+  .sp-error {
+    color: var(--danger);
+  }
+  .sp-link {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    white-space: nowrap;
+  }
+  .sp-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .sp-plain {
+    white-space: nowrap;
+  }
+</style>

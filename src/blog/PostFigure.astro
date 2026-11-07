@@ -1,16 +1,18 @@
 ---
 // A diagram in a post, drawn like the product images.
+import BuildQueue from "../components/imagery/BuildQueue.astro"
 import OssMap from "../components/imagery/OssMap.astro"
+import TestedOn from "../components/imagery/TestedOn.astro"
 import "./figures/figures.css"
 
 interface Props {
-  name: "oss-map"
+  name: "oss-map" | "build-queue" | "tested-on"
   label: string
 }
-const figures = { "oss-map": OssMap }
+const figures = { "oss-map": OssMap, "build-queue": BuildQueue, "tested-on": TestedOn }
 const Figure = figures[Astro.props.name]
 ---
 
-<figure class="post-figure">
+<figure class="post-figure" data-reveal>
   <Figure label={Astro.props.label} />
 </figure>
