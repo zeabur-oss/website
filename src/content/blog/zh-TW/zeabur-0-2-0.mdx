@@ -137,10 +137,18 @@ Catalog 每週會在這些發行版上，完整測試各自支援的元件。發
 
 ![成員頁面的 API 權杖列表，列出每個權杖的角色和到期時間](/blog/zeabur-0-2-0/zh-TW/next-api-tokens.avif)
 
-其他還有：節點頁面顯示還剩多少記憶體才會開始驅逐 Pod、用自己的身分使用 `kubectl`、介於 Developer 和 Admin 之間的專案管理員角色、用任何 OpenID Connect 服務登入，以及透過 `HTTPS_PROXY` 連上網路。所有工作依方向整理在 [#335](https://github.com/zeabur-oss/zeabur/issues/335)，想參與開發的話，可以先從這裡看起。
+資料庫備份設定好之後，可以再修改排程、保留期限和金鑰，也可以關閉備份。關閉後，已經存進 bucket 的備份會留著。
+
+![資料庫備份的「目的地」區塊：右上角多了「關閉備份」和「編輯」按鈕](/blog/zeabur-0-2-0/zh-TW/next-db-backups.avif)
+
+刪除專案時，如果某個資源的控制器一直沒完成清理，專案會停在刪除中。之後可以直接強制刪除，不用再自己用 `kubectl` 處理。
+
+![刪除中的專案橫幅：說明還剩哪些物件在等控制器清理，底下有「強制刪除」按鈕](/blog/zeabur-0-2-0/zh-TW/next-force-delete.avif)
+
+其他還有：不必升級 Zeabur 就能用到最新的模板、在物件儲存裡直接瀏覽和上傳檔案、在介面上替服務分組、重新啟動資料庫，以及節點頁面顯示還剩多少記憶體才會開始驅逐 Pod。管理叢集的人則可以用自己的身分使用 `kubectl`，也會有介於 Developer 和 Admin 之間的專案管理員角色、用任何 OpenID Connect 服務登入，以及透過 `HTTPS_PROXY` 連上網路。所有工作依方向整理在 [#335](https://github.com/zeabur-oss/zeabur/issues/335)，想參與開發的話，可以先從這裡看起。
 
 ## 一起參與
 
-- 有使用上的想法或建議，歡迎到 [GitHub Discussions](https://github.com/orgs/zeabur-oss/discussions) 討論。
+- 有使用上的想法或建議，歡迎到 [Discord](https://zeabur.com/dc) 討論。
 - 遇到問題，請到 [Zeabur issues](https://github.com/zeabur-oss/zeabur/issues) 回報，附上 Kubernetes 發行版、你執行的指令和輸出。
-- 想一起寫程式，可以從 [#335](https://github.com/zeabur-oss/zeabur/issues/335) 挑一張工單，上面也標出了適合第一次參與的工單。Later 的工單完成得越快，下一個版本就越早推出。
+- 想一起寫程式，可以從 [#335](https://github.com/zeabur-oss/zeabur/issues/335) 挑一張工單，上面也標出了適合第一次參與的工單。這些工單完成得越快，下一個版本就越早推出。
