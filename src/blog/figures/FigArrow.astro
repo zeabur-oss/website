@@ -1,0 +1,26 @@
+---
+// What passes from one box to the next: an arrow, and the thing it carries. A "flow" arrow points
+// down on a phone and right once its row lays the boxes out side by side.
+import Icon from "../../components/Icon.astro"
+
+interface Props {
+  label?: string
+  icon?: string
+  dir?: "down" | "right" | "flow"
+  accent?: boolean
+}
+const { label, icon, dir = "down", accent } = Astro.props
+---
+
+<div class:list={["fig-arrow", `fig-arrow-${dir}`, accent && "fig-arrow-accent"]}>
+  <span class="fig-arrow-line" aria-hidden="true">
+    <Icon name="arrow-down" class="fig-arrow-down-icon" />
+    <Icon name="arrow-right" class="fig-arrow-right-icon" />
+  </span>
+  {label && (
+    <span class="fig-arrow-label">
+      {icon && <Icon name={icon} />}
+      {label}
+    </span>
+  )}
+</div>
