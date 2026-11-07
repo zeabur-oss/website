@@ -108,6 +108,9 @@
   line-height: 1.6;
   color: var(--site-muted);
 }
+.prose .footnotes ol {
+  padding-left: 2.25em;
+}
 .prose .footnotes h2 {
   margin: 0 0 0.75rem;
   font-size: 0.8125rem;
