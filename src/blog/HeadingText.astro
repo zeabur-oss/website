@@ -1,5 +1,6 @@
 ---
-// Keeps each Chinese word on one line; <wbr> lets Safari break between words.
+// Breaks Chinese only between words: keep-all holds each word together, <wbr> marks the gaps,
+// and text-wrap picks among them.
 import { chineseTextSegments } from "./chinese-text.ts"
 
 interface Props {
@@ -10,15 +11,15 @@ const { text, locale } = Astro.props
 const plain = locale === "en" || !/\p{Script=Han}/u.test(text)
 ---
 
-{plain
-  ? text
-  : chineseTextSegments(text, locale).map((word, i) =>
-      word.trim() ? (
-        <Fragment>
-          {i > 0 && <wbr />}
-          <span class="zh-word">{word}</span>
-        </Fragment>
-      ) : (
-        word
-      ),
-    )}
+{plain ? (
+  text
+) : (
+  <span class="zh-words">
+    {chineseTextSegments(text, locale).map((word, i) => (
+      <Fragment>
+        {i > 0 && word.trim() && <wbr />}
+        {word}
+      </Fragment>
+    ))}
+  </span>
+)}
