@@ -123,11 +123,12 @@
   overflow-wrap: anywhere;
 }
 
+/* Outside @media print: WebKit ignores an @page nested in it and shrinks the page instead. */
+@page {
+  size: A4;
+  margin: 20mm 22mm 22mm;
+}
 @media print {
-  @page {
-    size: A4;
-    margin: 20mm 22mm 22mm;
-  }
   .prose {
     max-width: none;
     font-size: 10.5pt;
@@ -144,8 +145,16 @@
     font-size: 14pt;
     line-height: 1.4;
   }
+  /* WebKit ignores break-after, so a heading also reserves room for a few lines under it. */
   .prose :is(h2, h3) {
     break-after: avoid;
+    break-inside: avoid;
+  }
+  .prose :is(h2, h3)::after {
+    content: "";
+    display: block;
+    height: 4em;
+    margin-bottom: -4em;
   }
   .prose a {
     color: inherit;
@@ -157,6 +166,10 @@
   }
   .prose .post-figure {
     margin-block: 1.4em;
+  }
+  /* Chrome prints shadows as grey blocks. */
+  .prose .post-figure * {
+    box-shadow: none !important;
   }
   .prose pre {
     white-space: pre-wrap;

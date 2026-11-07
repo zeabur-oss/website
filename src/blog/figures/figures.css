@@ -1,0 +1,429 @@
+/* The diagrams in posts, drawn in HTML so their text keeps its size on a phone. Same parts as the
+   product images (imagery.css): boxes on hairlines, violet for the one thing that matters. */
+
+.fig {
+  container-type: inline-size;
+  padding: 20px;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-md);
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-family: var(--font-stack-sans);
+  font-size: 14px;
+  line-height: 1.55;
+}
+@media (max-width: 480px) {
+  .fig {
+    padding: 14px;
+  }
+}
+.fig-card {
+  padding: 8px 12px;
+  border: 1px solid var(--site-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--site-card);
+  box-shadow: 0 6px 14px light-dark(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.35));
+}
+.fig-group {
+  padding: 10px 12px;
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--site-card) 55%, transparent);
+}
+.fig-accent {
+  border-color: var(--site-accent);
+  box-shadow:
+    inset 0 0 0 0.5px var(--site-accent),
+    0 6px 14px light-dark(rgb(0 0 0 / 0.06), rgb(0 0 0 / 0.35));
+}
+.fig-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.fig-kind {
+  display: block;
+  color: var(--site-muted);
+  font-size: 12.5px;
+}
+.fig-name {
+  display: block;
+  font-weight: 500;
+}
+.fig-note {
+  color: var(--site-muted);
+  font-size: 13px;
+}
+.fig-mono {
+  font-family: var(--font-stack-mono);
+  font-size: 12.5px;
+}
+.fig-path {
+  color: var(--site-muted);
+  font-family: var(--font-stack-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.fig-tag {
+  display: inline-block;
+  padding: 0 7px;
+  border: 1px solid var(--site-line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-stack-mono);
+  font-size: 12px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.fig-hit {
+  border-color: transparent;
+  background: var(--site-accent-soft);
+  color: var(--site-accent);
+}
+.fig-faint {
+  color: var(--site-faint);
+}
+.fig-off {
+  color: var(--site-faint);
+  text-decoration: line-through;
+}
+
+.prose .fig :is(ol, ul) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.prose .fig li + li {
+  margin-top: 0;
+}
+
+.fig-claim-input {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+.fig-claim-presets {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+.fig-claim-out {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--site-line);
+}
+.fig-claim-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px 4px;
+}
+.fig-claim-steps li {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.fig-claim-part {
+  padding: 4px 10px;
+  font-family: var(--font-stack-mono);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.fig-claim-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 12px;
+}
+
+.fig-tool-presets {
+  display: grid;
+  gap: 6px;
+}
+.fig-tool-marks {
+  min-width: 0;
+  margin: 16px 0 0;
+  padding: 0;
+  border: 0;
+}
+.fig-tool-marks legend {
+  margin-bottom: 4px;
+  padding: 0;
+}
+.fig-tool-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) minmax(8rem, 14rem);
+  align-items: center;
+  gap: 4px 10px;
+  padding: 6px 0;
+  border-top: 1px solid var(--site-line);
+}
+.fig-tool-key {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.4;
+}
+.fig-tool-key .fig-tag {
+  font-size: 11px;
+  line-height: 17px;
+}
+.fig-tool-empty {
+  grid-column: 2 / -1;
+}
+@container (max-width: 520px) {
+  .fig-tool-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .fig-tool-value {
+    grid-column: 2;
+  }
+}
+.fig-tool-out {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--site-line);
+}
+.fig-tool-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+.fig-tool-steps li {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.fig-tool-skip {
+  border-style: dashed;
+  box-shadow: none;
+}
+@container (max-width: 300px) {
+  .fig-tool-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.fig-tool-result {
+  display: grid;
+  gap: 2px;
+  margin-top: 14px;
+}
+.fig-tool-warn {
+  color: var(--site-accent);
+  font-size: 13px;
+}
+.fig-tool-meta {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 2px 12px;
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+.fig-tool-meta dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.fig-graph-controls {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.fig-graph-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fig-graph-selector {
+  display: grid;
+  gap: 6px;
+}
+.fig-graph-wide,
+.fig-graph-narrow {
+  overflow: visible;
+}
+.fig-graph-narrow {
+  display: none;
+}
+@container (max-width: 520px) {
+  .fig-graph-wide {
+    display: none;
+  }
+  .fig-graph-narrow {
+    display: block;
+  }
+}
+.fig-graph-node {
+  cursor: pointer;
+  outline: none;
+}
+.fig-graph-node:focus-visible .img-card {
+  stroke: var(--site-accent);
+  stroke-width: 2;
+}
+.fig-graph-summary {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.fig-graph-panel {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--site-line);
+  font-size: 13px;
+}
+.fig-graph-sub {
+  margin-top: 8px;
+}
+.fig-graph-panel li {
+  display: grid;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.fig-node {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 10px 12px;
+}
+.fig-icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: var(--site-bg-soft);
+  color: var(--site-text);
+  font-size: 18px;
+}
+.fig-icon-accent {
+  background: var(--site-accent-soft);
+  color: var(--site-accent);
+}
+.fig-icon .icon,
+.fig-arrow .icon,
+.fig-verdict .icon {
+  width: 1em;
+  height: 1em;
+}
+.fig-node-text {
+  min-width: 0;
+}
+.fig-node-note {
+  display: block;
+  margin-top: 2px;
+}
+.fig-node-tag {
+  margin-top: 6px;
+  font-family: var(--font-stack-sans);
+}
+.fig-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--site-muted);
+  font-size: 12.5px;
+}
+.fig-arrow-line {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: var(--site-faint);
+  font-size: 15px;
+}
+.fig-arrow-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.fig-arrow-accent .fig-arrow-label,
+.fig-arrow-accent .fig-arrow-line {
+  color: var(--site-accent);
+}
+
+/* Down: a hairline from the box above, ending in an arrowhead, with the label beside it. */
+.fig-arrow-down,
+.fig-arrow-flow {
+  min-height: 34px;
+  padding-left: 28px;
+}
+.fig-arrow-down .fig-arrow-line,
+.fig-arrow-flow .fig-arrow-line {
+  align-self: stretch;
+  width: 1px;
+  margin-right: 12px;
+  background: var(--site-line-strong);
+}
+.fig-arrow-down .icon,
+.fig-arrow-flow .icon {
+  position: absolute;
+  bottom: -4px;
+  left: -7px;
+}
+.fig-arrow-accent .fig-arrow-line {
+  background: var(--site-accent);
+}
+.fig-arrow-down .fig-arrow-right-icon,
+.fig-arrow-flow .fig-arrow-right-icon,
+.fig-arrow-right .fig-arrow-down-icon {
+  display: none;
+}
+.fig-arrow-label .icon {
+  position: static;
+}
+
+/* Right: the label above an arrow between two boxes in a row. */
+.fig-arrow-right {
+  flex-direction: column-reverse;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 4px;
+  text-align: center;
+}
+@container (min-width: 540px) {
+  .fig-arrow-flow {
+    flex-direction: column-reverse;
+    justify-content: center;
+    gap: 2px;
+    min-height: 0;
+    padding: 0 4px;
+    text-align: center;
+  }
+  .fig-arrow-flow .fig-arrow-line {
+    width: auto;
+    margin: 0;
+    background: none;
+  }
+  .fig-arrow-flow .fig-arrow-line .icon {
+    position: static;
+  }
+  .fig-arrow-flow .fig-arrow-down-icon {
+    display: none;
+  }
+  .fig-arrow-flow .fig-arrow-right-icon {
+    display: block;
+  }
+}
+
+.fig-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.fig-verdict-yes {
+  color: var(--site-text);
+}
+.fig-verdict-no {
+  color: var(--site-accent);
+}
+.fig-node-stack {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+.fig-graph-icon {
+  color: var(--site-muted);
+}

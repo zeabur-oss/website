@@ -1,0 +1,29 @@
+---
+// A box in a diagram: an icon, what it is, its name and one line on what it does.
+import Icon from "../../components/Icon.astro"
+
+interface Props {
+  icon: string
+  kind?: string
+  name: string
+  note?: string
+  accent?: boolean
+  mono?: boolean
+  tag?: string
+  stack?: boolean
+}
+const { icon, kind, name, note, accent, mono, tag, stack } = Astro.props
+---
+
+<div class:list={["fig-card fig-node", accent && "fig-accent", stack && "fig-node-stack"]}>
+  <span class:list={["fig-icon", accent && "fig-icon-accent"]}>
+    <Icon name={icon} />
+  </span>
+  <span class="fig-node-text">
+    {kind && <span class:list={["fig-kind", mono && "fig-mono"]}>{kind}</span>}
+    <span class="fig-name">{name}</span>
+    {note && <span class="fig-note fig-node-note">{note}</span>}
+    <slot />
+    {tag && <span class="fig-tag fig-hit fig-node-tag">{tag}</span>}
+  </span>
+</div>
