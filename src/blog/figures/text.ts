@@ -7,8 +7,3 @@ export function figureCopy<T>(
 ) {
   return copy[locale] ?? copy["zh-TW"]
 }
-
-/** A field path or label key cut after each `.` and `/`, where a long one may wrap. */
-export function pathParts(path: string) {
-  return path.split(/(?<=[./])/)
-}

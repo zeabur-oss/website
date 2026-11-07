@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from "node:fs"
 import { join } from "node:path"
 import sitemap from "@astrojs/sitemap"
 import { unified } from "@astrojs/markdown-remark"
+import react from "@astrojs/react"
 import starlight from "@astrojs/starlight"
 import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "astro/config"
@@ -81,6 +82,7 @@ export default defineConfig({
       lastUpdated: false,
       credits: false,
     }),
+    react(),
   ],
   vite: { plugins: [tailwindcss(), phosphorForStarlight()] },
 })

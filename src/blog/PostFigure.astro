@@ -1,16 +1,31 @@
 ---
-// A diagram in a post, drawn like the product images.
+// A diagram in a post, drawn like the product images. The ones a reader can try are React
+// islands; their server HTML shows the first case.
 import BuildQueue from "../components/imagery/BuildQueue.astro"
 import OssMap from "../components/imagery/OssMap.astro"
 import TestedOn from "../components/imagery/TestedOn.astro"
 import { isSiteLocale } from "../lib/urls.ts"
+import ClaimNameMatcher from "./figures/ClaimNameMatcher.tsx"
 import HotelKeycard from "./figures/HotelKeycard.astro"
+import InferenceLayers from "./figures/InferenceLayers.astro"
 import LoginFlow from "./figures/LoginFlow.astro"
+import ReferenceGraph from "./figures/ReferenceGraph.tsx"
+import ToolDetector from "./figures/ToolDetector.tsx"
 import TrustStructure from "./figures/TrustStructure.astro"
 import "./figures/figures.css"
 
 interface Props {
-  name: "oss-map" | "build-queue" | "tested-on" | "trust-structure" | "login-flow" | "hotel-keycard"
+  name:
+    | "oss-map"
+    | "build-queue"
+    | "tested-on"
+    | "trust-structure"
+    | "login-flow"
+    | "hotel-keycard"
+    | "claim-name-matcher"
+    | "tool-detector"
+    | "inference-layers"
+    | "reference-graph"
   label: string
 }
 const { name, label } = Astro.props
@@ -24,4 +39,10 @@ const locale = isSiteLocale(Astro.params.locale) ? Astro.params.locale : "en"
   {name === "trust-structure" && <TrustStructure label={label} locale={locale} />}
   {name === "login-flow" && <LoginFlow label={label} locale={locale} />}
   {name === "hotel-keycard" && <HotelKeycard label={label} locale={locale} />}
+  {name === "claim-name-matcher" && (
+    <ClaimNameMatcher client:visible label={label} locale={locale} />
+  )}
+  {name === "tool-detector" && <ToolDetector client:visible label={label} locale={locale} />}
+  {name === "inference-layers" && <InferenceLayers label={label} locale={locale} />}
+  {name === "reference-graph" && <ReferenceGraph client:visible label={label} locale={locale} />}
 </figure>

@@ -1,0 +1,184 @@
+---
+title: 怎麼從 Kubernetes 物件關係推論出傳統 PaaS 的架構
+description: 不另外維護服務資料庫，要怎麼在介面上呈現專案、環境變數和網域？從 Deployment 的參照、Service 的 selector，到 Helm 和 GitOps 的標記，看看 Zeabur 開源版怎麼整理 Kubernetes 資源。
+pubDate: 2026-11-07
+author: pan93412
+draft: true
+---
+
+import Term from "../../../blog/Term.astro"
+import PostFigure from "../../../blog/PostFigure.astro"
+
+在[介紹 Zeabur 開源版](/zh-TW/blog/rebuilding-zeabur)時提到，Zeabur 開源版直接從 Kubernetes 資源推論出平台上的專案和服務，不另外維護一份需要同步的資料庫。比如你用 kubectl 幫 Deployment 掛上一個 PVC，Zeabur 開源版下次讀取時，就應該在這個服務底下看到那顆磁碟。
+
+但如果真的要做，光知道 Namespace 裡有幾個 Deployment、Secret 和 Service 還不夠。假如 web 和 worker 都用了同一份 <Term word="ConfigMap">存放設定的 Kubernetes 物件，可以掛成檔案或讀成環境變數。Secret 的用法類似，用來放密碼、金鑰這類機密資料。</Term>，這份設定要放在哪個服務底下？一條 <Term word="Ingress">把外部的 HTTP 流量依網域和路徑導到 Service 的規則。</Term> 指向 Service，Service 又透過 <Term word="selector">依 label 挑選物件的條件。label 是貼在物件上的鍵值標籤，例如 `app: web`。Service 的 selector 寫了 `app: web`，就會把流量送到帶著這個 label 的 Pod。</Term> 找 Pod，要怎麼知道這個網域對應哪個 Deployment？這些關係都得從資源裡找出來。
+
+## 專案和服務從哪裡來？
+
+Zeabur 開源版先把 Namespace 對應成專案，再把裡面的工作負載對應成服務。目前處理的工作負載有 Deployment、StatefulSet、DaemonSet、Job 和 CronJob。CronJob 排程建立的 Job 會歸在那個 CronJob 底下，否則每執行一次，介面上就會多出一個服務。Zeabur Builder 建置用的 Job 也會排除，不會混進應用程式清單[^workload]。
+
+已經在跑的 Namespace，也可以在介面選「使用這個 Namespace」，加上 `zeabur.com/project` label 變成專案，不用重新部署[^project-label][^ui-copy]。
+
+負責整理這些關係的 `zeabur-graph` 不直接呼叫 Kubernetes API。Zeabur 開源版先用使用者的權杖讀取資源，再把讀到的物件交給它，算出服務、各個服務使用的資源，以及它們之間的關係。這樣同一批物件就會得到相同的結果，也可以不用連上叢集就檢查推論邏輯[^projection]。
+
+這份資料裡不需要 Secret 的內容，只保留 metadata、`type` 和另外計算的 key 數量。使用者要檢視 Secret 內容時，Zeabur 開源版才另外用這位使用者的權杖讀取[^variables]。
+
+## 怎麼知道服務用了哪些資源？
+
+假如要畫 Kubernetes 資源之間的關係，很容易先想到 `ownerReference`。像 [kubectl-tree](https://github.com/ahmetb/kubectl-tree) 就可以沿著它，把 Deployment、ReplicaSet 和 Pod 畫成一棵樹[^kubectl-tree]。不過 `ownerReference` 主要是讓 Kubernetes 處理資源的相依刪除[^gc]，用它找不到服務使用的所有設定。比如 web 和 worker 都透過 `envFrom` 匯入 `app-config`，這份 ConfigMap 通常不會因此多出指向它們的 `ownerReference`。
+
+這時候就需要看工作負載的 spec。web 的 `envFrom` 寫了 `app-config`，就知道 web 使用了這份 ConfigMap。Pod 的 volume 寫了 PVC 的名字，就知道它掛載了哪顆磁碟。Zeabur 開源版會整理這些參照[^references]：
+
+| 從哪裡讀 | 接到什麼 | 關係 |
+| --- | --- | --- |
+| 容器的 `env[].valueFrom` | Secret、ConfigMap | 環境變數參照 |
+| 容器的 `envFrom` | Secret、ConfigMap | 整包匯入 |
+| Pod 的 volume，含 projected volume | Secret、ConfigMap、PVC | 掛載 |
+| `imagePullSecrets` | Secret | 拉映像檔 |
+| Service 的 `spec.selector` | 工作負載的 Pod template label | 符合 selector 的工作負載 |
+| Ingress 的 backend `service.name` | 上面那些 Service | 路由對應的工作負載 |
+| StatefulSet 的 `volumeClaimTemplates` | 名稱是 `<template>-<set>-<序號>` 的 PVC | 這個 StatefulSet 建立的磁碟 |
+
+整理的時候，也保留每個參照的欄位路徑。例如 `spec.template.spec.containers[name=app].env[name=DATABASE_URL].valueFrom.secretKeyRef`，就能說明 app 容器的 `DATABASE_URL` 是從哪個 Secret 讀來的。介面上看到這個關係時，也能回到 Deployment 找到對應的設定。
+
+接下來就可以依照使用情況分類。只有一個工作負載參照的資源，歸在那個服務底下，標成 owned。被多個工作負載使用的標成 shared。沒有工作負載參照的則是 orphan，留在專案裡。同一個工作負載從兩個欄位參照同一份設定，只算一次[^references]。
+
+為什麼要分這三種？假如 `app-config` 同時給 web 和 worker 使用，但介面只把它當成 web 的設定，你在 web 裡改了它，可能沒想到 worker 也會受到影響。標成 shared，就可以把其他使用它的服務一起列出來。刪除 web 時，也不能把這份 ConfigMap 當成 web 專用的資源一起清掉。
+
+只有 web 使用的 Secret 或 PVC，放在 web 底下就比較方便檢視。不過這裡的 owned 是依照參照數量做的分類，和 Kubernetes 的 `ownerReference` 不同，也不表示刪除服務時就該一起刪除——像 PVC 裡的資料，可能還是要保留。至於 orphan，只是這次沒有找到工作負載參照它，可能是預先建立的設定，或是留待確認的舊資源，所以仍然放在專案裡讓使用者處理。
+
+<PostFigure
+  name="reference-graph"
+  label="web 和 worker 都用了 app-config。關掉 worker 的 envFrom，app-config 就從共用變成 web 獨有。點選節點可以看到參照它的欄位"
+/>
+
+以上圖為例，`db-credentials` 和 `uploads` 只有 web 在用，所以歸在 web 底下。`app-config` 是 web 和 worker 共用的設定，`old-token` 則沒有被任何工作負載參照。如果把 worker 的 `envFrom` 取消，`app-config` 就只剩 web 使用，會從 shared 變成 owned。
+
+Service 和 Ingress 需要多找一層。Service 的 selector 選到 web 的 Pod，而 Ingress 指向這個 Service，就可以把 Ingress 的網域列在 web 底下。如果把 Service 的 selector 拿掉，Zeabur 開源版就無法透過它找到 web，Service 和這條 Ingress 也都會變成 orphan。
+
+### Service 的 selector 要全部符合
+
+Kubernetes 的 Service 是用 selector 比對 Pod 的 label，不會直接選取 Deployment[^service]。Zeabur 開源版則拿同一組 selector，和各個工作負載的 Pod template label 比對，推論它們的關係。比對時每個條件都要符合[^labels]。比如 selector 是 `app: web, tier: api`，web 的 Pod template 就必須同時有這兩個 label，少了 `tier` 也不算。
+
+沒有 selector 的 Service，就無法用這個方式判斷它屬於哪個工作負載，因此會留在專案裡。Ingress 目前則只處理指向 `backend.service` 的規則，其他類型的 backend 不會列成工作負載的網域[^references]。
+
+Gateway API 的 HTTPRoute 也會讀。HTTPRoute 的 backend 指向 web 的 Service 時，它的 hostname 和路徑同樣列在 web 底下。目前只處理同一個 Namespace 裡、指向 Service 的 backend。如果 HTTPRoute 和已經列出的 Ingress 同名，就保留 Ingress[^http-route]。
+
+### StatefulSet 的 PVC 要怎麼找？
+
+StatefulSet 還有一種情況：透過 `volumeClaimTemplates` 建立的 PVC，不會直接列在 Pod template 的 volumes 裡。Zeabur 開源版會依照 controller 產生名稱的方式，找出對應的 PVC。Kubernetes v1.35.0 原始程式碼裡的 `getPersistentVolumeClaimName` 使用 `fmt.Sprintf("%s-%s-%d", claim.Name, set.Name, ordinal)`，也就是 `<volumeClaimTemplate 名稱>-<StatefulSet 名稱>-<序號>`[^claim-name]。
+
+假如 StatefulSet 叫 `db`，直接比對字首很容易連 `db-replica` 的 PVC 都一起算進去。所以比對時，template 和 StatefulSet 的名稱都要完整符合，最後一段也必須全是數字[^references]。
+
+<PostFigure
+  name="claim-name-matcher"
+  label="StatefulSet db 的範本 data：data-db-0 和 data-db-12 符合。data-db-replica-0 剩下的 replica-0 不全是數字，不符合，屬於 StatefulSet db-replica"
+/>
+
+### 找不到資源，還是要保留參照
+
+假如 Deployment 寫了 `secretKeyRef`，但 Secret 已經被刪掉了，Zeabur 開源版還是會保留這筆參照。因為這個服務確實設定了要讀取那個 Secret，找不到目標也是需要呈現的資訊。掛載也一樣，找不到對應的 volume 時，種類會保留為 `Unknown`[^mounts]。
+
+另外，Namespace 裡有些資源是叢集或工具建立的，列在使用者設定裡反而容易混淆。Zeabur 開源版排除了 ConfigMap `kube-root-ca.crt`、`type` 為 `kubernetes.io/service-account-token` 的 Secret，以及 <Term word="Helm">Kubernetes 的套件管理工具。一組資源範本打包成 chart，填入參數安裝後成為一個 release，之後的升級和回復都以 release 為單位。</Term> 用來儲存 release 紀錄的 Secret（`type` 是 `helm.sh/release.v1`）。這裡只需要看名稱和 `type`，不用讀取內容[^references]。
+
+## 如果資源是 Helm 或 GitOps 管理的呢？
+
+知道服務用了哪些資源之後，還有一個會影響操作的問題：這些資源是誰在管理？假如 Deployment 是 <Term word="Argo CD">一種 GitOps 工具。GitOps 是把部署設定放在 Git，由工具比對叢集和 Git 的差異，再把叢集同步成 Git 裡的樣子。</Term> 部署的，使用者在 Zeabur 開源版改了映像檔，下次同步就可能被改回去。介面需要在修改前提醒。
+
+Kubernetes 沒有統一的欄位記錄這件事，要看各個工具留下的 label 和 annotation。這些 key 可能隨工具調整，要支援的工具也會增加，所以辨識規則集中放在 `zeabur-model` 的 adapters，整理專案和服務的程式只使用辨識結果，不直接比對第三方的 key[^tools]。Parnas 在談模組拆分時，也建議把可能改變的設計決定封裝在各自的模組裡[^parnas]。
+
+不過同一個資源可能同時有好幾種標記。比如 <Term word="Flux">另一個 GitOps 工具，和 Argo CD 一樣會把叢集同步成 Git 等來源裡的設定。</Term> 可以透過 Helm 安裝 chart[^flux-helmrelease]，Argo CD 也可以用 `helm template` 算繪 chart，再由 Argo CD 管理資源[^argo-helm]。產生的物件就可能同時帶著 Helm 和 GitOps 工具的標記。這時 Zeabur 開源版會優先顯示 GitOps 工具，提醒使用者之後的同步可能覆蓋修改。目前的辨識順序是 Argo CD、Flux，最後才是 Helm，使用的標記有[^tools]：
+
+| 工具 | 標記 |
+| --- | --- |
+| Argo CD | annotation `argocd.argoproj.io/tracking-id`，或自訂追蹤 label `argocd.argoproj.io/instance`[^argo-tracking] |
+| Flux | label `kustomize.toolkit.fluxcd.io/name`[^flux-kustomize]，或 `helm.toolkit.fluxcd.io/name`[^flux-helm] |
+| Helm | annotation `meta.helm.sh/release-name`，或 `app.kubernetes.io/managed-by` 的值不分大小寫等於 `Helm` |
+
+比如表裡的 `argocd.argoproj.io/instance`，要在 Argo CD 設定成追蹤 label 才會使用[^argo-tracking]。Zeabur 開源版也沒有把 Helm 等工具同樣會用的 `app.kubernetes.io/instance` 當成 Argo CD 的辨識依據[^tools]。Helm 那列則是 Zeabur 開源版為了顯示提醒採用的條件。Helm v3.16.4 自己檢查既有資源能否納入 release 時，會同時核對 `managed-by`、release name 和 release namespace，值也必須完全相符[^helm-validate]。
+
+標記的值如果是空字串，就當作沒有設定。辨識到工具後，Zeabur 開源版會在修改資源前顯示警告，提醒使用者下次 sync 或 upgrade 可能覆蓋這次修改。沒有符合的標記就不顯示這個警告，但仍會保留 `app.kubernetes.io/managed-by` 的原始值，即使寫的是其他工具[^tools]。
+
+環境變數也一樣。整份匯入的設定如果由 Helm 或 GitOps 工具管理，Zeabur 開源版會把那筆匯入標成唯讀，提醒使用者該回到原本的工具修改[^variables]。
+
+服務分組也會用到 label。Zeabur 開源版優先讀取 `zeabur.com/group`，沒有設定時，再用 Kubernetes 推薦的 `app.kubernetes.io/component`[^recommended-labels]，兩者都沒有就放在 `default`。這只影響介面上的分類，比如把 frontend 和 backend 分開顯示，不會改變工作負載和其他資源的參照關係[^groups]。
+
+<PostFigure
+  name="tool-detector"
+  label="選一組標記，看 Zeabur 開源版依 Argo CD、Flux、Helm 的順序辨識 Deployment web 的管理工具。預設同時有 Flux 和 Helm 的標記，結果是由 Flux 管理，Helm 的檢查略過。"
+/>
+
+比如同時勾選 Argo CD 和 Helm 的標記，結果會是 Argo CD。如果只保留 `managed-by`，再把它的值清空，就不會辨識成 Helm。
+
+### 資料庫和 operator 的分組
+
+資料庫 operator 建立的工作負載，也需要另外辨識。比如 PostgreSQL operator 建立了一個 StatefulSet，會希望它列在資料庫底下，而不是和 web、worker 放在一起。
+
+這裡可以回頭使用 `ownerReference`，但只看 `controller: true` 的項目，確認是哪個 controller 管理這個工作負載。目前辨識的種類有 CloudNativePG、Percona 與 Crunchy 的 PostgresCluster、MongoDB Community、Percona Server for MongoDB、Percona XtraDB Cluster、MOCO 的 MySQLCluster、MariaDB、Dragonfly，以及 SeaweedFS。符合的工作負載會放進 `databases` 分組，並標上資料庫引擎。如果使用者已經設定 `zeabur.com/group`，就優先使用這個設定[^operators]。
+
+operator 自己的 Deployment 則根據已知的 label，或 `app.kubernetes.io/name`（例如 `pg-operator`），放進 `operators` 分組。沒有符合這些規則的工作負載，會保留原本的分組[^operators]。
+
+## 沒有參照的資源怎麼呈現？
+
+如果一份 Secret 沒有被任何工作負載參照，Zeabur 開源版就把它留在專案裡，使用者仍然可以檢視和管理它。不會因為它和某個 Deployment 名字很像，就放到那個服務底下。沒有 selector 的 Service 也是一樣，找不到對應的工作負載，就不把它列成某個服務的網路設定。
+
+<PostFigure
+  name="inference-layers"
+  label="四層依據：欄位參照、管理工具的標記、從環境變數推測的連線，以及資訊不夠、留在專案裡的資源"
+/>
+
+整理到這裡，其實有幾種不同的依據。像 `secretKeyRef` 可以直接找到 Deployment 裡的欄位，知道它參照了哪份 Secret。Helm 或 Argo CD 的標記，則是依照工具的慣例辨識。服務之間的連線還多一種：環境變數裡寫了 `redis://redis:6379`，Zeabur 開源版會找出其中的 Service 名稱，連到它選到的工作負載，並標成「從變數推測」[^connections][^ui-copy]。Zeabur 開源版會保留這些依據，讓使用者知道介面上的關係是怎麼來的。沒有足夠資訊建立關係的資源，則繼續留在專案裡。
+
+在[打造 Zero-Trust PaaS](/zh-TW/blog/zero-trust-platform)裡，使用者能操作哪些資源，是交給 kube-apiserver 依 RBAC 判斷。這篇處理的是讀到資源之後，要怎麼把它們整理成專案和服務。兩者都沿用叢集裡的資料，不需要另外維護權限名單或服務資料庫。之後就算不使用 Zeabur 開源版，這些工作負載也能繼續跑，再用 kubectl 接手管理。
+
+Zeabur 開源版已公開在 [GitHub](https://github.com/zeabur-oss/zeabur)，這篇提到的推論都在 `crates/zeabur-graph` 和 `crates/zeabur-model` 裡。
+
+[^workload]: Zeabur, “workloads,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/workload.rs (accessed Nov. 7, 2026).
+
+[^project-label]: Zeabur, “Project labels,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-model/src/kernel/names.rs (accessed Nov. 7, 2026).
+
+[^projection]: Zeabur, “Snapshot,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/snapshot.rs (accessed Nov. 7, 2026).
+
+[^variables]: Zeabur, “env and env_from_in,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/env.rs (accessed Nov. 7, 2026).
+
+[^kubectl-tree]: A. A. Balkan, "kubectl-tree," source repository. [Online]. Available: https://github.com/ahmetb/kubectl-tree/tree/c8bbbd4634e364726484218441f6f4d6d6e6cdfa (accessed Oct. 17, 2026).
+
+[^gc]: The Kubernetes Authors, "Garbage collection," Kubernetes Documentation. [Online]. Available: https://kubernetes.io/docs/concepts/architecture/garbage-collection/
+
+[^references]: Zeabur, “relations_of, attribute and attribution_of,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/attribution.rs (accessed Nov. 7, 2026).
+
+[^service]: The Kubernetes Authors, "Service," Kubernetes Documentation. [Online]. Available: https://kubernetes.io/docs/concepts/services-networking/service/
+
+[^labels]: The Kubernetes Authors, "Labels and selectors," Kubernetes Documentation. [Online]. Available: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+
+[^http-route]: Zeabur, “with_http_routes,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/project.rs (accessed Nov. 7, 2026).
+
+[^claim-name]: The Kubernetes Authors, "getPersistentVolumeClaimName," in `pkg/controller/statefulset/stateful_set_utils.go`, Kubernetes source repository, v1.35.0. [Online]. Available: https://github.com/kubernetes/kubernetes/blob/66452049f3d692768c39c797b21b793dce80314e/pkg/controller/statefulset/stateful_set_utils.go
+
+[^mounts]: Zeabur, “mounts_in,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/mounts.rs (accessed Nov. 7, 2026).
+
+[^tools]: Zeabur, “detect_tool,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-model/src/adapters/provenance.rs and https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/project.rs (accessed Nov. 7, 2026).
+
+[^parnas]: D. L. Parnas, "On the criteria to be used in decomposing systems into modules," *Commun. ACM*, vol. 15, no. 12, pp. 1053–1058, Dec. 1972, doi: 10.1145/361598.361623. [Online]. Available: https://www.cs.colostate.edu/~france/CS314/Readings/Parnas-decomposition.pdf
+
+[^flux-helmrelease]: Flux authors, "Helm Releases," Flux Documentation. [Online]. Available: https://fluxcd.io/flux/components/helm/helmreleases/
+
+[^argo-helm]: Argo Project, "Helm," Argo CD Documentation. [Online]. Available: https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
+
+[^argo-tracking]: Argo Project, "Resource tracking," Argo CD Documentation. [Online]. Available: https://argo-cd.readthedocs.io/en/stable/user-guide/resource_tracking/
+
+[^flux-kustomize]: Flux authors, "SetOwnerLabels," in `ssa/manager.go`, Flux pkg source repository, ssa/v0.48.0; "Reconcile," in `internal/controller/kustomization_controller.go`, Kustomize Controller source repository, v1.6.0. [Online]. Available: https://github.com/fluxcd/pkg/blob/3d6f759b7671a1ab0b3da5ee856de681d6f7532f/ssa/manager.go and https://github.com/fluxcd/kustomize-controller/blob/f54038e15d1bf861e7028757fb6e7a336471a54c/internal/controller/kustomization_controller.go
+
+[^flux-helm]: Flux authors, "originLabels," in `internal/postrender/origin_labels.go`, Helm Controller source repository, v1.3.0. [Online]. Available: https://github.com/fluxcd/helm-controller/blob/e47f47f1282d1c66b180be7a386f5afbe3f5ae26/internal/postrender/origin_labels.go, https://github.com/fluxcd/helm-controller/blob/e47f47f1282d1c66b180be7a386f5afbe3f5ae26/internal/postrender/build.go and https://github.com/fluxcd/helm-controller/blob/e47f47f1282d1c66b180be7a386f5afbe3f5ae26/api/v2/groupversion_info.go
+
+[^helm-validate]: Helm Authors, "checkOwnership and requireValue," in `pkg/action/validate.go`, Helm source repository, v3.16.4. [Online]. Available: https://github.com/helm/helm/blob/7877b45b63f95635153b29a42c0c2f4273ec45ca/pkg/action/validate.go
+
+[^recommended-labels]: The Kubernetes Authors, "Recommended labels," Kubernetes Documentation. [Online]. Available: https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+
+[^groups]: Zeabur, “Service groups,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-model/src/adapters/group.rs and https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/workload.rs (accessed Nov. 7, 2026).
+
+[^operators]: Zeabur, “database_cluster and is_operator,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-model/src/adapters/operators.rs and https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/workload.rs (accessed Nov. 7, 2026).
+
+[^connections]: Zeabur, “connections,” source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/crates/zeabur-graph/src/connections.rs (accessed Nov. 7, 2026).
+
+[^ui-copy]: Zeabur, “Interface text (zh-TW),” interface source code. [Online]. Available: https://github.com/zeabur-oss/zeabur/blob/306085bad74fb151fe4353a63adc50e3de9de4cd/web/src/i18n/zh-TW.ts (accessed Nov. 7, 2026).

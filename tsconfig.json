@@ -1,9 +1,11 @@
 {
-  "include": ["src/**/*.ts", "scripts", "*.ts", ".astro/types.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "scripts", "*.ts", ".astro/types.d.ts"],
   "compilerOptions": {
     "target": "es2023",
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "esnext",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "types": ["bun"],
     "skipLibCheck": true,
 
