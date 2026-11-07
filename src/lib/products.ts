@@ -24,11 +24,3 @@ export const productName: Record<ProductId, string> = {
 export function releaseTag(id: ProductId): string {
   return lock.repos.find((r) => r.name === id)!.tag
 }
-
-/** The version each product page shows beside its name. Builder and Catalog show their API version. */
-export const productVersion: Record<ProductId, string> = {
-  zeabur: releaseTag("zeabur"),
-  identity: releaseTag("identity"),
-  builder: "v1alpha1",
-  catalog: "v1",
-}
