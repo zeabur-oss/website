@@ -133,13 +133,23 @@ The next release is already underway! Here are a few features in development:
 
 Builds will show a live list of steps. You'll be able to see which steps used the cache and which failed, with the failed step's output expanded automatically.
 
+![A build's logs as a list of steps: RUN npm ci failed under "Build the image", with npm's error output expanded beside it](/blog/zeabur-0-2-0/en/next-build-steps.avif)
+
 Database pages will explain how to connect from outside the cluster. Use `zeaburctl connect` to forward a database to a port on your computer, or open a public port so tools on other machines can connect directly. Before you open it, the interface will warn you about the risks.
+
+![A database's "Connect from outside the cluster" section: the zeaburctl connect command, the public port switch, the warning before opening it, and the connection address](/blog/zeabur-0-2-0/en/next-db-outside.avif)
 
 You'll be able to create API tokens for CI or scripts directly on the Members page, without creating a ServiceAccount and binding roles yourself.
 
+![The API tokens list on the Members page, with each token's role and expiry](/blog/zeabur-0-2-0/en/next-api-tokens.avif)
+
 After setting up database backups, you'll be able to change the schedule, retention period, and keys, or turn backups off. Backups already stored in the bucket will stay.
 
+![A database backup's "Destination" block, with "Turn off backups" and "Edit" buttons in its top-right corner](/blog/zeabur-0-2-0/en/next-db-backups.avif)
+
 If a resource's controller never finishes cleaning up during project deletion, the project stays stuck deleting. You'll be able to force-delete it directly, without handling it yourself with `kubectl`.
+
+![The banner of a project being deleted: which objects are still waiting for their controllers to clean up, with a "Force delete" button below](/blog/zeabur-0-2-0/en/next-force-delete.avif)
 
 Other work includes getting the latest templates without upgrading Zeabur, browsing and uploading files directly in object storage, grouping services in the interface, restarting databases, and showing how much memory a node has left before it starts evicting pods. Cluster administrators will be able to use `kubectl` as themselves. There will also be a project manager role between Developer and Admin, sign-in through any OpenID Connect provider, and network access through `HTTPS_PROXY`. [#335](https://github.com/zeabur-oss/zeabur/issues/335) groups all the work by area and is a good place to start if you'd like to contribute.
 

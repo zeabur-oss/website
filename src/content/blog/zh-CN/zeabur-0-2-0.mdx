@@ -133,13 +133,23 @@ Catalog 每周会在这些发行版上，完整测试各自支持的组件。发
 
 构建过程会改为实时更新的步骤列表。哪一步用了缓存、哪一步失败，一眼就能看出来，失败步骤的输出会直接展开。
 
+![构建日志里的步骤列表：“构建镜像”下的 RUN npm ci 失败，下面直接展开 npm 的错误输出](/blog/zeabur-0-2-0/zh-CN/next-build-steps.avif)
+
 数据库会说明如何从集群外连接。你可以用 `zeaburctl connect` 把数据库连接到自己电脑上的端口，也可以开放公开端口，让其他机器上的工具直接连接，开放前会先提醒你风险。
+
+![数据库的“从集群外连接”区域：zeaburctl connect 命令、对外端口开关、开放前的警告，以及连接地址](/blog/zeabur-0-2-0/zh-CN/next-db-outside.avif)
 
 成员页面可以直接创建 API 令牌，供 CI 或脚本使用，不用再自己创建 ServiceAccount 和绑定角色。
 
+![成员页面的 API 令牌列表，列出每个令牌的角色和过期时间](/blog/zeabur-0-2-0/zh-CN/next-api-tokens.avif)
+
 数据库备份配置好后，可以再修改执行时间、保留期限和密钥，也可以关闭备份。关闭后，已经存入 bucket 的备份会保留。
 
+![数据库备份的“目的地”区域：右上角多了“关闭备份”和“编辑”按钮](/blog/zeabur-0-2-0/zh-CN/next-db-backups.avif)
+
 删除项目时，如果某个资源的控制器一直没有完成清理，项目就会停在删除中。之后可以直接强制删除，不用再自己用 `kubectl` 处理。
+
+![正在删除的项目横幅：说明还有哪些对象在等控制器清理，下面有“强制删除”按钮](/blog/zeabur-0-2-0/zh-CN/next-force-delete.avif)
 
 其他功能还有：不必升级 Zeabur 就能使用最新的模板、在对象存储里直接浏览和上传文件、在界面上给服务分组、重启数据库，以及在节点页面显示内存还剩多少就会开始驱逐 Pod。集群管理员则可以用自己的身份使用 `kubectl`，还会有介于 Developer 和 Admin 之间的项目管理员角色、用任意 OpenID Connect 服务登录，以及通过 `HTTPS_PROXY` 连接网络。所有工作按方向整理在 [#335](https://github.com/zeabur-oss/zeabur/issues/335)，想参与开发，可以先从这里看起。
 
