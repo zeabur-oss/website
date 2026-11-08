@@ -22,7 +22,7 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     author: z.enum(["pan93412"]),
     /** A cover under the title, from src/blog/covers. */
-    cover: z.enum(["open-source"]).optional(),
+    cover: z.enum(["open-source", "release-0-2-0"]).optional(),
   }),
 })
 

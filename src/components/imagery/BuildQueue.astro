@@ -1,0 +1,64 @@
+---
+// Builder 0.1.2's default limits: one build at a time in a namespace, with 1 CPU and 1 GiB. The
+// others wait in line with QuotaExceeded, and the oldest starts next.
+interface Props {
+  label: string
+}
+const waiting = [
+  { name: "api", at: "10:03", x: 288, note: "next" },
+  { name: "worker", at: "10:05", x: 416, note: "" },
+]
+---
+
+<svg class="imagery imagery-queue" viewBox="0 0 560 232" role="img" aria-label={Astro.props.label}>
+  <rect class="img-frame" x="16" y="16" width="528" height="200" rx="6"></rect>
+  <text class="img-kind" x="40" y="44">
+    namespace shop
+  </text>
+
+  <rect class="img-box img-box-accent" x="40" y="56" width="208" height="128" rx="6"></rect>
+  <text class="img-strong img-name" x="56" y="80">
+    buildkitd
+  </text>
+  <text class="img-kind" x="232" y="80" text-anchor="end">
+    1 CPU · 1 GiB
+  </text>
+  <g class="img-q" style="--i: 0">
+    <rect class="img-card" x="56" y="96" width="176" height="72" rx="6"></rect>
+    <text class="img-kind img-accent-text" x="70" y="116">
+      10:02 · Running
+    </text>
+    <text class="img-name" x="70" y="136">
+      web
+    </text>
+    <rect class="img-q-track" x="70" y="150" width="148" height="4" rx="2"></rect>
+    <rect class="img-q-progress" x="70" y="150" width="148" height="4" rx="2"></rect>
+  </g>
+
+  <text class="img-kind" x="272" y="44">
+    waiting · QuotaExceeded
+  </text>
+  <rect class="img-q-lane" x="272" y="56" width="248" height="128" rx="6"></rect>
+  {waiting.map((w, i) => (
+    <g class="img-q" style={`--i: ${i + 1}`}>
+      <rect class="img-card" x={w.x} y="96" width="96" height="72" rx="6" />
+      <text class="img-kind" x={w.x + 12} y="116">
+        {w.at}
+      </text>
+      <text class="img-name" x={w.x + 12} y="136">
+        {w.name}
+      </text>
+      {w.note && (
+        <text class="img-kind img-accent-text" x={w.x + 12} y="156">
+          {w.note}
+        </text>
+      )}
+    </g>
+  ))}
+  <path class="img-q-arrow" d="M282 132 H254 M260 126 L254 132 L260 138"></path>
+  <path class="img-q-arrow" d="M410 132 H390 M396 126 L390 132 L396 138"></path>
+
+  <text class="img-kind" x="40" y="204">
+    one build at a time per namespace, and across the cluster
+  </text>
+</svg>
