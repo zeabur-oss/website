@@ -1,7 +1,7 @@
 ---
 title: Zeabur 0.2.0：開源版本的第一個正式版
 description: 安裝和升級前，先列出這次會改動什麼。出錯時，畫面直接告訴你下一步。
-pubDate: 2026-11-07
+pubDate: 2026-11-08
 author: pan93412
 draft: true
 cover: release-0-2-0
@@ -60,6 +60,8 @@ Ubuntu 26.04 新版核心的 AppArmor 規則，讓容器沒辦法對自己的程
 
 以前工作節點如果在安裝 Longhorn 之前就加入，會一直缺少掛載磁碟區需要的套件。現在只要在這個節點上執行 `plan`，就會列出要做的準備，執行 `apply` 就會補齊套件。`doctor` 也會提供[重新整理 Longhorn 檢查的指令](https://github.com/zeabur-oss/zeabur/issues/285)。
 
+在照 K3s CIS 強化指南設定的多節點叢集上，`kube-system` 只讓自己的 Pod 連進來，kube-apiserver 連不到另一個節點上的 metrics-server。一半的用量查詢要等約一分鐘才失敗，節點頁面和 `kubectl top` 在那之前都是空的。現在 metrics-server 允許來自每個節點的請求。就算還是連不到，Zeabur 也只等五秒，節點和資源請求照樣顯示，再註明用量暫時無法取得。
+
 ## 改進元件升級失敗的指引
 
 叢集裡的元件由 Helm 安裝和升級，升級失敗時，Helm 會把這次的版本標為失敗。測試時就遇過 zot（叢集內建的映像檔儲存庫）升級失敗，`apply` 卻回報 `Done` 的情況。畫面上看起來升級成功了，zot 其實沒有升級上去。
@@ -75,9 +77,9 @@ Ubuntu 26.04 新版核心的 AppArmor 規則，讓容器沒辦法對自己的程
 
 ## Builder、Identity 和 Catalog
 
-Zeabur 0.2.0 搭配 Zeabur Builder 0.1.2、Zeabur Identity 0.1.2 和 Zeabur Catalog 0.4.0 一起發布。
+Zeabur 0.2.0 搭配 Zeabur Builder 0.2.1、Zeabur Identity 0.1.2 和 Zeabur Catalog 0.4.2 一起發布。
 
-### Zeabur Builder 0.1.2
+### Zeabur Builder 0.2.1
 
 建置現在預設有上限。每次建置分到 1 CPU 和 1 GiB 記憶體，每個命名空間（namespace）和整個叢集同時都只跑一個建置。其他建置會排隊，狀態顯示 `QuotaExceeded`，最早送出的先開始。0.1.1 的命名空間最多同時跑 3 個建置，也沒有 CPU 和記憶體上限。
 
@@ -92,15 +94,19 @@ Zeabur 0.2.0 搭配 Zeabur Builder 0.1.2、Zeabur Identity 0.1.2 和 Zeabur Cata
 
 Builder 現在只刪除自己推送過的映像檔。你手動推送到 `<命名空間>/<名稱>` 路徑的映像檔，在刪除同名的 Build 時會保留下來。
 
+buildkitd 現在一律在 Linux 的 user namespace 裡執行，Builder 因此需要 Kubernetes 1.34 以上。以前改了建置快取的大小或儲存類別後，已經有 buildkitd 的命名空間就再也開始不了建置。現在 Builder 會刪掉舊的 buildkitd 和快取再重新建立，下一次建置從空的快取開始。
+
 ### Zeabur Identity 0.1.2
 
 自動填入和「使用通行密鑰登入」按鈕同時回應時，登入會卡在「已過期」畫面。0.1.2 修正了這個問題，現在只會送出第一個回應。
 
 在帳號頁面移除通行密鑰、移除已連結的帳號，或重新命名通行密鑰時，都改成在對話框裡操作，不再展開整列。Identity 要求的記憶體也從 32Mi 降到 24Mi。映像檔的版本標籤不再帶 `v`，請拉取 `ghcr.io/zeabur-oss/identity:0.1.2`。
 
-### Zeabur Catalog 0.4.0
+### Zeabur Catalog 0.4.2
 
 `profile` 在 `single-node` 和 `multi-node` 之間切換時，zot 和 VictoriaMetrics 會繼續運作。以前切換會改變磁碟區大小，zot 的升級因此失敗。現在兩種 `profile` 都用同樣的大小：zot 20 GiB，VictoriaMetrics 5 GiB。用 `multi-node` 建立的安裝，第一次升級前要先執行 [Catalog v0.4.0 發行說明](https://github.com/zeabur-oss/catalog/releases/tag/v0.4.0)裡的三個指令。
+
+在 `multi-node` 上，資料庫和儲存的 operator、Reloader 和 k8up 改成照實際用量要求記憶體，大約是以前的一半以下。VictoriaMetrics 要求的記憶體從 512 MiB 降到 224 MiB，一樣保留兩週的資料。
 
 節點重新啟動後，CrowdSec 的 agent 會自己恢復運作，不用再手動執行 `cscli machines delete`。
 
