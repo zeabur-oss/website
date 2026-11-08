@@ -1,0 +1,150 @@
+---
+title: Zeabur 0.2.0：开源版本的首个正式版
+description: 安装和升级前，先列出这次会改动什么。出错时，界面直接告诉你下一步怎么做。
+pubDate: 2026-11-08
+author: pan93412
+draft: true
+cover: release-0-2-0
+---
+
+import PostFigure from "../../../blog/PostFigure.astro";
+
+继 [0.1.1 Beta](/zh-CN/blog/rebuilding-zeabur) 之后，Zeabur 0.2.0 发布了，这是 Zeabur 开源版本的首个正式版！
+
+这一版着重改进可靠性和透明度：安装和升级前，你就知道这次会改动什么，出错时也知道下一步怎么做。完整变更见 [v0.2.0 发布说明](https://github.com/zeabur-oss/zeabur/releases/tag/v0.2.0)。
+
+## 这个版本的新功能
+
+- `plan` 会列出上次 `apply` 之后的差异，安装程序也增加了“选项”步骤。
+- 构建失败时，卡片会用一句话说明原因。内存不够时，旁边就有项目构建设置的链接。
+- 部署时会自动填好端口，或根据镜像的声明给出建议。
+- 有新版本时，集群页面会提醒你，并根据安装方式附上升级步骤。
+- 网络慢时，操作后约 100 毫秒就会出现进度条。
+- Identity 0.1.2 修复了通行密钥登录卡在“本次登录已过期”页面的问题。
+
+### 安装前的变更
+
+`plan` 现在会列出上次 `apply` 之后的差异，包括系统文件、要重启的服务、组件变更和 Zeabur 的版本。你不用再对照整份安装清单，自己找出这次会改动哪些地方。
+
+安装程序新增了“选项”步骤，可以设置体验计划和更新提醒，也会显示预留给系统的内存。
+
+![安装程序的“选项”步骤：体验计划、检查更新，以及预留给操作系统和 K3s 的内存](/blog/zeabur-0-2-0/zh-CN/installer-options.avif)
+
+### 构建失败的原因
+
+构建失败时，卡片会先用一句话说明原因。如果是内存用完了，旁边会有“打开构建设置”，可以直接调高这个项目的上限。每个项目都能调整构建的内存和 CPU 上限。要看原始输出，再打开“详细信息”。
+
+![失败的构建先提示“构建用完了内存”，旁边是“打开构建设置”](/blog/zeabur-0-2-0/zh-CN/build-out-of-memory.avif)
+
+![项目设置里的“构建”区域，可以调整每次构建的内存和 CPU](/blog/zeabur-0-2-0/zh-CN/build-limits.avif)
+
+### 端口建议
+
+用 Dockerfile 构建的服务首次构建完成后，“网络”标签页会读取镜像声明的端口，建议你用这个端口添加私有地址。点击按钮后会先列出变更，确认应用后才会创建。
+
+从 Git 或文件夹用 Railpack 构建的服务，端口默认填入 8080。如果集群设置了域名后缀，网址也会一起填好。
+
+![“网络”标签页提示镜像声明了端口 3000，旁边是用 3000 添加私有地址的按钮](/blog/zeabur-0-2-0/zh-CN/networking-port-hint.avif)
+
+### 更新提醒
+
+有新版本时，集群页面会显示通知，附上发布说明，并根据你当初的安装方式提供升级步骤。Zeabur 不会自动升级，你可以先读完变更，再决定什么时候升级。
+
+![集群页面的“需要处理”提示 Zeabur 0.2.0 已发布，旁边是“发布说明”和“升级方法”](/blog/zeabur-0-2-0/zh-CN/update-available.avif)
+
+## 多节点和 Ubuntu 26.04 改进
+
+以前在多节点 K3s 集群里，工作节点明明显示 Ready，`apply` 却可能失败，因为跨节点的 webhook 调用遭到了拦截。webhook 是 Kubernetes 在创建或修改对象时，调用其他组件来检查的机制。新安装的 K3s 改用了另一种跨节点连接方式，现有集群可以按照[这个 issue 里的命令](https://github.com/zeabur-oss/zeabur/issues/282)修复。
+
+Ubuntu 26.04 新版内核的 AppArmor 规则，让容器无法向自己的进程发送信号，PostgreSQL 等组件因此无法启动。安装程序现在会在集群启动前，加载[修正后的规则](https://github.com/zeabur-oss/zeabur/pull/255)。
+
+以前，如果工作节点在安装 Longhorn 之前就已加入集群，就会一直缺少挂载卷所需的软件包。现在只要在这个节点上运行 `plan`，就会列出需要做的准备，运行 `apply` 就会补齐软件包。`doctor` 也会提供[刷新 Longhorn 检查的命令](https://github.com/zeabur-oss/zeabur/issues/285)。
+
+在按照 K3s CIS 加固指南配置的多节点集群里，`kube-system` 只允许自己的 Pod 连入，kube-apiserver 连不上另一个节点上的 metrics-server。一半的用量查询要等约一分钟才会失败，在此之前，节点页面和 `kubectl top` 都是空的。现在 metrics-server 允许来自每个节点的请求。即使仍然连不上，Zeabur 也只等五秒，节点和资源请求照常显示，再注明暂时无法获取用量。
+
+## 改进组件升级失败后的处理指引
+
+集群里的组件由 Helm 安装和升级，升级失败时，Helm 会把这次的版本标记为失败。测试时就遇到过 zot（集群内置的镜像仓库）升级失败，`apply` 却报告 `Done` 的情况。界面上看起来升级成功了，zot 实际上并没有升级。
+
+现在 `apply` 升级组件后，会检查 Helm 记录的结果。只要标记为失败，`apply` 就会停止，并列出处理步骤：
+
+1. 用 `helm history` 查看原因。
+2. 解决问题后运行 `apply`。这次会更新组件配置，但仍然会停在同一步。
+3. 运行 `helm rollback`。如果首次安装就失败，改用 `helm uninstall`。
+4. 再运行一次 `apply`，应用修正后的配置。
+
+`helm` 命令要在装有 Helm、能连接集群的电脑上运行。顺序是先修复再回滚，因为如果先回滚，下一次 `apply` 会按照原来有问题的配置再升级一次。
+
+## Builder、Identity 和 Catalog
+
+Zeabur 0.2.0 与 Zeabur Builder 0.2.1、Zeabur Identity 0.1.2 和 Zeabur Catalog 0.4.2 一起发布。
+
+### Zeabur Builder 0.2.1
+
+构建现在默认有资源上限。每次构建分配 1 CPU 和 1 GiB 内存，每个命名空间（namespace）和整个集群同时都只运行一个构建。其他构建会排队，状态显示 `QuotaExceeded`，最早提交的先开始。0.1.1 的命名空间最多同时运行 3 个构建，也没有 CPU 和内存上限。
+
+<PostFigure
+  name="build-queue"
+  label="命名空间 shop 里有三个构建：最早提交的 web 正在运行，使用 1 CPU 和 1 GiB；api 和 worker 显示 QuotaExceeded，正在排队，最早提交的下一个开始"
+/>
+
+这样设置，是因为一台 [4 GB 的测试服务器](https://github.com/zeabur-oss/zeabur/issues/164)上出过这种问题：构建耗尽内存，连其他服务也停了下来。需要更多资源时，可以在项目设置里调高上限。K3s 团队安装至少需要 2700 MiB 内存，加上 Builder 则需要 3900 MiB，所以 4 GiB 的服务器默认不安装 Builder。
+
+构建用完内存时，Builder 会把失败原因标记为 `OutOfMemory`，Zeabur 的构建卡片就根据这个原因提示“构建用完了内存”。构建成功后，Builder 也会读取并记录镜像声明的端口，“网络”标签页的端口建议就来自这里。
+
+Builder 现在只删除自己推送过的镜像。你手动推送到 `<命名空间>/<名称>` 路径的镜像，在删除同名 Build 时会保留。
+
+buildkitd 现在统一在 Linux 的 user namespace 里运行，Builder 因此需要 Kubernetes 1.34 及以上版本。以前，修改构建缓存大小或存储类后，已有 buildkitd 的命名空间就再也无法开始构建。现在 Builder 会删除旧的 buildkitd 和缓存，再重新创建，下一次构建从空缓存开始。
+
+### Zeabur Identity 0.1.2
+
+自动填充和“使用通行密钥登录”按钮同时响应时，登录会卡在“本次登录已过期”页面。0.1.2 修复了这个问题，现在只会提交第一个响应。
+
+在账号页面移除通行密钥、移除已关联的账号，或重命名通行密钥时，现在都在对话框里操作，不再展开整行。Identity 请求的内存也从 32Mi 降到了 24Mi。镜像的版本标签不再带 `v`，请拉取 `ghcr.io/zeabur-oss/identity:0.1.2`。
+
+### Zeabur Catalog 0.4.2
+
+在 `single-node` 和 `multi-node` 之间切换 `profile` 时，zot 和 VictoriaMetrics 会继续运行。以前切换会改变卷大小，导致 zot 升级失败。现在两种 `profile` 都使用相同的大小：zot 20 GiB，VictoriaMetrics 5 GiB。用 `multi-node` 创建的安装，首次升级前要先执行 [Catalog v0.4.0 发布说明](https://github.com/zeabur-oss/catalog/releases/tag/v0.4.0)里的三个命令。
+
+在 `multi-node` 上，数据库和存储的 operator、Reloader 和 k8up 改为按实际用量请求内存，大约降到了原来的一半或更低。VictoriaMetrics 请求的内存从 512 MiB 降到了 224 MiB，仍然保留两周的数据。
+
+节点重启后，CrowdSec 的 agent 会自动恢复运行，不用再手动执行 `cscli machines delete`。
+
+组件文件修改后，要等新版文件通过测试，才会再次标记为已测试（`testedOn`）。每次测试会记录组件文件的摘要（digest），只有摘要与当前文件相同的通过记录才算数。安装程序选到在你的 Kubernetes 发行版上未经测试的组件时，仍然会安装，但会发出警告。
+
+<PostFigure
+  name="tested-on"
+  label="组件 zot 的文件摘要是 4b1e，三条通过的测试记录中，只有摘要相同的 K3s 计入 testedOn；RKE2 用的是旧文件，KubeSolo 没有摘要，都不算数"
+/>
+
+## 升级
+
+这一版有不兼容变更，升级前请先阅读 [v0.2.0 发布说明](https://github.com/zeabur-oss/zeabur/releases/tag/v0.2.0)。多节点安装还需要阅读 [Catalog v0.4.0 发布说明](https://github.com/zeabur-oss/catalog/releases/tag/v0.4.0)。
+
+## 测试方式
+
+K3s、RKE2 和 KubeSolo 都在 Ubuntu 26.04 虚拟机上测试过，包括单节点、多节点，以及安装后才加入的工作节点。除了从旧版升级，我们还故意填满磁盘，或在应用配置的过程中重启，检查后续能否继续执行。
+
+Catalog 每周会在这些发行版上，完整测试各自支持的组件。发布前，Zeabur、Builder 和 Identity 也用候选版本重新运行了测试。Catalog 则确认组件和模板与通过完整测试的版本相同。结果记录在 [#248](https://github.com/zeabur-oss/zeabur/issues/248)。
+
+## 下个版本预告
+
+下一个版本也已经在路上了！先看看几项正在开发的功能：
+
+构建过程会改为实时更新的步骤列表。哪一步用了缓存、哪一步失败，一眼就能看出来，失败步骤的输出会直接展开。
+
+数据库会说明如何从集群外连接。你可以用 `zeaburctl connect` 把数据库连接到自己电脑上的端口，也可以开放公开端口，让其他机器上的工具直接连接，开放前会先提醒你风险。
+
+成员页面可以直接创建 API 令牌，供 CI 或脚本使用，不用再自己创建 ServiceAccount 和绑定角色。
+
+数据库备份配置好后，可以再修改执行时间、保留期限和密钥，也可以关闭备份。关闭后，已经存入 bucket 的备份会保留。
+
+删除项目时，如果某个资源的控制器一直没有完成清理，项目就会停在删除中。之后可以直接强制删除，不用再自己用 `kubectl` 处理。
+
+其他功能还有：不必升级 Zeabur 就能使用最新的模板、在对象存储里直接浏览和上传文件、在界面上给服务分组、重启数据库，以及在节点页面显示内存还剩多少就会开始驱逐 Pod。集群管理员则可以用自己的身份使用 `kubectl`，还会有介于 Developer 和 Admin 之间的项目管理员角色、用任意 OpenID Connect 服务登录，以及通过 `HTTPS_PROXY` 连接网络。所有工作按方向整理在 [#335](https://github.com/zeabur-oss/zeabur/issues/335)，想参与开发，可以先从这里看起。
+
+## 一起参与
+
+- 有使用上的想法或建议，欢迎到 [Discord](https://zeabur.com/dc) 讨论。
+- 遇到问题，请到 [Zeabur issues](https://github.com/zeabur-oss/zeabur/issues) 反馈，附上 Kubernetes 发行版、你执行的命令和输出。
+- 想一起写代码，可以从 [#335](https://github.com/zeabur-oss/zeabur/issues/335) 挑一张工单，上面也标出了适合首次参与的工单。这些工单完成得越快，下一个版本就越早发布。
