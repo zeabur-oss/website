@@ -30,9 +30,9 @@
     "@resvg/resvg-js": "2.6.2",
     "@zeabur/design-system": "github:zeabur-oss/design-system#28c09304b3bc9e581a5632997ba6c6f6d239195d",
     "acorn": "8.19.0",
-    "astro": "7.4.4",
-    "cn": "0.5.1",
-    "posthog-js": "1.444.0",
+    "astro": "7.4.5",
+    "cn": "0.5.2",
+    "posthog-js": "1.444.4",
     "rehype-raw": "7.0.0",
     "remark-gfm": "4.0.1",
     "satori": "0.63.2",
@@ -42,14 +42,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
-    "@tailwindcss/vite": "4.3.3",
+    "@tailwindcss/vite": "4.3.4",
     "@types/bun": "1.4.4",
     "@types/node": "26.6.6",
     "oxfmt": "0.75.0",
     "oxlint": "1.90.0",
     "playwright-core": "1.64.1",
     "sharp": "0.35.5",
-    "tailwindcss": "4.3.3",
+    "tailwindcss": "4.3.4",
     "typescript": "7.0.2"
   }
 }
