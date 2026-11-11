@@ -1,0 +1,171 @@
+---
+// What zeabur-graph reads, how sure it is, and what a client shows for it.
+import Icon from "../../components/Icon.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import { figureCopy } from "./text.ts"
+
+interface Props {
+  label: string
+  locale: SiteLocale
+}
+
+const copy = {
+  "zh-TW": {
+    read: "讀到的依據",
+    shown: "介面怎麼呈現",
+    bands: [
+      {
+        title: "欄位參照",
+        icon: "link",
+        tag: "物件寫明",
+        items: [
+          "env、envFrom → 設定檔、機密變數",
+          "volumes、volumeClaimTemplates → 磁碟",
+          "Service selector、Ingress backend → 服務",
+        ],
+        shown: ["列在服務底下，附上欄位路徑", "共用的物件成為設定的連線"],
+      },
+      {
+        title: "管理工具標記",
+        icon: "tag",
+        tag: "工具慣例",
+        items: ["argocd.argoproj.io/tracking-id", "meta.helm.sh/release-name", "zeabur.com/group"],
+        shown: ["標出管理工具，修改前提醒", "分到 databases、operators 等分組"],
+      },
+      {
+        title: "環境變數的值",
+        icon: "question",
+        tag: "推測",
+        accent: true,
+        items: ["redis://redis:6379", "http://api.shop.svc.cluster.local:8080"],
+        shown: ["連到這個 Service 選取的服務", "標為「從變數推測」，不代表有流量"],
+      },
+      {
+        title: "資訊不足",
+        icon: "minus-circle",
+        tag: "不推論",
+        items: [
+          "沒有工作負載參照的機密變數",
+          "沒有 selector 的 Kubernetes Service",
+          "名稱和服務相近的物件",
+        ],
+        shown: ["留在專案的其他資源（orphan）", "不靠名稱歸給服務"],
+      },
+    ],
+  },
+}
+const t = figureCopy(copy, Astro.props.locale)
+---
+
+<div class="fig" role="group" aria-label={Astro.props.label}>
+  <div class="layers">
+    <div class="layers-head fig-note" aria-hidden="true">
+      <span>{t.read}</span>
+      <span>{t.shown}</span>
+    </div>
+    {t.bands.map((band) => (
+      <section class:list={["fig-card layers-band", band.accent && "fig-accent"]}>
+        <div class="layers-read">
+          <div class="layers-title">
+            <span class:list={["fig-icon", band.accent && "fig-icon-accent"]}>
+              <Icon name={band.icon} />
+            </span>
+            <span class="fig-name">{band.title}</span>
+            <span class:list={["fig-tag", band.accent && "fig-hit"]}>{band.tag}</span>
+          </div>
+          <ul class="layers-items">
+            {band.items.map((item) => (
+              <li class:list={["layers-item", /^[\x20-\x7e]+$/.test(item) && "fig-mono"]}>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <span class="layers-arrow" aria-hidden="true">
+          <Icon name="arrow-right" />
+        </span>
+        <ul class="layers-shown">
+          {band.shown.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</div>
+
+<style>
+  .layers {
+    display: grid;
+    gap: 10px;
+  }
+  .layers-head,
+  .layers-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) auto minmax(0, 1fr);
+    gap: 6px 14px;
+  }
+  .layers-head {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 6px 44px;
+    padding-inline: 13px;
+  }
+  .layers-arrow {
+    align-self: center;
+    color: var(--site-faint);
+  }
+  .layers-arrow :global(.icon) {
+    width: 16px;
+    height: 16px;
+  }
+  .fig .layers-band .layers-items {
+    padding-left: 42px;
+  }
+  .layers-band {
+    padding: 10px 12px;
+  }
+  .layers-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin-bottom: 6px;
+  }
+  .layers-item {
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+  .layers-shown {
+    align-self: center;
+    font-size: 13px;
+  }
+  .layers-shown li {
+    padding-left: 12px;
+    border-left: 2px solid var(--site-line-strong);
+  }
+  .layers-shown li + li {
+    margin-top: 4px;
+  }
+  .fig-accent .layers-shown li {
+    border-left-color: var(--site-accent);
+  }
+  @container (max-width: 520px) {
+    .layers-head {
+      display: none;
+    }
+    .layers-band {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .layers-arrow {
+      display: none;
+    }
+    .fig .layers-band .layers-items {
+      padding-left: 0;
+    }
+    .layers-shown {
+      padding-top: 8px;
+      border-top: 1px solid var(--site-line);
+    }
+  }
+</style>
