@@ -49,10 +49,10 @@ Starlight reads them, plus `content/nav.json` for the sidebar (one per repositor
 followed by the pages directly in `docs/`, in the order the README links them.
 
 Links between pages become site URLs, and so do GitHub URLs of published docs pages. Files under
-`docs/` are served from `/docs-assets/`. Only a link to a file outside `docs/` still goes to GitHub,
-at the locked ref, and `docs-check` fails on it: write a link to a docs page, or the full GitHub
-URL when the reader needs the source. The edit link of each page is the one link to GitHub the
-site adds itself.
+`docs/` are served from `/docs-assets/`. A relative link to any other file of the repository goes
+to GitHub at the locked ref, so it opens the release the page describes. Write it relative:
+`docs-check` fails on a GitHub URL into the page's own repository. The edit link of each page is
+the one link to GitHub the site adds itself.
 
 ## Locales
 
@@ -88,8 +88,8 @@ locale names) in page paths, relative links and images to files that do not exis
 are not published, published pages that are gone without a `redirects.yaml` entry, redirects to
 unpublished pages, frontmatter fields other than `title`, `description` (and `source` in
 translations), `import`/`export`, unknown components, props that are not literals or do not match
-the registry, GitHub URLs of docs pages, and relative
-links to files outside `docs/`. It lists stale translations and
+the registry, GitHub URLs of docs pages, and GitHub URLs of files in the page's own
+repository, and images outside `docs/` or written by reference, which the site does not serve. It lists stale translations and
 pages that are not published.
 
 ## Design system

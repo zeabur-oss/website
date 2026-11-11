@@ -8,6 +8,7 @@ import { htmlElements, registry, type ComponentName } from "../../src/docs-compo
 import {
   classifyLink,
   githubDocsLink,
+  githubFileLink,
   isDocsAsset,
   resolveImage,
   type RepoFiles,
@@ -98,16 +99,26 @@ export function checkPage(
       )
       return
     }
-    const target = classifyLink(href, path, repoFiles)
-    if (target.kind === "file" || target.kind === "dir") {
-      // The README is also read on GitHub, where these links work; the site rewrites them.
-      if (isReadme || isDocsAsset(target.path)) return
+    const file = githubFileLink(href)
+    if (file?.github === snap.repo.github) {
       add(
         "error",
-        "link-outside-docs",
+        "link-github-own",
         path,
-        `${href} is ${target.path}, outside docs/, so the site would send readers to ` +
-          "GitHub; link to a docs page, or write the full GitHub URL when the reader needs the source",
+        `${href} is ${file.path} of this repository; write a relative link, which opens the ` +
+          "release the docs describe",
+        line,
+      )
+      return
+    }
+    const target = classifyLink(href, path, repoFiles)
+    if (image && (target.kind === "file" || target.kind === "dir") && !isDocsAsset(target.path)) {
+      // Only files under docs/ are copied to /docs-assets/, where the site serves images from.
+      add(
+        "error",
+        "image-outside-docs",
+        path,
+        `${href} is ${target.path}, outside docs/, so the site cannot show it; move it under docs/`,
         line,
       )
     } else if (target.kind === "missing") {
@@ -157,6 +168,16 @@ export function checkPage(
         break
       case "image":
         checkRef(node.url, line, true)
+        break
+      case "imageReference":
+        // The site rewrites a definition as a link, so the image would point to a GitHub page.
+        add(
+          "error",
+          "image-reference",
+          path,
+          `![${node.alt ?? ""}][${node.identifier}] is a reference-style image; write it inline`,
+          line,
+        )
         break
       case "html":
         for (const m of node.value.matchAll(/\s(href|src|srcset)="([^"]+)"/g)) {
