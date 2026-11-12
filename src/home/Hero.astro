@@ -1,0 +1,104 @@
+---
+// The first screen: two readers side by side, and the one screen both of them open.
+import { cn } from "cn"
+import Icon from "../components/Icon.astro"
+import { landingCopy } from "../landing/copy.ts"
+import { shot, sizes } from "../landing/shots.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { homeCopy } from "./copy/index.ts"
+import Rich from "./Rich.astro"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const copy = homeCopy[locale]
+const docs = (slug: string) => docsUrl(locale, "zeabur", slug)
+const image = shot(locale, "project")
+// A number stays on the line of its unit.
+const unbroken = (text: string) => text.replace(/(\d) (?=(?:GiB|MiB|vCPU)\b)/g, "$1\u00a0")
+const sides = [
+  {
+    id: "team",
+    letter: "A",
+    text: copy.hero.team,
+    note: copy.hero.team.soon,
+    soon: false,
+    primary: docs("install/existing-cluster"),
+    secondary: "#permissions",
+  },
+  {
+    id: "machine",
+    letter: "B",
+    text: copy.hero.machine,
+    note: copy.hero.machine.next,
+    soon: true,
+    primary: docs("get-started/quickstart"),
+    secondary: docs("install/personal"),
+  },
+] as const
+---
+
+<section class="wrap hero-two">
+  <div class="hero-split">
+    {sides.map(({ id, letter, text, note, soon, primary, secondary }) => {
+      const Title = id === "team" ? "h1" : "h2"
+      return (
+        <div class="hero-side stagger" data-side={id}>
+          <p class="hero-who">
+            <span class="hero-letter">{letter}</span>
+            {text.eyebrow}
+            {soon && <span class="soon">Coming soon</span>}
+          </p>
+          <Title class="hero-title">{unbroken(text.title)}</Title>
+          <p class="lead">
+            <Rich text={text.sub} />
+          </p>
+          <div class="hero-actions">
+            <a href={primary} class={cn("button", id === "team" && "primary")}>
+              {text.primary}
+              <Icon name="arrow-right" class="go" />
+            </a>
+            <a href={secondary} class={cn("more", id === "team" && "more-down")}>
+              {text.secondary}
+              <Icon name={id === "team" ? "arrow-down" : "arrow-right"} class="go" />
+            </a>
+          </div>
+          <p class="hero-note">
+            {!soon && <span class="soon">Coming soon</span>}
+            <Rich text={note} />
+          </p>
+        </div>
+      )
+    })}
+  </div>
+
+  <div class="stage" data-reveal>
+    <div class="stage-shot">
+      <img
+        src={image.src}
+        srcset={`${image.src} ${image.width}w`}
+        alt={landingCopy[locale].shots.project}
+        width={image.width / 2}
+        height={image.height / 2}
+        sizes={sizes.full}
+        decoding="async"
+        fetchpriority="high"
+      />
+    </div>
+    <p class="stage-tags" aria-hidden="true">
+      {sides.map(({ letter }) => (
+        <span class="hero-letter">{letter}</span>
+      ))}
+    </p>
+  </div>
+
+  <ul class="cells cells-3 mt-6">
+    {copy.proof.map((claim, i) => (
+      <li data-reveal style={`--i:${i}`}>
+        <h3>{claim.title}</h3>
+        <p class="body">{claim.body}</p>
+      </li>
+    ))}
+  </ul>
+</section>

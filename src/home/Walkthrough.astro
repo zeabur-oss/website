@@ -1,0 +1,55 @@
+---
+// One failure followed through three screens.
+import { landingCopy } from "../landing/copy.ts"
+import { shot, sizes } from "../landing/shots.ts"
+import type { SiteLocale } from "../lib/urls.ts"
+import Band from "./Band.astro"
+import { homeCopy } from "./copy/index.ts"
+import Frame from "../landing/Frame.astro"
+import Pending from "./Pending.astro"
+import Rich from "./Rich.astro"
+
+interface Props {
+  locale: SiteLocale
+  index: number
+  of: number
+}
+const { locale, index, of } = Astro.props
+const t = homeCopy[locale].walk
+const alts = landingCopy[locale].shots
+const screens = [
+  { image: shot(locale, "project"), alt: alts.project, ratio: "1784 / 640" },
+  { image: shot(locale, "diagnosis"), alt: alts.diagnosis, ratio: undefined },
+  undefined,
+]
+---
+
+<section class="wrap band" id="walk" aria-labelledby="walk-title">
+  <Band id="walk-title" index={index} of={of} title={t.title} lead={t.intro} />
+  <ol class="walk">
+    {t.steps.map((step, i) => {
+      const screen = screens[i]
+      return (
+        <li class="walk-step">
+          <div class="walk-text" data-reveal>
+            <p class="walk-no" aria-hidden="true">
+              {i + 1}
+              <span> / {t.steps.length}</span>
+            </p>
+            <h3>{step.title}</h3>
+            <p class="body">
+              <Rich text={step.body} />
+            </p>
+          </div>
+          <div class="walk-shot" data-reveal style="--i:1">
+            {screen ? (
+              <Frame src={screen.image} alt={screen.alt} sizes={sizes.wide} ratio={screen.ratio} />
+            ) : (
+              <Pending file="service-logs-previous.avif" ratio="1264 / 700" />
+            )}
+          </div>
+        </li>
+      )
+    })}
+  </ol>
+</section>

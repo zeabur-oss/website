@@ -1,0 +1,17 @@
+---
+// The number of a part of the home page, on a rule.
+interface Props {
+  index: number
+  of: number
+}
+const { index, of } = Astro.props
+const two = (n: number) => String(n).padStart(2, "0")
+---
+
+<p class="beat" aria-hidden="true">
+  <span class="beat-no">{two(index)}</span>
+  <span class="beat-rule"></span>
+  <span class="beat-of">
+    {two(index)} / {two(of)}
+  </span>
+</p>

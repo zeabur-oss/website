@@ -1,0 +1,45 @@
+---
+import Site from "../layouts/Site.astro"
+import { chrome } from "../lib/chrome.ts"
+import { organization } from "../lib/seo.ts"
+import type { SiteLocale } from "../lib/urls.ts"
+import Hero from "./Hero.astro"
+import Close from "./Close.astro"
+import Local from "./Local.astro"
+import Lockin from "./Lockin.astro"
+import Soon from "./Soon.astro"
+import Team from "./Team.astro"
+import Walkthrough from "./Walkthrough.astro"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const title = `Zeabur ${chrome[locale].nav.openSource}`
+const description = chrome[locale].footer.about
+const parts = [Walkthrough, Team, Local, Lockin, Soon]
+---
+
+<Site
+  locale={locale}
+  title={title}
+  description={description}
+  section="home"
+  image={`/og/home/${locale}.png`}
+  schema={{
+    "@type": "WebSite",
+    name: "Zeabur Open Source",
+    // The header mark in each locale, so a search in Chinese matches the site name too.
+    alternateName: ["Zeabur 開源版", "Zeabur 开源版"],
+    description,
+    publisher: organization,
+  }}
+>
+  <div class="home">
+    <Hero locale={locale} />
+    {parts.map((Part, i) => (
+      <Part locale={locale} index={i + 1} of={parts.length} />
+    ))}
+    <Close locale={locale} />
+  </div>
+</Site>

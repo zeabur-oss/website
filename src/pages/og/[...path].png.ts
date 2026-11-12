@@ -2,7 +2,7 @@ import type { APIRoute, GetStaticPaths } from "astro"
 import { getCollection } from "astro:content"
 import { dateFormat, postSlug, postsFor } from "../../blog/blog.ts"
 import { blogCopy } from "../../blog/copy.ts"
-import { landingCopy } from "../../landing/copy.ts"
+import { homeCopy } from "../../home/copy/index.ts"
 import { chrome } from "../../lib/chrome.ts"
 import { productIds, productName, type ProductId } from "../../lib/products.ts"
 import { renderOg, type OgCard } from "../../lib/og.ts"
@@ -28,12 +28,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const add = (path: string, card: OgCard) => paths.push({ params: { path }, props: { card } })
   for (const locale of locales) {
     const t = blogCopy[locale]
-    const home = landingCopy[locale]
+    const home = homeCopy[locale]
     const date = dateFormat(locale, "long")
     add(`home/${locale}`, {
       kicker: "Zeabur Open Source",
-      title: home.hero.title,
-      sub: home.description,
+      title: home.hero.team.title,
+      sub: chrome[locale].footer.about,
       han: han(locale),
     })
     add(`404/${locale}`, { kicker: "404", ...notFound[locale], han: han(locale) })

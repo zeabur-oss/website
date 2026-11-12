@@ -1,0 +1,70 @@
+---
+// What stays when Zeabur goes, the licence, and how the cluster is set up.
+import Icon from "../components/Icon.astro"
+import { shot, sizes } from "../landing/shots.ts"
+import { githubOrg } from "../lib/site.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import Band from "./Band.astro"
+import { homeCopy } from "./copy/index.ts"
+import Frame from "../landing/Frame.astro"
+
+interface Props {
+  locale: SiteLocale
+  index: number
+  of: number
+}
+const { locale, index, of } = Astro.props
+const copy = homeCopy[locale]
+const t = copy.lockin
+const docs = (slug: string) => docsUrl(locale, "zeabur", slug)
+---
+
+<section class="wrap band" id="leave" aria-labelledby="leave-title">
+  <Band id="leave-title" index={index} of={of} title={t.title} lead={t.body} />
+
+  <div class="grid12 items-start">
+    <div class="lg:col-[1/6]" data-reveal>
+      <h3>{t.uninstall.title}</h3>
+      <p class="body mt-2">{t.uninstall.after}</p>
+      <a href={docs("leave/uninstall")} class="more mt-4">
+        {t.uninstall.link}
+        <Icon name="arrow-right" class="go" />
+      </a>
+      <p class="body mt-8 border-t border-site-line pt-6">{t.gitops}</p>
+    </div>
+    <figure class="lg:col-[6/13]" data-reveal style="--i:1">
+      <Frame
+        src={shot(locale, "existing-namespaces")}
+        alt={copy.alt.namespaces}
+        sizes={sizes.wide}
+      />
+      <figcaption class="note">{t.existing}</figcaption>
+    </figure>
+  </div>
+
+  <ul class="cells cells-2 mt-14 md:mt-20" id="security">
+    <li data-reveal>
+      <h3>
+        <a href={githubOrg} class="title-link">
+          {copy.license.title}
+          <Icon name="arrow-right" class="go" />
+        </a>
+      </h3>
+      <p class="body">{copy.license.body}</p>
+    </li>
+    <li data-reveal style="--i:1">
+      <h3>
+        <a href={docs("reference/security")} class="title-link">
+          {copy.safety.title}
+          <Icon name="arrow-right" class="go" />
+        </a>
+      </h3>
+      <p class="body">{copy.safety.hardening}</p>
+      <p class="body">{copy.safety.gitops}</p>
+      <a href="https://docs.k3s.io/security/hardening-guide" class="more">
+        {copy.safety.hardeningLink}
+        <Icon name="arrow-up-right" class="go" />
+      </a>
+    </li>
+  </ul>
+</section>

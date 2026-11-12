@@ -1,0 +1,45 @@
+---
+import Icon from "../components/Icon.astro"
+import { githubStars, shortCount } from "../lib/github.ts"
+import { githubOrg } from "../lib/site.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { homeCopy } from "./copy/index.ts"
+import Rich from "./Rich.astro"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = homeCopy[locale].cta
+const stars = await githubStars()
+---
+
+<section class="wrap close" aria-labelledby="close-title">
+  <div class="grid12 items-end gap-y-8" data-reveal>
+    <div class="lg:col-[1/8]">
+      <h2 id="close-title">{t.title}</h2>
+      <p class="lead mt-4">
+        <Rich text={t.body} />
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-3 lg:col-[8/13] lg:justify-end">
+      <a href={docsUrl(locale, "zeabur", "reference/zeaburctl")} class="button primary">
+        {t.primary}
+        <Icon name="arrow-right" class="go" />
+      </a>
+      <a href={docsUrl(locale, "zeabur")} class="button">
+        {t.secondary}
+      </a>
+      <a href={`${githubOrg}/zeabur`} class="button">
+        <Icon name="github-logo" />
+        GitHub
+        {stars !== undefined && (
+          <span class="inline-flex items-center gap-1 font-mono text-[0.75rem] text-site-faint">
+            <Icon name="star" weight="fill" class="!size-3" />
+            {shortCount(stars, locale)}
+          </span>
+        )}
+      </a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,13 @@
+---
+// The place of a docs screenshot that is not taken yet, in the shape it will have.
+interface Props {
+  /** The file the screenshot will be. */
+  file: string
+  ratio: string
+}
+const { file, ratio } = Astro.props
+---
+
+<div class="pending" style={`aspect-ratio:${ratio}`} role="img" aria-label={file}>
+  <span class="pending-file">{file}</span>
+</div>
