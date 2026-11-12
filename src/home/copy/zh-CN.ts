@@ -1,6 +1,26 @@
 import type { HomeCopy } from "./index.ts"
 
 export const zhCN: HomeCopy = {
+  home: {
+    hero: {
+      title: "开源的 Kubernetes 部署界面，服务都留在你的集群里",
+      sub: "Zeabur 是开源的部署界面。从 Git、镜像或 Docker Compose 部署，改配置前先检查这次的变更。服务本来就是 Kubernetes 对象，哪天不用 Zeabur 也照常运行。",
+      primary: "开始使用",
+      secondary: "去 GitHub 看源码",
+      note: "需要一个 Kubernetes 集群，或者一台 Linux 服务器。",
+    },
+    more: {
+      team: "产品团队怎么用",
+      provider: "服务商怎么用",
+      homelab: "Homelab 怎么用",
+    },
+    permTitle: "每个人能做什么，交给 Kubernetes RBAC",
+    openTitle: "用手上的 kubeconfig 就能打开",
+    cta: {
+      title: "从手上有的开始",
+      body: "已经有集群，可以用 Helm 装进去，或者在本地运行 `zeaburctl ui` 打开。文档从安装一直写到第一个服务上线。",
+    },
+  },
   hero: {
     switch: {
       label: "适合谁",
@@ -16,6 +36,7 @@ export const zhCN: HomeCopy = {
       note: "安装需要集群管理员权限。想先看看，在自己电脑上运行 `zeaburctl ui` 就能打开。",
       alt: "shop 项目页，列出 web、worker 和数据库的状态，worker 排在“需要处理”的第一项。",
       soon: "Kubernetes 1.30 及以上的集群，运行 `zeaburctl install` 就能装好 Zeabur 和 Zeabur Identity。集群里已有的 Ingress、证书和指标组件会直接沿用。",
+      meta: "产品团队：在现有的 Kubernetes 上部署｜Zeabur",
     },
     provider: {
       title: "集群你来搭，部署让客户自己来",
@@ -24,6 +45,7 @@ export const zhCN: HomeCopy = {
       secondary: "看看权限怎么分",
       note: "K3s 集群加上 Zeabur，一台 2 vCPU、2 GiB 内存的机器就能装下。",
       alt: "Zeatend 的终端界面，正在把一台 Linux 服务器装成 K3s 集群。",
+      meta: "服务商：给客户搭集群，部署交给客户｜Zeabur",
     },
     homelab: {
       title: "免费开源，跟你原来的 Helm、Argo CD 一起用",
@@ -32,6 +54,7 @@ export const zhCN: HomeCopy = {
       secondary: "去 GitHub 看源码",
       note: "用 KubeSolo 的个人安装没有成员和角色，也不能用 Zeabur Identity 登录。",
       alt: "项目页的其他 Namespace，Helm 或 Argo CD 管理的服务带有标记。",
+      meta: "Homelab：免费开源，跟 Helm、Argo CD 一起用｜Zeabur",
     },
   },
   proof: {
@@ -119,6 +142,7 @@ export const zhCN: HomeCopy = {
     gitops: "用 Helm、Argo CD 或 Flux 部署的服务，打开 Zeabur 就能看到，不用导入。",
     existing:
       "其他工具创建的 Namespace 也会列在项目页。点“使用这个 Namespace”只会加一个标签，里面的对象都不会改动。",
+    alt: "示意图：卸载 Zeabur 之后，Deployment、Service、Ingress 和卷留在原来的 Namespace 里，服务照常运行。",
     uninstall: {
       title: "卸载步骤",
       after: "Kubernetes、集群组件和项目的 Namespace 都会保留。",
@@ -153,9 +177,47 @@ export const zhCN: HomeCopy = {
     "`zeaburctl install`：在 Kubernetes 1.30 及以上的集群装好 Zeabur 和 Zeabur Identity。Ingress、证书和指标组件只补装缺的。",
     "Zeabur Desktop：Windows 和 macOS 上的桌面应用。读取 kubeconfig，列出可以搜索的 context，选一个就打开 Zeabur。",
   ],
+  dokploy: {
+    title: "用过 Dokploy？先看这几点",
+    intro:
+      "Dokploy 在 Docker 上部署，Zeabur 在 Kubernetes 上部署。部署步骤很像，底层跑的东西不一样，下面几点会跟着变。",
+    points: [
+      {
+        title: "部署步骤",
+        body: "一样从 Git、镜像或 Docker Compose 部署，域名和 HTTPS 也在服务的设置里。在 Zeabur 点应用之前，页面会先列出这次要写进集群的变更。",
+      },
+      {
+        title: "只有一台服务器",
+        body: "一台服务器也能装：安装程序会在上面装好 K3s 或 RKE2。只给自己用的话，个人安装用的是 KubeSolo（单节点 Kubernetes），没有成员和角色，拿到 kubeconfig 的人能控制整个集群。",
+      },
+      {
+        title: "小机器的内存",
+        body: "Kubernetes 本身就要占一部分内存。Dokploy 文档写的是至少 2 GB；Zeabur 现在的团队安装要 4 GiB，个人安装 1.5 GiB。这些都是文档写的最低要求，不是实测数据。",
+        soon: "团队安装在 2 vCPU、2 GiB 内存的机器上就能运行。",
+      },
+      {
+        title: "模板",
+        body: "Dokploy 的 README 写有 600 多个模板，Zeabur Catalog 的模板少得多。迁移之前，先确认你要的应用在不在目录里；不在的话，用镜像或 Compose 部署。",
+      },
+      {
+        title: "换到 Kubernetes 之后",
+        body: "服务会变成 Kubernetes 的 Deployment、Service 和 Ingress，用 kubectl 也能看到。多台机器由 Kubernetes 调度，不用 Docker Swarm。导入 Compose 时只创建有 `image:` 的服务，只有 `build:` 的服务改成从 Git 部署。",
+      },
+      {
+        title: "并用和离开",
+        body: "两边的安装都要求 80 和 443 端口空着，所以要并用的话，分开装在不同的服务器上，迁完再切换 DNS。哪天不用 Zeabur，卸载后服务的 Kubernetes 对象都还在，照常运行。",
+      },
+      {
+        title: "许可证",
+        body: "Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 都采用 Apache-2.0 许可证，没有付费版。Dokploy 大部分代码是 Apache-2.0，`/proprietary` 目录用的是 source-available 许可证。",
+      },
+    ],
+    link: "查看 Zeabur 和 Dokploy 的逐项对比",
+  },
   cta: {
     primary: "开始使用",
     secondary: "查看文档",
+    providerPrimary: "关注 Zeatend",
     team: {
       title: "先用手上的 kubeconfig 打开看看",
       body: "`zeaburctl ui` 在你的电脑上运行，集群里不用先装任何东西。",

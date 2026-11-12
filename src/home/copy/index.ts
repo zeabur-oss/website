@@ -15,7 +15,15 @@ export const audienceSlug: Record<Audience, string> = {
 }
 
 /** The parts a reader's page can be made of. */
-export type PartId = "walk" | "review" | "perm" | "lockin" | "zeatend" | "local" | "license"
+export type PartId =
+  | "walk"
+  | "review"
+  | "perm"
+  | "lockin"
+  | "zeatend"
+  | "local"
+  | "license"
+  | "dokploy"
 export type ProofId =
   | "license"
   | "state"
@@ -38,9 +46,19 @@ type Side = {
   alt: string
   /** What the next release adds for this reader. */
   soon?: string
+  /** The browser title of this reader's page. */
+  meta: string
 }
 
 export type HomeCopy = {
+  /** The home page's own words: its first screen, the links onward, and its closing block. */
+  home: {
+    hero: { title: string; sub: string; primary: string; secondary: string; note: string }
+    more: Record<Audience, string>
+    permTitle: string
+    openTitle: string
+    cta: Claim
+  }
   hero: Record<Audience, Side> & { switch: Record<Audience | "label", string> }
   proof: Record<ProofId, Claim>
   walk: { title: string; intro: string; steps: (Claim & { alt: string })[] }
@@ -60,14 +78,23 @@ export type HomeCopy = {
     body: string
     gitops: string
     existing: string
+    /** What the drawing of this part shows. */
+    alt: string
     uninstall: { title: string; after: string; link: string }
   }
   license: Claim
   safety: { title: string; hardening: string; hardeningLink: string; gitops: string }
   zeatend: Claim & { path: string[]; mirror: string; alt: string }
+  /** For a reader who comes from Dokploy: what changes and what stays, point by point. */
+  dokploy: {
+    title: string
+    intro: string
+    points: (Claim & { soon?: string })[]
+    link: string
+  }
   /** What else the next release brings, one sentence each. */
   soon: string[]
-  cta: Record<Audience, Claim> & { primary: string; secondary: string }
+  cta: Record<Audience, Claim> & { primary: string; secondary: string; providerPrimary: string }
 }
 
 export const homeCopy: Record<SiteLocale, HomeCopy> = { en, "zh-TW": zhTW, "zh-CN": zhCN }

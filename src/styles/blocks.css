@@ -87,7 +87,8 @@
     margin-top: 0;
   }
   .part :not(pre) > code,
-  .page-hero :not(pre) > code {
+  .page-hero :not(pre) > code,
+  .compare :not(pre) > code {
     padding: 0.05em 0.35em;
     border: 1px solid var(--site-line);
     border-radius: var(--radius-sm);
@@ -219,6 +220,18 @@
   }
   .claims .more {
     margin-top: 0.25rem;
+  }
+  .claim-soon {
+    color: var(--site-faint);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+  .claim-soon .soon {
+    margin-right: 0.5rem;
+    vertical-align: 0.05em;
+  }
+  .claims + .part-more {
+    margin-top: 2rem;
   }
   .upcoming {
     display: grid;

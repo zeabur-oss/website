@@ -25,6 +25,9 @@ export const homeUrl = (locale: string) => localePrefix(locale) || "/"
 export const productUrl = (locale: string, id: string) => `${localePrefix(locale)}/${id}`
 export const blogUrl = (locale: string) => `${localePrefix(locale)}/blog`
 /** The page written for one kind of reader: `teams`, `providers` or `homelab`. */
+/** The comparison hub, or one comparison such as `zeabur-vs-dokploy`. */
+export const compareUrl = (locale: string, slug?: string) =>
+  `${localePrefix(locale)}/compare${slug ? `/${slug}` : ""}`
 export const audienceUrl = (locale: string, slug: string) => `${localePrefix(locale)}/for/${slug}`
 
 /** The same path in another locale: en has no prefix, the others are /zh-TW and /zh-CN. */

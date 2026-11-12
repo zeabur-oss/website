@@ -7,11 +7,10 @@ import Proof from "../blocks/Proof.astro"
 import Frame from "../landing/Frame.astro"
 import { shot, sizes } from "../landing/shots.ts"
 import Site from "../layouts/Site.astro"
-import { chrome } from "../lib/chrome.ts"
 import { githubOrg } from "../lib/site.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import Actions from "./Actions.astro"
-import { homeCopy, type Audience } from "./copy/index.ts"
+import { homeCopy, type Audience, type PartId } from "./copy/index.ts"
 import { partOrder, proofOrder } from "./copy/order.ts"
 import Part from "./Part.astro"
 
@@ -28,15 +27,15 @@ const links = {
   provider: ["#zeatend", "#permissions"],
   homelab: ["#local", `${githubOrg}/zeabur`],
 }[audience]
-const name = chrome[locale].useCases[audience].name
+// The part for readers who come from Dokploy follows the part it builds on.
+const dokployAfter: Partial<Record<Audience, PartId>> = { team: "lockin", homelab: "local" }
+const parts = partOrder[audience].flatMap((part): PartId[] =>
+  part === dokployAfter[audience] ? [part, "dokploy"] : [part],
+)
 const description = hero.sub.replaceAll("`", "")
 ---
 
-<Site
-  locale={locale}
-  title={`${name} · Zeabur ${chrome[locale].nav.openSource}`}
-  description={description}
->
+<Site locale={locale} title={hero.meta} description={description}>
   <div class="home">
     <Hero
       title={hero.title}
@@ -68,7 +67,7 @@ const description = hero.sub.replaceAll("`", "")
       )}
       <Proof slot="after" claims={proofOrder[audience].map((claim) => t.proof[claim])} />
     </Hero>
-    {partOrder[audience].map((part) => (
+    {parts.map((part) => (
       <Part locale={locale} part={part} />
     ))}
     <Cta id="start" title={t.cta[audience].title} lead={t.cta[audience].body}>
@@ -80,7 +79,9 @@ const description = hero.sub.replaceAll("`", "")
           stars
         />
       )}
-      {audience === "provider" && <Actions locale={locale} repo={`${githubOrg}/zeatend`} />}
+      {audience === "provider" && (
+        <Actions locale={locale} repo={`${githubOrg}/zeatend`} label={t.cta.providerPrimary} />
+      )}
       {audience === "homelab" && <Actions locale={locale} repo={`${githubOrg}/zeabur`} stars />}
     </Cta>
   </div>

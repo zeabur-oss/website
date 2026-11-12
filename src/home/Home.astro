@@ -49,13 +49,13 @@ const page = (audience: Audience) => audienceUrl(locale, audienceSlug[audience])
 >
   <div class="home">
     <Hero
-      title={t.hero.team.title}
-      sub={t.hero.team.sub}
+      title={t.home.hero.title}
+      sub={t.home.hero.sub}
       actions={[
-        { text: t.cta.primary, href: docs("get-started/quickstart") },
-        { text: t.cta.secondary, href: docs() },
+        { text: t.home.hero.primary, href: docs("get-started/quickstart") },
+        { text: t.home.hero.secondary, href: `${githubOrg}/zeabur` },
       ]}
-      note={t.cta.team.body}
+      note={t.home.hero.note}
     >
       <Frame
         src={shot(locale, "project")}
@@ -95,26 +95,26 @@ const page = (audience: Audience) => audienceUrl(locale, audienceSlug[audience])
         ))}
       </ol>
       <a href={`${page("team")}#walk`} class="more part-more">
-        {words.useCases.team.name}
+        {t.home.more.team}
         <Icon name="arrow-right" class="go" />
       </a>
     </Section>
 
-    <Section id="permissions" title={t.perm.title}>
+    <Section id="permissions" title={t.home.permTitle}>
       <Roles locale={locale} a={t.proof.roles.body} b={t.proof.rbac.body} />
       <Proof claims={[t.proof.review]} />
       <a href={`${page("provider")}#permissions`} class="more part-more">
-        {words.useCases.provider.name}
+        {t.home.more.provider}
         <Icon name="arrow-right" class="go" />
       </a>
     </Section>
 
-    <Section id="local" title={t.local.title} lead={t.proof.local.body}>
+    <Section id="local" title={t.home.openTitle} lead={t.proof.local.body}>
       <Visual label={t.local.alt} class="visual-wide">
         <LocalMode chip={t.local.chip} />
       </Visual>
       <a href={`${page("homelab")}#local`} class="more part-more">
-        {words.useCases.homelab.name}
+        {t.home.more.homelab}
         <Icon name="arrow-right" class="go" />
       </a>
     </Section>
@@ -135,7 +135,7 @@ const page = (audience: Audience) => audienceUrl(locale, audienceSlug[audience])
       </ul>
     </Section>
 
-    <Cta id="start" title={t.cta.homelab.title} lead={t.cta.homelab.body}>
+    <Cta id="start" title={t.home.cta.title} lead={t.home.cta.body}>
       <Actions
         locale={locale}
         start={docs("get-started/quickstart")}

@@ -1,9 +1,17 @@
 ---
-// Copy with `code` between backticks.
+// Copy with `code` between backticks and **bold** between pairs of asterisks.
 interface Props {
   text: string
 }
-const parts = Astro.props.text.split("`")
+const parts = Astro.props.text.split(/(`[^`]*`|\*\*[^*]*\*\*)/)
 ---
 
-{parts.map((part, i) => (i % 2 ? <code>{part}</code> : part))}
+{parts.map((part) =>
+  part.startsWith("`") ? (
+    <code>{part.slice(1, -1)}</code>
+  ) : part.startsWith("**") ? (
+    <strong>{part.slice(2, -2)}</strong>
+  ) : (
+    part
+  ),
+)}

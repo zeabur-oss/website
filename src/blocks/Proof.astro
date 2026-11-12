@@ -3,7 +3,13 @@
 import Icon from "../components/Icon.astro"
 
 interface Props {
-  claims: { title: string; body: string; link?: { text: string; href: string } }[]
+  claims: {
+    title: string
+    body: string
+    /** What the next release changes about it, shown with "Coming soon". */
+    soon?: string
+    link?: { text: string; href: string }
+  }[]
 }
 const { claims } = Astro.props
 ---
@@ -13,6 +19,12 @@ const { claims } = Astro.props
     <li data-reveal style={`--i:${i}`}>
       <h3>{claim.title}</h3>
       <p class="body">{claim.body}</p>
+      {claim.soon && (
+        <p class="claim-soon">
+          <span class="soon">Coming soon</span>
+          {claim.soon}
+        </p>
+      )}
       {claim.link && (
         <a href={claim.link.href} class="more">
           {claim.link.text}

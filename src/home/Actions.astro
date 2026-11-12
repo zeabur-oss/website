@@ -11,10 +11,12 @@ interface Props {
   start?: string
   /** The repository the GitHub button opens. */
   repo: string
+  /** The GitHub button's own words, when "GitHub" is not enough. */
+  label?: string
   /** Show the stars of zeabur-oss/zeabur beside it. */
   stars?: boolean
 }
-const { locale, start, repo, stars = false } = Astro.props
+const { locale, start, repo, label = "GitHub", stars = false } = Astro.props
 const t = homeCopy[locale].cta
 const count = stars ? await githubStars() : undefined
 ---
@@ -27,7 +29,7 @@ const count = stars ? await githubStars() : undefined
 )}
 <a href={repo} class:list={["button", !start && "primary"]}>
   <Icon name="github-logo" />
-  GitHub
+  {label}
   {count !== undefined && (
     <span class="star-count">
       <Icon name="star" weight="fill" />

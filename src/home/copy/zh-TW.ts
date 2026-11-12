@@ -1,6 +1,26 @@
 import type { HomeCopy } from "./index.ts"
 
 export const zhTW: HomeCopy = {
+  home: {
+    hero: {
+      title: "開源的 Kubernetes 部署介面，服務都留在你的叢集",
+      sub: "Zeabur 是開源的部署介面。從 Git、映像檔或 Docker Compose 部署，改設定前先檢查這次的變更。服務本來就是 Kubernetes 物件，哪天不用 Zeabur 也照常執行。",
+      primary: "開始使用",
+      secondary: "到 GitHub 看原始碼",
+      note: "需要一個 Kubernetes 叢集，或一台 Linux 伺服器。",
+    },
+    more: {
+      team: "產品團隊怎麼用",
+      provider: "代管服務商怎麼用",
+      homelab: "Homelab 怎麼用",
+    },
+    permTitle: "每個人能做什麼，交給 Kubernetes RBAC",
+    openTitle: "用手上的 kubeconfig 就能打開",
+    cta: {
+      title: "從手上有的開始",
+      body: "已經有叢集，可以用 Helm 裝進去，或在本機執行 `zeaburctl ui` 打開。文件從安裝寫到第一個服務上線。",
+    },
+  },
   hero: {
     switch: {
       label: "適合誰",
@@ -16,6 +36,7 @@ export const zhTW: HomeCopy = {
       note: "安裝需要叢集管理員權限。想先看看，在自己的電腦上執行 `zeaburctl ui` 就能打開。",
       alt: "shop 專案頁，列出 web、worker 和資料庫的狀態，worker 排在「需要處理」的第一項。",
       soon: "Kubernetes 1.30 以上的叢集，執行 `zeaburctl install` 就能裝好 Zeabur 和 Zeabur Identity。叢集已經有的 Ingress、憑證和指標元件會直接沿用。",
+      meta: "產品團隊：在現有的 Kubernetes 上部署｜Zeabur",
     },
     provider: {
       title: "叢集你來架，部署讓客戶自己來",
@@ -24,6 +45,7 @@ export const zhTW: HomeCopy = {
       secondary: "看權限怎麼分",
       note: "K3s 叢集加上 Zeabur，一台 2 vCPU、2 GiB 記憶體的機器就能裝。",
       alt: "Zeatend 的終端機介面，正在把一台 Linux 伺服器裝成 K3s 叢集。",
+      meta: "代管服務商：替客戶架叢集，部署交給客戶｜Zeabur",
     },
     homelab: {
       title: "免費開源，跟你原本的 Helm、Argo CD 一起用",
@@ -32,6 +54,7 @@ export const zhTW: HomeCopy = {
       secondary: "到 GitHub 看原始碼",
       note: "用 KubeSolo 的個人安裝沒有成員和角色，也不能用 Zeabur Identity 登入。",
       alt: "專案頁的其他 Namespace，Helm 或 Argo CD 管理的服務有標示。",
+      meta: "Homelab：免費開源，跟 Helm、Argo CD 一起用｜Zeabur",
     },
   },
   proof: {
@@ -119,6 +142,7 @@ export const zhTW: HomeCopy = {
     gitops: "用 Helm、Argo CD 或 Flux 部署的服務，打開 Zeabur 就看得到，不用匯入。",
     existing:
       "其他工具建立的 Namespace 也列在專案頁。按「使用這個 Namespace」只會加上一個標籤，裡面的物件都不會改變。",
+    alt: "示意圖：移除 Zeabur 之後，Deployment、Service、Ingress 和磁碟區留在原本的 Namespace，服務照常執行。",
     uninstall: {
       title: "移除步驟",
       after: "Kubernetes、叢集元件和專案的 Namespace 都會留下。",
@@ -153,9 +177,47 @@ export const zhTW: HomeCopy = {
     "`zeaburctl install`：在 Kubernetes 1.30 以上的叢集裝好 Zeabur 和 Zeabur Identity。Ingress、憑證和指標元件只補裝缺少的。",
     "Zeabur Desktop：Windows 和 macOS 的桌面 App。讀取 kubeconfig，列出可以搜尋的 context，選一個就開啟 Zeabur。",
   ],
+  dokploy: {
+    title: "用過 Dokploy？先看這幾件事",
+    intro:
+      "Dokploy 在 Docker 上部署，Zeabur 在 Kubernetes 上部署。部署的步驟很像，底下跑的東西不一樣，下面幾點會跟著改變。",
+    points: [
+      {
+        title: "部署的步驟",
+        body: "一樣從 Git、映像檔或 Docker Compose 部署，網域和 HTTPS 也在服務的設定裡。在 Zeabur 按下套用之前，畫面會先列出這次要寫進叢集的變更。",
+      },
+      {
+        title: "只有一台伺服器",
+        body: "一台伺服器也能裝：安裝程式會在上面裝好 K3s 或 RKE2。只給自己用的話，個人安裝用的是 KubeSolo（單節點 Kubernetes），沒有成員和角色，拿到 kubeconfig 的人能控制整個叢集。",
+      },
+      {
+        title: "小機器的記憶體",
+        body: "Kubernetes 本身就要用掉一些記憶體。Dokploy 文件寫至少 2 GB；Zeabur 現在的團隊安裝要 4 GiB，個人安裝 1.5 GiB。這些都是文件寫的最低需求，不是實測數字。",
+        soon: "團隊安裝在 2 vCPU、2 GiB 記憶體的機器上就能執行。",
+      },
+      {
+        title: "範本",
+        body: "Dokploy 的 README 寫有 600 多個範本，Zeabur Catalog 的範本少得多。搬過來之前，先確認你要的應用在不在目錄裡；不在的話，用映像檔或 Compose 部署。",
+      },
+      {
+        title: "換到 Kubernetes 之後",
+        body: "服務會變成 Kubernetes 的 Deployment、Service 和 Ingress，用 kubectl 也看得到。多台機器由 Kubernetes 排程，不用 Docker Swarm。匯入 Compose 時只建立有 `image:` 的服務，只有 `build:` 的服務改從 Git 部署。",
+      },
+      {
+        title: "並用和離開",
+        body: "兩邊的安裝都要求 80 和 443 埠空著，所以要並用的話，分開裝在不同的主機，搬完再切換 DNS。哪天不用 Zeabur，移除後服務的 Kubernetes 物件都留著，照常執行。",
+      },
+      {
+        title: "授權",
+        body: "Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 都採 Apache-2.0 授權，沒有付費版。Dokploy 大部分程式碼是 Apache-2.0，`/proprietary` 目錄用的是 source-available 授權。",
+      },
+    ],
+    link: "看 Zeabur 和 Dokploy 的逐項比較",
+  },
   cta: {
     primary: "開始使用",
     secondary: "閱讀文件",
+    providerPrimary: "追蹤 Zeatend",
     team: {
       title: "先用手上的 kubeconfig 打開看看",
       body: "`zeaburctl ui` 在你的電腦上執行，叢集裡不用先裝任何東西。",

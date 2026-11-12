@@ -1,6 +1,26 @@
 import type { HomeCopy } from "./index.ts"
 
 export const en: HomeCopy = {
+  home: {
+    hero: {
+      title: "Open-source deploys on Kubernetes. Your services stay in your cluster.",
+      sub: "Zeabur is an open-source interface for deploying on Kubernetes. Deploy from Git, a container image or Docker Compose, and review each change before it's written. Your services are plain Kubernetes objects, so they keep running if you stop using Zeabur.",
+      primary: "Get started",
+      secondary: "View on GitHub",
+      note: "You need a Kubernetes cluster or a Linux server.",
+    },
+    more: {
+      team: "How product teams use it",
+      provider: "How service providers use it",
+      homelab: "How homelabs use it",
+    },
+    permTitle: "Kubernetes RBAC decides who can do what",
+    openTitle: "Open it with the kubeconfig you have",
+    cta: {
+      title: "Start from what you have",
+      body: "If you have a cluster, install with Helm or open it locally with `zeaburctl ui`. The docs go from install to your first service.",
+    },
+  },
   hero: {
     switch: {
       label: "Who it's for",
@@ -16,6 +36,7 @@ export const en: HomeCopy = {
       note: "Installing needs cluster-admin. To look first, run `zeaburctl ui` on your computer.",
       alt: "The shop project page with web, worker and a database. worker is first under Needs attention.",
       soon: "On Kubernetes 1.30 or later, `zeaburctl install` adds Zeabur and Zeabur Identity and keeps the ingress, certificate and metrics components you already have.",
+      meta: "Zeabur for product teams: deploy on the Kubernetes you run",
     },
     provider: {
       title: "Run Kubernetes for your clients without doing every deploy yourself.",
@@ -24,6 +45,7 @@ export const en: HomeCopy = {
       secondary: "See how permissions work",
       note: "A K3s cluster with Zeabur runs on one machine with 2 vCPU and 2 GiB of memory.",
       alt: "Zeatend's terminal UI turning a Linux server into a K3s cluster.",
+      meta: "Zeabur for service providers: clusters for clients who deploy",
     },
     homelab: {
       title: "Free and open source, next to your Helm charts and Argo CD apps",
@@ -32,6 +54,7 @@ export const en: HomeCopy = {
       secondary: "View on GitHub",
       note: "A personal install on KubeSolo has no members or roles, and Zeabur Identity sign-in doesn't work there.",
       alt: "Other Namespaces on the projects page, with services managed by Helm or Argo CD marked.",
+      meta: "Zeabur for homelabs: free, open source, next to Helm",
     },
   },
   proof: {
@@ -123,6 +146,7 @@ export const en: HomeCopy = {
       "Services you deployed with Helm, Argo CD or Flux show up in Zeabur without importing anything.",
     existing:
       "Namespaces created by other tools are listed on the projects page. Use this Namespace adds one label and leaves the objects inside untouched.",
+    alt: "Diagram: after Zeabur is removed, Deployments, Services, Ingresses and volumes stay in their Namespaces and keep running.",
     uninstall: {
       title: "How to remove it",
       after: "Kubernetes, cluster components and project Namespaces stay.",
@@ -159,9 +183,47 @@ export const en: HomeCopy = {
     "`zeaburctl install`: adds Zeabur and Zeabur Identity to a cluster on Kubernetes 1.30 or later, and installs ingress, certificate and metrics components only when they're missing.",
     "Zeabur Desktop: an app for Windows and macOS that reads your kubeconfig, lists your contexts with search, and opens Zeabur for the one you pick.",
   ],
+  dokploy: {
+    title: "Coming from Dokploy?",
+    intro:
+      "Dokploy deploys on Docker and Zeabur deploys on Kubernetes. The steps feel alike; what runs underneath differs, and these points change with it.",
+    points: [
+      {
+        title: "Deploying",
+        body: "You still deploy from Git, an image or Docker Compose, and set domains and HTTPS on the service. Before you apply, Zeabur lists what it will write to the cluster.",
+      },
+      {
+        title: "One server",
+        body: "One server is enough: the installer sets up K3s or RKE2 on it. For yourself alone, the personal install uses KubeSolo (single-node Kubernetes), with no members or roles: whoever holds the kubeconfig controls the cluster.",
+      },
+      {
+        title: "Memory on a small server",
+        body: "Kubernetes takes some memory of its own. Dokploy's docs ask for at least 2 GB; Zeabur's team install needs 4 GiB today and the personal install 1.5 GiB. These are the documented minimums, not measurements.",
+        soon: "The team install runs on a machine with 2 vCPU and 2 GiB of memory.",
+      },
+      {
+        title: "Templates",
+        body: "Dokploy's README lists more than 600 templates; Zeabur Catalog has far fewer. Before you move, check that the apps you need are there. If not, deploy them from an image or Compose.",
+      },
+      {
+        title: "What changes on Kubernetes",
+        body: "Services become Kubernetes Deployments, Services and Ingresses that kubectl can show. Kubernetes schedules across machines instead of Docker Swarm. Compose import only creates services with an `image:`; deploy `build:`-only services from Git.",
+      },
+      {
+        title: "Running both, or leaving",
+        body: "Both installers need ports 80 and 443 free, so run them on separate servers while you move, then switch DNS. If you stop using Zeabur, your services' Kubernetes objects stay and keep running.",
+      },
+      {
+        title: "Licence",
+        body: "Zeabur, Zeabur Identity, Zeabur Builder and Zeabur Catalog are Apache-2.0, with no paid edition. Most of Dokploy is Apache-2.0; its `/proprietary` directory is under a source-available licence.",
+      },
+    ],
+    link: "Compare Zeabur and Dokploy side by side",
+  },
   cta: {
     primary: "Get started",
     secondary: "Read the docs",
+    providerPrimary: "Watch Zeatend on GitHub",
     team: {
       title: "Try it with the kubeconfig you already have",
       body: "`zeaburctl ui` runs on your computer and installs nothing in the cluster.",

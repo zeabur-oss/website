@@ -32,7 +32,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const date = dateFormat(locale, "long")
     add(`home/${locale}`, {
       kicker: "Zeabur Open Source",
-      title: home.hero.team.title,
+      title: home.home.hero.title,
       sub: chrome[locale].footer.about,
       han: han(locale),
     })

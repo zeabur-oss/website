@@ -267,6 +267,30 @@
     }
   }
 
+  /* What changes and what stays, side by side under the two products' names. */
+  .fx-moving {
+    display: grid;
+    gap: 0.875rem;
+    width: 100%;
+    max-width: 44rem;
+  }
+  .fx-moving-names {
+    display: flex;
+    justify-content: space-between;
+    color: var(--site-faint);
+    font-family: var(--font-stack-mono);
+    font-size: var(--text-micro);
+  }
+  .fx-moving .wire {
+    min-width: 2rem;
+  }
+  .fx-moving .chips {
+    flex: 0 1 15rem;
+  }
+  .fx-moving .chips + .wire + .chips {
+    justify-content: flex-end;
+  }
+
   /* The service list, with the failing one first. */
   .fx-rows {
     width: 100%;
