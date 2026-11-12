@@ -98,7 +98,8 @@ site with that repository's next release; a docs-only patch release is fine.
 
 ## Copy
 
-The landing copy is in `src/landing/copy.ts`, in en, zh-TW and zh-CN. Write it by the
+The home page copy is in `src/home/copy/`, one file each for en, zh-TW and zh-CN. The product
+pages keep theirs in `src/landing/`. Write it by the
 [`zeabur-writing`](.claude/skills/zeabur-writing/SKILL.md) skill. Its screenshots are the docs
 screenshots of the zeabur repository (`docs/images/shots/`, from its `docs/shots.yaml`), taken at
 twice the pixel density: show every product image at half its width or less, with `sizes`.
