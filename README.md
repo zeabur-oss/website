@@ -94,7 +94,7 @@ pages that are not published.
 
 ## Design system
 
-The site uses `@zeabur/design-system`, pinned to a commit in `package.json` like `zeabur/web`.
+The site uses `@zeabur-oss/design-system`, pinned to an exact version in `package.json`.
 
 ## License
 

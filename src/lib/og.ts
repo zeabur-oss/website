@@ -73,7 +73,7 @@ async function noto(text: string, han: "tc" | "sc", weight: Weight) {
 const svgUri = (svg: string) => `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`
 
 const logo = readFile(
-  require.resolve("@zeabur/design-system/vendor/zeabur/logo-with-text.svg"),
+  require.resolve("@zeabur-oss/design-system/vendor/zeabur/logo-with-text.svg"),
   "utf8",
 ).then(svgUri)
 

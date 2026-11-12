@@ -5,7 +5,7 @@ import { createRequire } from "node:module"
 
 // The wordmark from the design system, unchanged but for its colours: the text follows the theme.
 const file = createRequire(import.meta.url).resolve(
-  "@zeabur/design-system/vendor/zeabur/logo-with-text.svg",
+  "@zeabur-oss/design-system/vendor/zeabur/logo-with-text.svg",
 )
 const svg = readFileSync(file, "utf8")
   .replace(/ width="563" height="107"/, ' aria-hidden="true" class="logo-svg"')
