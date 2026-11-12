@@ -5,7 +5,7 @@ description: Work on oss.zeabur.com (zeabur-oss/website) — the landing and pro
 
 # Zeabur website
 
-Follow the shared skills (installed under `.claude/skills/`, pinned in `skills-lock.json`):
+Follow the shared skills (copied from zeabur-oss/.github by the Update workflow):
 `zeabur-oss-workflow` (branches, commits, pull requests), `zeabur-oss-standards`,
 `zeabur-oss-dependencies` (Bun packages), `zeabur-writing` (all text; landing and product pages
 also by its `landing-copy.md`), `story-writing` (blog posts; technical articles also by its
