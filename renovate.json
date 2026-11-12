@@ -11,10 +11,9 @@
       "groupName": "packages (non-major)"
     },
     {
-      "description": "One pull request moves every docs tag, with no publish delay.",
+      "description": "One pull request moves every docs tag; the shared preset gives zeabur-oss releases no publish delay.",
       "matchFileNames": ["docs.lock.json"],
-      "groupName": "docs",
-      "minimumReleaseAge": null
+      "groupName": "docs"
     }
   ],
   "customManagers": [

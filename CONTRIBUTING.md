@@ -82,8 +82,9 @@ The settings are the ones `web/` in the zeabur repository uses.
 
 Packages are managed with Bun: `package.json` pins exact versions, `bun.lock` is committed, and
 `bun ci` fails if the two disagree. `bunfig.toml` sets `minimumReleaseAge` to seven days, the same
-delay as the other zeabur-oss repositories. No package is listed in `trustedDependencies`, so no
-install script runs. Licenses must be OSI-approved.
+delay as the other zeabur-oss repositories, except for our own `@zeabur-oss/design-system`. No
+package is listed in `trustedDependencies`, so no install script runs. Licenses must be
+OSI-approved.
 
 `@zeabur/design-system` is a Git dependency pinned to a commit.
 
