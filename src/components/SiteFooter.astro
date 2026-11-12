@@ -2,51 +2,51 @@
 import Logo from "./Logo.astro"
 import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
-import { productIds, productName } from "../lib/products.ts"
-import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { siteNav } from "../lib/nav.ts"
+import { blogUrl, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
 }
 const { locale } = Astro.props
 const t = chrome[locale]
+const nav = siteNav(locale)
+const [manage, install, components] = nav.groups
 const columns = [
-  {
-    title: t.footer.products,
-    links: productIds.map((id) => ({ href: productUrl(locale, id), text: productName[id] })),
-  },
-  {
-    title: t.nav.docs,
-    links: productIds.map((id) => ({ href: docsUrl(locale, id), text: productName[id] })),
-  },
+  { title: t.nav.products, links: [...manage!.items, ...install!.items] },
+  { title: components!.label, links: components!.items },
+  { title: t.nav.useCases, links: nav.useCases },
   {
     title: t.footer.resources,
     links: [
-      { href: blogUrl(locale), text: t.nav.blog },
-      { href: `${blogUrl(locale)}/rss.xml`, text: "RSS" },
-      { href: githubOrg, text: "GitHub" },
+      { href: nav.docs, name: t.nav.docs },
+      { href: nav.trust, name: t.nav.trust },
+      { href: nav.blog, name: t.nav.blog },
+      { href: `${blogUrl(locale)}/rss.xml`, name: "RSS" },
+      { href: githubOrg, name: "GitHub" },
     ],
   },
 ]
 ---
 
 <footer class="border-t border-site-line py-12 print:hidden text-sm text-site-muted [view-transition-name:site-footer]">
-  <div class="wrap grid gap-8 md:grid-cols-12 md:gap-x-6">
-    <div class="md:col-[1/5]">
+  <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-x-6">
+    <div class="lg:col-[1/5]">
       <Logo />
       <p class="mt-3 max-w-[22rem] leading-[1.6]">{t.footer.about}</p>
       <p class="mt-3 max-w-[22rem] leading-[1.6]">© Zeabur · {t.footer.license}</p>
     </div>
-    <div class="grid grid-cols-3 gap-6 md:col-[7/13]">
+    <div class="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 lg:col-[5/13]">
       {columns.map(({ title, links }) => (
         <div>
           <h2 class="mb-3 type-body font-medium tracking-normal text-site-text">{title}</h2>
           <ul class="m-0 grid list-none gap-2 p-0">
-            {links.map(({ href, text }) => (
-              <li>
-                <a href={href} class="text-site-muted no-underline hover:text-site-text">
-                  {text}
+            {links.map((link) => (
+              <li class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <a href={link.href} class="text-site-muted no-underline hover:text-site-text">
+                  {link.name}
                 </a>
+                {"soon" in link && link.soon && <span class="soon">Coming soon</span>}
               </li>
             ))}
           </ul>

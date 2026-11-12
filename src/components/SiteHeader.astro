@@ -1,21 +1,14 @@
 ---
 import { cn } from "cn"
-import ProductLink from "./ProductLink.astro"
 import Icon from "./Icon.astro"
 import Logo from "./Logo.astro"
+import NavEntry from "./NavEntry.astro"
 import ThemeToggle from "./ThemeToggle.astro"
 import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
-import { productIcon, productIds, productName } from "../lib/products.ts"
-import {
-  blogUrl,
-  docsUrl,
-  homeUrl,
-  locales,
-  pathInLocale,
-  productUrl,
-  type SiteLocale,
-} from "../lib/urls.ts"
+import { githubStars, shortCount } from "../lib/github.ts"
+import { siteNav } from "../lib/nav.ts"
+import { homeUrl, locales, pathInLocale, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
@@ -29,27 +22,25 @@ interface Props {
 const { locale, section, alternates = {}, docs = false } = Astro.props
 const Outer = docs ? "div" : "header"
 const t = chrome[locale]
+const nav = siteNav(locale)
 const here = Astro.url.pathname.replace(/\/$/, "") || "/"
 const langHref = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)
 const current = (on: boolean) => (on ? "true" : undefined)
 const navLink = "nav-item aria-[current=true]:font-medium aria-[current=true]:text-site-text"
-const mobileGroups = [
+const caret = "size-3 transition-[rotate] duration-quick ease-(--ease-site) group-open:rotate-180"
+const [manage, install, components] = nav.groups
+const stars = await githubStars()
+const starCount = stars === undefined ? undefined : shortCount(stars, locale)
+const repo = `${githubOrg}/zeabur`
+const links = [
   {
-    label: t.nav.products,
-    links: productIds.map((id) => ({
-      href: productUrl(locale, id),
-      icon: productIcon[id],
-      text: productName[id],
-    })),
+    href: nav.docs,
+    text: t.nav.docs,
+    icon: "book-open",
+    on: section === "docs" && here !== nav.trust,
   },
-  {
-    label: `Zeabur ${t.nav.openSource}`,
-    links: [
-      { href: docsUrl(locale, "zeabur"), icon: "book-open", text: t.nav.docs },
-      { href: blogUrl(locale), icon: "article", text: t.nav.blog },
-      { href: githubOrg, icon: "github-logo", text: "GitHub" },
-    ],
-  },
+  { href: nav.trust, text: t.nav.trust, icon: "shield-check", on: here === nav.trust },
+  { href: nav.blog, text: t.nav.blog, icon: "article", on: section === "blog" },
 ]
 ---
 
@@ -85,33 +76,43 @@ const mobileGroups = [
       <details class="menu group" data-menu>
         <summary class="nav-item" aria-current={current(section === "products")}>
           {t.nav.products}
-          <Icon
-            name="caret-down"
-            class="size-3 transition-[rotate] duration-quick ease-(--ease-site) group-open:rotate-180"
-          />
+          <Icon name="caret-down" class={caret} />
         </summary>
-        <div class="menu-panel left-0 grid w-[25rem] gap-0.5">
-          {productIds.map((id) => (
-            <ProductLink
-              id={id}
-              href={productUrl(locale, id)}
-              current={here === productUrl(locale, id)}
-              name={productName[id]}
-              line={t.products[id].line}
-            />
+        <div class="menu-panel left-0 grid w-[41rem] grid-cols-2 gap-x-2 p-2">
+          <div>
+            {[manage!, install!].map((group) => (
+              <section aria-label={group.label}>
+                <p class="menu-label">{group.label}</p>
+                {group.items.map((item) => (
+                  <NavEntry item={item} current={here === item.href} />
+                ))}
+              </section>
+            ))}
+          </div>
+          <section aria-label={components!.label}>
+            <p class="menu-label">{components!.label}</p>
+            {components!.items.map((item) => (
+              <NavEntry item={item} current={here === item.href} />
+            ))}
+          </section>
+        </div>
+      </details>
+      <details class="menu group" data-menu>
+        <summary class="nav-item">
+          {t.nav.useCases}
+          <Icon name="caret-down" class={caret} />
+        </summary>
+        <div class="menu-panel left-0 grid w-[19rem] p-2">
+          {nav.useCases.map((item) => (
+            <NavEntry item={item} current={false} />
           ))}
         </div>
       </details>
-      <a
-        href={docsUrl(locale, "zeabur")}
-        class={navLink}
-        aria-current={current(section === "docs")}
-      >
-        {t.nav.docs}
-      </a>
-      <a href={blogUrl(locale)} class={navLink} aria-current={current(section === "blog")}>
-        {t.nav.blog}
-      </a>
+      {links.map(({ href, text, on }) => (
+        <a href={href} class={navLink} aria-current={current(on)}>
+          {text}
+        </a>
+      ))}
     </nav>
     {Astro.slots.has("search") && (
       <div class="flex flex-1 justify-end docs:justify-start">
@@ -122,7 +123,7 @@ const mobileGroups = [
       <details class={cn("menu", docs && "max-docs:hidden")} data-menu>
         <summary class="nav-item" aria-label={t.nav.language}>
           <Icon name="translate" />
-          <span class="max-[30rem]:hidden">{t.lang}</span>
+          <span class={docs ? "max-[84rem]:hidden" : "max-[78rem]:hidden"}>{t.lang}</span>
         </summary>
         <div class="menu-panel right-0">
           {locales.map((l) => (
@@ -139,12 +140,24 @@ const mobileGroups = [
       </details>
       <ThemeToggle label={t.nav.theme} />
       <a
-        href={githubOrg}
-        class={cn("icon-button", docs && "max-docs:hidden")}
-        aria-label={t.nav.github}
+        href={repo}
+        class={cn("nav-item gap-2 max-[26rem]:hidden", docs && "max-docs:hidden")}
+        aria-label={starCount === undefined ? t.nav.github : t.nav.stars(starCount)}
       >
         <Icon name="github-logo" />
+        <span class={docs ? "hidden" : "max-nav:hidden"}>GitHub</span>
+        {starCount !== undefined && (
+          <span class="inline-flex items-center gap-1 font-mono text-[0.75rem] text-site-faint">
+            <Icon name="star" weight="fill" class="!size-3" />
+            {starCount}
+          </span>
+        )}
       </a>
+      {!docs && (
+        <a href={nav.start} class="button primary ml-1 h-8 px-3 max-[30rem]:hidden">
+          {t.nav.start}
+        </a>
+      )}
       {!docs && (
         // Small screens: one menu button opens the whole navigation. The docs have Starlight's.
         <details class="menu nav:hidden" data-menu>
@@ -152,17 +165,38 @@ const mobileGroups = [
             <Icon name="list" />
           </summary>
           <div class="menu-panel fixed top-(--header-height) right-0 left-0 max-h-[calc(100dvh-var(--header-height))] overflow-y-auto rounded-none border-x-0 px-(--gutter) pt-2 pb-4">
-            {mobileGroups.map(({ label, links }) => (
+            {nav.groups.map(({ label, items }) => (
               <>
-                <p class="px-2 pt-3 pb-1 type-meta text-site-faint">{label}</p>
-                {links.map(({ href, icon, text }) => (
+                <p class="menu-label">{`${t.nav.products} · ${label}`}</p>
+                {items.map(({ href, icon, name, soon }) => (
                   <a href={href} class="px-2 py-2.5">
-                    <Icon name={icon} />
-                    {text}
+                    {icon && <Icon name={icon} />}
+                    {name}
+                    {soon && <span class="soon">Coming soon</span>}
                   </a>
                 ))}
               </>
             ))}
+            <p class="menu-label">{t.nav.useCases}</p>
+            {nav.useCases.map(({ href, name }) => (
+              <a href={href} class="px-2 py-2.5">
+                {name}
+              </a>
+            ))}
+            <p class="menu-label">{`Zeabur ${t.nav.openSource}`}</p>
+            {links.map(({ href, icon, text }) => (
+              <a href={href} class="px-2 py-2.5">
+                <Icon name={icon} />
+                {text}
+              </a>
+            ))}
+            <a href={repo} class="px-2 py-2.5">
+              <Icon name="github-logo" />
+              GitHub
+            </a>
+            <a href={nav.start} class="button primary mt-3 w-full !text-(--on-primary)">
+              {t.nav.start}
+            </a>
           </div>
         </details>
       )}
@@ -171,7 +205,7 @@ const mobileGroups = [
 </Outer>
 
 <script>
-  // One menu open at a time; a click outside or Escape closes it.
+  // One menu open at a time. A click outside, Escape, or focus that leaves the menu closes it.
   function closeMenus(except?: Element) {
     for (const menu of document.querySelectorAll<HTMLDetailsElement>("[data-menu][open]")) {
       if (menu !== except) menu.open = false
@@ -184,6 +218,12 @@ const mobileGroups = [
     if (menu && target.closest(".menu-panel a")) (menu as HTMLDetailsElement).open = false
   })
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMenus()
+    if (event.key !== "Escape") return
+    const open = document.querySelector<HTMLDetailsElement>("[data-menu][open]")
+    closeMenus()
+    if (open?.contains(document.activeElement)) open.querySelector("summary")?.focus()
+  })
+  document.addEventListener("focusin", (event) => {
+    closeMenus((event.target as Element).closest("[data-menu]") ?? undefined)
   })
 </script>

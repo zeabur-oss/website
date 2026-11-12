@@ -7,8 +7,13 @@ type Chrome = {
   lang: string
   nav: {
     products: string
+    useCases: string
     docs: string
+    trust: string
     blog: string
+    start: string
+    /** The accessible name of the GitHub link when the star count is known. */
+    stars: (count: string) => string
     language: string
     theme: string
     github: string
@@ -19,21 +24,30 @@ type Chrome = {
   }
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { line: string; short: string }>
-  footer: { about: string; license: string; products: string; resources: string; source: string }
+  /** The three groups of the product menu. */
+  groups: { manage: string; install: string; components: string }
+  /** One line each for the products of the next release. The tag beside them is not translated. */
+  upcoming: { desktop: string; zeatend: string }
+  useCases: Record<"cluster" | "machine" | "team", { name: string; line: string }>
+  footer: { about: string; license: string; resources: string }
 }
 
 const zhTW: Chrome = {
   lang: "繁體中文",
   nav: {
-    products: "專案",
+    products: "產品",
+    useCases: "使用情境",
     docs: "文件",
+    trust: "安全",
     blog: "部落格",
+    start: "開始使用",
+    stars: (count) => `GitHub，${count} 顆星`,
     language: "語言",
     theme: "切換亮色或暗色",
     github: "GitHub",
     menu: "選單",
     home: "首頁",
-    openSource: "開源",
+    openSource: "開源版",
   },
   products: {
     zeabur: {
@@ -54,26 +68,38 @@ const zhTW: Chrome = {
     },
   },
   footer: {
-    about: "Zeabur 的開源專案：在自己的 Kubernetes 上部署、登入、建置和安裝元件。",
+    about: "在自己的 Kubernetes 上部署和管理服務。",
     license: "原始碼採 Apache-2.0 授權",
-    products: "專案",
     resources: "資源",
-    source: "原始碼",
+  },
+  groups: { manage: "管理", install: "安裝", components: "元件" },
+  upcoming: {
+    desktop: "電腦上的 App，讀你的 kubeconfig",
+    zeatend: "獨立的 Kubernetes 安裝程式",
+  },
+  useCases: {
+    cluster: { name: "已有 Kubernetes", line: "用自己的 kubeconfig 開啟" },
+    machine: { name: "只有一台機器", line: "從一台 Linux 伺服器開始" },
+    team: { name: "帶團隊維運", line: "每個人用自己的權限" },
   },
 }
 
 const zhCN: Chrome = {
   lang: "简体中文",
   nav: {
-    products: "项目",
+    products: "产品",
+    useCases: "使用场景",
     docs: "文档",
+    trust: "安全",
     blog: "博客",
+    start: "开始使用",
+    stars: (count) => `GitHub，${count} 颗星`,
     language: "语言",
     theme: "切换浅色或深色",
     github: "GitHub",
     menu: "菜单",
     home: "首页",
-    openSource: "开源",
+    openSource: "开源版",
   },
   products: {
     zeabur: {
@@ -94,20 +120,32 @@ const zhCN: Chrome = {
     },
   },
   footer: {
-    about: "Zeabur 的开源项目：在自己的 Kubernetes 上部署、登录、构建和安装组件。",
+    about: "在自己的 Kubernetes 上部署和管理服务。",
     license: "源代码采用 Apache-2.0 许可证",
-    products: "项目",
     resources: "资源",
-    source: "源代码",
+  },
+  groups: { manage: "管理", install: "安装", components: "组件" },
+  upcoming: {
+    desktop: "电脑上的 App，读取你的 kubeconfig",
+    zeatend: "独立的 Kubernetes 安装程序",
+  },
+  useCases: {
+    cluster: { name: "已有 Kubernetes", line: "用自己的 kubeconfig 打开" },
+    machine: { name: "只有一台机器", line: "从一台 Linux 服务器开始" },
+    team: { name: "带团队运维", line: "每个人用自己的权限" },
   },
 }
 
 const en: Chrome = {
   lang: "English",
   nav: {
-    products: "Projects",
+    products: "Product",
+    useCases: "Use cases",
     docs: "Docs",
+    trust: "Security",
     blog: "Blog",
+    start: "Get started",
+    stars: (count) => `GitHub, ${count} stars`,
     language: "Language",
     theme: "Switch between light and dark",
     github: "GitHub",
@@ -134,12 +172,19 @@ const en: Chrome = {
     },
   },
   footer: {
-    about:
-      "Zeabur's open-source projects: deploy, sign in, build and install components on your own Kubernetes.",
+    about: "Deploy and run services on your own Kubernetes.",
     license: "Source under Apache-2.0",
-    products: "Projects",
     resources: "Resources",
-    source: "Source",
+  },
+  groups: { manage: "Manage", install: "Install", components: "Components" },
+  upcoming: {
+    desktop: "A desktop app that reads your kubeconfig",
+    zeatend: "A Kubernetes installer of its own",
+  },
+  useCases: {
+    cluster: { name: "A cluster you already have", line: "Open it with your own kubeconfig" },
+    machine: { name: "One machine", line: "Start from one Linux server" },
+    team: { name: "Running it with a team", line: "Everyone works with their own rights" },
   },
 }
 
