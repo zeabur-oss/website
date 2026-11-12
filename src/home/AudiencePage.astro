@@ -1,0 +1,87 @@
+---
+// The page for one kind of reader: their first screen, their three statements, their parts in
+// their order, and their closing block.
+import Cta from "../blocks/Cta.astro"
+import Hero from "../blocks/Hero.astro"
+import Proof from "../blocks/Proof.astro"
+import Frame from "../landing/Frame.astro"
+import { shot, sizes } from "../landing/shots.ts"
+import Site from "../layouts/Site.astro"
+import { chrome } from "../lib/chrome.ts"
+import { githubOrg } from "../lib/site.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import Actions from "./Actions.astro"
+import { homeCopy, type Audience } from "./copy/index.ts"
+import { partOrder, proofOrder } from "./copy/order.ts"
+import Part from "./Part.astro"
+
+interface Props {
+  locale: SiteLocale
+  audience: Audience
+}
+const { locale, audience } = Astro.props
+const t = homeCopy[locale]
+const hero = t.hero[audience]
+const docs = (slug: string) => docsUrl(locale, "zeabur", slug)
+const links = {
+  team: [docs("install/existing-cluster"), docs("get-started/first-project")],
+  provider: ["#zeatend", "#permissions"],
+  homelab: ["#local", `${githubOrg}/zeabur`],
+}[audience]
+const name = chrome[locale].useCases[audience].name
+const description = hero.sub.replaceAll("`", "")
+---
+
+<Site
+  locale={locale}
+  title={`${name} · Zeabur ${chrome[locale].nav.openSource}`}
+  description={description}
+>
+  <div class="home">
+    <Hero
+      title={hero.title}
+      sub={hero.sub}
+      actions={[
+        { text: hero.primary, href: links[0]! },
+        { text: hero.secondary, href: links[1]! },
+      ]}
+      note={hero.note}
+      soonNote={hero.soon}
+      soon={audience === "provider"}
+    >
+      {audience === "homelab" ? (
+        <Frame
+          src={shot(locale, "existing-namespaces")}
+          alt={hero.alt}
+          sizes={sizes.full}
+          ratio="1240 / 640"
+          eager
+        />
+      ) : (
+        <Frame
+          src={shot(locale, "project")}
+          alt={t.hero.team.alt}
+          sizes={sizes.full}
+          ratio="1240 / 640"
+          eager
+        />
+      )}
+      <Proof slot="after" claims={proofOrder[audience].map((claim) => t.proof[claim])} />
+    </Hero>
+    {partOrder[audience].map((part) => (
+      <Part locale={locale} part={part} />
+    ))}
+    <Cta id="start" title={t.cta[audience].title} lead={t.cta[audience].body}>
+      {audience === "team" && (
+        <Actions
+          locale={locale}
+          start={docs("reference/zeaburctl")}
+          repo={`${githubOrg}/zeabur`}
+          stars
+        />
+      )}
+      {audience === "provider" && <Actions locale={locale} repo={`${githubOrg}/zeatend`} />}
+      {audience === "homelab" && <Actions locale={locale} repo={`${githubOrg}/zeabur`} stars />}
+    </Cta>
+  </div>
+</Site>

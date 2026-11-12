@@ -28,7 +28,6 @@ const langHref = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)
 const current = (on: boolean) => (on ? "true" : undefined)
 const navLink = "nav-item aria-[current=true]:font-medium aria-[current=true]:text-site-text"
 const caret = "size-3 transition-[rotate] duration-quick ease-(--ease-site) group-open:rotate-180"
-const [manage, install, components] = nav.groups
 const stars = await githubStars()
 const starCount = stars === undefined ? undefined : shortCount(stars, locale)
 const repo = `${githubOrg}/zeabur`
@@ -78,23 +77,10 @@ const links = [
           {t.nav.products}
           <Icon name="caret-down" class={caret} />
         </summary>
-        <div class="menu-panel left-0 grid w-[41rem] grid-cols-2 gap-x-2 p-2">
-          <div>
-            {[manage!, install!].map((group) => (
-              <section aria-label={group.label}>
-                <p class="menu-label">{group.label}</p>
-                {group.items.map((item) => (
-                  <NavEntry item={item} current={here === item.href} />
-                ))}
-              </section>
-            ))}
-          </div>
-          <section aria-label={components!.label}>
-            <p class="menu-label">{components!.label}</p>
-            {components!.items.map((item) => (
-              <NavEntry item={item} current={here === item.href} />
-            ))}
-          </section>
+        <div class="menu-panel left-0 grid w-[24rem] p-2">
+          {nav.products.map((item) => (
+            <NavEntry item={item} current={here === item.href} />
+          ))}
         </div>
       </details>
       <details class="menu group" data-menu>
@@ -165,17 +151,13 @@ const links = [
             <Icon name="list" />
           </summary>
           <div class="menu-panel fixed top-(--header-height) right-0 left-0 max-h-[calc(100dvh-var(--header-height))] overflow-y-auto rounded-none border-x-0 px-(--gutter) pt-2 pb-4">
-            {nav.groups.map(({ label, items }) => (
-              <>
-                <p class="menu-label">{`${t.nav.products} · ${label}`}</p>
-                {items.map(({ href, icon, name, soon }) => (
-                  <a href={href} class="px-2 py-2.5">
-                    {icon && <Icon name={icon} />}
-                    {name}
-                    {soon && <span class="soon">Coming soon</span>}
-                  </a>
-                ))}
-              </>
+            <p class="menu-label">{t.nav.products}</p>
+            {nav.products.map(({ href, icon, name, soon }) => (
+              <a href={href} class="px-2 py-2.5">
+                {icon && <Icon name={icon} />}
+                {name}
+                {soon && <span class="soon">Coming soon</span>}
+              </a>
             ))}
             <p class="menu-label">{t.nav.useCases}</p>
             {nav.useCases.map(({ href, name }) => (

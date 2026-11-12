@@ -3,7 +3,8 @@ import Logo from "./Logo.astro"
 import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
 import { siteNav } from "../lib/nav.ts"
-import { blogUrl, type SiteLocale } from "../lib/urls.ts"
+import { productIds, productName } from "../lib/products.ts"
+import { blogUrl, docsUrl, type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
@@ -11,15 +12,16 @@ interface Props {
 const { locale } = Astro.props
 const t = chrome[locale]
 const nav = siteNav(locale)
-const [manage, install, components] = nav.groups
 const columns = [
-  { title: t.nav.products, links: [...manage!.items, ...install!.items] },
-  { title: components!.label, links: components!.items },
+  { title: t.nav.products, links: [...nav.products, ...nav.components] },
   { title: t.nav.useCases, links: nav.useCases },
+  {
+    title: t.nav.docs,
+    links: productIds.map((id) => ({ href: docsUrl(locale, id), name: productName[id] })),
+  },
   {
     title: t.footer.resources,
     links: [
-      { href: nav.docs, name: t.nav.docs },
       { href: nav.trust, name: t.nav.trust },
       { href: nav.blog, name: t.nav.blog },
       { href: `${blogUrl(locale)}/rss.xml`, name: "RSS" },

@@ -1,17 +1,35 @@
 ---
+// The home page: what Zeabur is for every reader, in brief, with the way to each reader's page.
+import Cta from "../blocks/Cta.astro"
+import Hero from "../blocks/Hero.astro"
+import Proof from "../blocks/Proof.astro"
+import Rich from "../blocks/Rich.astro"
+import Section from "../blocks/Section.astro"
+import Visual from "../blocks/Visual.astro"
+import Icon from "../components/Icon.astro"
+import Frame from "../landing/Frame.astro"
+import { shot, sizes } from "../landing/shots.ts"
 import Site from "../layouts/Site.astro"
 import { chrome } from "../lib/chrome.ts"
 import { organization } from "../lib/seo.ts"
-import type { SiteLocale } from "../lib/urls.ts"
-import Hero from "./Hero.astro"
-import Parts from "./Parts.astro"
+import { githubOrg } from "../lib/site.ts"
+import { audienceUrl, docsUrl, type SiteLocale } from "../lib/urls.ts"
+import Actions from "./Actions.astro"
+import { audiences, audienceSlug, homeCopy, type Audience } from "./copy/index.ts"
+import LocalMode from "./figures/LocalMode.astro"
+import Trace from "./figures/Trace.astro"
+import Roles from "./Roles.astro"
 
 interface Props {
   locale: SiteLocale
 }
 const { locale } = Astro.props
-const title = `Zeabur ${chrome[locale].nav.openSource}`
-const description = chrome[locale].footer.about
+const t = homeCopy[locale]
+const words = chrome[locale]
+const title = `Zeabur ${words.nav.openSource}`
+const description = words.footer.about
+const docs = (slug?: string) => docsUrl(locale, "zeabur", slug)
+const page = (audience: Audience) => audienceUrl(locale, audienceSlug[audience])
 ---
 
 <Site
@@ -30,7 +48,100 @@ const description = chrome[locale].footer.about
   }}
 >
   <div class="home">
-    <Hero locale={locale} />
-    <Parts locale={locale} />
+    <Hero
+      title={t.hero.team.title}
+      sub={t.hero.team.sub}
+      actions={[
+        { text: t.cta.primary, href: docs("get-started/quickstart") },
+        { text: t.cta.secondary, href: docs() },
+      ]}
+      note={t.cta.team.body}
+    >
+      <Frame
+        src={shot(locale, "project")}
+        alt={t.hero.team.alt}
+        sizes={sizes.full}
+        ratio="1240 / 640"
+        eager
+      />
+      <nav slot="after" class="readers" aria-labelledby="readers-title">
+        <h2 id="readers-title">{t.hero.switch.label}</h2>
+        <ul>
+          {audiences.map((audience, i) => (
+            <li data-reveal style={`--i:${i}`}>
+              <a href={page(audience)}>
+                <span class="readers-name">
+                  {words.useCases[audience].name}
+                  {audience === "provider" && <span class="soon">Coming soon</span>}
+                  <Icon name="arrow-right" class="go" />
+                </span>
+                <span class="body">{words.useCases[audience].line}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </Hero>
+
+    <Section id="walk" title={t.walk.title} lead={t.walk.intro}>
+      <ol class="cards" style="--n:3">
+        {t.walk.steps.map((step, i) => (
+          <li class="card">
+            <Visual label={step.alt} after={i * 5}>
+              <Trace step={i as 0 | 1 | 2} />
+            </Visual>
+            <h3>{step.title}</h3>
+          </li>
+        ))}
+      </ol>
+      <a href={`${page("team")}#walk`} class="more part-more">
+        {words.useCases.team.name}
+        <Icon name="arrow-right" class="go" />
+      </a>
+    </Section>
+
+    <Section id="permissions" title={t.perm.title}>
+      <Roles locale={locale} a={t.proof.roles.body} b={t.proof.rbac.body} />
+      <Proof claims={[t.proof.review]} />
+      <a href={`${page("provider")}#permissions`} class="more part-more">
+        {words.useCases.provider.name}
+        <Icon name="arrow-right" class="go" />
+      </a>
+    </Section>
+
+    <Section id="local" title={t.local.title} lead={t.proof.local.body}>
+      <Visual label={t.local.alt} class="visual-wide">
+        <LocalMode chip={t.local.chip} />
+      </Visual>
+      <a href={`${page("homelab")}#local`} class="more part-more">
+        {words.useCases.homelab.name}
+        <Icon name="arrow-right" class="go" />
+      </a>
+    </Section>
+
+    <Section id="open" title={t.license.title}>
+      <Proof claims={[t.proof.state, t.proof.lockin, t.proof.gitops]} />
+    </Section>
+
+    <Section id="soon" title="Coming soon">
+      <ul class="upcoming">
+        {t.soon.map((line, i) => (
+          <li data-reveal style={`--i:${i}`}>
+            <p class="body">
+              <Rich text={line} />
+            </p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+
+    <Cta id="start" title={t.cta.homelab.title} lead={t.cta.homelab.body}>
+      <Actions
+        locale={locale}
+        start={docs("get-started/quickstart")}
+        repo={`${githubOrg}/zeabur`}
+        stars
+      />
+    </Cta>
   </div>
 </Site>

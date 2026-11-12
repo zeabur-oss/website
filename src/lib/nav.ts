@@ -1,7 +1,7 @@
 // The site's navigation, shared by the header, its small-screen menu and the footer.
 import { chrome } from "./chrome.ts"
-import { productIcon, productName, type ProductId } from "./products.ts"
-import { blogUrl, docsUrl, homeUrl, productUrl, type SiteLocale } from "./urls.ts"
+import { productIds, productName } from "./products.ts"
+import { audienceUrl, blogUrl, docsUrl, homeUrl, productUrl, type SiteLocale } from "./urls.ts"
 
 export type NavItem = {
   name: string
@@ -11,63 +11,34 @@ export type NavItem = {
   /** Not released yet: shown with "Coming soon". */
   soon?: boolean
 }
-type NavGroup = { label: string; items: NavItem[] }
 
-/** A section of the home page, from any page of the site. */
+/** A part of the home page, from any page of the site. */
 const homeSection = (locale: string, id: string) => `${homeUrl(locale)}#${id}`
 
 export function siteNav(locale: SiteLocale) {
   const t = chrome[locale]
-  const product = (id: ProductId): NavItem => ({
-    name: productName[id],
-    href: productUrl(locale, id),
-    line: t.products[id].line,
-    icon: productIcon[id],
-  })
-  const groups: NavGroup[] = [
+  const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
+  const products: NavItem[] = [
+    { ...t.menu.gui, href: productUrl(locale, "zeabur"), icon: "squares-four" },
+    { ...t.menu.desktop, href: homeSection(locale, "soon"), icon: "desktop", soon: true },
     {
-      label: t.groups.manage,
-      items: [
-        product("zeabur"),
-        {
-          name: "Zeabur Desktop",
-          href: homeSection(locale, "soon"),
-          line: t.upcoming.desktop,
-          icon: "desktop",
-          soon: true,
-        },
-      ],
-    },
-    {
-      label: t.groups.install,
-      items: [
-        {
-          name: "Zeatend",
-          href: homeSection(locale, "soon"),
-          line: t.upcoming.zeatend,
-          icon: "hard-drives",
-          soon: true,
-        },
-      ],
-    },
-    {
-      label: t.groups.components,
-      items: [product("identity"), product("builder"), product("catalog")],
+      ...t.menu.zeatend,
+      href: homeSection(locale, "zeatend"),
+      icon: "terminal-window",
+      soon: true,
     },
   ]
-  const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
-  const useCaseDocs = {
-    cluster: zeaburDocs("reference/zeaburctl"),
-    machine: zeaburDocs("install/personal"),
-    team: zeaburDocs("get-started/quickstart"),
-  }
-  const useCases: NavItem[] = (["cluster", "machine", "team"] as const).map((id) => ({
-    name: t.useCases[id].name,
-    line: t.useCases[id].line,
-    href: useCaseDocs[id],
+  const components: NavItem[] = productIds
+    .filter((id) => id !== "zeabur")
+    .map((id) => ({ name: productName[id], href: productUrl(locale, id) }))
+  const pages = { team: "teams", provider: "providers", homelab: "homelab" } as const
+  const useCases: NavItem[] = (["team", "provider", "homelab"] as const).map((id) => ({
+    ...t.useCases[id],
+    href: audienceUrl(locale, pages[id]),
   }))
   return {
-    groups,
+    products,
+    components,
     useCases,
     docs: zeaburDocs(),
     trust: zeaburDocs("reference/security"),

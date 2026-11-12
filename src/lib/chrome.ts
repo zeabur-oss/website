@@ -24,11 +24,10 @@ type Chrome = {
   }
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { line: string; short: string }>
-  /** The three groups of the product menu. */
-  groups: { manage: string; install: string; components: string }
-  /** One line each for the products of the next release. The tag beside them is not translated. */
-  upcoming: { desktop: string; zeatend: string }
-  useCases: Record<"cluster" | "machine" | "team", { name: string; line: string }>
+  /** The product menu. The names are not translated. */
+  menu: Record<"gui" | "desktop" | "zeatend", { name: string; line: string }>
+  /** The use cases, one for each reader the home page speaks to. */
+  useCases: Record<"team" | "provider" | "homelab", { name: string; line: string }>
   footer: { about: string; license: string; resources: string }
 }
 
@@ -72,15 +71,18 @@ const zhTW: Chrome = {
     license: "原始碼採 Apache-2.0 授權",
     resources: "資源",
   },
-  groups: { manage: "管理", install: "安裝", components: "元件" },
-  upcoming: {
-    desktop: "電腦上的 App，讀你的 kubeconfig",
-    zeatend: "獨立的 Kubernetes 安裝程式",
+  menu: {
+    gui: { name: "Zeabur GUI", line: "在瀏覽器部署和管理服務" },
+    desktop: {
+      name: "Zeabur Desktop",
+      line: "Windows 和 macOS 的桌面 App，選好 kubeconfig 裡的叢集就能打開 Zeabur GUI",
+    },
+    zeatend: { name: "Zeatend", line: "在終端機架設和升級 K3s、RKE2、KubeSolo 叢集" },
   },
   useCases: {
-    cluster: { name: "已有 Kubernetes", line: "用自己的 kubeconfig 開啟" },
-    machine: { name: "只有一台機器", line: "從一台 Linux 伺服器開始" },
-    team: { name: "帶團隊維運", line: "每個人用自己的權限" },
+    team: { name: "產品團隊", line: "已經有叢集，想讓開發者自己部署" },
+    provider: { name: "代管服務商", line: "替客戶架叢集，讓客戶自己部署" },
+    homelab: { name: "Homelab", line: "家裡的叢集，跟原本的工具一起用" },
   },
 }
 
@@ -124,15 +126,18 @@ const zhCN: Chrome = {
     license: "源代码采用 Apache-2.0 许可证",
     resources: "资源",
   },
-  groups: { manage: "管理", install: "安装", components: "组件" },
-  upcoming: {
-    desktop: "电脑上的 App，读取你的 kubeconfig",
-    zeatend: "独立的 Kubernetes 安装程序",
+  menu: {
+    gui: { name: "Zeabur GUI", line: "在浏览器里部署和管理服务" },
+    desktop: {
+      name: "Zeabur Desktop",
+      line: "Windows 和 macOS 上的桌面应用，选好 kubeconfig 里的集群就能打开 Zeabur GUI",
+    },
+    zeatend: { name: "Zeatend", line: "在终端里搭建和升级 K3s、RKE2、KubeSolo 集群" },
   },
   useCases: {
-    cluster: { name: "已有 Kubernetes", line: "用自己的 kubeconfig 打开" },
-    machine: { name: "只有一台机器", line: "从一台 Linux 服务器开始" },
-    team: { name: "带团队运维", line: "每个人用自己的权限" },
+    team: { name: "产品团队", line: "已经有集群，想让开发自己部署" },
+    provider: { name: "服务商", line: "替客户搭集群，让客户自己部署" },
+    homelab: { name: "Homelab", line: "家里的集群，跟原来的工具一起用" },
   },
 }
 
@@ -176,15 +181,30 @@ const en: Chrome = {
     license: "Source under Apache-2.0",
     resources: "Resources",
   },
-  groups: { manage: "Manage", install: "Install", components: "Components" },
-  upcoming: {
-    desktop: "A desktop app that reads your kubeconfig",
-    zeatend: "A Kubernetes installer of its own",
+  menu: {
+    gui: { name: "Zeabur GUI", line: "Deploy and manage services in the browser" },
+    desktop: {
+      name: "Zeabur Desktop",
+      line: "A Windows and macOS app that opens any cluster in your kubeconfig",
+    },
+    zeatend: {
+      name: "Zeatend",
+      line: "Set up and upgrade K3s, RKE2 and KubeSolo clusters from a terminal",
+    },
   },
   useCases: {
-    cluster: { name: "A cluster you already have", line: "Open it with your own kubeconfig" },
-    machine: { name: "One machine", line: "Start from one Linux server" },
-    team: { name: "Running it with a team", line: "Everyone works with their own rights" },
+    team: {
+      name: "Product teams",
+      line: "You have a cluster and want developers to deploy on their own",
+    },
+    provider: {
+      name: "Service providers",
+      line: "You run clusters for clients and want them to deploy on their own",
+    },
+    homelab: {
+      name: "Homelab",
+      line: "Use Zeabur on your home cluster next to the tools you already run",
+    },
   },
 }
 

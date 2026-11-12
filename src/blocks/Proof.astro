@@ -8,7 +8,7 @@ interface Props {
 const { claims } = Astro.props
 ---
 
-<ul class="claims">
+<ul class="claims" style={`--n:${Math.min(claims.length, 3)}`}>
   {claims.map((claim, i) => (
     <li data-reveal style={`--i:${i}`}>
       <h3>{claim.title}</h3>

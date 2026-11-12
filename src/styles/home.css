@@ -1,124 +1,78 @@
-/* The home page's first screen, and the drawings of its blocks. */
+/* The home page and the readers' pages: the way to each reader, and the drawings. */
 
 @layer components {
-  /* ---------- first screen ---------- */
-
-  .hero-switch {
-    padding-block: 3rem var(--part-space);
+  /* The way to each reader's page, under the home page's picture. */
+  .readers {
+    margin-top: var(--part-gap);
   }
-  @media (min-width: 768px) {
-    .hero-switch {
-      padding-top: 5.5rem;
-    }
+  .readers h2 {
+    margin-bottom: 1rem;
+    color: var(--site-faint);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.5;
   }
-
-  /* The switch between the two readers. */
-  .switch {
-    display: inline-flex;
-    max-width: 100%;
-    padding: 0.1875rem;
+  .readers ul {
+    display: grid;
+    gap: 1px;
+    overflow: hidden;
     border: 1px solid var(--site-line);
     border-radius: var(--radius-lg);
-    background: var(--site-bg-soft);
+    background: var(--site-line);
   }
-  .switch a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 2.25rem;
-    padding: 0.25rem 0.875rem;
-    border-radius: var(--radius-md);
-    color: var(--site-muted);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    line-height: 1.3;
-    text-decoration: none;
-    transition:
-      color var(--transition-duration-quick) var(--ease-site),
-      background-color var(--transition-duration-quick) var(--ease-site);
-  }
-  .switch a:hover {
-    color: var(--site-text);
-  }
-  .switch a[aria-selected="true"] {
-    background: var(--site-card);
-    box-shadow: var(--shadow-raised);
-    color: var(--site-text);
-  }
-
-  .panels {
-    margin-top: 2rem;
-  }
-  .panel {
+  .readers a {
     display: grid;
     align-content: start;
-    justify-items: start;
-    row-gap: 1.5rem;
-    max-width: 50rem;
-    scroll-margin-top: calc(var(--header-height) + 5rem);
+    gap: 0.375rem;
+    height: 100%;
+    padding: 1.25rem 1.5rem;
+    background: var(--site-bg);
+    color: inherit;
+    text-decoration: none;
+    transition: background-color var(--transition-duration-quick) var(--ease-site);
   }
-  .panel + .panel {
-    margin-top: 4rem;
+  .readers a:hover {
+    background: var(--site-bg-soft);
   }
-  .panel .lead {
-    max-width: 42rem;
-  }
-  .hero-actions {
+  .readers-name {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.75rem 1.5rem;
-    margin-top: 0.5rem;
+    gap: 0.5rem;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: 1.4;
   }
-  .hero-note {
-    max-width: 42rem;
-    color: var(--site-faint);
-    font-size: var(--text-body);
-    line-height: 1.7;
+  .readers-name .icon {
+    width: 1rem;
+    height: 1rem;
+    margin-left: auto;
+    color: var(--site-accent);
+    transition: translate var(--transition-duration-fast) var(--ease-site);
   }
-  .hero-note .soon {
-    margin-right: 0.5rem;
-    vertical-align: 0.05em;
-  }
-  /* With scripts, both sides share one place and one of them shows. The place is as tall as the
-     taller side, so the screenshot under it does not move. */
-  [data-audience] .panels {
-    display: grid;
-  }
-  [data-audience] .panel {
-    grid-area: 1 / 1;
-    margin-top: 0;
-    transition:
-      opacity var(--transition-duration-fast) var(--ease-site),
-      visibility 0s;
-  }
-  [data-audience="team"] #personal,
-  [data-audience="personal"] #team {
-    visibility: hidden;
-    opacity: 0;
-    transition:
-      opacity var(--transition-duration-quick) var(--ease-site),
-      visibility 0s var(--transition-duration-quick);
-  }
-
-  .hero-shot {
-    margin-top: 3.5rem;
+  .readers a:hover .icon {
+    translate: 3px 0;
   }
   @media (min-width: 768px) {
-    .hero-shot {
-      margin-top: 5rem;
+    .readers ul {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
-  @media (max-width: 639px) {
-    .hero-shot .frame {
-      aspect-ratio: 358 / 300 !important;
-    }
-    .hero-shot .frame img {
-      width: 190%;
-      max-width: none;
-      height: auto;
-      object-fit: initial;
-    }
+  .part-more {
+    margin-top: 1.5rem;
+  }
+  .star-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-stack-mono);
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+  .star-count .icon {
+    width: 0.75rem;
+    height: 0.75rem;
   }
 
   /* ---------- drawings ---------- */
@@ -257,21 +211,43 @@
     .fx-lane .node {
       padding-inline: 0.5rem;
     }
-    .fx-map,
+  }
+  .fx-path .node {
+    font-family: var(--font-stack-sans);
+  }
+  .fx-path .wire {
+    min-width: 1.25rem;
+  }
+  @media (max-width: 1099px) {
     .fx-path {
       flex-direction: column;
       align-items: flex-start;
+      width: auto;
     }
-    .fx-map .wire,
     .fx-path .wire {
+      flex: none;
+      width: 1px;
+      min-width: 0;
+      height: 1.5rem;
+      margin-left: 1.25rem;
+    }
+    .fx-path .wire i {
+      transform-origin: top;
+    }
+  }
+  @media (max-width: 767px) {
+    .fx-map {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .fx-map .wire {
       flex: none;
       width: 1px;
       min-width: 0;
       height: 1.75rem;
       margin-left: 1.25rem;
     }
-    .fx-map .wire i,
-    .fx-path .wire i {
+    .fx-map .wire i {
       transform-origin: top;
     }
     .fx-map .wire i.cut {
@@ -436,10 +412,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .switch a,
-  [data-audience] .panel,
-  [data-audience="team"] #personal,
-  [data-audience="personal"] #team {
+  .readers a,
+  .readers-name .icon {
     transition: none;
   }
   .reveal-ready .visual .fx {

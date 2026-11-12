@@ -1,7 +1,9 @@
 ---
-// The next release's way from one Linux server to Zeabur: Zeatend sets up the cluster and hands
-// over a kubeconfig.
-const stops = ["Linux", "Zeatend", "K3s · RKE2 · KubeSolo", "kubeconfig", "Zeabur"]
+// The next release's way from one pasted line to Zeabur GUI, one stop after another.
+interface Props {
+  stops: string[]
+}
+const { stops } = Astro.props
 ---
 
 <div class="fx-path">
