@@ -1,0 +1,23 @@
+---
+// A project is a Namespace and a service is plain Kubernetes objects. Zeabur goes; they stay.
+const kinds = ["Deployment", "Service", "Ingress", "PersistentVolumeClaim"]
+---
+
+<div class="fx-map">
+  <span class="node gone fx" style="--fx:fx-leave;--s:3">
+    Zeabur
+  </span>
+  <span class="wire">
+    <i class="cut gone fx" style="--fx:fx-leave;--s:3"></i>
+  </span>
+  <div class="box">
+    <span class="box-name">Namespace shop</span>
+    <span class="chips">
+      {kinds.map((kind, k) => (
+        <span class="chip fx" style={`--s:${k * 0.5}`}>
+          {kind}
+        </span>
+      ))}
+    </span>
+  </div>
+</div>

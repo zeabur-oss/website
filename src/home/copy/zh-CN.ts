@@ -106,8 +106,4 @@ export const zhCN: HomeCopy = {
     primary: "开始使用",
     secondary: "查看文档",
   },
-  alt: {
-    invite: "邀请成员窗口，选择了指定项目，blog 的角色为查看者，shop 的角色为开发者",
-    namespaces: "“项目”页的“其他 Namespace”列出集群中尚未成为项目的 Namespace",
-  },
 }

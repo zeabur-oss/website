@@ -1,0 +1,26 @@
+---
+// The wrapper of every block: one container, one vertical rhythm, and an optional heading
+// (title and one paragraph). Text between backticks in the paragraph is shown as code.
+import Rich from "./Rich.astro"
+
+interface Props {
+  id: string
+  title?: string
+  lead?: string
+}
+const { id, title, lead } = Astro.props
+---
+
+<section class="wrap part" id={id} aria-labelledby={title && `${id}-title`}>
+  {title && (
+    <header class="part-head" data-reveal>
+      <h2 id={`${id}-title`}>{title}</h2>
+      {lead && (
+        <p class="lead">
+          <Rich text={lead} />
+        </p>
+      )}
+    </header>
+  )}
+  <slot />
+</section>

@@ -1,0 +1,24 @@
+---
+// The frame of a drawn explanation. Its steps play once when it comes into view. Without scripts,
+// or when the reader asks for less motion, it shows the finished drawing.
+import { cn } from "cn"
+
+interface Props {
+  /** What the drawing shows, for a reader who cannot see it. */
+  label: string
+  /** Steps to wait before this drawing starts, when several sit side by side. */
+  after?: number
+  class?: string
+}
+const { label, after = 0, class: className } = Astro.props
+---
+
+<div
+  class={cn("visual", className)}
+  role="img"
+  aria-label={label}
+  data-reveal
+  style={`--o:${after}`}
+>
+  <slot />
+</div>

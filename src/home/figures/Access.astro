@@ -1,0 +1,26 @@
+---
+// One request on its way to Kubernetes: it carries the person's own identity, and RBAC lets it
+// through or stops it.
+import Icon from "../../components/Icon.astro"
+
+interface Props {
+  who: string
+  request: string
+  allowed: boolean
+}
+const { who, request, allowed } = Astro.props
+---
+
+<div class="fx-lane">
+  <span class="node">{who}</span>
+  <span class="wire">
+    <i class:list={["fx", !allowed && "cut"]} style="--fx:fx-draw;--s:0"></i>
+    <b class="fx" style="--s:1">
+      {request}
+    </b>
+  </span>
+  <span class:list={["node fx", allowed ? "ok" : "bad"]} style="--s:2">
+    <Icon name={allowed ? "check" : "x"} weight="bold" />
+    {allowed ? "shop" : "403 Forbidden"}
+  </span>
+</div>

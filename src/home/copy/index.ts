@@ -44,8 +44,6 @@ export type HomeCopy = {
   /** What the next release brings, one sentence each. */
   soon: string[]
   cta: { title: string; body: string; primary: string; secondary: string }
-  /** What the screenshots show, in the words of Zeabur's docs. */
-  alt: { invite: string; namespaces: string }
 }
 
 export const homeCopy: Record<SiteLocale, HomeCopy> = { en, "zh-TW": zhTW, "zh-CN": zhCN }

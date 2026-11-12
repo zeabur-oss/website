@@ -8,7 +8,8 @@ import { landingCopy } from "../landing/copy.ts"
 import { shot, sizes } from "../landing/shots.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { homeCopy } from "./copy/index.ts"
-import Rich from "./Rich.astro"
+import Proof from "../blocks/Proof.astro"
+import Rich from "../blocks/Rich.astro"
 
 interface Props {
   locale: SiteLocale
@@ -89,14 +90,7 @@ const sides = [
     />
   </div>
 
-  <ul class="claims">
-    {copy.proof.map((claim, i) => (
-      <li data-reveal style={`--i:${i}`}>
-        <h3>{claim.title}</h3>
-        <p class="body">{claim.body}</p>
-      </li>
-    ))}
-  </ul>
+  <Proof claims={copy.proof} />
 </section>
 
 <script>

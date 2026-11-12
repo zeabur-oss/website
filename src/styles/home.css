@@ -1,31 +1,6 @@
-/* The home page: a first screen with a switch, then parts that all share one shape. */
+/* The home page's first screen, and the drawings of its blocks. */
 
 @layer components {
-  .home {
-    --part-space: 5rem;
-    --part-gap: 2.5rem;
-  }
-  @media (min-width: 768px) {
-    .home {
-      --part-space: 8rem;
-      --part-gap: 3.5rem;
-    }
-  }
-  /* A long command scrolls inside its column instead of widening it. */
-  .home .grid12 > * {
-    min-width: 0;
-  }
-  .home :not(pre) > code {
-    padding: 0.05em 0.35em;
-    border: 1px solid var(--site-line);
-    border-radius: var(--radius-sm);
-    background: var(--site-bg-soft);
-    color: var(--site-text);
-    font-family: var(--font-stack-mono);
-    font-size: 0.875em;
-    white-space: nowrap;
-  }
-
   /* ---------- first screen ---------- */
 
   .hero-switch {
@@ -146,109 +121,317 @@
     }
   }
 
-  /* ---------- parts ---------- */
+  /* ---------- drawings ---------- */
 
-  .part {
-    padding-bottom: var(--part-space);
+  .node,
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border: 1px solid var(--site-line-strong);
+    background: var(--site-card);
+    color: var(--site-text);
+    font-family: var(--font-stack-mono);
+    white-space: nowrap;
   }
-  .part-head {
-    max-width: 46rem;
-    margin-bottom: var(--part-gap);
-  }
-  .part-head .lead {
-    margin-top: 1rem;
-  }
-  .part-shot {
-    margin-top: var(--part-gap);
-  }
-  .sub-title {
-    font-size: 1.5rem;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
-  }
-  :lang(zh) .sub-title {
-    letter-spacing: 0;
-  }
-
-  .frame {
-    overflow: hidden;
-    border: 1px solid var(--site-line);
-    border-radius: var(--radius-lg);
-    background: var(--site-bg-soft);
-  }
-  .frame img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  .frame-crop img {
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
-  }
-  .note {
-    max-width: 46rem;
-    margin-top: 1rem;
-    color: var(--site-muted);
-    font-size: var(--text-sm);
-    line-height: 1.7;
-  }
-
-  /* Short statements side by side: a title and a sentence or two each. */
-  .claims {
-    display: grid;
-    gap: 2rem 1.5rem;
-  }
-  .claims li {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  .claims .more {
-    margin-top: 0.25rem;
-  }
-  .hero-switch .claims,
-  figure + .claims {
-    margin-top: var(--part-gap);
-  }
-  .upcoming {
-    display: grid;
-    gap: 1.5rem;
-    max-width: 62rem;
-  }
-  @media (min-width: 768px) {
-    .claims {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    .upcoming {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: 3rem;
-    }
-  }
-
-  /* Paragraphs one under another, a rule between them. */
-  .rows > * + * {
-    margin-top: 1.25rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--site-line);
-  }
-  .aside {
-    display: block;
-    margin-top: 0.375rem;
-    color: var(--site-faint);
+  .node {
+    height: 2.25rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-md);
     font-size: var(--text-body);
   }
+  .chip {
+    height: 1.625rem;
+    padding-inline: 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-meta);
+  }
+  .node .icon {
+    width: 0.8125rem;
+    height: 0.8125rem;
+  }
+  .node.ok {
+    border-color: var(--site-accent);
+    background: var(--site-accent-soft);
+    color: var(--site-accent);
+  }
+  .node.bad,
+  .chip.bad {
+    border-color: var(--fx-bad);
+    background: var(--fx-bad-soft);
+    color: var(--fx-bad);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
 
-  .command {
-    overflow-x: auto;
-    padding: 1.25rem 1.5rem;
-    border: 1px solid var(--site-line);
-    border-radius: var(--radius-lg);
-    background: var(--site-bg-soft);
+  /* A line between two things, with a word over it. */
+  .wire {
+    position: relative;
+    flex: 1;
+    min-width: 2.5rem;
+    height: 1px;
+  }
+  .wire i {
+    position: absolute;
+    inset: 0;
+    background: var(--site-line-strong);
+    transform-origin: left;
+  }
+  .wire i.cut {
+    background: repeating-linear-gradient(
+      to right,
+      var(--site-line-strong) 0 4px,
+      transparent 4px 8px
+    );
+  }
+  .wire b {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    translate: -50% 0;
+    color: var(--site-muted);
     font-family: var(--font-stack-mono);
-    font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
-    line-height: 1.5;
+    font-size: var(--text-micro);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .fx-lane,
+  .fx-map,
+  .fx-path {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+  .fx-lane .wire {
+    min-width: 7.5rem;
+  }
+  /* A request that is refused stops short of the cluster. */
+  .fx-lane .wire i.cut {
+    right: 30%;
+  }
+
+  /* A place with things in it: the reader's computer, the cluster, a Namespace. */
+  .box {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 1px solid var(--site-line-strong);
+    border-radius: var(--radius-lg);
+    background: var(--site-bg);
+  }
+  .box-name {
+    color: var(--site-faint);
+    font-family: var(--font-stack-mono);
+    font-size: var(--text-micro);
+  }
+  .part code.fx-command {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-family: var(--font-stack-mono);
+    font-size: clamp(1.125rem, 0.9rem + 1vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+  .gone {
+    opacity: 0.35;
+  }
+  .node.gone {
+    border-style: dashed;
+    text-decoration: line-through;
+  }
+  @media (max-width: 767px) {
+    .fx-lane {
+      gap: 0.5rem;
+    }
+    .fx-lane .wire {
+      min-width: 5.5rem;
+    }
+    .fx-lane .node {
+      padding-inline: 0.5rem;
+    }
+    .fx-map,
+    .fx-path {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .fx-map .wire,
+    .fx-path .wire {
+      flex: none;
+      width: 1px;
+      min-width: 0;
+      height: 1.75rem;
+      margin-left: 1.25rem;
+    }
+    .fx-map .wire i,
+    .fx-path .wire i {
+      transform-origin: top;
+    }
+    .fx-map .wire i.cut {
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--site-line-strong) 0 4px,
+        transparent 4px 8px
+      );
+    }
+    .fx-map .wire b {
+      bottom: 50%;
+      left: 0.75rem;
+      translate: 0 50%;
+    }
+    .fx-map .box {
+      width: 100%;
+    }
+  }
+
+  /* The service list, with the failing one first. */
+  .fx-rows {
+    width: 100%;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-md);
+    background: var(--site-card);
+  }
+  .fx-rows li {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    height: 2.25rem;
+    padding-inline: 0.75rem;
+    font-family: var(--font-stack-mono);
+    font-size: var(--text-body);
+  }
+  .fx-rows li + li {
+    border-top: 1px solid var(--site-line);
+  }
+  .fx-count {
+    margin-left: auto;
+    color: var(--site-faint);
+  }
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--site-line-strong);
+  }
+  .dot.bad {
+    background: var(--fx-bad);
+  }
+
+  /* Restarts on a line of time. */
+  .fx-backoff {
+    display: grid;
+    justify-items: start;
+    gap: 1.25rem;
+    width: 100%;
+  }
+  .fx-axis {
+    position: relative;
+    width: 100%;
+    height: 1.5rem;
+    border-bottom: 1px solid var(--site-line-strong);
+  }
+  .fx-axis i {
+    position: absolute;
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    border-radius: 1px 1px 0 0;
+    background: var(--fx-bad);
+    transform-origin: bottom;
+  }
+
+  /* Log lines, the last one being the error. */
+  .fx-log {
+    display: grid;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-md);
+    background: var(--site-card);
+  }
+  .fx-log i {
+    height: 0.4375rem;
+    border-radius: 999px;
+    background: var(--site-line-strong);
+    transform-origin: left;
+  }
+  .fx-log i.bad {
+    background: var(--fx-bad);
+  }
+
+  .fx-diff {
+    width: 100%;
+    overflow-x: auto;
+    padding-block: 0.875rem;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-md);
+    background: var(--site-card);
+    font-family: var(--font-stack-mono);
+    font-size: var(--text-body);
+    line-height: 1.75;
+  }
+  .fx-diff span {
+    display: block;
+    padding-inline: 1rem;
+  }
+  .fx-diff .del {
+    background: var(--fx-bad-soft);
+    color: var(--fx-bad);
+  }
+  .fx-diff .add {
+    background: var(--site-accent-soft);
+    color: var(--site-accent);
+  }
+}
+
+/* The steps of a drawing. Each waits its turn (--s, after the drawing's own --o) and plays once
+   when the drawing comes into view. Without the class that scripts set, nothing is animated and
+   the drawing is finished. */
+.reveal-ready .visual .fx {
+  animation: var(--fx, fx-in) 450ms var(--ease-site) both paused;
+  animation-delay: calc((var(--o, 0) + var(--s, 0)) * 260ms + 250ms);
+}
+.reveal-ready .visual.is-in .fx {
+  animation-play-state: running;
+}
+@media (max-width: 767px) {
+  .visual {
+    --o: 0 !important;
+  }
+}
+@keyframes fx-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+@keyframes fx-draw {
+  from {
+    scale: 0;
+  }
+}
+@keyframes fx-move {
+  from {
+    translate: 0 var(--from);
+  }
+}
+@keyframes fx-calm {
+  from {
+    background: var(--site-line-strong);
+  }
+}
+@keyframes fx-leave {
+  from {
+    opacity: 1;
+    text-decoration-color: transparent;
   }
 }
 
@@ -258,5 +441,13 @@
   [data-audience="team"] #personal,
   [data-audience="personal"] #team {
     transition: none;
+  }
+  .reveal-ready .visual .fx {
+    animation: none;
+  }
+}
+@media print {
+  .reveal-ready .visual .fx {
+    animation: none;
   }
 }

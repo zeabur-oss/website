@@ -1,0 +1,50 @@
+---
+// The worker failure in three drawings: the list puts it first, the restarts wait longer each
+// time, and the last line of the previous run is the error. Names and counts are those of the
+// docs' shop project.
+interface Props {
+  step: 0 | 1 | 2
+}
+const { step } = Astro.props
+const services = [
+  { name: "worker", ready: "1/2", failing: true },
+  { name: "api", ready: "3/3", failing: false },
+  { name: "web", ready: "2/2", failing: false },
+]
+const restarts = 14
+// Each wait is longer than the one before it.
+const ticks = Array.from({ length: restarts }, (_, k) => ((k * (k + 1)) / 2 / 91) * 100)
+const lines = [72, 54, 86, 61, 78]
+---
+
+{step === 0 && (
+  <ul class="fx-rows">
+    {services.map((service) => (
+      <li class="fx" style={`--fx:fx-move;--from:${service.failing ? "200%" : "-100%"};--s:3`}>
+        <i class={service.failing ? "dot bad fx" : "dot"} style="--fx:fx-calm;--s:1" />
+        <span>{service.name}</span>
+        <span class="fx-count">{service.ready}</span>
+      </li>
+    ))}
+  </ul>
+)}
+{step === 1 && (
+  <div class="fx-backoff">
+    <span class="chip bad">CrashLoopBackOff</span>
+    <div class="fx-axis">
+      {ticks.map((left, k) => (
+        <i class="fx" style={`left:${left.toFixed(2)}%;--s:${(k * 0.35).toFixed(2)}`} />
+      ))}
+    </div>
+  </div>
+)}
+{step === 2 && (
+  <div class="fx-log">
+    {lines.map((width, k) => (
+      <i
+        class={k === lines.length - 1 ? "bad fx" : "fx"}
+        style={`width:${width}%;--s:${k * 0.6}`}
+      />
+    ))}
+  </div>
+)}

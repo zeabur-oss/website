@@ -111,10 +111,4 @@ export const en: HomeCopy = {
     primary: "Get started",
     secondary: "Read the docs",
   },
-  alt: {
-    invite:
-      "Invite member dialog with Chosen projects selected, blog set to Viewer, and shop set to Developer",
-    namespaces:
-      "Other namespaces on the Projects page lists namespaces in the cluster that aren't projects yet",
-  },
 }

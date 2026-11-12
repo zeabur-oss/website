@@ -2,6 +2,7 @@
 @import "@zeabur-oss/design-system";
 @import "./site.css";
 @import "./imagery.css";
+@import "./blocks.css";
 @import "./home.css";
 
 /* The landing, the product pages and the blog. The docs load site.css through docs.css. */

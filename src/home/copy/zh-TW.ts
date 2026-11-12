@@ -106,8 +106,4 @@ export const zhTW: HomeCopy = {
     primary: "開始使用",
     secondary: "閱讀文件",
   },
-  alt: {
-    invite: "邀請成員視窗，選了指定專案，blog 是檢視者、shop 是開發者",
-    namespaces: "「專案」頁的「其他 Namespace」列出叢集裡還不是專案的 Namespace",
-  },
 }

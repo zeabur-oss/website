@@ -1,0 +1,27 @@
+---
+// Short statements side by side: a title, a sentence or two, and an optional link.
+import Icon from "../components/Icon.astro"
+
+interface Props {
+  claims: { title: string; body: string; link?: { text: string; href: string } }[]
+}
+const { claims } = Astro.props
+---
+
+<ul class="claims">
+  {claims.map((claim, i) => (
+    <li data-reveal style={`--i:${i}`}>
+      <h3>{claim.title}</h3>
+      <p class="body">{claim.body}</p>
+      {claim.link && (
+        <a href={claim.link.href} class="more">
+          {claim.link.text}
+          <Icon
+            name={claim.link.href.startsWith("http") ? "arrow-up-right" : "arrow-right"}
+            class="go"
+          />
+        </a>
+      )}
+    </li>
+  ))}
+</ul>

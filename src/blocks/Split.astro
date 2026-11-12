@@ -1,0 +1,18 @@
+---
+// Text on one side and a drawing on the other. `flip` puts the drawing first on wide screens.
+import { cn } from "cn"
+
+interface Props {
+  flip?: boolean
+}
+const { flip = false } = Astro.props
+---
+
+<div class={cn("split", flip && "split-flip")}>
+  <div class="split-text" data-reveal>
+    <slot />
+  </div>
+  <div class="split-visual">
+    <slot name="visual" />
+  </div>
+</div>

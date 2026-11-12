@@ -1,0 +1,23 @@
+---
+// Steps side by side: a drawing, a title and a paragraph each. The drawings are the slots
+// `visual-0`, `visual-1` and so on.
+import Rich from "./Rich.astro"
+
+interface Props {
+  steps: { title: string; body: string }[]
+}
+const { steps } = Astro.props
+const visuals = await Promise.all(steps.map((_, i) => Astro.slots.render(`visual-${i}`)))
+---
+
+<ol class="cards" style={`--n:${steps.length}`}>
+  {steps.map((step, i) => (
+    <li class="card">
+      <Fragment set:html={visuals[i]} />
+      <h3>{step.title}</h3>
+      <p class="body">
+        <Rich text={step.body} />
+      </p>
+    </li>
+  ))}
+</ol>
