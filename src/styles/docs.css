@@ -5,8 +5,8 @@
 @import "tailwindcss/theme.css" layer(theme);
 /* Only the site's own components: words in the synced Markdown would become utilities otherwise. */
 @import "tailwindcss/utilities.css" layer(utilities) source(none);
-@import "@zeabur/design-system/tokens.css";
-@import "@zeabur/design-system/fonts.css";
+@import "@zeabur-oss/design-system/tokens.css";
+@import "@zeabur-oss/design-system/fonts.css";
 @import "./site.css";
 @source "../components";
 @source "../docs-components";

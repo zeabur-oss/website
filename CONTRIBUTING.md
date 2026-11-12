@@ -72,9 +72,9 @@ The settings are the ones `web/` in the zeabur repository uses.
   formatted: their text belongs to their authors.
 - `oxlint --deny-warnings` (`.oxlintrc.json`) lints TypeScript and the frontmatter and `<script>`
   blocks of `.astro` files, not their markup. It adds `zeabur/no-unguarded-motion` from
-  `@zeabur/design-system/lint`, and refuses the component and motion libraries that `web/` also
+  `@zeabur-oss/design-system/lint`, and refuses the component and motion libraries that `web/` also
   refuses. The `@shadcn/lint` rules of `web/` are left out: they check the class names on React
-  components from `@zeabur/design-system`, and the site has none.
+  components from `@zeabur-oss/design-system`, and the site has none.
 - `tsc` and `astro check` use the same strict settings as `web/` (`tsconfig.json`), plus
   `noUncheckedIndexedAccess`.
 
@@ -85,7 +85,7 @@ Packages are managed with Bun: `package.json` pins exact versions, `bun.lock` is
 delay as the other zeabur-oss repositories. No package is listed in `trustedDependencies`, so no
 install script runs. Licenses must be OSI-approved.
 
-`@zeabur/design-system` is a Git dependency pinned to a commit.
+`@zeabur-oss/design-system` is an npm package pinned to an exact version.
 
 ## Product documentation
 

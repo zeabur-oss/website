@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "jsPlugins": ["@zeabur/design-system/lint"],
+  "jsPlugins": ["@zeabur-oss/design-system/lint"],
   "rules": {
     "zeabur/no-unguarded-motion": "error",
     "no-restricted-imports": [
@@ -18,7 +18,7 @@
               "motion",
               "motion/*"
             ],
-            "message": "The site is plain Astro and CSS. Motion goes through src/components/Reveal.astro and the motion tokens of @zeabur/design-system."
+            "message": "The site is plain Astro and CSS. Motion goes through src/components/Reveal.astro and the motion tokens of @zeabur-oss/design-system."
           }
         ]
       }
