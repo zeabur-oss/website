@@ -1,7 +1,16 @@
 // The site's navigation, shared by the header, its small-screen menu and the footer.
+import { compareCopy } from "../compare/copy/index.ts"
 import { chrome } from "./chrome.ts"
 import { productIds, productName } from "./products.ts"
-import { audienceUrl, blogUrl, docsUrl, homeUrl, productUrl, type SiteLocale } from "./urls.ts"
+import {
+  audienceUrl,
+  blogUrl,
+  compareUrl,
+  docsUrl,
+  homeUrl,
+  productUrl,
+  type SiteLocale,
+} from "./urls.ts"
 
 export type NavItem = {
   name: string
@@ -44,5 +53,6 @@ export function siteNav(locale: SiteLocale) {
     trust: zeaburDocs("reference/security"),
     blog: blogUrl(locale),
     start: zeaburDocs("get-started/quickstart"),
+    compare: { name: compareCopy[locale].hub.heading, href: compareUrl(locale) },
   }
 }

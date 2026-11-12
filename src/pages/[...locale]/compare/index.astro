@@ -1,0 +1,9 @@
+---
+import Hub from "../../../compare/Hub.astro"
+import { localePaths } from "../../../lib/urls.ts"
+
+export const getStaticPaths = localePaths
+const { locale } = Astro.props
+---
+
+<Hub locale={locale} />

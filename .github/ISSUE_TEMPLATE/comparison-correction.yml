@@ -1,0 +1,42 @@
+name: Comparison page correction
+description: A cell of a comparison page is out of date or wrong.
+title: "Comparison: "
+labels: [documentation]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The address of the comparison page.
+      placeholder: https://oss.zeabur.com/compare/zeabur-vs-dokploy
+    validations:
+      required: true
+  - type: input
+    id: cell
+    attributes:
+      label: Row and product
+      description: Which row of the table, and which product's cell.
+      placeholder: Minimum machine, Dokploy
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong
+      description: What the page says, and what it should say.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official source
+      description: A link to the product's own docs, pricing page, licence or release notes.
+    validations:
+      required: true
+  - type: dropdown
+    id: maintainer
+    attributes:
+      label: Are you a maintainer of that product?
+      options:
+        - "No"
+        - "Yes"

@@ -1,0 +1,90 @@
+---
+// The comparison hub: what Zeabur is and who it suits, which tool to look at for which
+// situation, every comparison, and how the pages are made and corrected.
+import Icon from "../components/Icon.astro"
+import Site from "../layouts/Site.astro"
+import { organization } from "../lib/seo.ts"
+import { compareUrl, homeUrl, type SiteLocale } from "../lib/urls.ts"
+import { breadcrumb } from "./breadcrumb.ts"
+import { compareCopy } from "./copy/index.ts"
+import Corrections from "./Corrections.astro"
+import { comparisonSlug } from "./data.ts"
+import { publishedComparisons } from "./published.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = compareCopy[locale]
+---
+
+<Site
+  locale={locale}
+  title={t.hub.title}
+  description={t.hub.description}
+  schema={{
+    "@type": "CollectionPage",
+    name: t.hub.title,
+    description: t.hub.description,
+    publisher: organization,
+    breadcrumb: breadcrumb([
+      { name: "Zeabur", href: homeUrl(locale) },
+      { name: t.hub.heading, href: compareUrl(locale) },
+    ]),
+  }}
+>
+  <article class="wrap compare">
+    <header class="compare-head">
+      <h1>{t.hub.heading}</h1>
+      <p class="lead">{t.hub.intro}</p>
+      <p class="compare-disclosure">{t.hub.disclosure}</p>
+    </header>
+
+    <section aria-labelledby="uses">
+      <h2 id="uses">{t.hub.uses.title}</h2>
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th scope="col">{t.hub.uses.need}</th>
+            <th scope="col">{t.hub.uses.tools}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {t.hub.uses.rows.map((row) => (
+            <tr>
+              <th scope="row" class="matrix-wide">
+                {row.need}
+              </th>
+              <td data-label={t.hub.uses.tools}>{row.tools}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="pages">
+      <h2 id="pages">{t.hub.pages}</h2>
+      <ul class="compare-pages">
+        {publishedComparisons.map((id) => (
+          <li>
+            <a href={compareUrl(locale, comparisonSlug(id))}>
+              <span>
+                <strong>{t.pages[id]!.link}</strong>
+                <span>{t.pages[id]!.line}</span>
+              </span>
+              <Icon name="arrow-right" class="go" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section aria-labelledby="method">
+      <h2 id="method">{t.hub.method.title}</h2>
+      <p class="compare-text">{t.hub.method.body}</p>
+      <p class="compare-text">{t.notDocumented}</p>
+    </section>
+
+    <Corrections locale={locale} />
+  </article>
+</Site>
