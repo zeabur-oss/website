@@ -1,0 +1,141 @@
+---
+// Everything under the first screen: the same page for both readers.
+import Icon from "../components/Icon.astro"
+import Frame from "../landing/Frame.astro"
+import { landingCopy } from "../landing/copy.ts"
+import { shot, sizes } from "../landing/shots.ts"
+import { githubStars, shortCount } from "../lib/github.ts"
+import { githubOrg } from "../lib/site.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { homeCopy } from "./copy/index.ts"
+import Rich from "./Rich.astro"
+import Section from "./Section.astro"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = homeCopy[locale]
+const docs = (slug?: string) => docsUrl(locale, "zeabur", slug)
+const stars = await githubStars()
+---
+
+<Section id="walk" title={t.walk.title} lead={t.walk.intro}>
+  <ol class="claims">
+    {t.walk.steps.map((step, i) => (
+      <li data-reveal style={`--i:${i}`}>
+        <h3>{step.title}</h3>
+        <p class="body">
+          <Rich text={step.body} />
+        </p>
+      </li>
+    ))}
+  </ol>
+  <div class="part-shot" data-reveal>
+    <Frame
+      src={shot(locale, "diagnosis")}
+      alt={landingCopy[locale].shots.diagnosis}
+      sizes={sizes.full}
+    />
+  </div>
+</Section>
+
+<Section id="permissions" title={t.perm.title} lead={t.perm.body}>
+  <div class="grid12 items-start">
+    <div class="rows lg:col-[1/6]" data-reveal>
+      <p class="body">{t.perm.erin}</p>
+      <p class="body">{t.perm.alice}</p>
+      <p class="body">
+        {t.perm.invite}
+        <span class="aside">{t.perm.scope}</span>
+      </p>
+    </div>
+    <div class="lg:col-[7/13]" data-reveal style="--i:1">
+      <Frame src={shot(locale, "members-invite")} alt={t.alt.invite} sizes={sizes.half} />
+    </div>
+  </div>
+  <div class="grid12 mt-16 items-start md:mt-24" id="review">
+    <div class="lg:col-[1/6]" data-reveal>
+      <h3 class="sub-title">{t.review.title}</h3>
+      <div class="rows mt-4">
+        <p class="body">{t.review.body}</p>
+        <p class="body">{t.review.conflict}</p>
+        <p class="body">{t.review.gitops}</p>
+      </div>
+    </div>
+    <div class="lg:col-[7/13]" data-reveal style="--i:1">
+      <Frame src={shot(locale, "change-review")} alt={t.review.title} sizes={sizes.half} />
+    </div>
+  </div>
+</Section>
+
+<Section id="local" title={t.local.title} lead={t.local.body}>
+  <pre class="command" data-reveal><code>zeaburctl ui</code></pre>
+</Section>
+
+<Section id="leave" title={t.lockin.title} lead={t.lockin.body}>
+  <figure data-reveal>
+    <Frame src={shot(locale, "existing-namespaces")} alt={t.alt.namespaces} sizes={sizes.full} />
+    <figcaption class="note">
+      {t.lockin.gitops} {t.lockin.existing}
+    </figcaption>
+  </figure>
+  <ul class="claims" id="security">
+    <li data-reveal>
+      <h3>{t.lockin.uninstall.title}</h3>
+      <p class="body">{t.lockin.uninstall.after}</p>
+      <a href={docs("leave/uninstall")} class="more">
+        {t.lockin.uninstall.link}
+        <Icon name="arrow-right" class="go" />
+      </a>
+    </li>
+    <li data-reveal style="--i:1">
+      <h3>{t.license.title}</h3>
+      <p class="body">{t.license.body}</p>
+    </li>
+    <li data-reveal style="--i:2">
+      <h3>{t.safety.title}</h3>
+      <p class="body">
+        {t.safety.hardening} {t.safety.gitops}
+      </p>
+      <a href="https://docs.k3s.io/security/hardening-guide" class="more">
+        {t.safety.hardeningLink}
+        <Icon name="arrow-up-right" class="go" />
+      </a>
+    </li>
+  </ul>
+</Section>
+
+<Section id="soon" title="Coming soon">
+  <ul class="upcoming">
+    {t.soon.map((line, i) => (
+      <li data-reveal style={`--i:${i}`}>
+        <p class="body">
+          <Rich text={line} />
+        </p>
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<Section id="start" title={t.cta.title} lead={t.cta.body}>
+  <div class="flex flex-wrap gap-3" data-reveal>
+    <a href={docs("reference/zeaburctl")} class="button primary">
+      {t.cta.primary}
+      <Icon name="arrow-right" class="go" />
+    </a>
+    <a href={docs()} class="button">
+      {t.cta.secondary}
+    </a>
+    <a href={`${githubOrg}/zeabur`} class="button">
+      <Icon name="github-logo" />
+      GitHub
+      {stars !== undefined && (
+        <span class="inline-flex items-center gap-1 font-mono text-[0.75rem] text-site-faint">
+          <Icon name="star" weight="fill" class="!size-3" />
+          {shortCount(stars, locale)}
+        </span>
+      )}
+    </a>
+  </div>
+</Section>

@@ -4,12 +4,7 @@ import { chrome } from "../lib/chrome.ts"
 import { organization } from "../lib/seo.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 import Hero from "./Hero.astro"
-import Close from "./Close.astro"
-import Local from "./Local.astro"
-import Lockin from "./Lockin.astro"
-import Soon from "./Soon.astro"
-import Team from "./Team.astro"
-import Walkthrough from "./Walkthrough.astro"
+import Parts from "./Parts.astro"
 
 interface Props {
   locale: SiteLocale
@@ -17,7 +12,6 @@ interface Props {
 const { locale } = Astro.props
 const title = `Zeabur ${chrome[locale].nav.openSource}`
 const description = chrome[locale].footer.about
-const parts = [Walkthrough, Team, Local, Lockin, Soon]
 ---
 
 <Site
@@ -37,9 +31,6 @@ const parts = [Walkthrough, Team, Local, Lockin, Soon]
 >
   <div class="home">
     <Hero locale={locale} />
-    {parts.map((Part, i) => (
-      <Part locale={locale} index={i + 1} of={parts.length} />
-    ))}
-    <Close locale={locale} />
+    <Parts locale={locale} />
   </div>
 </Site>

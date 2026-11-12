@@ -1,7 +1,9 @@
 ---
-// The first screen: two readers side by side, and the one screen both of them open.
+// The first screen. A switch picks the reader: a team that shares a cluster, or one machine.
+// Without scripts both sides show, one under the other, and the switch links to each.
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
+import Frame from "../landing/Frame.astro"
 import { landingCopy } from "../landing/copy.ts"
 import { shot, sizes } from "../landing/shots.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
@@ -14,13 +16,11 @@ interface Props {
 const { locale } = Astro.props
 const copy = homeCopy[locale]
 const docs = (slug: string) => docsUrl(locale, "zeabur", slug)
-const image = shot(locale, "project")
 // A number stays on the line of its unit.
-const unbroken = (text: string) => text.replace(/(\d) (?=(?:GiB|MiB|vCPU)\b)/g, "$1\u00a0")
+const unbroken = (text: string) => text.replace(/(\d) (?=(?:GiB|MiB|vCPU)\b)/g, "$1 ")
 const sides = [
   {
     id: "team",
-    letter: "A",
     text: copy.hero.team,
     note: copy.hero.team.soon,
     soon: false,
@@ -28,8 +28,7 @@ const sides = [
     secondary: "#permissions",
   },
   {
-    id: "machine",
-    letter: "B",
+    id: "personal",
     text: copy.hero.machine,
     note: copy.hero.machine.next,
     soon: true,
@@ -39,23 +38,30 @@ const sides = [
 ] as const
 ---
 
-<section class="wrap hero-two">
-  <div class="hero-split">
-    {sides.map(({ id, letter, text, note, soon, primary, secondary }) => {
+<section class="wrap hero-switch">
+  <script is:inline>
+    document.documentElement.dataset.audience = location.hash === "#personal" ? "personal" : "team"
+  </script>
+  <div class="switch" data-switch>
+    {sides.map(({ id, text, soon }) => (
+      <a href={`#${id}`} id={`tab-${id}`} data-tab={id}>
+        {text.eyebrow}
+        {soon && <span class="soon">Coming soon</span>}
+      </a>
+    ))}
+  </div>
+
+  <div class="panels">
+    {sides.map(({ id, text, note, soon, primary, secondary }) => {
       const Title = id === "team" ? "h1" : "h2"
       return (
-        <div class="hero-side stagger" data-side={id}>
-          <p class="hero-who">
-            <span class="hero-letter">{letter}</span>
-            {text.eyebrow}
-            {soon && <span class="soon">Coming soon</span>}
-          </p>
-          <Title class="hero-title">{unbroken(text.title)}</Title>
+        <div class="panel" id={id} data-panel>
+          <Title class="display">{unbroken(text.title)}</Title>
           <p class="lead">
             <Rich text={text.sub} />
           </p>
           <div class="hero-actions">
-            <a href={primary} class={cn("button", id === "team" && "primary")}>
+            <a href={primary} class="button primary">
               {text.primary}
               <Icon name="arrow-right" class="go" />
             </a>
@@ -73,27 +79,17 @@ const sides = [
     })}
   </div>
 
-  <div class="stage" data-reveal>
-    <div class="stage-shot">
-      <img
-        src={image.src}
-        srcset={`${image.src} ${image.width}w`}
-        alt={landingCopy[locale].shots.project}
-        width={image.width / 2}
-        height={image.height / 2}
-        sizes={sizes.full}
-        decoding="async"
-        fetchpriority="high"
-      />
-    </div>
-    <p class="stage-tags" aria-hidden="true">
-      {sides.map(({ letter }) => (
-        <span class="hero-letter">{letter}</span>
-      ))}
-    </p>
+  <div class="hero-shot" data-reveal>
+    <Frame
+      src={shot(locale, "project")}
+      alt={landingCopy[locale].shots.project}
+      sizes={sizes.full}
+      ratio="1240 / 640"
+      eager
+    />
   </div>
 
-  <ul class="cells cells-3 mt-6">
+  <ul class="claims">
     {copy.proof.map((claim, i) => (
       <li data-reveal style={`--i:${i}`}>
         <h3>{claim.title}</h3>
@@ -102,3 +98,62 @@ const sides = [
     ))}
   </ul>
 </section>
+
+<script>
+  // The switch as tabs: one side shown, the choice kept in the address as #team or #personal.
+  type Audience = "team" | "personal"
+  const audienceOf = (hash: string): Audience => (hash === "#personal" ? "personal" : "team")
+
+  function show(audience: Audience) {
+    document.documentElement.dataset.audience = audience
+    for (const tab of document.querySelectorAll<HTMLElement>("[data-tab]")) {
+      const on = tab.dataset.tab === audience
+      tab.setAttribute("aria-selected", String(on))
+      tab.tabIndex = on ? 0 : -1
+    }
+  }
+
+  function setUp() {
+    const bar = document.querySelector<HTMLElement>("[data-switch]")
+    if (!bar) return
+    bar.setAttribute("role", "tablist")
+    const tabs = [...bar.querySelectorAll<HTMLElement>("[data-tab]")]
+    for (const tab of tabs) {
+      tab.setAttribute("role", "tab")
+      tab.setAttribute("aria-controls", tab.dataset.tab!)
+    }
+    for (const panel of document.querySelectorAll<HTMLElement>("[data-panel]")) {
+      panel.setAttribute("role", "tabpanel")
+      panel.setAttribute("aria-labelledby", `tab-${panel.id}`)
+    }
+    const choose = (tab: HTMLElement) => {
+      const audience = tab.dataset.tab as Audience
+      show(audience)
+      history.replaceState(history.state, "", `#${audience}`)
+    }
+    bar.addEventListener("click", (event) => {
+      const tab = (event.target as Element).closest<HTMLElement>("[data-tab]")
+      if (!tab) return
+      event.preventDefault()
+      choose(tab)
+    })
+    bar.addEventListener("keydown", (event) => {
+      const at = tabs.indexOf(document.activeElement as HTMLElement)
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key]
+      if (at < 0 || step === undefined) return
+      event.preventDefault()
+      const next = tabs[(at + step + tabs.length) % tabs.length]!
+      next.focus()
+      choose(next)
+    })
+    show(audienceOf(location.hash))
+  }
+
+  document.addEventListener("astro:before-swap", (event) => {
+    event.newDocument.documentElement.dataset.audience = audienceOf(event.to.hash)
+  })
+  document.addEventListener("astro:page-load", setUp)
+  window.addEventListener("hashchange", () => {
+    if (location.hash === "#team" || location.hash === "#personal") show(audienceOf(location.hash))
+  })
+</script>
