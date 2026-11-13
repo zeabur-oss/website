@@ -1,16 +1,7 @@
 // The site's navigation, shared by the header, its small-screen menu and the footer.
-import { compareCopy } from "../compare/copy/index.ts"
 import { chrome } from "./chrome.ts"
 import { productIds, productName } from "./products.ts"
-import {
-  audienceUrl,
-  blogUrl,
-  compareUrl,
-  docsUrl,
-  homeUrl,
-  productUrl,
-  type SiteLocale,
-} from "./urls.ts"
+import { audienceUrl, blogUrl, docsUrl, homeUrl, productUrl, type SiteLocale } from "./urls.ts"
 
 export type NavItem = {
   name: string
@@ -40,8 +31,13 @@ export function siteNav(locale: SiteLocale) {
   const components: NavItem[] = productIds
     .filter((id) => id !== "zeabur")
     .map((id) => ({ name: productName[id], href: productUrl(locale, id) }))
-  const pages = { team: "teams", provider: "providers", homelab: "homelab" } as const
-  const useCases: NavItem[] = (["team", "provider", "homelab"] as const).map((id) => ({
+  const pages = {
+    developer: "developers",
+    team: "teams",
+    provider: "providers",
+    homelab: "homelab",
+  } as const
+  const useCases: NavItem[] = (["developer", "team", "provider", "homelab"] as const).map((id) => ({
     ...t.useCases[id],
     href: audienceUrl(locale, pages[id]),
   }))
@@ -53,6 +49,5 @@ export function siteNav(locale: SiteLocale) {
     trust: zeaburDocs("reference/security"),
     blog: blogUrl(locale),
     start: zeaburDocs("get-started/quickstart"),
-    compare: { name: compareCopy[locale].hub.heading, href: compareUrl(locale) },
   }
 }

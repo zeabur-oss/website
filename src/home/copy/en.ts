@@ -24,12 +24,22 @@ export const en: HomeCopy = {
   hero: {
     switch: {
       label: "Who it's for",
+      developer: "Developers",
       team: "Product teams",
       provider: "Service providers",
       homelab: "Homelab",
     },
+    developer: {
+      title: "Deploy your own programs on Kubernetes, starting from one small machine",
+      sub: "Deploy from Git, a container image or Docker Compose, and set domains, HTTPS, variables and databases in one place. Start on a machine with 2 cores and 2 GiB of memory, and keep the same cluster and the same Zeabur GUI as your programs grow.",
+      primary: "Get started",
+      secondary: "Open it locally",
+      note: "You need a Kubernetes cluster or a Linux server. To look first, run `zeaburctl ui` on your computer.",
+      alt: "The shop project page with web, worker and a database. worker is first under Needs attention.",
+      meta: "Zeabur for developers: deploy your own programs on Kubernetes",
+    },
     team: {
-      title: "Heroku-style deploys on the Kubernetes you already run",
+      title: "Deploy like on a PaaS, on the Kubernetes you already run",
       sub: "Deploy from Git, a container image or Docker Compose, and set domains, HTTPS, variables and databases in one place. Zeabur works on the cluster you already run, and services deployed with Helm, Argo CD or Flux show up as they are. When something breaks, the page says what happened and what to try next, so developers can look into it themselves.",
       primary: "Install in your cluster",
       secondary: "See how deploys work",
@@ -183,47 +193,52 @@ export const en: HomeCopy = {
     "`zeaburctl install`: adds Zeabur and Zeabur Identity to a cluster on Kubernetes 1.30 or later, and installs ingress, certificate and metrics components only when they're missing.",
     "Zeabur Desktop: an app for Windows and macOS that reads your kubeconfig, lists your contexts with search, and opens Zeabur for the one you pick.",
   ],
-  dokploy: {
-    title: "Coming from Dokploy?",
+  grow: {
+    title: "Start small, grow without moving",
     intro:
-      "Dokploy deploys on Docker and Zeabur deploys on Kubernetes. The steps feel alike; what runs underneath differs, and these points change with it.",
+      "Begin on one small machine. When your programs and traffic grow, you stay on the same cluster and the same Zeabur GUI instead of moving to another platform.",
     points: [
       {
-        title: "Deploying",
-        body: "You still deploy from Git, an image or Docker Compose, and set domains and HTTPS on the service. Before you apply, Zeabur lists what it will write to the cluster.",
+        title: "Same cluster as you grow",
+        body: "You don't rebuild your setup when a side project becomes the real thing. The services you deployed first are still there.",
       },
       {
-        title: "One server",
-        body: "One server is enough: the installer sets up K3s or RKE2 on it. For yourself alone, the personal install uses KubeSolo (single-node Kubernetes), with no members or roles: whoever holds the kubeconfig controls the cluster.",
+        title: "Less memory on a small machine",
+        body: "On a machine with 2 cores and 2 GiB of memory, memory use went from 1.8 GiB to 1.1 GiB, about 38% less.",
       },
       {
-        title: "Memory on a small server",
-        body: "Kubernetes takes some memory of its own. Dokploy's docs ask for at least 2 GB; Zeabur's team install needs 4 GiB today and the personal install 1.5 GiB. These are the documented minimums, not measurements.",
-        soon: "The team install runs on a machine with 2 vCPU and 2 GiB of memory.",
-      },
-      {
-        title: "Templates",
-        body: "Dokploy's README lists more than 600 templates; Zeabur Catalog has far fewer. Before you move, check that the apps you need are there. If not, deploy them from an image or Compose.",
-      },
-      {
-        title: "What changes on Kubernetes",
-        body: "Services become Kubernetes Deployments, Services and Ingresses that kubectl can show. Kubernetes schedules across machines instead of Docker Swarm. Compose import only creates services with an `image:`; deploy `build:`-only services from Git.",
-      },
-      {
-        title: "Running both, or leaving",
-        body: "Both installers need ports 80 and 443 free, so run them on separate servers while you move, then switch DNS. If you stop using Zeabur, your services' Kubernetes objects stay and keep running.",
-      },
-      {
-        title: "Licence",
-        body: "Zeabur, Zeabur Identity, Zeabur Builder and Zeabur Catalog are Apache-2.0, with no paid edition. Most of Dokploy is Apache-2.0; its `/proprietary` directory is under a source-available licence.",
+        title: "More room for your own programs",
+        body: "With an app and a database running, free memory went from 52 MiB to 448 MiB.",
       },
     ],
-    link: "Compare Zeabur and Dokploy side by side",
+  },
+  secure: {
+    title: "Kubernetes keeps your programs apart and safe",
+    intro:
+      "Zeabur puts Kubernetes isolation, high availability, backup and teamwork behind the same screens you deploy from.",
+    points: [
+      {
+        title: "Isolated by Kubernetes",
+        body: "Each project runs in its own Kubernetes Namespace, apart from the others.",
+      },
+      {
+        title: "High availability, backup and teamwork in the GUI",
+        body: "Set up high availability and backup, and work with others, in Zeabur GUI instead of writing the Kubernetes objects yourself.",
+      },
+      {
+        title: "Zero-Trust",
+        body: "Sign-in gives short-lived tokens, and Kubernetes RBAC decides what each request may do.",
+      },
+    ],
   },
   cta: {
     primary: "Get started",
     secondary: "Read the docs",
     providerPrimary: "Watch Zeatend on GitHub",
+    developer: {
+      title: "Deploy your first program",
+      body: "Install with Helm, or run `zeaburctl ui` on your computer. The docs go from install to your first service.",
+    },
     team: {
       title: "Try it with the kubeconfig you already have",
       body: "`zeaburctl ui` runs on your computer and installs nothing in the cluster.",

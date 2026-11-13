@@ -81,10 +81,6 @@ const links = [
           {nav.products.map((item) => (
             <NavEntry item={item} current={here === item.href} />
           ))}
-          <a href={nav.compare.href} class="menu-more">
-            {nav.compare.name}
-            <Icon name="arrow-right" />
-          </a>
         </div>
       </details>
       <details class="menu group" data-menu>
@@ -163,10 +159,6 @@ const links = [
                 {soon && <span class="soon">Coming soon</span>}
               </a>
             ))}
-            <a href={nav.compare.href} class="px-2 py-2.5">
-              <Icon name="scales" />
-              {nav.compare.name}
-            </a>
             <p class="menu-label">{t.nav.useCases}</p>
             {nav.useCases.map(({ href, name }) => (
               <a href={href} class="px-2 py-2.5">

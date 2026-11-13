@@ -24,9 +24,19 @@ export const zhTW: HomeCopy = {
   hero: {
     switch: {
       label: "適合誰",
+      developer: "開發者",
       team: "產品團隊",
       provider: "代管服務商",
       homelab: "Homelab",
+    },
+    developer: {
+      title: "把自己寫的程式部署到 Kubernetes，從一台小機器開始",
+      sub: "從 Git、映像檔或 Docker Compose 部署，網域、HTTPS、環境變數和資料庫都在同一個地方設定。一台 2 核心、2 GiB 記憶體的機器就能開始，程式變多、流量變大時，仍然是同一個叢集、同一個 Zeabur GUI。",
+      primary: "開始使用",
+      secondary: "在本機打開",
+      note: "需要一個 Kubernetes 叢集，或一台 Linux 伺服器。想先看看，在自己的電腦上執行 `zeaburctl ui` 就能打開。",
+      alt: "shop 專案頁，列出 web、worker 和資料庫的狀態，worker 排在「需要處理」的第一項。",
+      meta: "開發者：把自己的程式部署到 Kubernetes｜Zeabur",
     },
     team: {
       title: "在現有的 Kubernetes 上，像用 PaaS 一樣部署",
@@ -177,47 +187,51 @@ export const zhTW: HomeCopy = {
     "`zeaburctl install`：在 Kubernetes 1.30 以上的叢集裝好 Zeabur 和 Zeabur Identity。Ingress、憑證和指標元件只補裝缺少的。",
     "Zeabur Desktop：Windows 和 macOS 的桌面 App。讀取 kubeconfig，列出可以搜尋的 context，選一個就開啟 Zeabur。",
   ],
-  dokploy: {
-    title: "用過 Dokploy？先看這幾件事",
+  grow: {
+    title: "從小機器開始，長大不用搬家",
     intro:
-      "Dokploy 在 Docker 上部署，Zeabur 在 Kubernetes 上部署。部署的步驟很像，底下跑的東西不一樣，下面幾點會跟著改變。",
+      "先從一台小機器開始。程式和流量變多以後，還是同一個叢集、同一個 Zeabur GUI，不用搬到別的平台。",
     points: [
       {
-        title: "部署的步驟",
-        body: "一樣從 Git、映像檔或 Docker Compose 部署，網域和 HTTPS 也在服務的設定裡。在 Zeabur 按下套用之前，畫面會先列出這次要寫進叢集的變更。",
+        title: "長大還是同一個叢集",
+        body: "小專案變成正式服務時，不用重建環境。最早部署的服務還在原處。",
       },
       {
-        title: "只有一台伺服器",
-        body: "一台伺服器也能裝：安裝程式會在上面裝好 K3s 或 RKE2。只給自己用的話，個人安裝用的是 KubeSolo（單節點 Kubernetes），沒有成員和角色，拿到 kubeconfig 的人能控制整個叢集。",
+        title: "小機器更省記憶體",
+        body: "在 2 核心、2 GiB 記憶體的機器上，記憶體用量從 1.8 GiB 降到 1.1 GiB，少了約 38%。",
       },
       {
-        title: "小機器的記憶體",
-        body: "Kubernetes 本身就要用掉一些記憶體。Dokploy 文件寫至少 2 GB；Zeabur 現在的團隊安裝要 4 GiB，個人安裝 1.5 GiB。這些都是文件寫的最低需求，不是實測數字。",
-        soon: "團隊安裝在 2 vCPU、2 GiB 記憶體的機器上就能執行。",
-      },
-      {
-        title: "範本",
-        body: "Dokploy 的 README 寫有 600 多個範本，Zeabur Catalog 的範本少得多。搬過來之前，先確認你要的應用在不在目錄裡；不在的話，用映像檔或 Compose 部署。",
-      },
-      {
-        title: "換到 Kubernetes 之後",
-        body: "服務會變成 Kubernetes 的 Deployment、Service 和 Ingress，用 kubectl 也看得到。多台機器由 Kubernetes 排程，不用 Docker Swarm。匯入 Compose 時只建立有 `image:` 的服務，只有 `build:` 的服務改從 Git 部署。",
-      },
-      {
-        title: "並用和離開",
-        body: "兩邊的安裝都要求 80 和 443 埠空著，所以要並用的話，分開裝在不同的主機，搬完再切換 DNS。哪天不用 Zeabur，移除後服務的 Kubernetes 物件都留著，照常執行。",
-      },
-      {
-        title: "授權",
-        body: "Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 都採 Apache-2.0 授權，沒有付費版。Dokploy 大部分程式碼是 Apache-2.0，`/proprietary` 目錄用的是 source-available 授權。",
+        title: "留給自己程式的空間更多",
+        body: "跑著一個應用程式和一個資料庫時，剩餘記憶體從 52 MiB 增加到 448 MiB。",
       },
     ],
-    link: "看 Zeabur 和 Dokploy 的逐項比較",
+  },
+  secure: {
+    title: "用 Kubernetes 把程式隔開，也把門顧好",
+    intro: "Kubernetes 的隔離、高可用、備份和協作，都放在你部署時用的同一套畫面裡。",
+    points: [
+      {
+        title: "由 Kubernetes 隔離",
+        body: "每個專案各跑在自己的 Kubernetes Namespace，彼此分開。",
+      },
+      {
+        title: "高可用、備份和協作，在 GUI 裡設定",
+        body: "高可用和備份在 Zeabur GUI 設定，多人一起用也在這裡，不必自己寫 Kubernetes 物件。",
+      },
+      {
+        title: "Zero-Trust",
+        body: "登入後拿到的是短效權杖，每個請求能做什麼，由 Kubernetes RBAC 決定。",
+      },
+    ],
   },
   cta: {
     primary: "開始使用",
     secondary: "閱讀文件",
     providerPrimary: "追蹤 Zeatend",
+    developer: {
+      title: "部署你的第一個程式",
+      body: "用 Helm 裝進叢集，或在本機執行 `zeaburctl ui`。文件從安裝寫到第一個服務上線。",
+    },
     team: {
       title: "先用手上的 kubeconfig 打開看看",
       body: "`zeaburctl ui` 在你的電腦上執行，叢集裡不用先裝任何東西。",

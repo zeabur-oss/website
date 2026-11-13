@@ -5,10 +5,11 @@ import { zhCN } from "./zh-CN.ts"
 import { zhTW } from "./zh-TW.ts"
 
 /** The readers who have a page of their own, in the order the site lists them. */
-export const audiences = ["team", "provider", "homelab"] as const
+export const audiences = ["developer", "team", "provider", "homelab"] as const
 export type Audience = (typeof audiences)[number]
 /** Each reader's page, under /for/. */
 export const audienceSlug: Record<Audience, string> = {
+  developer: "developers",
   team: "teams",
   provider: "providers",
   homelab: "homelab",
@@ -23,7 +24,8 @@ export type PartId =
   | "zeatend"
   | "local"
   | "license"
-  | "dokploy"
+  | "grow"
+  | "secure"
 export type ProofId =
   | "license"
   | "state"
@@ -54,7 +56,7 @@ export type HomeCopy = {
   /** The home page's own words: its first screen, the links onward, and its closing block. */
   home: {
     hero: { title: string; sub: string; primary: string; secondary: string; note: string }
-    more: Record<Audience, string>
+    more: Record<Exclude<Audience, "developer">, string>
     permTitle: string
     openTitle: string
     cta: Claim
@@ -85,13 +87,9 @@ export type HomeCopy = {
   license: Claim
   safety: { title: string; hardening: string; hardeningLink: string; gitops: string }
   zeatend: Claim & { path: string[]; mirror: string; alt: string }
-  /** For a reader who comes from Dokploy: what changes and what stays, point by point. */
-  dokploy: {
-    title: string
-    intro: string
-    points: (Claim & { soon?: string })[]
-    link: string
-  }
+  /** For a developer who deploys their own programs: starting small, and what keeps it safe. */
+  grow: { title: string; intro: string; points: Claim[] }
+  secure: { title: string; intro: string; points: Claim[] }
   /** What else the next release brings, one sentence each. */
   soon: string[]
   cta: Record<Audience, Claim> & { primary: string; secondary: string; providerPrimary: string }

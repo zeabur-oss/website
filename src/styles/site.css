@@ -188,15 +188,6 @@
     line-height: var(--text-meta--line-height);
   }
 
-  /* A link under a menu's entries, after a rule. */
-  .menu-panel .menu-more {
-    justify-content: space-between;
-    margin-top: 0.25rem;
-    padding: 0.625rem;
-    border-top: 1px solid var(--site-line);
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
-  }
-
   /* Not released yet. The words stay in English in every language. */
   .soon {
     display: inline-flex;

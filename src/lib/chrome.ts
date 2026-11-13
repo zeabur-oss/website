@@ -27,7 +27,7 @@ type Chrome = {
   /** The product menu. The names are not translated. */
   menu: Record<"gui" | "desktop" | "zeatend", { name: string; line: string }>
   /** The use cases, one for each reader the home page speaks to. */
-  useCases: Record<"team" | "provider" | "homelab", { name: string; line: string }>
+  useCases: Record<"developer" | "team" | "provider" | "homelab", { name: string; line: string }>
   footer: { about: string; license: string; resources: string }
 }
 
@@ -80,6 +80,7 @@ const zhTW: Chrome = {
     zeatend: { name: "Zeatend", line: "在終端機架設和升級 K3s、RKE2、KubeSolo 叢集" },
   },
   useCases: {
+    developer: { name: "開發者", line: "把自己寫的程式部署上線，從一台小機器開始" },
     team: { name: "產品團隊", line: "已經有叢集，想讓開發者自己部署" },
     provider: { name: "代管服務商", line: "替客戶架叢集，讓客戶自己部署" },
     homelab: { name: "Homelab", line: "家裡的叢集，跟原本的工具一起用" },
@@ -135,6 +136,7 @@ const zhCN: Chrome = {
     zeatend: { name: "Zeatend", line: "在终端里搭建和升级 K3s、RKE2、KubeSolo 集群" },
   },
   useCases: {
+    developer: { name: "开发者", line: "把自己写的程序部署上线，从一台小机器开始" },
     team: { name: "产品团队", line: "已经有集群，想让开发自己部署" },
     provider: { name: "服务商", line: "替客户搭集群，让客户自己部署" },
     homelab: { name: "Homelab", line: "家里的集群，跟原来的工具一起用" },
@@ -193,6 +195,10 @@ const en: Chrome = {
     },
   },
   useCases: {
+    developer: {
+      name: "Developers",
+      line: "You deploy your own programs, starting from one small machine",
+    },
     team: {
       name: "Product teams",
       line: "You have a cluster and want developers to deploy on their own",

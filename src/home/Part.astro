@@ -5,13 +5,11 @@ import Section from "../blocks/Section.astro"
 import Split from "../blocks/Split.astro"
 import Steps from "../blocks/Steps.astro"
 import Visual from "../blocks/Visual.astro"
-import Icon from "../components/Icon.astro"
-import { compareUrl, docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { homeCopy, type PartId } from "./copy/index.ts"
 import Diff from "./figures/Diff.astro"
 import InstallPath from "./figures/InstallPath.astro"
 import LocalMode from "./figures/LocalMode.astro"
-import Moving from "./figures/Moving.astro"
 import ObjectsStay from "./figures/ObjectsStay.astro"
 import Trace from "./figures/Trace.astro"
 import Roles from "./Roles.astro"
@@ -115,15 +113,13 @@ const t = homeCopy[locale]
     />
   </Section>
 )}
-{part === "dokploy" && (
-  <Section id="dokploy" title={t.dokploy.title} lead={t.dokploy.intro}>
-    <Visual label={t.dokploy.title} class="visual-wide">
-      <Moving />
-    </Visual>
-    <Proof claims={t.dokploy.points} />
-    <a href={compareUrl(locale, "zeabur-vs-dokploy")} class="more part-more">
-      {t.dokploy.link}
-      <Icon name="arrow-right" class="go" />
-    </a>
+{part === "grow" && (
+  <Section id="grow" title={t.grow.title} lead={t.grow.intro}>
+    <Proof claims={t.grow.points} />
+  </Section>
+)}
+{part === "secure" && (
+  <Section id="secure" title={t.secure.title} lead={t.secure.intro}>
+    <Proof claims={t.secure.points} />
   </Section>
 )}

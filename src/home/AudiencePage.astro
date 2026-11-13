@@ -10,7 +10,7 @@ import Site from "../layouts/Site.astro"
 import { githubOrg } from "../lib/site.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import Actions from "./Actions.astro"
-import { homeCopy, type Audience, type PartId } from "./copy/index.ts"
+import { homeCopy, type Audience } from "./copy/index.ts"
 import { partOrder, proofOrder } from "./copy/order.ts"
 import Part from "./Part.astro"
 
@@ -23,15 +23,11 @@ const t = homeCopy[locale]
 const hero = t.hero[audience]
 const docs = (slug: string) => docsUrl(locale, "zeabur", slug)
 const links = {
+  developer: [docs("get-started/quickstart"), "#local"],
   team: [docs("install/existing-cluster"), docs("get-started/first-project")],
   provider: ["#zeatend", "#permissions"],
   homelab: ["#local", `${githubOrg}/zeabur`],
 }[audience]
-// The part for readers who come from Dokploy follows the part it builds on.
-const dokployAfter: Partial<Record<Audience, PartId>> = { team: "lockin", homelab: "local" }
-const parts = partOrder[audience].flatMap((part): PartId[] =>
-  part === dokployAfter[audience] ? [part, "dokploy"] : [part],
-)
 const description = hero.sub.replaceAll("`", "")
 ---
 
@@ -67,10 +63,18 @@ const description = hero.sub.replaceAll("`", "")
       )}
       <Proof slot="after" claims={proofOrder[audience].map((claim) => t.proof[claim])} />
     </Hero>
-    {parts.map((part) => (
+    {partOrder[audience].map((part) => (
       <Part locale={locale} part={part} />
     ))}
     <Cta id="start" title={t.cta[audience].title} lead={t.cta[audience].body}>
+      {audience === "developer" && (
+        <Actions
+          locale={locale}
+          start={docs("get-started/quickstart")}
+          repo={`${githubOrg}/zeabur`}
+          stars
+        />
+      )}
       {audience === "team" && (
         <Actions
           locale={locale}
