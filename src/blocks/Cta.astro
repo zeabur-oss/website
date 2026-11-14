@@ -1,0 +1,25 @@
+---
+// The closing block: one line, one paragraph, and the actions in its slot.
+import Rich from "./Rich.astro"
+
+interface Props {
+  id: string
+  title: string
+  lead: string
+}
+const { id, title, lead } = Astro.props
+---
+
+<section class="wrap part cta" id={id} aria-labelledby={`${id}-title`}>
+  <div class="cta-panel" data-reveal>
+    <div>
+      <h2 id={`${id}-title`}>{title}</h2>
+      <p class="lead">
+        <Rich text={lead} />
+      </p>
+    </div>
+    <div class="cta-actions">
+      <slot />
+    </div>
+  </div>
+</section>

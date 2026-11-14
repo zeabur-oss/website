@@ -1,0 +1,22 @@
+---
+// The next release's way from one pasted line to Zeabur GUI, one stop after another.
+interface Props {
+  stops: string[]
+}
+const { stops } = Astro.props
+---
+
+<div class="fx-path">
+  {stops.map((stop, k) => (
+    <>
+      {k > 0 && (
+        <span class="wire">
+          <i class="fx" style={`--fx:fx-draw;--s:${k * 2 - 1}`} />
+        </span>
+      )}
+      <span class:list={["node fx", k === stops.length - 1 && "ok"]} style={`--s:${k * 2}`}>
+        {stop}
+      </span>
+    </>
+  ))}
+</div>

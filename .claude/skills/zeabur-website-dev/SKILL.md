@@ -43,7 +43,8 @@ The docs pages are not written here. Each repository keeps its own `docs/`, and
 
 ## Landing and product pages
 
-- The copy is in `src/landing/copy.ts`, in en, zh-TW and zh-CN.
+- The home page copy is in `src/home/copy/`, one file each for en, zh-TW and zh-CN. The product
+  pages keep theirs in `src/landing/`.
 - The screenshots are the zeabur repository's docs screenshots (`docs/images/shots/`, from its
   `docs/shots.yaml`), taken at twice the pixel density. Show every product image at half its
   width or less, and give it `sizes`.

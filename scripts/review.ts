@@ -55,6 +55,8 @@ for (const theme of themes) {
         // Sections that come in on scroll are shown as they end up.
         for (const el of document.querySelectorAll("[data-reveal], .stagger"))
           el.classList.add("is-in")
+        // Drawings are shown finished.
+        for (const animation of document.getAnimations()) animation.finish()
         await new Promise((done) => setTimeout(done, 1200))
       })
       const overflow = await page.evaluate(

@@ -1,0 +1,33 @@
+---
+// zeaburctl ui: Zeabur runs on the reader's computer and reaches the cluster with their
+// kubeconfig. The cluster side shows only what was already there.
+interface Props {
+  /** The name of the interface, as the copy has it. */
+  chip: string
+}
+const { chip } = Astro.props
+---
+
+<div class="fx-map">
+  <div class="box">
+    <span class="box-name">127.0.0.1</span>
+    <code class="fx-command">zeaburctl ui</code>
+    <span class="node ok fx" style="--s:1">
+      {chip}
+    </span>
+  </div>
+  <span class="wire">
+    <i class="fx" style="--fx:fx-draw;--s:2"></i>
+    <b class="fx" style="--s:3">
+      kubeconfig
+    </b>
+  </span>
+  <div class="box fx" style="--s:4">
+    <span class="box-name">Kubernetes</span>
+    <span class="node">kube-apiserver</span>
+    <span class="chips">
+      <span class="chip">shop</span>
+      <span class="chip">blog</span>
+    </span>
+  </div>
+</div>

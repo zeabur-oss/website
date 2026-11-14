@@ -1,0 +1,19 @@
+---
+// Two cases side by side, a drawing over one paragraph each. The drawings are the slots `a`, `b`.
+interface Props {
+  a: string
+  b: string
+}
+const { a, b } = Astro.props
+---
+
+<ul class="cards" style="--n:2">
+  <li class="card">
+    <slot name="a" />
+    <p class="body">{a}</p>
+  </li>
+  <li class="card">
+    <slot name="b" />
+    <p class="body">{b}</p>
+  </li>
+</ul>

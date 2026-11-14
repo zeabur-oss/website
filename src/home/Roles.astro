@@ -1,0 +1,26 @@
+---
+// erin's request goes through and alice's is refused, with a sentence under each.
+import Comparison from "../blocks/Comparison.astro"
+import Visual from "../blocks/Visual.astro"
+import type { SiteLocale } from "../lib/urls.ts"
+import { homeCopy } from "./copy/index.ts"
+import Access from "./figures/Access.astro"
+
+interface Props {
+  locale: SiteLocale
+  /** The sentence under each drawing. */
+  a: string
+  b: string
+}
+const { locale, a, b } = Astro.props
+const t = homeCopy[locale].perm
+---
+
+<Comparison a={a} b={b}>
+  <Visual slot="a" label={t.erin}>
+    <Access who="erin" request="patch deployments" allowed />
+  </Visual>
+  <Visual slot="b" label={t.deniedAlt} after={3}>
+    <Access who="alice" request="get pods/log" allowed={false} />
+  </Visual>
+</Comparison>

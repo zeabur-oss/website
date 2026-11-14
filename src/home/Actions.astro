@@ -1,0 +1,42 @@
+---
+// The buttons of a closing block: the main action when there is one, GitHub, and the docs.
+import Icon from "../components/Icon.astro"
+import { githubStars, shortCount } from "../lib/github.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { homeCopy } from "./copy/index.ts"
+
+interface Props {
+  locale: SiteLocale
+  /** Where "Get started" goes. Without it GitHub is the main action. */
+  start?: string
+  /** The repository the GitHub button opens. */
+  repo: string
+  /** The GitHub button's own words, when "GitHub" is not enough. */
+  label?: string
+  /** Show the stars of zeabur-oss/zeabur beside it. */
+  stars?: boolean
+}
+const { locale, start, repo, label = "GitHub", stars = false } = Astro.props
+const t = homeCopy[locale].cta
+const count = stars ? await githubStars() : undefined
+---
+
+{start && (
+  <a href={start} class="button primary">
+    {t.primary}
+    <Icon name="arrow-right" class="go" />
+  </a>
+)}
+<a href={repo} class:list={["button", !start && "primary"]}>
+  <Icon name="github-logo" />
+  {label}
+  {count !== undefined && (
+    <span class="star-count">
+      <Icon name="star" weight="fill" />
+      {shortCount(count, locale)}
+    </span>
+  )}
+</a>
+<a href={docsUrl(locale, "zeabur")} class="button">
+  {t.secondary}
+</a>

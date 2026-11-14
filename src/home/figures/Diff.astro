@@ -1,0 +1,7 @@
+---
+// The change of the docs' example, as Zeabur lists it before writing: one value of web's
+// environment goes from production to staging.
+const before = ["containers:", "- env:", "  - name: NODE_ENV"]
+---
+
+<pre class="fx-diff"><code>{before.map((line) => <span>  {line}{"\n"}</span>)}<span class="del fx" style="--s:1">-     value: production{"\n"}</span><span class="add fx" style="--s:3">+     value: staging{"\n"}</span></code></pre>

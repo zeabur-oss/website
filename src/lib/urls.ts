@@ -24,6 +24,8 @@ export const localePaths = () =>
 export const homeUrl = (locale: string) => localePrefix(locale) || "/"
 export const productUrl = (locale: string, id: string) => `${localePrefix(locale)}/${id}`
 export const blogUrl = (locale: string) => `${localePrefix(locale)}/blog`
+/** The page written for one kind of reader: `teams`, `providers`, `homelab` or `developers`. */
+export const audienceUrl = (locale: string, slug: string) => `${localePrefix(locale)}/for/${slug}`
 
 /** The same path in another locale: en has no prefix, the others are /zh-TW and /zh-CN. */
 export function pathInLocale(pathname: string, locale: string) {

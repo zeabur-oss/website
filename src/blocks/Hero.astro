@@ -1,0 +1,59 @@
+---
+// The first screen of a page: one title, one paragraph, up to two actions, a note, and one
+// picture in its slot. Text between backticks is shown as code.
+import Icon from "../components/Icon.astro"
+import { phrases } from "./phrases.ts"
+import Rich from "./Rich.astro"
+
+interface Props {
+  title: string
+  sub: string
+  /** The first is the main action. A link into the page (`#…`) points down. */
+  actions: { text: string; href: string }[]
+  note?: string
+  /** What the next release adds, shown with "Coming soon". */
+  soonNote?: string
+  /** The whole page is about something that is not released yet. */
+  soon?: boolean
+}
+const { title, sub, actions, note, soonNote, soon } = Astro.props
+// A number stays on the line of its unit.
+const unbroken = (text: string) => text.replace(/(\d) (?=(?:GiB|MiB|vCPU)\b)/g, "$1 ")
+---
+
+<section class="wrap page-hero">
+  <div class="page-hero-text stagger">
+    {soon && <span class="soon">Coming soon</span>}
+    <h1 class="display">
+      {phrases(unbroken(title)).map((phrase) => (
+        <span class="zh:inline-block">{phrase}</span>
+      ))}
+    </h1>
+    <p class="lead">
+      <Rich text={sub} />
+    </p>
+    <div class="page-hero-actions">
+      {actions.map(({ text, href }, i) => (
+        <a href={href} class={i === 0 ? "button primary" : "more"}>
+          {text}
+          <Icon name={href.startsWith("#") ? "arrow-down" : "arrow-right"} class="go" />
+        </a>
+      ))}
+    </div>
+    {note && (
+      <p class="page-hero-note">
+        <Rich text={unbroken(note)} />
+      </p>
+    )}
+    {soonNote && (
+      <p class="page-hero-note">
+        <span class="soon">Coming soon</span>
+        <Rich text={soonNote} />
+      </p>
+    )}
+  </div>
+  <div class="page-hero-picture" data-reveal>
+    <slot />
+  </div>
+  <slot name="after" />
+</section>

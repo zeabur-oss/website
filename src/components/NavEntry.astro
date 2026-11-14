@@ -1,0 +1,30 @@
+---
+// One entry of a header menu: a name, one line under it, and "Coming soon" when it is not out.
+import type { NavItem } from "../lib/nav.ts"
+import Icon from "./Icon.astro"
+
+interface Props {
+  item: NavItem
+  current: boolean
+}
+const { item, current } = Astro.props
+---
+
+<a
+  href={item.href}
+  aria-current={current ? "page" : undefined}
+  class="!items-start !gap-3 !p-2.5 !text-site-text aria-[current=page]:bg-glass-hover"
+>
+  {item.icon && (
+    <span class="mark mt-0.5">
+      <Icon name={item.icon} />
+    </span>
+  )}
+  <span class="grid min-w-0 gap-0.5">
+    <span class="flex flex-wrap items-center gap-x-2 font-medium">
+      {item.name}
+      {item.soon && <span class="soon">Coming soon</span>}
+    </span>
+    {item.line && <span class="type-body font-normal text-site-muted">{item.line}</span>}
+  </span>
+</a>

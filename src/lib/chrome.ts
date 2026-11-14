@@ -7,8 +7,13 @@ type Chrome = {
   lang: string
   nav: {
     products: string
+    useCases: string
     docs: string
+    trust: string
     blog: string
+    start: string
+    /** The accessible name of the GitHub link when the star count is known. */
+    stars: (count: string) => string
     language: string
     theme: string
     github: string
@@ -19,21 +24,29 @@ type Chrome = {
   }
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { line: string; short: string }>
-  footer: { about: string; license: string; products: string; resources: string; source: string }
+  /** The product menu. The names are not translated. */
+  menu: Record<"gui" | "desktop" | "zeatend", { name: string; line: string }>
+  /** The use cases, one for each reader the home page speaks to. */
+  useCases: Record<"developer" | "team" | "provider" | "homelab", { name: string; line: string }>
+  footer: { about: string; license: string; resources: string }
 }
 
 const zhTW: Chrome = {
   lang: "繁體中文",
   nav: {
-    products: "專案",
+    products: "產品",
+    useCases: "使用情境",
     docs: "文件",
+    trust: "安全",
     blog: "部落格",
+    start: "開始使用",
+    stars: (count) => `GitHub，${count} 顆星`,
     language: "語言",
     theme: "切換亮色或暗色",
     github: "GitHub",
     menu: "選單",
     home: "首頁",
-    openSource: "開源",
+    openSource: "開源版",
   },
   products: {
     zeabur: {
@@ -54,26 +67,42 @@ const zhTW: Chrome = {
     },
   },
   footer: {
-    about: "Zeabur 的開源專案：在自己的 Kubernetes 上部署、登入、建置和安裝元件。",
+    about: "在自己的 Kubernetes 上部署和管理服務。",
     license: "原始碼採 Apache-2.0 授權",
-    products: "專案",
     resources: "資源",
-    source: "原始碼",
+  },
+  menu: {
+    gui: { name: "Zeabur GUI", line: "在瀏覽器部署和管理服務" },
+    desktop: {
+      name: "Zeabur Desktop",
+      line: "Windows 和 macOS 的桌面 App，選好 kubeconfig 裡的叢集就能打開 Zeabur GUI",
+    },
+    zeatend: { name: "Zeatend", line: "在終端機架設和升級 K3s、RKE2、KubeSolo 叢集" },
+  },
+  useCases: {
+    developer: { name: "開發者", line: "把自己寫的程式部署上線，從一台小機器開始" },
+    team: { name: "產品團隊", line: "已經有叢集，想讓開發者自己部署" },
+    provider: { name: "代管服務商", line: "替客戶架叢集，讓客戶自己部署" },
+    homelab: { name: "Homelab", line: "家裡的叢集，跟原本的工具一起用" },
   },
 }
 
 const zhCN: Chrome = {
   lang: "简体中文",
   nav: {
-    products: "项目",
+    products: "产品",
+    useCases: "使用场景",
     docs: "文档",
+    trust: "安全",
     blog: "博客",
+    start: "开始使用",
+    stars: (count) => `GitHub，${count} 颗星`,
     language: "语言",
     theme: "切换浅色或深色",
     github: "GitHub",
     menu: "菜单",
     home: "首页",
-    openSource: "开源",
+    openSource: "开源版",
   },
   products: {
     zeabur: {
@@ -94,20 +123,36 @@ const zhCN: Chrome = {
     },
   },
   footer: {
-    about: "Zeabur 的开源项目：在自己的 Kubernetes 上部署、登录、构建和安装组件。",
+    about: "在自己的 Kubernetes 上部署和管理服务。",
     license: "源代码采用 Apache-2.0 许可证",
-    products: "项目",
     resources: "资源",
-    source: "源代码",
+  },
+  menu: {
+    gui: { name: "Zeabur GUI", line: "在浏览器里部署和管理服务" },
+    desktop: {
+      name: "Zeabur Desktop",
+      line: "Windows 和 macOS 上的桌面应用，选好 kubeconfig 里的集群就能打开 Zeabur GUI",
+    },
+    zeatend: { name: "Zeatend", line: "在终端里搭建和升级 K3s、RKE2、KubeSolo 集群" },
+  },
+  useCases: {
+    developer: { name: "开发者", line: "把自己写的程序部署上线，从一台小机器开始" },
+    team: { name: "产品团队", line: "已经有集群，想让开发自己部署" },
+    provider: { name: "服务商", line: "替客户搭集群，让客户自己部署" },
+    homelab: { name: "Homelab", line: "家里的集群，跟原来的工具一起用" },
   },
 }
 
 const en: Chrome = {
   lang: "English",
   nav: {
-    products: "Projects",
+    products: "Product",
+    useCases: "Use cases",
     docs: "Docs",
+    trust: "Security",
     blog: "Blog",
+    start: "Get started",
+    stars: (count) => `GitHub, ${count} stars`,
     language: "Language",
     theme: "Switch between light and dark",
     github: "GitHub",
@@ -134,12 +179,38 @@ const en: Chrome = {
     },
   },
   footer: {
-    about:
-      "Zeabur's open-source projects: deploy, sign in, build and install components on your own Kubernetes.",
+    about: "Deploy and run services on your own Kubernetes.",
     license: "Source under Apache-2.0",
-    products: "Projects",
     resources: "Resources",
-    source: "Source",
+  },
+  menu: {
+    gui: { name: "Zeabur GUI", line: "Deploy and manage services in the browser" },
+    desktop: {
+      name: "Zeabur Desktop",
+      line: "A Windows and macOS app that opens any cluster in your kubeconfig",
+    },
+    zeatend: {
+      name: "Zeatend",
+      line: "Set up and upgrade K3s, RKE2 and KubeSolo clusters from a terminal",
+    },
+  },
+  useCases: {
+    developer: {
+      name: "Developers",
+      line: "You deploy your own programs, starting from one small machine",
+    },
+    team: {
+      name: "Product teams",
+      line: "You have a cluster and want developers to deploy on their own",
+    },
+    provider: {
+      name: "Service providers",
+      line: "You run clusters for clients and want them to deploy on their own",
+    },
+    homelab: {
+      name: "Homelab",
+      line: "Use Zeabur on your home cluster next to the tools you already run",
+    },
   },
 }
 

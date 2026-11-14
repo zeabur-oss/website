@@ -1,0 +1,30 @@
+---
+// A product screenshot in its frame, taken at twice the pixel density so its CSS size is half its
+// pixels. `ratio` crops it from the top to that shape.
+import { cn } from "cn"
+import type { ShotImage } from "./shots.ts"
+
+interface Props {
+  src: ShotImage
+  alt: string
+  sizes: string
+  ratio?: string
+  eager?: boolean
+  class?: string
+}
+const { src, alt, sizes, ratio, eager, class: className } = Astro.props
+---
+
+<div class={cn("frame", ratio && "frame-crop", className)} style={ratio && `aspect-ratio:${ratio}`}>
+  <img
+    src={src.src}
+    srcset={`${src.src} ${src.width}w`}
+    alt={alt}
+    width={src.width / 2}
+    height={src.height / 2}
+    sizes={sizes}
+    decoding="async"
+    loading={eager ? "eager" : "lazy"}
+    fetchpriority={eager ? "high" : undefined}
+  />
+</div>

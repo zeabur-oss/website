@@ -1,0 +1,125 @@
+---
+// One part of the story, by name. The readers' pages put these in their own order.
+import Proof from "../blocks/Proof.astro"
+import Section from "../blocks/Section.astro"
+import Split from "../blocks/Split.astro"
+import Steps from "../blocks/Steps.astro"
+import Visual from "../blocks/Visual.astro"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { homeCopy, type PartId } from "./copy/index.ts"
+import Diff from "./figures/Diff.astro"
+import InstallPath from "./figures/InstallPath.astro"
+import LocalMode from "./figures/LocalMode.astro"
+import ObjectsStay from "./figures/ObjectsStay.astro"
+import Trace from "./figures/Trace.astro"
+import Roles from "./Roles.astro"
+
+interface Props {
+  locale: SiteLocale
+  part: PartId
+}
+const { locale, part } = Astro.props
+const t = homeCopy[locale]
+---
+
+{part === "walk" && (
+  <Section id="walk" title={t.walk.title} lead={t.walk.intro}>
+    <Steps steps={t.walk.steps}>
+      {t.walk.steps.map((step, i) => (
+        <Visual slot={`visual-${i}`} label={step.alt} after={i * 5}>
+          <Trace step={i as 0 | 1 | 2} />
+        </Visual>
+      ))}
+    </Steps>
+  </Section>
+)}
+{part === "review" && (
+  <Section id="review">
+    <Split>
+      <h2>{t.review.title}</h2>
+      <div class="rows">
+        <p class="body">{t.review.body}</p>
+        <p class="body">{t.review.conflict}</p>
+        <p class="body">{t.review.gitops}</p>
+      </div>
+      <Visual slot="visual" label={t.review.alt}>
+        <Diff />
+      </Visual>
+    </Split>
+  </Section>
+)}
+{part === "perm" && (
+  <Section id="permissions" title={t.perm.title} lead={t.perm.body}>
+    <Roles locale={locale} a={t.perm.erin} b={t.perm.alice} />
+    <p class="note" data-reveal>
+      {t.perm.invite}
+      {t.perm.scope}
+    </p>
+  </Section>
+)}
+{part === "lockin" && (
+  <Section id="leave" title={t.lockin.title} lead={t.lockin.body}>
+    <Visual label={t.lockin.alt} class="visual-wide">
+      <ObjectsStay />
+    </Visual>
+    <p class="note" data-reveal>
+      {t.lockin.gitops} {t.lockin.existing}
+    </p>
+    <Proof
+      claims={[
+        {
+          title: t.lockin.uninstall.title,
+          body: t.lockin.uninstall.after,
+          link: {
+            text: t.lockin.uninstall.link,
+            href: docsUrl(locale, "zeabur", "leave/uninstall"),
+          },
+        },
+      ]}
+    />
+  </Section>
+)}
+{part === "zeatend" && (
+  <Section id="zeatend" title={t.zeatend.title} lead={t.zeatend.body} soon>
+    <Visual label={t.zeatend.alt} class="visual-wide">
+      <InstallPath stops={t.zeatend.path} />
+    </Visual>
+    <p class="note" data-reveal>
+      {t.zeatend.mirror}
+    </p>
+  </Section>
+)}
+{part === "local" && (
+  <Section id="local" title={t.local.title} lead={t.local.body}>
+    <Visual label={t.local.alt} class="visual-wide">
+      <LocalMode chip={t.local.chip} />
+    </Visual>
+  </Section>
+)}
+{part === "license" && (
+  <Section id="license">
+    <Proof
+      claims={[
+        t.license,
+        {
+          title: t.safety.title,
+          body: `${t.safety.hardening} ${t.safety.gitops}`,
+          link: {
+            text: t.safety.hardeningLink,
+            href: "https://docs.k3s.io/security/hardening-guide",
+          },
+        },
+      ]}
+    />
+  </Section>
+)}
+{part === "grow" && (
+  <Section id="grow" title={t.grow.title} lead={t.grow.intro}>
+    <Proof claims={t.grow.points} />
+  </Section>
+)}
+{part === "secure" && (
+  <Section id="secure" title={t.secure.title} lead={t.secure.intro}>
+    <Proof claims={t.secure.points} />
+  </Section>
+)}

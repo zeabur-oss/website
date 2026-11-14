@@ -1,0 +1,283 @@
+/* The blocks a page is put together from (src/blocks): one wrapper and rhythm, then a few ways to
+   set text beside a drawing. */
+
+:root {
+  --part-space: 5rem;
+  --part-gap: 2.5rem;
+  --fx-bad: var(--destructive);
+  --fx-bad-soft: light-dark(rgb(255 68 0 / 0.07), rgb(255 110 60 / 0.12));
+}
+@media (min-width: 768px) {
+  :root {
+    --part-space: 8rem;
+    --part-gap: 3.5rem;
+  }
+}
+
+@layer components {
+  /* The first screen of a page. */
+  .page-hero {
+    padding-block: 3rem var(--part-space);
+  }
+  .page-hero-text {
+    display: grid;
+    justify-items: start;
+    row-gap: 1.5rem;
+    max-width: 50rem;
+  }
+  .page-hero-text .lead,
+  .page-hero-note {
+    max-width: 42rem;
+  }
+  .page-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+  .page-hero-note {
+    color: var(--site-faint);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+  .page-hero-note .soon {
+    margin-right: 0.5rem;
+    vertical-align: 0.05em;
+  }
+  .page-hero-picture {
+    margin-top: 3.5rem;
+  }
+  @media (min-width: 768px) {
+    .page-hero {
+      padding-top: 5.5rem;
+    }
+    .page-hero-picture {
+      margin-top: 5rem;
+    }
+  }
+  @media (max-width: 639px) {
+    .page-hero-picture .frame {
+      aspect-ratio: 358 / 300 !important;
+    }
+    .page-hero-picture .frame img {
+      width: 190%;
+      max-width: none;
+      height: auto;
+      object-fit: initial;
+    }
+  }
+
+  .part {
+    padding-bottom: var(--part-space);
+    scroll-margin-top: calc(var(--header-height) + 2rem);
+  }
+  .part-head {
+    max-width: 46rem;
+    margin-bottom: var(--part-gap);
+  }
+  .part-head .lead {
+    margin-top: 1rem;
+  }
+  .part-head .soon {
+    margin-bottom: 1rem;
+  }
+  /* A block that opens with its statements has no gap to close above them. */
+  .part > .claims:first-child {
+    margin-top: 0;
+  }
+  .part :not(pre) > code,
+  .page-hero :not(pre) > code,
+  .compare :not(pre) > code {
+    padding: 0.05em 0.35em;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-sm);
+    background: var(--site-bg-soft);
+    color: var(--site-text);
+    font-family: var(--font-stack-mono);
+    font-size: 0.875em;
+    white-space: nowrap;
+  }
+
+  .frame {
+    overflow: hidden;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-lg);
+    background: var(--site-bg-soft);
+  }
+  .frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .frame-crop img {
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .note {
+    max-width: 46rem;
+    margin-top: 1.25rem;
+    color: var(--site-muted);
+    font-size: var(--text-sm);
+    line-height: 1.7;
+  }
+
+  /* The frame of a drawing: a soft panel that centres what is drawn in it. */
+  .visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 11rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-lg);
+    background: var(--site-bg-soft);
+  }
+  .visual-wide {
+    min-height: 15rem;
+  }
+  @media (max-width: 767px) {
+    .visual {
+      padding: 1rem;
+    }
+  }
+  @media (min-width: 768px) {
+    .visual-wide {
+      padding: 3rem clamp(1.5rem, 8%, 7rem);
+    }
+  }
+
+  /* Cards side by side: a drawing, then its words. */
+  .cards {
+    display: grid;
+    gap: 2.5rem 1.5rem;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+  }
+  .card .visual {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  .card h3 {
+    margin-bottom: 0.5rem;
+  }
+  @media (min-width: 768px) {
+    .cards {
+      grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    }
+  }
+
+  /* Text beside a drawing. */
+  .split {
+    display: grid;
+    gap: 2.5rem 1.5rem;
+    align-items: center;
+  }
+  .split > * {
+    min-width: 0;
+  }
+  .split-text h2 {
+    margin-bottom: 1.5rem;
+  }
+  .split-visual .visual {
+    min-height: 18rem;
+  }
+  @media (min-width: 1024px) {
+    .split {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .split-text {
+      grid-column: 1 / 6;
+    }
+    .split-visual {
+      grid-column: 7 / 13;
+    }
+    .split-flip .split-text {
+      grid-column: 8 / 13;
+      order: 2;
+    }
+    .split-flip .split-visual {
+      grid-column: 1 / 7;
+    }
+  }
+
+  /* Short statements side by side: a title and a sentence or two each. */
+  .claims {
+    display: grid;
+    gap: 2rem 1.5rem;
+    margin-top: var(--part-gap);
+  }
+  .claims li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .claims .more {
+    margin-top: 0.25rem;
+  }
+  .claim-soon {
+    color: var(--site-faint);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+  .claim-soon .soon {
+    margin-right: 0.5rem;
+    vertical-align: 0.05em;
+  }
+  .claims + .part-more {
+    margin-top: 2rem;
+  }
+  .upcoming {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 62rem;
+    margin-top: var(--part-gap);
+  }
+  @media (min-width: 768px) {
+    .claims {
+      grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+    }
+    .upcoming {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 3rem;
+    }
+  }
+
+  /* Paragraphs one under another, a rule between them. */
+  .rows > * + * {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--site-line);
+  }
+
+  /* The closing panel. */
+  .cta-panel {
+    display: grid;
+    gap: 2rem;
+    align-items: end;
+    padding: 2rem 1.5rem;
+    border: 1px solid var(--site-line);
+    border-radius: var(--radius-xl);
+    background: var(--site-bg-soft);
+  }
+  .cta-panel .lead {
+    margin-top: 1rem;
+  }
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  @media (min-width: 1024px) {
+    .cta-panel {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 4rem;
+    }
+  }
+}

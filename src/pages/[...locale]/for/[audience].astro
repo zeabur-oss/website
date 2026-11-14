@@ -1,0 +1,17 @@
+---
+import AudiencePage from "../../../home/AudiencePage.astro"
+import { audiences, audienceSlug } from "../../../home/copy/index.ts"
+import { localePaths } from "../../../lib/urls.ts"
+
+export function getStaticPaths() {
+  return localePaths().flatMap(({ params, props }) =>
+    audiences.map((audience) => ({
+      params: { ...params, audience: audienceSlug[audience] },
+      props: { ...props, audience },
+    })),
+  )
+}
+const { locale, audience } = Astro.props
+---
+
+<AudiencePage locale={locale} audience={audience} />
