@@ -17,9 +17,11 @@ concurrency:
   group: pages-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# On a pull request, build runs on a fresh Instabox machine (instabox-<size>) when the organization
+# variable CI_INSTABOX is "true". The build that deploys, on main, stays on GitHub's runners.
 jobs:
   build:
-    runs-on: ubuntu-26.04-arm
+    runs-on: ${{ vars.CI_INSTABOX == 'true' && github.event_name == 'pull_request' && 'instabox-medium' || 'ubuntu-26.04-arm' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
