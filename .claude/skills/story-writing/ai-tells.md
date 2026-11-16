@@ -1,4 +1,4 @@
-<!-- Edit this in zeabur-oss/skills (skills/story-writing/ai-tells.md); the weekly skills sync overwrites the copy in other repositories. -->
+<!-- Edit this in zeabur-oss/.github (skills/story-writing/ai-tells.md); the weekly skills sync overwrites the copy in other repositories. -->
 
 # AI tells in narrative Chinese prose
 
