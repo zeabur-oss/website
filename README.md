@@ -14,6 +14,11 @@ Run every command in the development shell (`nix develop`, or `nix develop -c <c
 nix develop -c sh -c 'bun install && bun run build && bun run preview'   # http://localhost:4321
 ```
 
+Bun installs with its isolated linker (`bunfig.toml`): a package sees only the packages its own
+`package.json` lists. So `package.json` lists every package the site imports, type packages too.
+It also lists `satteri` at the version Starlight depends on: the built pages import it from `dist/`,
+so Node must find it from the site's root. Move it with Starlight.
+
 ## Layout
 
 ```
