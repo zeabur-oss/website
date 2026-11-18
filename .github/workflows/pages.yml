@@ -19,12 +19,13 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-26.04-arm
+    runs-on: instabox-small
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/determinate-nix-action@16f94ba7aae399b9f9077c254b6719ec6de7e3e3 # v3.24.2
+      - uses: zeabur-oss/.github/actions/ci-setup@f3ae87d7ef3c37447432e398200d200b546dfa46 # main
       - name: Shellcheck
         run: nix develop --command shellcheck scripts/*.sh
       - name: Build
@@ -43,7 +44,8 @@ jobs:
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-slim
+    runs-on: instabox-small
+    timeout-minutes: 10
     permissions:
       pages: write
       id-token: write
