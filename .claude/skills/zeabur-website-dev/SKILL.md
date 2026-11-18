@@ -5,12 +5,7 @@ description: Work on oss.zeabur.com (zeabur-oss/website) — the landing and pro
 
 # Zeabur website
 
-Follow the shared skills (copied from zeabur-oss/.github by the Update workflow):
-`zeabur-oss-workflow` (branches, commits, pull requests), `zeabur-oss-standards`,
-`zeabur-oss-dependencies` (Bun packages), `zeabur-writing` (all text; landing and product pages
-also by its `landing-copy.md`), `story-writing` (blog posts; technical articles also by its
-`technical-articles.md`) and `no-ai-flavour` (comments and visuals). This skill adds what is the
-website's own. `CONTRIBUTING.md` has the full checks and the toolchain.
+`CONTRIBUTING.md` has the full checks and the toolchain.
 
 ## Checks
 
