@@ -1,7 +1,7 @@
 ---
 import { cn } from "cn"
-// A section's heading: an optional kicker, the title with an optional dim half, and a lead.
-// After zeabur.com's LandingSectionHeader (eyebrow, title, description, left or centred).
+// A section's heading: an optional number and label in mono, the title with an optional quiet
+// half, and a lead.
 interface Props {
   id: string
   title?: string
@@ -11,19 +11,23 @@ interface Props {
   tail?: string
   lead?: string
   kicker?: string
+  /** The section's place on the page, such as "02". */
+  number?: string
   align?: "start" | "center"
 }
-const { id, title, dim, tail, lead, kicker, align = "start" } = Astro.props
+const { id, title, dim, tail, lead, kicker, number, align = "start" } = Astro.props
 // Chinese runs the two halves together; other languages put a space between them.
 const gap = dim && !/[　-鿿＀-￯]$/u.test(dim) ? " " : ""
 ---
 
-<header
-  class={cn("mb-10 max-w-[46rem] md:mb-14", align === "center" && "mx-auto text-center")}
-  data-reveal
->
-  {kicker && <p class="kicker mb-4">{kicker}</p>}
-  <h2 id={id}>
+<header class={cn("mb-10 max-w-[56rem] md:mb-14", align === "center" && "mx-auto text-center")}>
+  {(number || kicker) && (
+    <p class="index label mb-6" data-reveal>
+      {number && <span>{number}</span>}
+      {kicker && <span>{kicker}</span>}
+    </p>
+  )}
+  <h2 id={id} data-reveal="text">
     {tail ? (
       <>
         {`${title} `}
@@ -39,5 +43,9 @@ const gap = dim && !/[　-鿿＀-￯]$/u.test(dim) ? " " : ""
       title
     )}
   </h2>
-  {lead && <p class="lead mt-4">{lead}</p>}
+  {lead && (
+    <p class="lead mt-5" data-reveal style="--i:1">
+      {lead}
+    </p>
+  )}
 </header>

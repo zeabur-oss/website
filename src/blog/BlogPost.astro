@@ -58,7 +58,7 @@ const image = `/og/blog/${locale}/${slug}.png`
     publisher: organization,
   }}
 >
-  <header class="wrap hero stagger grid justify-items-start gap-5 pb-0 print:mb-[8mm] print:max-w-none print:gap-[3mm] print:border-b-[0.5pt] print:border-b-[#ccc] print:p-0 print:pb-[5mm]">
+  <header class="wrap hero grid justify-items-start gap-5 pb-0 print:mb-[8mm] print:max-w-none print:gap-[3mm] print:border-b-[0.5pt] print:border-b-[#ccc] print:p-0 print:pb-[5mm]">
     <a
       class="inline-flex items-center gap-1.5 text-sm text-site-muted no-underline hover:text-site-text print:hidden"
       href={blogUrl(locale)}
@@ -99,7 +99,7 @@ const image = `/og/blog/${locale}/${slug}.png`
     </div>
   )}
 
-  <article class="wrap section grid items-start gap-12 before:col-span-full before:mt-10 before:mb-2 grid-cols-[minmax(0,1fr)] min-[1100px]:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] print:max-w-none print:p-0 print:before:hidden">
+  <article class="wrap grid grid-cols-[minmax(0,1fr)] items-start gap-12 pt-12 pb-(--section-space) min-[1100px]:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] print:max-w-none print:p-0">
     <div class="prose">
       <Content components={{ TermNote }} />
     </div>

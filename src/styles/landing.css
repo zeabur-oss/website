@@ -18,6 +18,7 @@ body {
   font-family: var(--font-stack-sans);
   font-size: var(--text-base);
   line-height: 1.6;
+  overflow-wrap: break-word;
   -webkit-font-smoothing: antialiased;
 }
 :lang(zh) body {
@@ -29,7 +30,7 @@ body {
   h2 {
     font-weight: 600;
     text-wrap: balance;
-    letter-spacing: -0.025em;
+    letter-spacing: var(--track-tight);
   }
   :lang(zh) h1,
   :lang(zh) h2 {
@@ -40,30 +41,44 @@ body {
   }
   h2 {
     font-size: var(--fs-h2);
-    line-height: 1.15;
+    line-height: 1;
   }
   :lang(zh) h2 {
-    line-height: 1.3;
+    line-height: var(--lh-tight-zh);
   }
   h3 {
-    font-size: var(--text-lg);
+    font-size: var(--fs-h3);
     font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  :lang(zh) h3 {
     line-height: 1.4;
+    letter-spacing: 0;
   }
 }
 
 @layer components {
   /* Text roles. */
+  .mega {
+    font-size: var(--fs-mega);
+    line-height: var(--lh-tight);
+  }
   .display {
     font-size: var(--fs-display);
-    line-height: 1.06;
+    line-height: var(--lh-tight);
   }
-  :lang(zh) .display {
-    line-height: 1.18;
+  :lang(zh) :is(.mega, .display) {
+    line-height: var(--lh-tight-zh);
+  }
+  /* keep-all holds a run of Han characters together, so the smallest size must fit nine of them. */
+  :lang(zh) .mega {
+    font-size: clamp(2.25rem, 1rem + 5.6vw, 6.25rem);
   }
   .lead {
+    max-width: 38rem;
     font-size: var(--fs-lead);
-    line-height: 1.6;
+    line-height: 1.55;
     color: var(--site-muted);
     text-wrap: pretty;
   }
@@ -71,40 +86,28 @@ body {
     line-height: 1.8;
   }
   .body {
+    max-width: 40rem;
     font-size: var(--text-base);
-    line-height: 1.65;
+    line-height: 1.6;
     color: var(--site-muted);
     text-wrap: pretty;
   }
   :lang(zh) .body {
     line-height: 1.8;
   }
-  /* After zeabur.com's section eyebrow: small mono capitals, spaced out. */
-  .kicker {
-    font-family: var(--font-stack-mono);
-    font-size: var(--text-micro);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--site-faint);
-  }
-  :lang(zh) .kicker {
-    font-family: var(--font-stack-sans);
-    font-size: var(--text-body);
-    letter-spacing: 0.04em;
-  }
   .pill {
     display: inline-flex;
     align-items: center;
-    height: 1.5rem;
-    padding-inline: 0.5rem;
-    border: 1px solid var(--site-line);
+    padding: 0.125rem 0.375rem;
+    border: var(--stroke) solid var(--site-line);
     border-radius: var(--radius-sm);
     font-family: var(--font-stack-mono);
-    font-size: var(--text-micro);
-    color: var(--site-muted);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--site-text);
   }
 
-  /* Twelve columns from 1024px. Every section starts its content on a column edge. */
+  /* Twelve columns from 1024px. Every block starts on a column edge. */
   .grid12 {
     display: grid;
     gap: 2.5rem;
@@ -116,32 +119,92 @@ body {
     }
   }
 
-  /* The first screen, and the sections under it, each after a rule. */
+  /* The first screen, then sections that each start on a hairline. */
   .hero {
-    padding-block: 3rem var(--section-space);
+    --land-overlap: clamp(4.5rem, 11vw, 10rem);
+    padding-block: 2.5rem var(--section-space);
   }
   @media (min-width: 768px) {
     .hero {
-      padding-top: 5.5rem;
+      padding-top: 4.5rem;
     }
   }
   .section {
-    padding-bottom: var(--section-space);
-  }
-  .section::before {
-    content: "";
-    display: block;
-    height: 1px;
-    margin-bottom: var(--section-space);
-    background: var(--site-line);
+    padding-block: var(--section-space);
+    border-top: var(--stroke) solid var(--site-line);
   }
 
-  /* An image sits on a soft panel, the same frame the screenshots use. */
+  /* The page's frame, as on zeabur.com: two rails a little outside the content, a cross where a
+     section's rule meets them, and hatched bands between parts. From 768px. */
+  .frame {
+    --rail-pad: 0px;
+    position: relative;
+  }
+  .band {
+    --rail-pad: 0px;
+  }
+  @media (min-width: 768px) {
+    .frame,
+    .band {
+      --rail-pad: 1.5rem;
+    }
+    .frame::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline: calc(var(--gutter) - var(--rail-pad));
+      border-inline: var(--stroke) solid var(--site-line);
+      pointer-events: none;
+    }
+    .frame.section::after {
+      --cross: var(--site-line-strong);
+      content: "";
+      position: absolute;
+      top: -5px;
+      inset-inline: calc(var(--gutter) - var(--rail-pad) - 5px);
+      height: 11px;
+      background:
+        linear-gradient(var(--cross), var(--cross)) left 5px top 0 / 1px 11px no-repeat,
+        linear-gradient(var(--cross), var(--cross)) left 0 top 5px / 11px 1px no-repeat,
+        linear-gradient(var(--cross), var(--cross)) right 5px top 0 / 1px 11px no-repeat,
+        linear-gradient(var(--cross), var(--cross)) right 0 top 5px / 11px 1px no-repeat;
+      pointer-events: none;
+    }
+  }
+  .band > span {
+    display: block;
+    height: 2.5rem;
+    margin-inline: calc(-1 * var(--rail-pad));
+    border-block: var(--stroke) solid var(--site-line);
+    color: var(--site-faint);
+  }
+  @media (min-width: 768px) {
+    .band > span {
+      border-inline: var(--stroke) solid var(--site-line);
+    }
+  }
+
+  /* A section's number and name, in the left column of the grid. */
+  .index {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    color: var(--site-text);
+  }
+  .index > :first-child {
+    color: var(--site-accent);
+  }
+  /* Text on a violet panel. */
+  .on-violet :is(.index, .index > :first-child, .lead) {
+    color: inherit;
+  }
+
+  /* An image in a plain ruled frame. */
   .art {
     padding: 0.75rem;
-    border: 1px solid var(--site-line);
-    border-radius: var(--radius-xl);
-    background: var(--site-bg-soft);
+    border: var(--stroke) solid var(--site-line);
+    border-radius: var(--radius-lg);
+    background: var(--site-card);
   }
 }
 /* Outside the layer, to win over the frame colour in imagery.css. */
@@ -167,26 +230,9 @@ body {
     background: #fff;
     color: #111;
   }
-  .reveal-ready :is(.stagger > *, [data-reveal]) {
+  .reveal-ready [data-reveal] {
     opacity: 1 !important;
     translate: none !important;
-    filter: none !important;
+    clip-path: none !important;
   }
-}
-
-/* The order each line of the first screen comes in (site.css, motion). */
-.stagger > * {
-  --i: 0;
-}
-.stagger > :nth-child(2) {
-  --i: 1;
-}
-.stagger > :nth-child(3) {
-  --i: 2;
-}
-.stagger > :nth-child(4) {
-  --i: 3;
-}
-.stagger > :nth-child(5) {
-  --i: 4;
 }

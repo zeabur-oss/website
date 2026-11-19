@@ -42,6 +42,7 @@ const copies = new Set(
 export default defineConfig({
   site: siteOrigin,
   trailingSlash: "never",
+  prefetch: { prefetchAll: true, defaultStrategy: "viewport" },
   build: { format: "directory", concurrency: 8 },
   redirects,
   markdown: {

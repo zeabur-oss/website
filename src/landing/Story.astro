@@ -1,0 +1,376 @@
+---
+// Four chapters beside one stage: Zeabur's map of the shop project, drawn after the web app and
+// labelled from its catalogues (scenes/ui.ts). The stage holds still while the chapters scroll
+// past, and plays the chapter in the middle of the screen: a deploy, a crash and its logs, a
+// passkey sign-in, and the cluster after Zeabur is removed. Without scripts it shows the deploy.
+import Icon from "../components/Icon.astro"
+import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { landingCopy } from "./copy.ts"
+import "./story.css"
+import { alts, ui, words } from "./scenes/ui.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = landingCopy[locale]
+const u = ui[locale]
+const zeaburDocs = (slug: string) => docsUrl(locale, "zeabur", slug)
+
+// Positions are in the map's own units, 1000 wide and 620 high.
+const lanes = [
+  { label: u.lanes[0], count: "2/2", x: 30, y: 155, w: 280, h: 320 },
+  { label: u.lanes[1], count: "1/1", x: 370, y: 225, w: 280, h: 190 },
+  { label: u.lanes[2], count: "2/2", x: 700, y: 120, w: 280, h: 380 },
+]
+const services = [
+  {
+    id: "api",
+    icon: "globe",
+    sub: "api.shop.example.com",
+    count: "1/1",
+    kinds: "Deployment · Service",
+    x: 45,
+    y: 185,
+  },
+  {
+    id: "web",
+    icon: "globe",
+    sub: "shop.example.com",
+    count: "1/1",
+    kinds: "Deployment · Ingress",
+    x: 45,
+    y: 325,
+  },
+  {
+    id: "worker",
+    icon: "gear",
+    sub: "ghcr.io/acme/worker:2.11",
+    count: "2/2",
+    kinds: "Deployment",
+    x: 385,
+    y: 255,
+  },
+  {
+    id: "db",
+    icon: "database",
+    sub: "PostgreSQL 17",
+    count: "1/1",
+    kinds: "StatefulSet · PVC",
+    x: 715,
+    y: 150,
+  },
+  {
+    id: "redis",
+    icon: "lightning",
+    sub: "Redis 8",
+    count: "1/1",
+    kinds: "StatefulSet · PVC",
+    x: 715,
+    y: 310,
+  },
+]
+const edges = [
+  { d: "M295 238 C505 238 505 202 715 202" },
+  { d: "M295 238 C340 238 340 308 385 308", guessed: true },
+  { d: "M635 308 C675 308 675 202 715 202", worker: true },
+  { d: "M635 308 C675 308 675 362 715 362", worker: true },
+  { d: "M295 378 C505 378 505 362 715 362", fresh: true },
+]
+const logLines = [
+  "08:14:02 starting worker 2.11.0",
+  "08:14:02 connecting to db:5432",
+  "Error: connect ECONNREFUSED 10.43.12.7:5432",
+  "08:14:03 worker exited with code 1",
+]
+const pct = (n: number, of: number) => `${(n / of) * 100}%`
+const number = (i: number) => String(i + 1).padStart(2, "0")
+const chapters = ["deploy", "trace", "access", "leave"] as const
+const roleLinks = [
+  zeaburDocs("reference/permissions"),
+  productUrl(locale, "identity"),
+  zeaburDocs("reference/security"),
+]
+---
+
+<section class="wrap section frame story" id="story" aria-label={t.deploy.title}>
+  <div class="story-grid">
+    <div class="story-stage" data-step="0">
+      <figure class="story-slab">
+        <div class="app" aria-hidden="true">
+          <div class="app-top">
+            <span class="app-project">shop</span>
+            <span class="app-pill">
+              <span class="dot"></span>
+              {u.failing(1)}
+            </span>
+            <span class="app-fresh">{u.justNow}</span>
+            <span class="app-views">
+              <span class="on">
+                <Icon name="tree-structure" />
+                {u.views[0]}
+              </span>
+              <span>
+                <Icon name="list" />
+                {u.views[1]}
+              </span>
+            </span>
+            <span class="app-add">
+              <Icon name="plus" />
+              {u.add}
+              <Icon name="caret-down" />
+            </span>
+          </div>
+          <div class="app-k8s">
+            <Icon name="cube" />
+            <b>Kubernetes</b>
+            <code>namespace/shop</code>
+            <span class="kept">
+              <Icon name="check" />
+              {words[locale].kept}
+            </span>
+          </div>
+          <div class="app-view">
+            <div class="app-canvas">
+              {lanes.map((lane) => (
+                <div
+                  class="lane"
+                  style={`left:${pct(lane.x, 1000)};top:${pct(lane.y, 620)};width:${pct(lane.w, 1000)};height:${pct(lane.h, 620)}`}
+                >
+                  <span class="lane-label">
+                    {lane.label}
+                    <span class="dot"></span>
+                    {lane.count}
+                  </span>
+                </div>
+              ))}
+              <svg class="edges" viewBox="0 0 1000 620" preserveAspectRatio="none">
+                {edges.map((e) => (
+                  <path
+                    d={e.d}
+                    class:list={[e.guessed && "guessed", e.fresh && "fresh", e.worker && "worker"]}
+                    pathLength={e.fresh ? 1 : undefined}
+                  />
+                ))}
+                {edges
+                  .filter((e) => !e.guessed)
+                  .map((e, i) => (
+                    <path
+                      d={e.d}
+                      class:list={["pulse", e.fresh && "fresh", e.worker && "worker"]}
+                      pathLength="1"
+                      style={`--i:${i}`}
+                    />
+                  ))}
+              </svg>
+              {services.map((s) => (
+                <div
+                  class:list={["card", `card-${s.id}`]}
+                  style={`left:${pct(s.x, 1000)};top:${pct(s.y, 620)}`}
+                >
+                  <span class="card-head">
+                    <Icon name={s.icon} />
+                    <span class="card-name">{s.id}</span>
+                  </span>
+                  <span class="card-sub">
+                    <span class="sub">{s.sub}</span>
+                    <span class="kinds">{s.kinds}</span>
+                  </span>
+                  <span class="card-foot">
+                    <span class="state">
+                      <span class="was">
+                        <span class="dot wait"></span>
+                        {u.building}
+                      </span>
+                      <span class="now">
+                        <span class="dot"></span>
+                        {s.id === "db" || s.id === "redis" ? u.running : u.ready}
+                      </span>
+                      <span class="fail">
+                        <span class="dot bad"></span>
+                        {u.crashing}
+                      </span>
+                      <span class="run">
+                        <span class="dot"></span>
+                        {u.running}
+                      </span>
+                    </span>
+                    <span class="count">
+                      {s.id === "worker" ? (
+                        <>
+                          <span class="ok-count">2/2</span>
+                          <span class="bad-count">1/2</span>
+                        </>
+                      ) : (
+                        s.count
+                      )}
+                    </span>
+                  </span>
+                </div>
+              ))}
+              <div class="card card-zeabur" style={`left:${pct(385, 1000)};top:${pct(470, 620)}`}>
+                <span class="card-head">
+                  <Icon name="cube" />
+                  <span class="card-name">zeabur</span>
+                </span>
+                <span class="card-sub">
+                  <span class="sub">Helm chart · zeabur-system</span>
+                </span>
+                <span class="card-foot">
+                  <span class="gone">{words[locale].removed}</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="app-attention">
+              <span class="title">
+                {u.attention} <span class="n">1</span>
+              </span>
+              <span class="row">
+                <Icon name="gear" />
+                <b>worker</b>
+                <span class="badge">
+                  <span class="dot bad"></span>
+                  {u.crashing}
+                </span>
+                <span class="logs-button">
+                  <Icon name="file-text" />
+                  {u.openLogs}
+                </span>
+              </span>
+            </div>
+
+            <div class="app-logs">
+              <span class="title">{u.logs} · worker</span>
+              {logLines.map((line, i) => (
+                <code class:list={[i === 2 && "err"]}>{line}</code>
+              ))}
+            </div>
+
+            <div class="app-signin">
+              <span class="who">Zeabur Identity</span>
+              <span class="passkey">
+                <Icon name="fingerprint" />
+                {u.passkey}
+              </span>
+              <span class="flow">
+                <span class="chip">Zeabur</span>
+                <span class="chip">kubectl</span>
+                <Icon name="arrow-right" />
+                <span class="chip">Kubernetes RBAC</span>
+              </span>
+            </div>
+          </div>
+        </div>
+        <figcaption class="sr-only">{chapters.map((c) => alts[locale][c]).join(" ")}</figcaption>
+      </figure>
+    </div>
+
+    <ol class="story-chapters">
+      <li data-chapter="0">
+        <p class="index label">
+          <span>01</span>
+          <span>{t.deploy.label}</span>
+        </p>
+        <h2>{t.deploy.title}</h2>
+        <p class="lead">{t.deploy.body}</p>
+      </li>
+      <li data-chapter="1" id="trace">
+        <p class="index label">
+          <span>02</span>
+          <span>{t.trace.label}</span>
+        </p>
+        <h2>{t.trace.title}</h2>
+        <ol class="story-points">
+          {t.trace.steps.map((step, i) => (
+            <li>
+              <span class="label text-site-accent">{number(i)}</span>
+              <h3>{step.title}</h3>
+              <p class="body">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </li>
+      <li data-chapter="2" id="access">
+        <p class="index label">
+          <span>03</span>
+          <span>{t.roles.label}</span>
+        </p>
+        <h2>{t.roles.title}</h2>
+        <ul class="story-points">
+          {t.roles.points.map((p, i) => (
+            <li>
+              <h3>{p.title}</h3>
+              <p class="body">{p.body}</p>
+              <a href={roleLinks[i]} class="more">
+                {p.link}
+                <Icon name="arrow-right" class="go" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </li>
+      <li data-chapter="3" id="leave">
+        <p class="index label">
+          <span>04</span>
+          <span>{t.leave.label}</span>
+        </p>
+        <h2>{t.leave.title}</h2>
+        <p class="lead">{t.leave.body}</p>
+        <a href={zeaburDocs("leave/uninstall")} class="more mt-6">
+          {t.leave.link}
+          <Icon name="arrow-right" class="go" />
+        </a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<script>
+  // The chapter that crosses the reading line sets the stage's scene. The stage goes live (its
+  // first scene plays) once most of it is on screen. Percent root margins resolve against the
+  // viewport width, so the reading line is set in pixels from its height.
+  let observers: IntersectionObserver[] = []
+  let height = 0
+
+  function story() {
+    observers.forEach((o) => o.disconnect())
+    observers = []
+    height = innerHeight
+    const stage = document.querySelector<HTMLElement>(".story-stage")
+    if (!stage) return
+    const chapters = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            stage.dataset.step = (entry.target as HTMLElement).dataset.chapter
+          }
+        }
+      },
+      { rootMargin: `${-Math.round(height * 0.55)}px 0px ${-Math.round(height * 0.43)}px 0px` },
+    )
+    for (const chapter of document.querySelectorAll("[data-chapter]")) chapters.observe(chapter)
+    observers.push(chapters)
+    if (stage.classList.contains("is-live")) return
+    const live = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          stage.classList.add("is-live")
+          live.disconnect()
+        }
+      },
+      { threshold: 0.4 },
+    )
+    live.observe(stage)
+    observers.push(live)
+  }
+
+  document.documentElement.classList.add("story-ready")
+  document.addEventListener("astro:before-swap", (event) => {
+    event.newDocument.documentElement.classList.add("story-ready")
+  })
+  document.addEventListener("astro:page-load", story)
+  addEventListener("resize", () => {
+    if (innerHeight !== height) story()
+  })
+</script>

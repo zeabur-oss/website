@@ -23,11 +23,11 @@ const mid = (i: number) => x(i) + w / 2
 ---
 
 <svg class="imagery imagery-map" viewBox="0 0 640 352" role="img" aria-label={Astro.props.label}>
-  <rect class="img-frame" x="16" y="16" width="608" height="320" rx="6"></rect>
+  <rect class="img-frame" x="16" y="16" width="608" height="320"></rect>
 
   {clients.map((c, i) => (
     <g>
-      <rect class="img-card" x={x(i)} y="36" width={w} height="52" rx="6" />
+      <rect class="img-card" x={x(i)} y="36" width={w} height="52" />
       <text class="img-kind" x={x(i) + 12} y="56">
         {c.kind}
       </text>
@@ -38,7 +38,7 @@ const mid = (i: number) => x(i) + w / 2
     </g>
   ))}
 
-  <rect class="img-box" x="40" y="112" width="424" height="38" rx="6"></rect>
+  <rect class="img-box" x="40" y="112" width="424" height="38"></rect>
   <text class="img-strong img-name" x="52" y="136">
     Zeabur Identity
   </text>
@@ -49,7 +49,7 @@ const mid = (i: number) => x(i) + w / 2
     <path class="img-link" d={`M${mid(i)} 150 V176`} />
   ))}
 
-  <rect class="img-box img-box-accent" x="40" y="176" width="572" height="38" rx="6"></rect>
+  <rect class="img-box img-box-accent" x="40" y="176" width="572" height="38"></rect>
   <text class="img-strong img-name" x="52" y="200">
     kube-apiserver
   </text>
@@ -58,13 +58,13 @@ const mid = (i: number) => x(i) + w / 2
   </text>
   <path class="img-link img-accent-stroke" d="M326 214 V232"></path>
 
-  <rect class="img-group" x="40" y="232" width="572" height="88" rx="6"></rect>
+  <rect class="img-group" x="40" y="232" width="572" height="88"></rect>
   <text class="img-kind" x="52" y="250">
     cluster
   </text>
   {objects.map((o, i) => (
     <g>
-      <rect class="img-card" x={x(i) + 8} y="258" width={w - 16} height="50" rx="6" />
+      <rect class="img-card" x={x(i) + 8} y="258" width={w - 16} height="50" />
       <text class="img-kind" x={x(i) + 18} y="277">
         {o.kind}
       </text>

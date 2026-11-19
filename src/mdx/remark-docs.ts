@@ -119,9 +119,14 @@ function importNode(names: string[]): MdxjsEsm {
 
 /** Screenshots are taken at twice the pixel density, so an AVIF shows at half its size. */
 function halfSize(src: string) {
-  if (!src.startsWith("/docs-assets/") || !src.endsWith(".avif")) return undefined
+  if (!/^\/(docs-assets|blog)\//.test(src) || !src.endsWith(".avif")) return undefined
   const [width, height] = avifFileSize(join(root, "public", src))
   return { width: width / 2, height: height / 2 }
+}
+
+/** Docs and blog images load lazily, at the size they show. */
+function imageProperties(src: string) {
+  return { loading: "lazy", decoding: "async", ...halfSize(src) }
 }
 
 /**
@@ -131,7 +136,15 @@ function halfSize(src: string) {
 export function remarkDocs() {
   return (tree: Root, file: VFile) => {
     const context = contextOf(file)
-    if (!context) return
+    if (!context) {
+      visit(tree, "image", (image: Image) => {
+        image.data = {
+          ...image.data,
+          hProperties: { ...image.data?.hProperties, ...imageProperties(image.url) },
+        }
+      })
+      return
+    }
     const mdx = file.path.endsWith(".mdx")
     visit(tree, (node) => {
       if (node.type === "link" || node.type === "definition") {
@@ -143,8 +156,10 @@ export function remarkDocs() {
       if (node.type !== "image") return
       const image = node as Image
       image.url = rewriteSrc(image.url, context)
-      const hProperties = { loading: "lazy", decoding: "async", ...halfSize(image.url) }
-      image.data = { ...image.data, hProperties: { ...image.data?.hProperties, ...hProperties } }
+      image.data = {
+        ...image.data,
+        hProperties: { ...image.data?.hProperties, ...imageProperties(image.url) },
+      }
     })
     if (!mdx) return
     const used = new Set<string>()

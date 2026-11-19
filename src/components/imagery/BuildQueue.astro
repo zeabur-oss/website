@@ -11,12 +11,12 @@ const waiting = [
 ---
 
 <svg class="imagery imagery-queue" viewBox="0 0 560 232" role="img" aria-label={Astro.props.label}>
-  <rect class="img-frame" x="16" y="16" width="528" height="200" rx="6"></rect>
+  <rect class="img-frame" x="16" y="16" width="528" height="200"></rect>
   <text class="img-kind" x="40" y="44">
     namespace shop
   </text>
 
-  <rect class="img-box img-box-accent" x="40" y="56" width="208" height="128" rx="6"></rect>
+  <rect class="img-box img-box-accent" x="40" y="56" width="208" height="128"></rect>
   <text class="img-strong img-name" x="56" y="80">
     buildkitd
   </text>
@@ -24,24 +24,24 @@ const waiting = [
     1 CPU · 1 GiB
   </text>
   <g class="img-q" style="--i: 0">
-    <rect class="img-card" x="56" y="96" width="176" height="72" rx="6"></rect>
+    <rect class="img-card" x="56" y="96" width="176" height="72"></rect>
     <text class="img-kind img-accent-text" x="70" y="116">
       10:02 · Running
     </text>
     <text class="img-name" x="70" y="136">
       web
     </text>
-    <rect class="img-q-track" x="70" y="150" width="148" height="4" rx="2"></rect>
-    <rect class="img-q-progress" x="70" y="150" width="148" height="4" rx="2"></rect>
+    <rect class="img-q-track" x="70" y="150" width="148" height="4"></rect>
+    <rect class="img-q-progress" x="70" y="150" width="148" height="4"></rect>
   </g>
 
   <text class="img-kind" x="272" y="44">
     waiting · QuotaExceeded
   </text>
-  <rect class="img-q-lane" x="272" y="56" width="248" height="128" rx="6"></rect>
+  <rect class="img-q-lane" x="272" y="56" width="248" height="128"></rect>
   {waiting.map((w, i) => (
     <g class="img-q" style={`--i: ${i + 1}`}>
-      <rect class="img-card" x={w.x} y="96" width="96" height="72" rx="6" />
+      <rect class="img-card" x={w.x} y="96" width="96" height="72" />
       <text class="img-kind" x={w.x + 12} y="116">
         {w.at}
       </text>

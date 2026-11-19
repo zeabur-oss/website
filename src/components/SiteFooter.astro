@@ -2,50 +2,51 @@
 import Logo from "./Logo.astro"
 import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
-import { productIds, productName } from "../lib/products.ts"
-import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { siteNav } from "../lib/nav.ts"
+import { type SiteLocale } from "../lib/urls.ts"
 
 interface Props {
   locale: SiteLocale
 }
 const { locale } = Astro.props
 const t = chrome[locale]
+const nav = siteNav(locale)
 const columns = [
-  {
-    title: t.footer.products,
-    links: productIds.map((id) => ({ href: productUrl(locale, id), text: productName[id] })),
-  },
-  {
-    title: t.nav.docs,
-    links: productIds.map((id) => ({ href: docsUrl(locale, id), text: productName[id] })),
-  },
+  { title: t.nav.product, links: nav.product.flatMap((g) => g.items).filter((i) => i.line) },
+  { title: t.nav.useCases, links: nav.useCases },
   {
     title: t.footer.resources,
     links: [
-      { href: blogUrl(locale), text: t.nav.blog },
-      { href: `${blogUrl(locale)}/rss.xml`, text: "RSS" },
-      { href: githubOrg, text: "GitHub" },
+      { name: t.nav.docs, href: nav.docs },
+      { name: t.nav.security, href: nav.security },
+      { name: t.nav.blog, href: nav.blog },
+      { name: "RSS", href: `${nav.blog}/rss.xml` },
+      { name: "GitHub", href: githubOrg },
     ],
   },
 ]
 ---
 
-<footer class="border-t border-site-line py-12 print:hidden text-sm text-site-muted [view-transition-name:site-footer]">
-  <div class="wrap grid gap-8 md:grid-cols-12 md:gap-x-6">
-    <div class="md:col-[1/5]">
-      <Logo />
-      <p class="mt-3 max-w-[22rem] leading-[1.6]">{t.footer.about}</p>
-      <p class="mt-3 max-w-[22rem] leading-[1.6]">© Zeabur · {t.footer.license}</p>
+<footer class="border-t border-site-line print:hidden [view-transition-name:site-footer]">
+  <div class="wrap grid gap-10 py-12 md:grid-cols-12 md:gap-x-6">
+    <div class="md:col-span-4">
+      <Logo class="h-5" />
+      <p class="mt-4 max-w-[24rem] text-sm leading-[1.6] text-site-muted">{t.footer.about}</p>
+      <p class="label mt-6 text-site-faint">© Zeabur · {t.footer.license}</p>
     </div>
-    <div class="grid grid-cols-3 gap-6 md:col-[7/13]">
+    <div class="grid gap-8 sm:grid-cols-3 md:col-span-8">
       {columns.map(({ title, links }) => (
         <div>
-          <h2 class="mb-3 type-body font-medium tracking-normal text-site-text">{title}</h2>
-          <ul class="m-0 grid list-none gap-2 p-0">
-            {links.map(({ href, text }) => (
+          <h2 class="label mb-3 font-medium tracking-[0.06em] text-site-faint">{title}</h2>
+          <ul class="m-0 grid list-none p-0">
+            {links.map(({ href, name, soon }: { href: string; name: string; soon?: boolean }) => (
               <li>
-                <a href={href} class="text-site-muted no-underline hover:text-site-text">
-                  {text}
+                <a
+                  href={href}
+                  class="inline-flex min-h-8 items-center gap-2 text-sm text-site-text no-underline hover:underline hover:underline-offset-4"
+                >
+                  {name}
+                  {soon && <span class="soon">{t.nav.soon}</span>}
                 </a>
               </li>
             ))}

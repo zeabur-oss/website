@@ -1,6 +1,8 @@
 ---
-// The three ways to start with Zeabur, on the landing and on the Zeabur page.
+// The three ways to start, ordered by how hands-on the reader wants to be, on the home page and on
+// the Zeabur page. Each way names the other two in one line.
 import Icon from "../components/Icon.astro"
+import { chrome } from "../lib/chrome.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
 
@@ -8,30 +10,63 @@ interface Props {
   locale: SiteLocale
 }
 const { locale } = Astro.props
-const start = landingCopy[locale].start
+const t = landingCopy[locale].start
+const soon = chrome[locale].nav.soon
 const zeaburDocs = (slug: string) => docsUrl(locale, "zeabur", slug)
 const ways = [
-  { way: start.server, href: zeaburDocs("get-started/quickstart"), icon: "hard-drives" },
-  { way: start.cluster, href: zeaburDocs("install/existing-cluster"), icon: "cube" },
-  { way: start.laptop, href: zeaburDocs("reference/zeaburctl"), icon: "laptop" },
+  { id: "start-agent", ...t.agent, soon: true },
+  { id: "start-zeatend", ...t.zeatend, soon: true },
+  { id: "start-manual", ...t.manual, soon: false },
+]
+const manual = [
+  { href: zeaburDocs("get-started/quickstart"), text: t.manual.server },
+  { href: zeaburDocs("install/existing-cluster"), text: t.manual.cluster },
+  { href: zeaburDocs("reference/zeaburctl"), text: t.manual.laptop },
 ]
 ---
 
-<ul class="grid gap-x-6 md:grid-cols-3">
-  {ways.map(({ way, href, icon }, i) => (
-    <li data-reveal style={`--i:${i}`}>
-      <a
-        href={href}
-        class="flex flex-col gap-2 border-t border-site-line pt-5 pb-8 text-inherit no-underline transition-[border-color] duration-fast ease-(--ease-site) hover:border-t-site-text"
-      >
-        <Icon name={icon} class="mb-2 size-5 text-site-accent" />
-        <h3>{way.title}</h3>
-        <p class="body flex-1">{way.body}</p>
-        <span class="more mt-2">
-          {way.link}
-          <Icon name="arrow-right" class="go" />
-        </span>
-      </a>
+<ol class="grid border-site-line lg:grid-cols-3 lg:border-l">
+  {ways.map((way, i) => (
+    <li
+      id={way.id}
+      class="flex scroll-mt-24 flex-col gap-4 border-t border-site-line py-8 lg:border-r lg:border-b lg:px-6"
+      data-reveal
+      style={`--i:${i}`}
+    >
+      <p class="flex flex-wrap items-center gap-3">
+        <span class="label text-site-accent">{String(i + 1).padStart(2, "0")}</span>
+        {way.soon && <span class="soon">{soon}</span>}
+      </p>
+      <h3>{way.title}</h3>
+      <p class="body">{way.body}</p>
+      {!way.soon && (
+        <ul class="grid border-t border-site-line">
+          {manual.map(({ href, text }) => (
+            <li class="border-b border-site-line">
+              <a
+                href={href}
+                class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 font-semibold text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
+              >
+                {text}
+                <Icon name="arrow-right" class="size-4" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p class="mt-auto pt-2 text-sm text-site-muted">
+        {t.others}
+        {ways
+          .filter((other) => other.id !== way.id)
+          .map((other, j) => (
+            <>
+              {j > 0 && " · "}
+              <a href={`#${other.id}`} class="text-site-text underline underline-offset-4">
+                {other.title}
+              </a>
+            </>
+          ))}
+      </p>
     </li>
   ))}
-</ul>
+</ol>

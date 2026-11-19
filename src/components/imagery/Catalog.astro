@@ -29,23 +29,14 @@ const y0 = 26
   const chosen = i === 1
   return (
     <g class={cn("img-tile", chosen && "img-chosen")} style={`--i:${i}`}>
-      <rect
-        class={cn("img-box", chosen && "img-box-accent")}
-        x={x}
-        y={y}
-        width={w}
-        height={h}
-        rx="4"
-      />
+      <rect class={cn("img-box", chosen && "img-box-accent")} x={x} y={y} width={w} height={h} />
       <text class="img-kind" x={x + 10} y={y + 20}>
         {capability}
       </text>
       <text class="img-name img-strong" x={x + 10} y={y + 40}>
         {upstream}
       </text>
-      {recommended && (
-        <rect class="img-flag" x={x + w - 16} y={y + h - 18} width="6" height="6" rx="1" />
-      )}
+      {recommended && <rect class="img-flag" x={x + w - 16} y={y + h - 18} width="6" height="6" />}
       <g class="img-check">
         <path
           class={cn("img-tick", chosen && "img-accent-stroke")}

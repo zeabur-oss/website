@@ -1,24 +1,51 @@
 ---
+import { cn } from "cn"
 import Icon from "../components/Icon.astro"
-import Imagery from "../components/imagery/Imagery.astro"
 import Site from "../layouts/Site.astro"
-import { productIcon, productIds, productName } from "../lib/products.ts"
+import { chrome } from "../lib/chrome.ts"
+import { productName, releaseTag } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
-import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
-import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
+import Story from "./Story.astro"
 import SectionHead from "./blocks/SectionHead.astro"
-import { featureCopy, features } from "./features.ts"
-import { shot, sizes } from "./shots.ts"
 
 interface Props {
   locale: SiteLocale
 }
 const { locale } = Astro.props
 const t = landingCopy[locale]
+const c = chrome[locale]
 const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
+
+const entrances = [
+  { ...t.hero.team, href: zeaburDocs("install/existing-cluster") },
+  { ...t.hero.machine, href: zeaburDocs("get-started/quickstart") },
+]
+const members = [
+  {
+    name: productName.zeabur,
+    line: t.members.lines.zeabur,
+    href: productUrl(locale, "zeabur"),
+    status: releaseTag("zeabur"),
+  },
+  { name: "Zeabur Desktop", line: t.members.lines.desktop, soon: true },
+  {
+    name: "Zeabur Zeatend",
+    line: t.members.lines.zeatend,
+    href: `${githubOrg}/zeatend`,
+    soon: true,
+  },
+  ...(["identity", "builder", "catalog"] as const).map((id) => ({
+    name: productName[id],
+    line: t.members.lines[id],
+    href: productUrl(locale, id),
+    status: releaseTag(id),
+  })),
+]
+const number = (i: number) => String(i + 1).padStart(2, "0")
 ---
 
 <Site
@@ -36,152 +63,151 @@ const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
     publisher: organization,
   }}
 >
-  <section class="wrap hero">
-    <div class="grid12">
-      <div class="stagger flex flex-col items-start gap-6 lg:col-[1/9]">
-        <h1 class="display max-w-[14em]">{t.hero.title}</h1>
-        <p class="lead max-w-xl">{t.hero.lead}</p>
-        <div class="mt-2 flex flex-wrap gap-3">
-          <a href={zeaburDocs("get-started/quickstart")} class="button primary">
-            {t.hero.start}
-            <Icon name="arrow-right" class="go" />
-          </a>
-          <a href={`${githubOrg}/zeabur`} class="button">
-            <Icon name="github-logo" />
-            {t.hero.source}
-          </a>
-        </div>
+  <section class="wrap hero frame">
+    <p class="label text-site-muted" data-reveal>
+      {t.hero.meta}
+    </p>
+    <h1 class="mega mt-6 max-w-[11em]" data-reveal="text">
+      {t.hero.title}
+    </h1>
+    <div
+      class="mt-10 flex flex-col items-start gap-8 md:mt-14 lg:max-w-[40rem]"
+      data-reveal
+      style="--i:1"
+    >
+      <p class="lead">{t.hero.lead}</p>
+      <div class="flex flex-wrap gap-3">
+        <a href="#start" class="button primary">
+          {t.hero.start}
+          <Icon name="arrow-down" class="go" />
+        </a>
+        <a href={`${githubOrg}/zeabur`} class="button">
+          <Icon name="github-logo" />
+          {t.hero.source}
+        </a>
       </div>
-      <dl class="lg:col-[9/13] lg:self-end" data-reveal style="--i:3">
-        {t.facts.map((f) => (
-          <div class="border-t border-site-line py-3 last:border-b">
-            <dt class="type-body text-site-faint">{f.label}</dt>
-            <dd class="mt-0.5 text-base leading-[1.55]">{f.value}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-    <div class="mt-12 md:mt-18" data-reveal style="--i:4">
-      <Shot
-        src={shot(locale, "project")}
-        alt={t.shots.project}
-        caption={t.shots.project}
-        sizes={sizes.full}
-        eager
-      />
     </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="projects">
-    <SectionHead id="projects" title={t.projects.title} lead={t.projects.lead} />
-    <ul class="grid gap-6 md:grid-cols-2">
-      {productIds.map((id, i) => (
-        <li data-reveal style={`--i:${i}`}>
+  <Story locale={locale} />
+
+  <div class="wrap band" aria-hidden="true">
+    <span class="bg-hatch"></span>
+  </div>
+
+  <section class="wrap frame" aria-label={t.hero.start}>
+    <ul class="grid md:grid-cols-2">
+      {entrances.map((e, i) => (
+        <li
+          class="border-site-line max-md:not-first:border-t md:not-first:border-l md:first:*:pl-0"
+          data-reveal
+          style={`--i:${i}`}
+        >
           <a
-            href={productUrl(locale, id)}
-            class="group flex h-full flex-col overflow-hidden rounded-xl border border-site-line bg-site-card text-inherit no-underline transition-[border-color,background-color] duration-fast ease-(--ease-site) hover:border-site-line-strong hover:bg-site-card-hover"
+            href={e.href}
+            class="group flex h-full flex-col gap-2 px-4 py-8 -mx-4 text-site-text no-underline transition-colors duration-quick hover:bg-site-hover md:mx-0 md:px-8"
           >
-            <div class="art mx-2 mt-2 rounded-[calc(var(--radius-xl)-0.375rem)]">
-              <Imagery id={id} />
-            </div>
-            <div class="flex flex-1 flex-col gap-2 px-6 pt-5 pb-6">
-              <div class="flex items-center gap-2.5">
-                <span class="mark">
-                  <Icon name={productIcon[id]} />
-                </span>
-                <h3>{productName[id]}</h3>
-              </div>
-              <p class="body flex-1">{t[id].summary}</p>
-              <span class="mt-2 inline-flex items-center gap-1.5 text-sm font-medium">
-                {t.projects.more}
-                <Icon
-                  name="arrow-right"
-                  class="transition-[translate] duration-fast ease-(--ease-site) group-hover:translate-x-[3px]"
-                />
-              </span>
-            </div>
+            <span class="flex items-center justify-between gap-4 text-2xl font-semibold">
+              {e.title}
+              <Icon
+                name="arrow-right"
+                class="size-6 flex-none transition-transform duration-quick group-hover:translate-x-1"
+              />
+            </span>
+            <span class="body opacity-80">{e.body}</span>
+            <span class="label mt-2">{e.link}</span>
           </a>
         </li>
       ))}
     </ul>
   </section>
 
-  <section class="wrap section" aria-labelledby="zeabur-title">
-    <SectionHead id="zeabur-title" title={productName.zeabur} tail={t.zeabur.tagline} />
-    <div class="grid12 items-start">
-      <div class="lg:col-[1/5]" data-reveal>
-        <ul>
-          {t.zeabur.points.map((p) => (
-            <li class="border-t border-site-line py-3.5 leading-[1.65] first:border-t-0 first:pt-0">
-              {p}
-            </li>
-          ))}
-        </ul>
-        <div class="mt-5 flex flex-wrap gap-x-7 gap-y-3">
-          <a href={`${productUrl(locale, "zeabur")}#features`} class="more">
-            {featureCopy[locale].all(features.length)}
-            <Icon name="arrow-right" class="go" />
-          </a>
-          <a href={zeaburDocs()} class="more">
-            {t.zeabur.docs}
-            <Icon name="arrow-right" class="go" />
-          </a>
-        </div>
-      </div>
-      <div class="lg:col-[5/13]" data-reveal style="--i:1">
-        <Shot
-          src={shot(locale, "diagnosis")}
-          alt={t.shots.diagnosis}
-          caption={t.shots.diagnosis}
-          sizes={sizes.wide}
-        />
-      </div>
-    </div>
-    <div class="mt-12 grid gap-10 md:grid-cols-2 md:gap-6">
-      <div data-reveal>
-        <Shot
-          src={shot(locale, "database")}
-          alt={t.shots.database}
-          caption={t.shots.database}
-          sizes={sizes.half}
-        />
-      </div>
-      <div data-reveal style="--i:1">
-        <Shot
-          src={shot(locale, "cluster")}
-          alt={t.shots.cluster}
-          caption={t.shots.cluster}
-          sizes={sizes.half}
-        />
-      </div>
-    </div>
-  </section>
-
-  <section class="wrap section" aria-labelledby="start">
-    <SectionHead id="start" title={t.start.title} lead={t.start.lead} />
+  <section class="wrap section frame" id="start" aria-labelledby="start-title">
+    <SectionHead
+      id="start-title"
+      number="05"
+      kicker={t.start.label}
+      title={t.start.title}
+      lead={t.start.lead}
+    />
     <StartWays locale={locale} />
-    <div class="mt-12 md:mt-18" data-reveal>
-      <Shot
-        src={shot(locale, "installer")}
-        alt={t.shots.installer}
-        caption={t.shots.installer}
-        sizes={sizes.full}
-      />
-    </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="leave">
-    <div class="grid12 items-start">
-      <h2 id="leave" class="lg:col-[1/6]" data-reveal>
-        {t.leave.title}
-      </h2>
-      <div class="lg:col-[7/13]" data-reveal style="--i:1">
-        <p class="lead">{t.leave.body}</p>
-        <a href={zeaburDocs("leave/uninstall")} class="more mt-5">
-          {t.leave.link}
-          <Icon name="arrow-right" class="go" />
-        </a>
-      </div>
-    </div>
+  <section class="wrap section frame" id="members" aria-labelledby="members-title">
+    <SectionHead
+      id="members-title"
+      number="06"
+      kicker={t.members.label}
+      title={t.members.title}
+      lead={t.members.lead}
+    />
+    <ul class="border-b border-site-line">
+      {members.map((m, i) => {
+        const Row = m.href ? "a" : "div"
+        return (
+          <li class="border-t border-site-line" data-reveal style={`--i:${i % 4}`}>
+            <Row
+              href={m.href}
+              class={cn(
+                "-mx-3 grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-x-4 gap-y-1 px-3 py-5 text-site-text no-underline md:grid-cols-[3rem_minmax(0,18rem)_1fr_auto]",
+                m.href && "transition-colors duration-quick hover:bg-site-hover",
+              )}
+            >
+              <span class="label opacity-70">{number(i)}</span>
+              <span class="text-lg font-semibold" translate="no">
+                {m.name}
+              </span>
+              <span class="col-start-2 text-sm leading-[1.6] opacity-80 md:col-start-3 md:row-start-1">
+                {m.line}
+              </span>
+              <span class="col-start-3 row-start-1 md:col-start-4">
+                {m.soon ? (
+                  <span class="soon">{c.nav.soon}</span>
+                ) : (
+                  <span class="label">{m.status}</span>
+                )}
+              </span>
+            </Row>
+          </li>
+        )
+      })}
+    </ul>
+    <p class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3" data-reveal>
+      <span class="body">{t.members.community}</span>
+      <a href={githubOrg} class="more">
+        GitHub
+        <Icon name="arrow-right" class="go" />
+      </a>
+      <a href={blogUrl(locale)} class="more">
+        {c.nav.blog}
+        <Icon name="arrow-right" class="go" />
+      </a>
+    </p>
+  </section>
+  <section class="wrap section frame" id="community" aria-labelledby="community-title">
+    <a
+      href="https://zeabur.com/dc"
+      class="on-violet group grid items-center gap-8 rounded-xl bg-(--violet) p-8 text-white no-underline md:grid-cols-[1fr_auto] md:p-12"
+      data-reveal
+    >
+      <span class="flex flex-col gap-4">
+        <span class="index label">
+          <span>07</span>
+          <span>{t.discord.label}</span>
+        </span>
+        <span id="community-title" class="text-3xl font-semibold md:text-5xl">
+          {t.discord.title}
+        </span>
+        <span class="lead max-w-[36rem]">{t.discord.body}</span>
+      </span>
+      <span class="button justify-self-start">
+        <Icon name="discord-logo" />
+        {t.discord.link}
+        <Icon
+          name="arrow-right"
+          class="go transition-transform duration-quick group-hover:translate-x-1"
+        />
+      </span>
+    </a>
   </section>
 </Site>
