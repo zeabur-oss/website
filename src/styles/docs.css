@@ -76,6 +76,8 @@
   --sl-content-width: 44rem;
   --sl-sidebar-width: 16.5rem;
   --sl-nav-height: var(--header-height);
+  --sl-menu-button-size: 2.25rem;
+  --sl-nav-gap: 0.75rem;
   --sl-text-h1: 2rem;
   --sl-text-h2: 1.5rem;
   --sl-text-h3: 1.1875rem;
@@ -123,8 +125,27 @@ body {
 }
 site-search > button[data-open-modal] {
   border-radius: var(--radius-md);
-  border-color: var(--site-line);
-  background: var(--site-bg-soft);
+}
+@media (max-width: 49.99rem) {
+  site-search > button[data-open-modal] {
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--site-text);
+  }
+  site-search > button[data-open-modal]:hover {
+    background: var(--site-hover);
+  }
+  site-search > button[data-open-modal] svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+@media (min-width: 50rem) {
+  site-search > button[data-open-modal] {
+    border-color: var(--site-line);
+    background: var(--site-bg-soft);
+  }
 }
 
 /* ---------- sidebar ---------- */
@@ -405,24 +426,23 @@ starlight-toc a[aria-current="true"] {
   border-bottom: 0;
 }
 
-/* Starlight's menu button, drawn like the other header buttons. */
+/* Starlight's menu button, drawn like the other header buttons. The bar's bottom border takes
+   1px, so the button centres on the rest. */
 .sl-menu-button.sl-menu-button {
-  width: 2.25rem;
-  height: 2.25rem;
+  top: calc((var(--sl-nav-height) - 1px - var(--sl-menu-button-size)) / 2);
   padding: 0.625rem;
   border: 0;
   border-radius: var(--radius-md);
   background: transparent;
   box-shadow: none;
-  color: var(--site-muted);
-}
-.sl-menu-button.sl-menu-button:hover {
-  background: var(--glass-hover);
   color: var(--site-text);
 }
+.sl-menu-button.sl-menu-button:hover {
+  background: var(--site-hover);
+}
 .sl-menu-button.sl-menu-button svg {
-  width: 1.125rem;
-  height: 1.125rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .sl-markdown-content blockquote:not(:where(.not-content *)) {
