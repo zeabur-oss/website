@@ -1,0 +1,17 @@
+---
+import TemplatePage from "../../../../catalog/TemplatePage.astro"
+import { catalog } from "../../../../catalog/data.ts"
+import { localePaths } from "../../../../lib/urls.ts"
+
+export function getStaticPaths() {
+  return localePaths().flatMap(({ params, props }) =>
+    catalog.templates.map((template) => ({
+      params: { ...params, template: template.id },
+      props: { ...props, template },
+    })),
+  )
+}
+const { locale, template } = Astro.props
+---
+
+<TemplatePage locale={locale} template={template} />

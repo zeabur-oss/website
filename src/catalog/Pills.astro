@@ -1,0 +1,28 @@
+---
+import { cn } from "cn"
+
+interface Props {
+  items: { text: string; href?: string; mono?: boolean }[]
+}
+const { items } = Astro.props
+---
+
+<ul class="flex list-none flex-wrap gap-2 p-0">
+  {items.map(({ text, href, mono }) => {
+    const Tag = href ? "a" : "span"
+    return (
+      <li>
+        <Tag
+          href={href}
+          class={cn(
+            "inline-flex min-h-8 max-w-full items-center rounded-(--radius-sm) [overflow-wrap:anywhere] border border-site-line px-2.5 text-sm text-site-text no-underline",
+            mono && "font-mono",
+            href && "hover:border-site-line-strong hover:text-site-accent",
+          )}
+        >
+          {text}
+        </Tag>
+      </li>
+    )
+  })}
+</ul>

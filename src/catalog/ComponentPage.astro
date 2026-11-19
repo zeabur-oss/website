@@ -1,0 +1,89 @@
+---
+import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
+import Icon from "../components/Icon.astro"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "./copy.ts"
+import { catalog, entryUrl } from "./data.ts"
+import EntryPage from "./EntryPage.astro"
+import Pills from "./Pills.astro"
+import Section from "./Section.astro"
+
+interface Props {
+  locale: SiteLocale
+  component: CatalogComponent
+}
+const { locale, component: x } = Astro.props
+const t = catalogCopy[locale]
+const w = t.component
+const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
+const usedBy = catalog.templates.filter((tpl) => tpl.requires.includes(x.id))
+const needs = x.requires.map((r) =>
+  "component" in r
+    ? {
+        text: componentName.get(r.component) ?? r.component,
+        href: entryUrl(locale, "components", r.component),
+      }
+    : { text: w.capability(r.capability) },
+)
+---
+
+<EntryPage
+  locale={locale}
+  kind="components"
+  entry={x}
+  title={w.pageTitle(x.name)}
+  facts={[{ label: t.facts.capability, value: x.capability }]}
+  glance={[
+    {
+      label: w.defaults.title,
+      value: w.defaults.value(x.defaults.singleNode, x.defaults.multiNode),
+    },
+  ]}
+  actions={[
+    { href: docsUrl(locale, "zeabur", "cluster/components"), text: w.install, icon: "arrow-right" },
+    { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
+  ]}
+>
+  {usedBy.length > 0 && (
+    <Section id="used-by" title={w.usedBy}>
+      <Pills
+        items={usedBy.map((tpl) => ({
+          text: tpl.name,
+          href: entryUrl(locale, "templates", tpl.id),
+        }))}
+      />
+    </Section>
+  )}
+
+  <Section slot="details" id="security" title={t.security}>
+    <p class="body" lang="en">
+      {x.security}
+    </p>
+  </Section>
+
+  <Section slot="details" id="releases" title={w.releases}>
+    <Pills
+      items={x.releases.map((r) => ({
+        text: r.version ? `${r.name} ${r.version}` : r.name,
+        mono: true,
+      }))}
+    />
+    {needs.length > 0 && (
+      <div class="grid gap-3">
+        <h3 class="label text-site-faint">{w.needs}</h3>
+        <Pills items={needs} />
+      </div>
+    )}
+    {usedBy.length > 0 && (
+      <div class="grid gap-3">
+        <h3 class="label text-site-faint">{w.usedBy}</h3>
+        <Pills
+          items={usedBy.map((tpl) => ({
+            text: tpl.name,
+            href: entryUrl(locale, "templates", tpl.id),
+          }))}
+        />
+      </div>
+    )}
+  </Section>
+</EntryPage>

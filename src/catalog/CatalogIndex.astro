@@ -1,0 +1,262 @@
+---
+import { cn } from "cn"
+import { dateFormat } from "../blog/blog.ts"
+import Icon from "../components/Icon.astro"
+import Site from "../layouts/Site.astro"
+import { productIcon, productName } from "../lib/products.ts"
+import { productUrl, siteOrigin, type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "./copy.ts"
+import {
+  browseUrl,
+  catalog,
+  entryUrl,
+  formatMemory,
+  idleMemory,
+  lastTested,
+  type EntryKind,
+} from "./data.ts"
+
+interface Props {
+  locale: SiteLocale
+}
+const { locale } = Astro.props
+const t = catalogCopy[locale]
+const date = dateFormat(locale, "medium")
+const { templates, components } = catalog
+const total = templates.length + components.length
+const title = `${t.title} · ${productName.catalog}`
+const description = t.description(templates.length, components.length)
+
+type Card = {
+  id: string
+  name: string
+  summary: string
+  search: string
+  tested?: string
+  tag?: string
+}
+const card = (
+  x: {
+    id: string
+    name: string
+    summary: Record<SiteLocale, string>
+    tests: { date: string; memoryMiB: number }[]
+  },
+  extra: string[] = [],
+): Card => ({
+  id: x.id,
+  name: x.name,
+  summary: x.summary[locale],
+  search: [x.id, x.name, x.summary[locale], x.summary.en, ...extra].join(" ").toLowerCase(),
+  tested: lastTested(x.tests),
+  memory: idleMemory(x.tests),
+})
+const groups: { kind: EntryKind; title: string; cards: Card[] }[] = [
+  { kind: "templates", title: t.kinds.templates, cards: templates.map((x) => card(x, x.requires)) },
+  {
+    kind: "components",
+    title: t.kinds.components,
+    cards: components.map((x) => card(x, [x.capability])),
+  },
+]
+const kinds = [
+  { value: "", text: t.kinds.all },
+  { value: "templates", text: t.kinds.templates },
+  { value: "components", text: t.kinds.components },
+]
+---
+
+<Site
+  locale={locale}
+  title={title}
+  description={description}
+  section="products"
+  image={`/og/catalog/${locale}/index.png`}
+  schema={{
+    "@type": "CollectionPage",
+    name: title,
+    description,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: total,
+      itemListElement: groups
+        .flatMap((g) => g.cards.map((c) => ({ ...c, kind: g.kind })))
+        .map((c, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: c.name,
+          url: `${siteOrigin}${entryUrl(locale, c.kind, c.id)}`,
+        })),
+    },
+  }}
+>
+  <section class="wrap hero pb-10 md:pb-14">
+    <a
+      href={productUrl(locale, "catalog")}
+      class="label inline-flex items-center gap-2.5 text-site-muted no-underline hover:text-site-text"
+    >
+      <Icon name={productIcon.catalog} class="size-4" />
+      <span translate="no">{productName.catalog}</span>
+      <span class="pill">{catalog.ref}</span>
+    </a>
+    <h1 class="display mt-6">{t.title}</h1>
+    <p class="lead mt-6">{description}</p>
+  </section>
+
+  <section class="wrap section pt-10 md:pt-14" aria-label={t.title}>
+    <search class="block">
+      <form method="get" action={browseUrl(locale)} class="grid gap-4" data-catalog-search>
+        <div class="flex flex-col gap-3 md:flex-row md:items-center">
+          <label class="relative block w-full md:max-w-md">
+            <span class="sr-only">{t.search}</span>
+            <Icon
+              name="magnifying-glass"
+              class="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-site-faint"
+            />
+            <input
+              type="search"
+              name="q"
+              placeholder={t.placeholder}
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="none"
+              spellcheck="false"
+              enterkeyhint="search"
+              class="h-11 w-full rounded-(--radius-lg) border border-site-line-strong bg-site-card pr-3 pl-10 text-base text-site-text placeholder:text-site-faint focus:border-site-accent focus:outline-none"
+            />
+          </label>
+          <fieldset class="m-0 flex flex-wrap gap-1 border-0 p-0">
+            <legend class="sr-only">{t.kinds.all}</legend>
+            {kinds.map((k) => (
+              <label class="cursor-pointer">
+                <input
+                  type="radio"
+                  name="kind"
+                  value={k.value}
+                  checked={k.value === ""}
+                  class="peer sr-only"
+                />
+                <span class="inline-flex h-11 items-center rounded-(--radius-lg) border border-transparent px-3.5 text-sm text-site-muted peer-checked:border-site-line-strong peer-checked:bg-site-card peer-checked:text-site-text peer-focus-visible:outline-2 peer-focus-visible:outline-site-accent hover:text-site-text">
+                  {k.text}
+                </span>
+              </label>
+            ))}
+          </fieldset>
+          <p
+            role="status"
+            class="label text-site-faint md:ml-auto"
+            data-all={t.shownAll}
+            data-some={t.shownSome}
+            data-total={total}
+          >
+            {t.shownAll.replace("{total}", String(total))}
+          </p>
+        </div>
+      </form>
+    </search>
+
+    {groups.map((g) => (
+      <div class="mt-12 first-of-type:mt-10" data-group={g.kind}>
+        <h2 class="label flex items-baseline gap-2 text-site-faint">
+          {g.title}
+          <span class="tabular-nums" data-count>
+            {g.cards.length}
+          </span>
+        </h2>
+        <ul class="mt-4 grid list-none gap-3 p-0 md:grid-cols-2 xl:grid-cols-3">
+          {g.cards.map((c) => (
+            <li data-search={c.search}>
+              <a
+                href={entryUrl(locale, g.kind, c.id)}
+                class="group flex h-full flex-col gap-3 rounded-(--radius-lg) border border-site-line bg-site-card p-4 text-inherit no-underline transition-colors duration-(--transition-duration-quick) ease-(--ease-site) hover:border-site-line-strong hover:bg-site-card-hover sm:p-5"
+              >
+                <span class="grid gap-1.5">
+                  <span class="font-semibold group-hover:text-site-accent" translate="no">
+                    {c.name}
+                  </span>
+                  <span class="text-sm leading-[1.6] text-site-muted zh:leading-[1.8]">
+                    {c.summary}
+                  </span>
+                </span>
+                <span class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+                  <span
+                    class={cn(
+                      "inline-flex items-center gap-1.5",
+                      c.tested ? "text-site-accent" : "text-site-faint",
+                    )}
+                  >
+                    {c.tested && <Icon name="seal-check" weight="fill" class="size-3.5" />}
+                    {c.tested
+                      ? t.tested(date.format(new Date(`${c.tested}T12:00:00Z`)))
+                      : t.untested}
+                  </span>
+                  {c.memory !== undefined && (
+                    <span class="text-site-muted">{t.glance.card(formatMemory(c.memory))}</span>
+                  )}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+    <p class="lead mt-8" hidden data-none>
+      {t.none}
+    </p>
+  </section>
+</Site>
+
+<script>
+  function setUp() {
+    const form = document.querySelector<HTMLFormElement>("[data-catalog-search]")
+    if (!form) return
+    const input = form.querySelector<HTMLInputElement>("input[name=q]")!
+    const status = form.querySelector<HTMLElement>("[role=status]")!
+    const none = document.querySelector<HTMLElement>("[data-none]")!
+    const groups = [...document.querySelectorAll<HTMLElement>("[data-group]")]
+    const total = status.dataset.total!
+
+    const apply = () => {
+      const kind = new FormData(form).get("kind") || ""
+      const words = input.value.toLowerCase().trim().split(/\s+/).filter(Boolean)
+      let shown = 0
+      for (const group of groups) {
+        let count = 0
+        for (const item of group.querySelectorAll<HTMLElement>("li[data-search]")) {
+          const match = words.every((w) => item.dataset.search!.includes(w))
+          item.hidden = !match
+          if (match) count++
+        }
+        group.querySelector("[data-count]")!.textContent = String(count)
+        group.hidden = count === 0 || (kind !== "" && group.dataset.group !== kind)
+        if (!group.hidden) shown += count
+      }
+      none.hidden = shown > 0
+      const line = words.length || kind ? status.dataset.some! : status.dataset.all!
+      status.textContent = line.replace("{count}", String(shown)).replace("{total}", total)
+      const url = new URL(location.href)
+      for (const [key, value] of [
+        ["q", input.value.trim()],
+        ["kind", String(kind)],
+      ]) {
+        if (value) url.searchParams.set(key!, value)
+        else url.searchParams.delete(key!)
+      }
+      history.replaceState(history.state, "", url)
+    }
+
+    const params = new URLSearchParams(location.search)
+    input.value = params.get("q") ?? ""
+    const kind = params.get("kind") ?? ""
+    for (const radio of form.querySelectorAll<HTMLInputElement>("input[name=kind]")) {
+      radio.checked = radio.value === kind
+    }
+    form.addEventListener("input", apply)
+    form.addEventListener("submit", (event) => {
+      event.preventDefault()
+      apply()
+    })
+    if (input.value || kind) apply()
+  }
+  document.addEventListener("astro:page-load", setUp)
+</script>

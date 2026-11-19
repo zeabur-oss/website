@@ -7,6 +7,8 @@ import { productIcon, productName, releaseTag, type ProductId } from "../lib/pro
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "../catalog/copy.ts"
+import { browseUrl } from "../catalog/data.ts"
 import { landingCopy } from "./copy.ts"
 import { builderExample, catalogExample, identityExample } from "./examples.ts"
 import { productCopy, sectionLabels } from "./products.ts"
@@ -148,6 +150,12 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           {t.docs}
           <Icon name="arrow-right" class="go" />
         </a>
+        {id === "catalog" && (
+          <a href={browseUrl(locale)} class="button">
+            <Icon name="squares-four" />
+            {catalogCopy[locale].browse}
+          </a>
+        )}
         <a href={repo} class="button">
           <Icon name="github-logo" />
           {t.source}
