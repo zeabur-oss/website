@@ -6,7 +6,7 @@ import Site from "../layouts/Site.astro"
 import { productIcon, productName, releaseTag, type ProductId } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "../catalog/copy.ts"
 import { browseUrl } from "../catalog/data.ts"
 import { landingCopy } from "./copy.ts"
@@ -57,7 +57,7 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
 const l = sectionLabels[locale]
 const number = (i: number) => String(i + 1).padStart(2, "0")
 // Chinese runs the two halves of a title together; other languages put a space between them.
-const gap = locale === "en" ? " " : ""
+const gap = localeInfo(locale).titleGap
 
 // The story: Zeabur walks through its jobs on its own screens, the others through their steps.
 const story =

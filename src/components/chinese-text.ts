@@ -1,3 +1,5 @@
+import { localeInfo } from "../lib/urls.ts"
+
 const segmenters = new Map<string, Intl.Segmenter>()
 
 /**
@@ -5,10 +7,10 @@ const segmenters = new Map<string, Intl.Segmenter>()
  * Consecutive single-character Han segments form one group (e.g. 叢 + 集).
  */
 export function chineseTextSegments(text: string, locale: string): string[] {
-  if (locale === "en" || !/\p{Script=Han}/u.test(text)) return [text]
+  if (localeInfo(locale).han === null || !/\p{Script=Han}/u.test(text)) return [text]
   let segmenter = segmenters.get(locale)
   if (!segmenter) {
-    segmenter = new Intl.Segmenter(locale.toLowerCase() === "zh-cn" ? "zh-CN" : "zh-TW", {
+    segmenter = new Intl.Segmenter(localeInfo(locale).han === "sc" ? "zh-CN" : "zh-TW", {
       granularity: "word",
     })
     segmenters.set(locale, segmenter)

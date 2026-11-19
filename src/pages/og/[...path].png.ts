@@ -9,9 +9,10 @@ import { chrome } from "../../lib/chrome.ts"
 import { productIds, productName, type ProductId } from "../../lib/products.ts"
 import { renderOg, type OgCard } from "../../lib/og.ts"
 import { summary } from "../../lib/seo.ts"
-import { locales, type SiteLocale } from "../../lib/urls.ts"
+import { localeInfo, locales, type SiteLocale } from "../../lib/urls.ts"
 
-const han = (locale: string) => (locale === "zh-CN" ? "sc" : "tc")
+// English cards use the traditional Han font.
+const han = (locale: string) => localeInfo(locale).han ?? "tc"
 
 const notFound: Record<SiteLocale, { title: string; sub: string }> = {
   en: {
