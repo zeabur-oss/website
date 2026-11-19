@@ -1,5 +1,6 @@
 ---
 import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
+import Icon from "../components/Icon.astro"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl } from "./data.ts"
@@ -24,10 +25,6 @@ const needs = x.requires.map((r) =>
       }
     : { text: w.capability(r.capability) },
 )
-const defaults = [
-  { label: w.defaults.singleNode, state: x.defaults.singleNode },
-  { label: w.defaults.multiNode, state: x.defaults.multiNode },
-]
 ---
 
 <EntryPage
@@ -36,29 +33,35 @@ const defaults = [
   entry={x}
   title={w.pageTitle(x.name)}
   facts={[{ label: t.facts.capability, value: x.capability }]}
+  glance={[
+    {
+      label: w.defaults.title,
+      value: w.defaults.value(x.defaults.singleNode, x.defaults.multiNode),
+    },
+  ]}
   actions={[
     { href: docsUrl(locale, "zeabur", "cluster/components"), text: w.install, icon: "arrow-right" },
-    { href: docsUrl(locale, "catalog", "reference/components"), text: w.list, icon: "list" },
+    { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
-  <Section id="defaults" title={w.defaults.title}>
-    <dl class="grid gap-x-6 sm:grid-cols-2">
-      {defaults.map((d) => (
-        <div class="flex items-baseline justify-between gap-4 border-t border-site-line py-4">
-          <dt class="text-site-muted">{d.label}</dt>
-          <dd class="m-0 font-medium">{w.state[d.state]}</dd>
-        </div>
-      ))}
-    </dl>
-  </Section>
+  {usedBy.length > 0 && (
+    <Section id="used-by" title={w.usedBy}>
+      <Pills
+        items={usedBy.map((tpl) => ({
+          text: tpl.name,
+          href: entryUrl(locale, "templates", tpl.id),
+        }))}
+      />
+    </Section>
+  )}
 
-  <Section id="security" title={t.security}>
+  <Section slot="details" id="security" title={t.security}>
     <p class="body" lang="en">
       {x.security}
     </p>
   </Section>
 
-  <Section id="releases" title={w.releases}>
+  <Section slot="details" id="releases" title={w.releases}>
     <Pills
       items={x.releases.map((r) => ({
         text: r.version ? `${r.name} ${r.version}` : r.name,

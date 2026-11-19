@@ -1,5 +1,6 @@
 ---
 import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
+import Icon from "../components/Icon.astro"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl } from "./data.ts"
@@ -25,14 +26,10 @@ const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
   facts={[{ label: t.facts.version, value: x.version }]}
   actions={[
     { href: docsUrl(locale, "zeabur", "deploy/templates"), text: w.deploy, icon: "arrow-right" },
-    {
-      href: docsUrl(locale, "catalog", "get-started/deploy-a-template"),
-      text: w.deployCli,
-      icon: "terminal",
-    },
+    { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
-  <Section id="security" title={t.security}>
+  <Section slot="details" id="security" title={t.security}>
     <p class="body">{x.security.summary[locale]}</p>
     {x.security.risks.length > 0 && (
       <div>
@@ -55,7 +52,7 @@ const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
     )}
   </Section>
 
-  <Section id="needs" title={w.needs.title} body={w.needs.body}>
+  <Section slot="details" id="needs" title={w.needs.title} body={w.needs.body}>
     {x.requires.length > 0 && (
       <Pills
         items={x.requires.map((id) => ({
@@ -68,5 +65,9 @@ const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
       <h3 class="label text-site-faint">{w.runs}</h3>
       <Pills items={x.services.map((text) => ({ text, mono: true }))} />
     </div>
+    <a href={docsUrl(locale, "catalog", "get-started/deploy-a-template")} class="more">
+      <Icon name="terminal" />
+      {w.deployCli}
+    </a>
   </Section>
 </EntryPage>

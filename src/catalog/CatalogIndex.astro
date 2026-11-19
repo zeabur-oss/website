@@ -6,7 +6,15 @@ import Site from "../layouts/Site.astro"
 import { productIcon, productName } from "../lib/products.ts"
 import { productUrl, siteOrigin, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
-import { browseUrl, catalog, entryUrl, lastTested, type EntryKind } from "./data.ts"
+import {
+  browseUrl,
+  catalog,
+  entryUrl,
+  formatMemory,
+  idleMemory,
+  lastTested,
+  type EntryKind,
+} from "./data.ts"
 
 interface Props {
   locale: SiteLocale
@@ -28,23 +36,27 @@ type Card = {
   tag?: string
 }
 const card = (
-  x: { id: string; name: string; summary: Record<SiteLocale, string>; tests: { date: string }[] },
+  x: {
+    id: string
+    name: string
+    summary: Record<SiteLocale, string>
+    tests: { date: string; memoryMiB: number }[]
+  },
   extra: string[] = [],
-  tag?: string,
 ): Card => ({
   id: x.id,
   name: x.name,
   summary: x.summary[locale],
   search: [x.id, x.name, x.summary[locale], x.summary.en, ...extra].join(" ").toLowerCase(),
   tested: lastTested(x.tests),
-  tag,
+  memory: idleMemory(x.tests),
 })
 const groups: { kind: EntryKind; title: string; cards: Card[] }[] = [
   { kind: "templates", title: t.kinds.templates, cards: templates.map((x) => card(x, x.requires)) },
   {
     kind: "components",
     title: t.kinds.components,
-    cards: components.map((x) => card(x, [x.capability], x.capability)),
+    cards: components.map((x) => card(x, [x.capability])),
   },
 ]
 const kinds = [
@@ -178,7 +190,9 @@ const kinds = [
                       ? t.tested(date.format(new Date(`${c.tested}T12:00:00Z`)))
                       : t.untested}
                   </span>
-                  {c.tag && <span class="font-mono text-site-faint">{c.tag}</span>}
+                  {c.memory !== undefined && (
+                    <span class="text-site-muted">{t.glance.card(formatMemory(c.memory))}</span>
+                  )}
                 </span>
               </a>
             </li>

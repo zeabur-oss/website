@@ -1,6 +1,8 @@
 // The catalog list (/catalog/browse) and the page of each template and component.
 import type { SiteLocale } from "../lib/urls.ts"
 
+type Default = "recommended" | "optional"
+
 type CatalogCopy = {
   title: string
   description: (templates: number, components: number) => string
@@ -16,12 +18,31 @@ type CatalogCopy = {
   back: string
   tested: (date: string) => string
   untested: string
+  /** The facts someone choosing a server reads first. */
+  glance: {
+    memory: string
+    memoryValue: (amount: string) => string
+    memoryNote: string
+    cpu: string
+    cpus: (names: string[]) => string
+    card: (amount: string) => string
+  }
+  details: string
+  /** The button to the project's own site. */
+  about: (name: string) => string
   tests: {
     title: string
     body: string
     cols: [string, string, string, string, string]
   }
-  facts: { version: string; license: string; homepage: string; source: string; capability: string }
+  facts: {
+    title: string
+    version: string
+    license: string
+    homepage: string
+    source: string
+    capability: string
+  }
   security: string
   template: {
     kind: string
@@ -37,8 +58,7 @@ type CatalogCopy = {
     pageTitle: (name: string) => string
     install: string
     list: string
-    defaults: { title: string; singleNode: string; multiNode: string }
-    state: { recommended: string; optional: string }
+    defaults: { title: string; value: (oneMachine: Default, severalMachines: Default) => string }
     needs: string
     capability: (name: string) => string
     releases: string
@@ -61,12 +81,24 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     back: "All templates and components",
     tested: (date) => `Tested ${date}`,
     untested: "No CI run in this release",
+    glance: {
+      memory: "Memory when idle",
+      memoryValue: (amount) => `about ${amount}`,
+      memoryNote:
+        "CI measures it once the app is ready and before any traffic. Leave room for more.",
+      cpu: "Tested on",
+      cpus: (names) => `${names.join(" and ")} servers`,
+      card: (amount) => `${amount} idle`,
+    },
+    details: "Technical details",
+    about: (name) => `About ${name}`,
     tests: {
       title: "Tested in CI",
       body: "CI installs these exact files on a new cluster, waits until they are ready, then records the idle memory.",
       cols: ["Distribution", "Platform", "Kubernetes", "Passed", "Idle memory"],
     },
     facts: {
+      title: "This release",
       version: "Version",
       license: "Licence",
       homepage: "Homepage",
@@ -93,10 +125,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       list: "Every component",
       defaults: {
         title: "Installed by default",
-        singleNode: "Single node",
-        multiNode: "Multi-node",
+        value: (one, several) =>
+          one === several
+            ? { recommended: "Recommended", optional: "Optional" }[one]
+            : `${one === "recommended" ? "Recommended" : "Optional"} on one machine, ${several} on several`,
       },
-      state: { recommended: "Recommended", optional: "Optional" },
       needs: "Needs",
       capability: (name) => `any ${name} component`,
       releases: "What it installs",
@@ -117,12 +150,23 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     back: "所有範本和元件",
     tested: (date) => `${date} 測試通過`,
     untested: "這個版本沒有 CI 測試紀錄",
+    glance: {
+      memory: "閒置時的記憶體",
+      memoryValue: (amount) => `約 ${amount}`,
+      memoryNote: "CI 在應用程式就緒、還沒有流量時量到的。實際使用會更多，記得留點空間。",
+      cpu: "測試過的伺服器",
+      cpus: (names) => names.join(" 和 "),
+      card: (amount) => `閒置 ${amount}`,
+    },
+    details: "技術細節",
+    about: (name) => `認識 ${name}`,
     tests: {
       title: "CI 測試結果",
       body: "CI 會把這些檔案原封不動裝到新的叢集，等到它就緒，再記下閒置時的記憶體用量。",
       cols: ["發行版", "平台", "Kubernetes", "通過日期", "閒置記憶體"],
     },
     facts: {
+      title: "這個版本",
       version: "版本",
       license: "授權",
       homepage: "官方網站",
@@ -147,8 +191,13 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       pageTitle: (name) => `在自己的 Kubernetes 叢集安裝 ${name} · Zeabur Catalog`,
       install: "用 Zeabur 安裝",
       list: "所有元件",
-      defaults: { title: "預設是否安裝", singleNode: "單節點", multiNode: "多節點" },
-      state: { recommended: "建議安裝", optional: "選用" },
+      defaults: {
+        title: "預設是否安裝",
+        value: (one, several) => {
+          const word = { recommended: "建議安裝", optional: "選用" }
+          return one === several ? word[one] : `一台機器${word[one]}，多台機器${word[several]}`
+        },
+      },
       needs: "需要",
       capability: (name) => `任一個提供 ${name} 的元件`,
       releases: "會安裝的內容",
@@ -169,12 +218,23 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     back: "所有模板和组件",
     tested: (date) => `${date} 测试通过`,
     untested: "这个版本没有 CI 测试记录",
+    glance: {
+      memory: "空闲时的内存",
+      memoryValue: (amount) => `约 ${amount}`,
+      memoryNote: "CI 在应用就绪、还没有流量时测到的。实际使用会更多，记得留点余量。",
+      cpu: "测试过的服务器",
+      cpus: (names) => names.join(" 和 "),
+      card: (amount) => `空闲 ${amount}`,
+    },
+    details: "技术细节",
+    about: (name) => `了解 ${name}`,
     tests: {
       title: "CI 测试结果",
       body: "CI 会把这些文件原样装到新的集群，等到它就绪，再记下空闲时的内存用量。",
       cols: ["发行版", "平台", "Kubernetes", "通过日期", "空闲内存"],
     },
     facts: {
+      title: "这个版本",
       version: "版本",
       license: "许可",
       homepage: "官方网站",
@@ -199,8 +259,13 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       pageTitle: (name) => `在自己的 Kubernetes 集群安装 ${name} · Zeabur Catalog`,
       install: "用 Zeabur 安装",
       list: "所有组件",
-      defaults: { title: "默认是否安装", singleNode: "单节点", multiNode: "多节点" },
-      state: { recommended: "建议安装", optional: "可选" },
+      defaults: {
+        title: "默认是否安装",
+        value: (one, several) => {
+          const word = { recommended: "建议安装", optional: "可选" }
+          return one === several ? word[one] : `一台机器${word[one]}，多台机器${word[several]}`
+        },
+      },
       needs: "需要",
       capability: (name) => `任一个提供 ${name} 的组件`,
       releases: "会安装的内容",
