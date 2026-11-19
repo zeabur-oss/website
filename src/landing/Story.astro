@@ -328,9 +328,17 @@ const roleLinks = [
 
 <script>
   // The chapter that crosses the reading line sets the stage's scene. The stage goes live (its
-  // first scene plays) once most of it is on screen.
-  const stage = document.querySelector<HTMLElement>(".story-stage")
-  if (stage) {
+  // first scene plays) once most of it is on screen. Percent root margins resolve against the
+  // viewport width, so the reading line is set in pixels from its height.
+  let observers: IntersectionObserver[] = []
+  let height = 0
+
+  function story() {
+    observers.forEach((o) => o.disconnect())
+    observers = []
+    height = innerHeight
+    const stage = document.querySelector<HTMLElement>(".story-stage")
+    if (!stage) return
     const chapters = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -339,9 +347,11 @@ const roleLinks = [
           }
         }
       },
-      { rootMargin: "-55% 0px -43% 0px" },
+      { rootMargin: `${-Math.round(height * 0.55)}px 0px ${-Math.round(height * 0.43)}px 0px` },
     )
     for (const chapter of document.querySelectorAll("[data-chapter]")) chapters.observe(chapter)
+    observers.push(chapters)
+    if (stage.classList.contains("is-live")) return
     const live = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
@@ -352,6 +362,15 @@ const roleLinks = [
       { threshold: 0.4 },
     )
     live.observe(stage)
-    document.documentElement.classList.add("story-ready")
+    observers.push(live)
   }
+
+  document.documentElement.classList.add("story-ready")
+  document.addEventListener("astro:before-swap", (event) => {
+    event.newDocument.documentElement.classList.add("story-ready")
+  })
+  document.addEventListener("astro:page-load", story)
+  addEventListener("resize", () => {
+    if (innerHeight !== height) story()
+  })
 </script>
