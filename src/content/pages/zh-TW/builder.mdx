@@ -1,0 +1,60 @@
+---
+status: released
+lines:
+  nav: 推送 commit，拿到映像檔 digest
+  landing: 用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。
+meta:
+  title: Zeabur Builder：程式碼推上 GitHub，就自動部署
+  description: Zeabur 裡負責把 Git 儲存庫變成映像檔的部分。自動判斷程式碼用的語言，建置不了時可以讓 AI 寫 Dockerfile，分支一更新就重新建置，建置變數以 BuildKit secret 傳遞。
+titleDim: 程式碼推上 GitHub，
+title: Zeabur 就會部署
+sub: 跟其他部署平台一樣：在專案選擇「新增」→「從 Git 部署」。Zeabur Builder 會判斷程式碼用的語言、建置映像檔，之後分支一有更新就重新建置。
+docs: 閱讀 Builder 文件
+source: GitHub 上的原始碼
+highlights:
+  titleDim: 不用寫 Dockerfile，
+  title: 推送後就換上新版本
+  items:
+    - tag: railpack
+      title: 自動判斷語言
+      body: 用 Railpack 建置 Node.js、Python、Go、PHP、Ruby、Java、Rust 等應用程式和靜態網站，不需要 Dockerfile。儲存庫裡有 Dockerfile 時，就照它建置。
+    - tag: agent
+      title: Railpack 建置不了，就讓 AI 寫 Dockerfile
+      body: 沒有 Dockerfile、Railpack 也建置不起來時，可以改用 agent 建置方式：你選的模型會讀程式碼、寫 Dockerfile 並試著建置，建置成功才交給你。Anthropic、OpenAI，或自己架的 Ollama、vLLM 都能用，API 金鑰用你自己的。
+    - tag: push
+      title: 分支更新就重新建置
+      body: Zeabur Builder 每分鐘檢查一次分支。推送後就建置新版本，服務接著換成新版本。
+how:
+  titleDim: 單獨使用時，
+  title: 從 commit 到映像檔 digest
+  steps:
+    - title: 解析 ref
+      body: controller 透過 Git 的 smart HTTP 或 SSH，把 Build 的 ref 解析成 commit。
+    - title: 建置
+      body: 新的 commit 會建立一個 BuildRun 和一個 Job。Job 對同一個 Namespace 的 buildkitd 執行 buildctl，不需要特權。
+    - title: 推送
+      body: 映像檔推上 registry，digest 和標籤寫進 BuildRun 和 Build。
+details:
+  title: 什麼時候會建置
+  cols:
+    - 觸發方式
+    - 怎麼運作
+    - 需要設定
+  rows:
+    - - 輪詢
+      - controller 每分鐘向 Git 伺服器查詢一次 ref
+      - 不用設定，spec.triggers.pollInterval 可調整
+    - - Push webhook
+      - GitHub、GitLab、Gitea、Forgejo、Bitbucket 和 Standard Webhooks
+      - 在 chart 啟用 webhooks，每個 Build 一個 secret
+    - - GitHub App
+      - 私有儲存庫用短效的 installation token，每個 commit 都有 commit status
+      - 叢集管理員建立一次 App
+    - - 手動
+      - 改 builder.zeabur.com/rebuild annotation 重新建置目前的 commit
+      - spec.suspend 可停止自動建置
+start:
+  title: 一個 Build，對應一個儲存庫
+  sub: 單獨使用時，一個 Build 寫出 Git 儲存庫和建置方式。沒寫 ref 時跟著預設分支，status.resolvedRef 會寫出是哪一個分支。
+  cta: 閱讀 Builder 文件
+---

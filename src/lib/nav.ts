@@ -1,7 +1,7 @@
 // The site's navigation, shared by the header, its small-screen menu and the footer.
 import { chrome } from "./chrome.ts"
-import { productName } from "./products.ts"
-import { blogUrl, docsUrl, homeUrl, productUrl, type SiteLocale } from "./urls.ts"
+import { sitePages, type NavGroup, type SitePage } from "./site-pages.ts"
+import { blogUrl, docsUrl, homeUrl, type SiteLocale } from "./urls.ts"
 
 type NavItem = {
   name: string
@@ -12,55 +12,34 @@ type NavItem = {
   soon?: boolean
 }
 
-type NavGroup = { title: string; items: NavItem[] }
+type NavSection = { title: string; items: NavItem[] }
 
 /** A part of the home page, from any page of the site. */
 const homeSection = (locale: string, id: string) =>
   `${homeUrl(locale) === "/" ? "" : homeUrl(locale)}/#${id}`
 
-export function siteNav(locale: SiteLocale) {
+export async function siteNav(locale: SiteLocale) {
   const t = chrome[locale]
   const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
-  const product: NavGroup[] = [
-    {
-      title: t.groups.manage,
-      items: [
-        {
-          name: productName.zeabur,
-          line: t.products.zeabur.line,
-          href: productUrl(locale, "zeabur"),
-          icon: "squares-four",
-        },
-        {
-          name: "Zeabur Desktop",
-          line: t.members.desktop,
-          href: homeSection(locale, "members"),
-          icon: "desktop",
-          soon: true,
-        },
-      ],
-    },
+  const pages = await sitePages(locale)
+  const item = (p: SitePage): NavItem => ({
+    name: p.name,
+    line: p.navLine,
+    href: p.href ?? homeSection(locale, "members"),
+    icon: p.icon,
+    soon: !p.released,
+  })
+  const group = (g: NavGroup) => pages.filter((p) => p.group === g).map(item)
+  const product: NavSection[] = [
+    { title: t.groups.manage, items: group("manage") },
     {
       title: t.groups.install,
       items: [
-        {
-          name: "Zeabur Zeatend",
-          line: t.members.zeatend,
-          href: homeSection(locale, "members"),
-          icon: "terminal-window",
-          soon: true,
-        },
+        ...group("install"),
         { name: t.groups.allInstalls, href: homeSection(locale, "start"), icon: "arrow-down" },
       ],
     },
-    {
-      title: t.groups.components,
-      items: (["identity", "builder", "catalog"] as const).map((id) => ({
-        name: productName[id],
-        line: t.products[id].line,
-        href: productUrl(locale, id),
-      })),
-    },
+    { title: t.groups.components, items: group("components") },
   ]
   const useCases: NavItem[] = [
     { ...t.useCases.team, href: zeaburDocs("install/existing-cluster"), icon: "users-three" },

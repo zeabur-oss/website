@@ -3,7 +3,7 @@ import HeadingText from "../components/HeadingText.astro"
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import { productIcon, productName, releaseTag, type ProductId } from "../lib/products.ts"
+import { productIcon, productName, releaseTag } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
@@ -11,7 +11,9 @@ import { catalogCopy } from "../catalog/copy.ts"
 import { browseUrl } from "../catalog/data.ts"
 import { landingCopy } from "./copy.ts"
 import { builderExample, catalogExample, identityExample } from "./examples.ts"
-import { productCopy, sectionLabels } from "./products.ts"
+import { pageEntry, pageRow } from "../lib/site-pages.ts"
+import { chrome } from "../lib/chrome.ts"
+import { sectionLabels } from "./products.ts"
 import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
 import ProductStage from "./blocks/ProductStage.astro"
@@ -24,10 +26,15 @@ import { stageOf, type Panel } from "./stages.ts"
 
 interface Props {
   locale: SiteLocale
-  id: ProductId
+  slug: string
 }
-const { locale, id } = Astro.props
-const t = productCopy[locale][id]
+const { locale, slug } = Astro.props
+const spec = pageRow(slug)
+const id = spec.repo
+const page = (await pageEntry(locale, slug))!
+const t = page.data
+const released = t.status === "released"
+const chaptered = spec.story === "chapters"
 const home = landingCopy[locale]
 const name = productName[id]
 const repo = `${githubOrg}/${id}`
@@ -38,15 +45,14 @@ const docs = {
   catalog: docsUrl(locale, "catalog"),
 }[id]
 
-const file = {
-  zeabur: undefined,
-  identity: identityExample,
-  builder: builderExample,
-  catalog: catalogExample,
-}[id]
+const file = spec.example
+  ? { identity: identityExample, builder: builderExample, catalog: catalogExample }[
+      id as "identity" | "builder" | "catalog"
+    ]
+  : undefined
 
 const f = featureCopy[locale]
-const productShots = productCopy[locale].identity.shots?.captions ?? {}
+const productShots = (await pageEntry(locale, "identity"))?.data.shots?.captions ?? {}
 const known = home.shots as Record<string, string>
 const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => {
   if (s.from === "identity") {
@@ -60,44 +66,42 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
 const gap = localeInfo(locale).titleGap
 
 // The story: Zeabur walks through its jobs on its own screens, the others through their steps.
-const story =
-  id === "zeabur"
-    ? chapters.map((c) => {
-        const w = c.words[locale]
-        const s = chapterShot(c.shot, w.alt)
-        return {
-          kicker: groupNames[locale][c.group],
-          title: w.title,
-          body: w.body,
+const story = chaptered
+  ? chapters.map((c) => {
+      const w = c.words[locale]
+      const s = chapterShot(c.shot, w.alt)
+      return {
+        kicker: groupNames[locale][c.group],
+        title: w.title,
+        body: w.body,
+        alt: s.alt,
+        link: {
+          href: `#features-${c.group}`,
+          text: f.group(features.filter((x) => x.group === c.group).length),
+        },
+        panel: {
+          title: groupNames[locale][c.group],
+          image: s.src,
           alt: s.alt,
-          link: {
-            href: `#features-${c.group}`,
-            text: f.group(features.filter((x) => x.group === c.group).length),
-          },
-          panel: {
-            title: groupNames[locale][c.group],
-            image: s.src,
-            alt: s.alt,
-            whole: s.whole,
-          } as Panel,
-        }
-      })
-    : t.how.steps.map((step) => ({
-        kicker: l.how,
-        title: step.title,
-        body: step.body,
-        alt: step.body,
-        link: undefined,
-        panel: undefined,
-      }))
-const stage =
-  id === "zeabur"
-    ? { panels: story.map((c) => c.panel!) }
-    : stageOf(id, productShots["sign-in"] ?? "")
+          whole: s.whole,
+        } as Panel,
+      }
+    })
+  : t.how.steps.map((step) => ({
+      kicker: l.how,
+      title: step.title,
+      body: step.body,
+      alt: step.body,
+      link: undefined,
+      panel: undefined,
+    }))
+const stage = chaptered
+  ? { panels: story.map((c) => c.panel!) }
+  : stageOf(id as Exclude<typeof id, "zeabur">, productShots["sign-in"] ?? "")
 const sections = [
   "highlights",
-  ...(id === "zeabur" ? ["how", "features"] : []),
-  ...(id === "identity" && t.shots ? ["screens"] : []),
+  ...(chaptered ? ["how", "features"] : []),
+  ...(t.shots ? ["screens"] : []),
   "details",
   "start",
 ]
@@ -126,7 +130,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
     <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
       <Icon name={productIcon[id]} class="size-4" />
       <span translate="no">{name}</span>
-      <span class="pill">{releaseTag(id)}</span>
+      <span class="pill">{released ? releaseTag(id) : chrome[locale].nav.soon}</span>
     </p>
     <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
       <span class="text-site-faint zh:inline-block">
@@ -150,7 +154,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           {t.docs}
           <Icon name="arrow-right" class="go" />
         </a>
-        {id === "catalog" && (
+        {spec.browse && (
           <a href={browseUrl(locale)} class="button">
             <Icon name="squares-four" />
             {catalogCopy[locale].browse}
@@ -166,18 +170,18 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
 
   <StoryLayout
     id="how-it-works"
-    label={id === "zeabur" ? f.chapters : `${t.how.titleDim}${gap}${t.how.title}`}
+    label={chaptered ? f.chapters : `${t.how.titleDim}${gap}${t.how.title}`}
     caption={story.map((c) => c.alt).join(" ")}
   >
     <SectionHead
       slot="head"
       id="story-title"
-      dim={id === "zeabur" ? undefined : t.how.titleDim}
-      title={id === "zeabur" ? f.chapters : t.how.title}
+      dim={chaptered ? undefined : t.how.titleDim}
+      title={chaptered ? f.chapters : t.how.title}
     />
     <ProductStage slot="stage" {...stage} />
     {story.map((c, i) => (
-      <li data-chapter={i} id={id === "zeabur" ? `chapter-${chapters[i]!.group}` : undefined}>
+      <li data-chapter={i} id={chaptered ? `chapter-${chapters[i]!.group}` : undefined}>
         <p class="index label">
           <span>{number(i)}</span>
           <span>{c.kicker}</span>
@@ -227,7 +231,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
     </ul>
   </section>
 
-  {id === "zeabur" && (
+  {chaptered && (
     <section class="wrap section frame" aria-labelledby="how">
       <SectionHead
         id="how"
@@ -254,7 +258,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
     </section>
   )}
 
-  {id === "zeabur" && (
+  {chaptered && (
     <section class="wrap section frame" id="features" aria-labelledby="features-title">
       <SectionHead
         id="features-title"
@@ -267,7 +271,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
     </section>
   )}
 
-  {id === "identity" && t.shots && (
+  {t.shots && (
     <section class="wrap section frame" aria-labelledby="shots">
       <SectionHead
         id="shots"
@@ -319,7 +323,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
                   class={cn(
                     "border-b border-site-line py-3.5 pr-4 align-top leading-[1.55] text-site-muted",
                     i === 0 && "text-site-text",
-                    i === 0 && (id === "catalog" ? "type-mono" : "font-medium"),
+                    i === 0 && (spec.monoNames ? "type-mono" : "font-medium"),
                   )}
                 >
                   {cell}

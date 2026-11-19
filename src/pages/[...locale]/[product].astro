@@ -1,14 +1,20 @@
 ---
+import { getCollection } from "astro:content"
 import ProductPage from "../../landing/ProductPage.astro"
-import { productIds } from "../../lib/products.ts"
 import { localePaths } from "../../lib/urls.ts"
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const pages = await getCollection("pages")
   return localePaths().flatMap(({ params, props }) =>
-    productIds.map((product) => ({ params: { ...params, product }, props: { ...props, product } })),
+    pages
+      .filter((page) => page.id.startsWith(`${props.locale}/`))
+      .map((page) => {
+        const product = page.id.slice(props.locale.length + 1)
+        return { params: { ...params, product }, props: { ...props, product } }
+      }),
   )
 }
 const { locale, product } = Astro.props
 ---
 
-<ProductPage locale={locale} id={product} />
+<ProductPage locale={locale} slug={product} />

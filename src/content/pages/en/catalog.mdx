@@ -1,0 +1,81 @@
+---
+status: released
+lines:
+  nav: Cluster components and app templates, tested in CI
+  landing: Cluster components and app templates, each installed and tested in CI.
+meta:
+  title: "Zeabur Catalog: one-click templates, tested before they ship"
+  description: Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. Every template is installed and tested before it ships, with pinned versions and generated passwords.
+titleDim: One-click templates,
+title: tested before they ship.
+sub: "Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. The catalog comes with Zeabur: in a project, choose Add → App template and pick an app."
+docs: About Catalog
+source: Source on GitHub
+highlights:
+  titleDim: The same template
+  title: installs the same version every time.
+  items:
+    - tag: CI
+      title: Tested before it ships
+      body: Before any change to a template merges, CI installs it on a Kubernetes cluster and checks that the app responds.
+    - tag: version
+      title: Pinned versions
+      body: Every template pins its image, so it installs the same app version every time. New template versions come with Zeabur upgrades.
+    - tag: secrets
+      title: Passwords generated for you
+      body: Passwords and keys are generated at deploy time and stored as Kubernetes Secrets, never in the template. Each template also states the CPU and memory it needs.
+how:
+  titleDim: On its own,
+  title: components and templates are data you can read.
+  steps:
+    - title: Write it down
+      body: One file per upstream, such as components/traefik.yaml, with the chart, version, values and the reason.
+    - title: Test in CI
+      body: CI installs and tests every component and template, and records idle memory and CPU.
+    - title: Release
+      body: One signed bundle. Zeabur reads it to suggest what a cluster is missing, and never installs anything itself.
+details:
+  title: Some of the cluster components
+  cols:
+    - Capability
+    - Upstream
+    - Single node
+    - Multi-node
+  rows:
+    - - ingress
+      - Traefik
+      - Recommended
+      - Recommended
+    - - certificates
+      - cert-manager
+      - Recommended
+      - Recommended
+    - - metrics
+      - VictoriaMetrics, metrics-server
+      - Recommended
+      - Recommended
+    - - logs
+      - VictoriaLogs
+      - Recommended
+      - Recommended
+    - - volume-backup
+      - K8up, Velero
+      - Optional
+      - Optional
+    - - event-autoscaling
+      - KEDA
+      - Optional
+      - Recommended
+    - - replicated-storage
+      - Longhorn
+      - Optional
+      - Recommended
+    - - databases
+      - CloudNativePG, MariaDB Operator, MOCO
+      - Optional
+      - Optional
+start:
+  title: Read one component file
+  sub: "Without Zeabur, a cluster admin installs the components first. Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install."
+  cta: About Catalog
+---

@@ -1,0 +1,81 @@
+---
+status: released
+lines:
+  nav: 经过 CI 测试的集群组件和应用模板
+  landing: 集群组件和应用模板，每一项都由 CI 安装并测试。
+meta:
+  title: Zeabur Catalog：一键部署的应用模板，上架前先测过
+  description: 在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。每个模板上架前都先装过、测过，版本固定，密码自动生成。
+titleDim: 一键部署的模板，
+title: 上架前先测过
+sub: 在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。Zeabur 已经内置这份目录：在项目里选择“新建”→“应用模板”，挑一个就能部署。
+docs: 阅读 Catalog 说明
+source: GitHub 上的源代码
+highlights:
+  titleDim: 同一个模板，
+  title: 每次装出同一个版本
+  items:
+    - tag: CI
+      title: 上架前先测过
+      body: 模板的每次修改合并前，CI 都会把模板装到 Kubernetes 集群上，确认应用有响应。
+    - tag: version
+      title: 版本固定
+      body: 每个模板都固定镜像版本，同一个模板每次装出来都是同一个应用版本。新版模板随 Zeabur 升级提供。
+    - tag: secrets
+      title: 密码自动生成
+      body: 部署时自动生成密码和密钥，存成 Kubernetes Secret，不会写在模板里。每个模板也写明需要多少 CPU 和内存。
+how:
+  titleDim: 单独使用时，
+  title: 组件和模板都是可以读的数据
+  steps:
+    - title: 写下选择
+      body: 每个 upstream 一个文件，例如 components/traefik.yaml，写明 chart、版本、values 和原因。
+    - title: CI 测试
+      body: CI 安装并测试每个组件和模板，也记录空闲时的内存和 CPU。
+    - title: 发版
+      body: 生成一份带签名的 bundle。Zeabur 读取它来建议集群缺什么，自己不会安装任何东西。
+details:
+  title: 部分集群组件
+  cols:
+    - 能力
+    - Upstream
+    - 单节点
+    - 多节点
+  rows:
+    - - ingress
+      - Traefik
+      - 推荐
+      - 推荐
+    - - certificates
+      - cert-manager
+      - 推荐
+      - 推荐
+    - - metrics
+      - VictoriaMetrics、metrics-server
+      - 推荐
+      - 推荐
+    - - logs
+      - VictoriaLogs
+      - 推荐
+      - 推荐
+    - - volume-backup
+      - K8up、Velero
+      - 可选
+      - 可选
+    - - event-autoscaling
+      - KEDA
+      - 可选
+      - 推荐
+    - - replicated-storage
+      - Longhorn
+      - 可选
+      - 推荐
+    - - databases
+      - CloudNativePG、MariaDB Operator、MOCO
+      - 可选
+      - 可选
+start:
+  title: 读一个组件文件
+  sub: 单独使用时，集群管理员会先装好组件。每个组件都是这样：说明为什么推荐、许可证、依赖哪些能力，以及要装的 chart 和版本。
+  cta: 阅读 Catalog 说明
+---

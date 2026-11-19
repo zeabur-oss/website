@@ -9,7 +9,7 @@ const zeaburVersion = releaseTag("zeabur")
 type Entrance = { title: string; body: string; link: string }
 type Point = { title: string; body: string; link: string }
 type Step = { title: string; body: string }
-type MemberId = "zeabur" | "desktop" | "zeatend" | "identity" | "builder" | "catalog"
+type MemberId = "desktop" | "zeatend"
 
 export type LandingCopy = {
   title: string
@@ -155,12 +155,8 @@ const zhTW: LandingCopy = {
     title: "Zeabur 開源的所有專案",
     lead: "可以整套一起用，也可以只拿其中一個，放進你現有的叢集。",
     lines: {
-      zeabur: "把叢集整理成專案和服務，說明哪裡出錯、該怎麼處理。",
       desktop: "在自己的電腦開啟 Zeabur。",
       zeatend: "把一臺 Linux 伺服器變成 Kubernetes 叢集。",
-      identity: "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的 token。",
-      builder: "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。",
-      catalog: "叢集元件和應用程式範本，每一項都由 CI 安裝並測試。",
     },
     community: "在 GitHub 上追蹤進度、回報問題，或讀部落格上的設計說明。",
   },
@@ -276,12 +272,8 @@ const zhCN: LandingCopy = {
     title: "Zeabur 开源的全部项目",
     lead: "可以整套一起用，也可以只拿其中一个，放进你现有的集群。",
     lines: {
-      zeabur: "把集群整理成项目和服务，说明哪里出错、该怎么处理。",
       desktop: "在自己的电脑上打开 Zeabur。",
       zeatend: "把一台 Linux 服务器变成 Kubernetes 集群。",
-      identity: "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的 token。",
-      builder: "用 BuildKit 从 Git 构建镜像的 Kubernetes operator。",
-      catalog: "集群组件和应用模板，每一项都由 CI 安装并测试。",
     },
     community: "在 GitHub 上跟进进度、反馈问题，或者读博客上的设计说明。",
   },
@@ -403,13 +395,8 @@ const en: LandingCopy = {
     title: "Every Zeabur open-source project",
     lead: "Use them together, or pick one and add it to the cluster you already have.",
     lines: {
-      zeabur: "Shows the cluster as projects and services, what is wrong and what to do.",
       desktop: "Zeabur on your own computer.",
       zeatend: "Turns one Linux server into a Kubernetes cluster.",
-      identity:
-        "kubectl signs in through your browser with a passkey and gets a token that expires in minutes.",
-      builder: "A Kubernetes operator that builds container images from Git with BuildKit.",
-      catalog: "Cluster components and app templates, each installed and tested in CI.",
     },
     community: "Follow the work and report issues on GitHub, or read the design notes on the blog.",
   },

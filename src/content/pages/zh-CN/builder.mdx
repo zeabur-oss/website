@@ -1,0 +1,60 @@
+---
+status: released
+lines:
+  nav: 推送 commit，拿到镜像 digest
+  landing: 用 BuildKit 从 Git 构建镜像的 Kubernetes operator。
+meta:
+  title: Zeabur Builder：代码推到 GitHub，就自动部署
+  description: Zeabur 里负责把 Git 仓库变成镜像的部分。自动识别代码用的语言，构建不了时可以让 AI 写 Dockerfile，分支一更新就重新构建，构建变量以 BuildKit secret 传递。
+titleDim: 代码推到 GitHub，
+title: Zeabur 就会部署
+sub: 跟其他部署平台一样：在项目里选择“新建”→“从 Git 部署”。Zeabur Builder 会识别代码用的语言、构建镜像，之后分支一有更新就重新构建。
+docs: 阅读 Builder 文档
+source: GitHub 上的源代码
+highlights:
+  titleDim: 不用写 Dockerfile，
+  title: 推送后就换上新版本
+  items:
+    - tag: railpack
+      title: 自动识别语言
+      body: 用 Railpack 构建 Node.js、Python、Go、PHP、Ruby、Java、Rust 等应用和静态网站，不需要 Dockerfile。仓库里有 Dockerfile 时，就按它构建。
+    - tag: agent
+      title: Railpack 构建不了，就让 AI 写 Dockerfile
+      body: 没有 Dockerfile、Railpack 也构建不起来时，可以改用 agent 构建方式：你选的模型会读代码、写 Dockerfile 并试着构建，构建成功才交给你。Anthropic、OpenAI，或自己部署的 Ollama、vLLM 都能用，API 密钥用你自己的。
+    - tag: push
+      title: 分支更新就重新构建
+      body: Zeabur Builder 每分钟检查一次分支。推送后就构建新版本，服务接着换成新版本。
+how:
+  titleDim: 单独使用时，
+  title: 从 commit 到镜像 digest
+  steps:
+    - title: 解析 ref
+      body: controller 通过 Git 的 smart HTTP 或 SSH，把 Build 的 ref 解析成 commit。
+    - title: 构建
+      body: 新的 commit 会创建一个 BuildRun 和一个 Job。Job 对同一个 Namespace 的 buildkitd 运行 buildctl，不需要特权。
+    - title: 推送
+      body: 镜像推送到镜像仓库，digest 和标签写进 BuildRun 和 Build。
+details:
+  title: 什么时候会构建
+  cols:
+    - 触发方式
+    - 怎么运作
+    - 需要配置
+  rows:
+    - - 轮询
+      - controller 每分钟向 Git 服务器查询一次 ref
+      - 不用配置，spec.triggers.pollInterval 可调整
+    - - Push webhook
+      - GitHub、GitLab、Gitea、Forgejo、Bitbucket 和 Standard Webhooks
+      - 在 chart 中启用 webhooks，每个 Build 一个 secret
+    - - GitHub App
+      - 私有仓库用短期的 installation token，每个 commit 都有 commit status
+      - 集群管理员创建一次 App
+    - - 手动
+      - 修改 builder.zeabur.com/rebuild 注解，重新构建当前 commit
+      - spec.suspend 可停止自动构建
+start:
+  title: 一个 Build，对应一个仓库
+  sub: 单独使用时，一个 Build 写明 Git 仓库和构建方式。没写 ref 时跟随默认分支，status.resolvedRef 会写出是哪个分支。
+  cta: 阅读 Builder 文档
+---

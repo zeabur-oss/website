@@ -1,0 +1,60 @@
+---
+status: released
+lines:
+  nav: Push a commit, get an image digest
+  landing: A Kubernetes operator that builds container images from Git with BuildKit.
+meta:
+  title: "Zeabur Builder: push your code to GitHub, and Zeabur deploys it"
+  description: The part of Zeabur that turns a Git repository into an image. It finds your language, lets AI write a Dockerfile when that fails, rebuilds when the branch changes, and passes build variables as BuildKit secrets.
+titleDim: Push your code to GitHub,
+title: and Zeabur deploys it.
+sub: "Just as on other deployment platforms: in a project, choose Add → Deploy from Git. Zeabur Builder finds the language your code uses, builds an image, and builds again whenever the branch changes."
+docs: Read the Builder docs
+source: Source on GitHub
+highlights:
+  titleDim: No Dockerfile needed,
+  title: and a push brings the new version.
+  items:
+    - tag: railpack
+      title: Finds your language
+      body: Railpack builds Node.js, Python, Go, PHP, Ruby, Java, Rust and other apps, and static sites, with no Dockerfile. If the repository has a Dockerfile, it builds that.
+    - tag: agent
+      title: AI writes the Dockerfile Railpack can't
+      body: "When a repository has no Dockerfile and Railpack can't build it, switch to the agent builder: a model you choose reads the code, writes a Dockerfile and trial-builds it, and you get the Dockerfile only once it builds. Use Anthropic, OpenAI, or your own Ollama or vLLM, with your own API key."
+    - tag: push
+      title: Rebuilds when the branch changes
+      body: Zeabur Builder checks the branch every minute. After a push it builds the new version, and the service switches to it.
+how:
+  titleDim: On its own,
+  title: from a commit to an image digest.
+  steps:
+    - title: Resolve the ref
+      body: The controller resolves the Build's ref to a commit over Git's smart HTTP or SSH protocol.
+    - title: Build
+      body: A new commit gets a BuildRun and a Job. The Job runs buildctl against its namespace's buildkitd and needs no privileges.
+    - title: Push
+      body: The image is pushed, and its digest and tags land in the BuildRun and the Build.
+details:
+  title: When it builds
+  cols:
+    - Trigger
+    - How it works
+    - Setup
+  rows:
+    - - Polling
+      - The controller asks the Git server for the ref every minute
+      - None; spec.triggers.pollInterval changes it
+    - - Push webhooks
+      - GitHub, GitLab, Gitea, Forgejo, Bitbucket and Standard Webhooks
+      - Enable webhooks in the chart, one secret per Build
+    - - GitHub App
+      - Private repositories with a short-lived installation token, and a commit status per commit
+      - A cluster admin creates the App once
+    - - By hand
+      - A new value in the builder.zeabur.com/rebuild annotation rebuilds the current commit
+      - spec.suspend stops automatic builds
+start:
+  title: One Build per repository
+  sub: Without Zeabur, a Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.
+  cta: Read the Builder docs
+---
