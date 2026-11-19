@@ -7,7 +7,7 @@ import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { parse as parseYaml } from "yaml"
 import { z } from "zod"
-import { siteLocales, type Locale } from "./docs.ts"
+import { locales, type SiteLocale } from "../../src/lib/urls.ts"
 import type { Snapshot } from "./repos.ts"
 
 const localized = <T extends z.ZodRawShape>(shape: T) =>
@@ -63,7 +63,7 @@ const measurementFile = z.object({
 })
 
 /** A text in each site locale; a locale the catalog does not translate gets the English text. */
-export type Localized = Record<Locale, string>
+export type Localized = Record<SiteLocale, string>
 
 /** The newest CI run on one distribution and platform that installed these very files and passed. */
 export type TestRun = {
@@ -113,7 +113,7 @@ function pick<K extends string>(
   key: K,
 ): Localized {
   const out = {} as Localized
-  for (const locale of siteLocales) out[locale] = value.locales?.[locale]?.[key] ?? value[key]
+  for (const locale of locales) out[locale] = value.locales?.[locale]?.[key] ?? value[key]
   return out
 }
 
