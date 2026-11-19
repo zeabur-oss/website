@@ -297,7 +297,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
       steps: [
         {
           title: "寫下選擇",
-          body: "一個能力和 upstream 一個檔案，例如 components/ingress/traefik.yaml，寫明 chart、版本、values 和原因。",
+          body: "每個 upstream 一個檔案，例如 components/traefik.yaml，寫明 chart、版本、values 和原因。",
         },
         { title: "CI 測試", body: "CI 安裝並測試每個元件和範本，也記錄閒置時的記憶體和 CPU。" },
         {
@@ -602,7 +602,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
       steps: [
         {
           title: "写下选择",
-          body: "一个能力和 upstream 一个文件，例如 components/ingress/traefik.yaml，写明 chart、版本、values 和原因。",
+          body: "每个 upstream 一个文件，例如 components/traefik.yaml，写明 chart、版本、values 和原因。",
         },
         { title: "CI 测试", body: "CI 安装并测试每个组件和模板，也记录空闲时的内存和 CPU。" },
         {
@@ -937,7 +937,7 @@ const en: Record<ProductId, ProductCopy> = {
       steps: [
         {
           title: "Write it down",
-          body: "One file per capability and upstream, such as components/ingress/traefik.yaml, with the chart, version, values and the reason.",
+          body: "One file per upstream, such as components/traefik.yaml, with the chart, version, values and the reason.",
         },
         {
           title: "Test in CI",
@@ -975,4 +975,42 @@ export const productCopy: Record<SiteLocale, Record<ProductId, ProductCopy>> = {
   en,
   "zh-TW": zhTW,
   "zh-CN": zhCN,
+}
+
+/** The labels of the product pages' sections. */
+export const sectionLabels: Record<
+  SiteLocale,
+  {
+    how: string
+    highlights: string
+    screens: string
+    features: string
+    details: string
+    start: string
+  }
+> = {
+  "zh-TW": {
+    how: "運作方式",
+    highlights: "重點",
+    screens: "畫面",
+    features: "功能",
+    details: "範圍",
+    start: "開始",
+  },
+  "zh-CN": {
+    how: "运作方式",
+    highlights: "要点",
+    screens: "画面",
+    features: "功能",
+    details: "范围",
+    start: "开始",
+  },
+  en: {
+    how: "How it works",
+    highlights: "Highlights",
+    screens: "Screens",
+    features: "Features",
+    details: "Scope",
+    start: "Get started",
+  },
 }

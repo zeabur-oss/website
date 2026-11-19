@@ -1,7 +1,6 @@
 ---
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
-import Imagery from "../components/imagery/Imagery.astro"
 import Site from "../layouts/Site.astro"
 import { productIcon, productName, releaseTag, type ProductId } from "../lib/products.ts"
 import { githubOrg } from "../lib/site.ts"
@@ -9,14 +8,16 @@ import { organization } from "../lib/seo.ts"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
 import { builderExample, catalogExample, identityExample } from "./examples.ts"
-import { productCopy } from "./products.ts"
+import { productCopy, sectionLabels } from "./products.ts"
 import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
-import Chapter from "./blocks/Chapter.astro"
+import ProductStage from "./blocks/ProductStage.astro"
+import StoryLayout from "./blocks/StoryLayout.astro"
 import FeatureIndex from "./blocks/FeatureIndex.astro"
 import SectionHead from "./blocks/SectionHead.astro"
 import { chapters, featureCopy, features, groupNames } from "./features.ts"
 import { identityShot, shot, sizes } from "./shots.ts"
+import { stageOf, type Panel } from "./stages.ts"
 
 interface Props {
   locale: SiteLocale
@@ -48,6 +49,49 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
   if (s.from === "identity") return { src: identityShot(s.id), alt: productShots[s.id] ?? fallback }
   return { src: shot(locale, s.id), alt: known[s.id] ?? fallback }
 }
+const l = sectionLabels[locale]
+const number = (i: number) => String(i + 1).padStart(2, "0")
+// Chinese runs the two halves of a title together; other languages put a space between them.
+const gap = locale === "en" ? " " : ""
+
+// The story: Zeabur walks through its jobs on its own screens, the others through their steps.
+const story =
+  id === "zeabur"
+    ? chapters.map((c) => {
+        const w = c.words[locale]
+        const s = chapterShot(c.shot, w.alt)
+        return {
+          kicker: groupNames[locale][c.group],
+          title: w.title,
+          body: w.body,
+          alt: s.alt,
+          link: {
+            href: `#features-${c.group}`,
+            text: f.group(features.filter((x) => x.group === c.group).length),
+          },
+          panel: { title: groupNames[locale][c.group], image: s.src, alt: s.alt } as Panel,
+        }
+      })
+    : t.how.steps.map((step) => ({
+        kicker: l.how,
+        title: step.title,
+        body: step.body,
+        alt: step.body,
+        link: undefined,
+        panel: undefined,
+      }))
+const stage =
+  id === "zeabur"
+    ? { panels: story.map((c) => c.panel!) }
+    : stageOf(id, productShots["sign-in"] ?? "")
+const sections = [
+  "highlights",
+  ...(id === "zeabur" ? ["how", "features"] : []),
+  ...(id === "identity" && t.shots ? ["screens"] : []),
+  "details",
+  "start",
+]
+const sectionNumber = (name: string) => number(story.length + sections.indexOf(name))
 ---
 
 <Site
@@ -68,47 +112,78 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
     publisher: organization,
   }}
 >
-  <section class="wrap hero">
-    <div class="grid12">
-      <div class="flex flex-col items-start gap-6 lg:col-[1/7] lg:self-center" data-reveal>
-        <p class="inline-flex items-center gap-2.5 type-body text-site-muted">
-          <span class="mark">
-            <Icon name={productIcon[id]} />
-          </span>
-          {name}
-          <span class="pill">{releaseTag(id)}</span>
-        </p>
-        <h1 class="display max-w-[14em]">
-          <span class="text-site-faint zh:inline-block">{t.titleDim}</span>
-          {locale === "en" ? " " : ""}
-          <span class="zh:inline-block">{t.title}</span>
-        </h1>
-        <p class="lead max-w-xl">{t.sub}</p>
-        <div class="mt-2 flex flex-wrap gap-3">
-          <a href={docs} class="button primary">
-            {t.docs}
-            <Icon name="arrow-right" class="go" />
-          </a>
-          <a href={repo} class="button">
-            <Icon name="github-logo" />
-            {t.source}
-          </a>
-        </div>
-        {id === "zeabur" && (
-          <a href="#features" class="more more-down">
-            {f.all(features.length)}
-            <Icon name="arrow-down" class="go" />
-          </a>
-        )}
-      </div>
-      <div class="art lg:col-[7/13]" data-reveal style="--i:2">
-        <Imagery id={id} />
+  <section class="wrap hero frame">
+    <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
+      <Icon name={productIcon[id]} class="size-4" />
+      <span translate="no">{name}</span>
+      <span class="pill">{releaseTag(id)}</span>
+    </p>
+    <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
+      <span class="text-site-faint zh:inline-block">{t.titleDim}</span>
+      {gap}
+      <span class="zh:inline-block">{t.title}</span>
+    </h1>
+    <div
+      class="mt-10 flex flex-col items-start gap-8 md:mt-14 lg:max-w-[40rem]"
+      data-reveal
+      style="--i:1"
+    >
+      <p class="lead">{t.sub}</p>
+      <div class="flex flex-wrap gap-3">
+        <a href={docs} class="button primary">
+          {t.docs}
+          <Icon name="arrow-right" class="go" />
+        </a>
+        <a href={repo} class="button">
+          <Icon name="github-logo" />
+          {t.source}
+        </a>
       </div>
     </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="highlights">
-    <SectionHead id="highlights" dim={t.highlights.titleDim} title={t.highlights.title} />
+  <StoryLayout
+    id="how-it-works"
+    label={id === "zeabur" ? f.chapters : `${t.how.titleDim}${gap}${t.how.title}`}
+    caption={story.map((c) => c.alt).join(" ")}
+  >
+    <SectionHead
+      slot="head"
+      id="story-title"
+      dim={id === "zeabur" ? undefined : t.how.titleDim}
+      title={id === "zeabur" ? f.chapters : t.how.title}
+    />
+    <ProductStage slot="stage" {...stage} />
+    {story.map((c, i) => (
+      <li data-chapter={i} id={id === "zeabur" ? `chapter-${chapters[i]!.group}` : undefined}>
+        <p class="index label">
+          <span>{number(i)}</span>
+          <span>{c.kicker}</span>
+        </p>
+        <h2>{c.title}</h2>
+        <p class="lead">{c.body}</p>
+        {c.link && (
+          <a href={c.link.href} class="more more-down mt-2">
+            {c.link.text}
+            <Icon name="arrow-down" class="go" />
+          </a>
+        )}
+      </li>
+    ))}
+  </StoryLayout>
+
+  <div class="wrap band" aria-hidden="true">
+    <span class="bg-hatch"></span>
+  </div>
+
+  <section class="wrap section frame" aria-labelledby="highlights">
+    <SectionHead
+      id="highlights"
+      number={sectionNumber("highlights")}
+      kicker={l.highlights}
+      dim={t.highlights.titleDim}
+      title={t.highlights.title}
+    />
     <ul class="grid gap-x-6 md:grid-cols-3">
       {t.highlights.items.map((item, i) => (
         <li
@@ -124,54 +199,52 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
     </ul>
   </section>
 
-  <section class="wrap section" aria-labelledby="how">
-    <SectionHead id="how" dim={t.how.titleDim} title={t.how.title} />
-    <ol class="grid gap-x-6 [counter-reset:step] md:grid-cols-3">
-      {t.how.steps.map((step, i) => (
-        <li
-          class="relative flex flex-col gap-2 border-t border-site-line pt-5 pb-8 [counter-increment:step] before:type-mono before:text-site-accent before:content-[counter(step,decimal-leading-zero)]"
-          data-reveal
-          style={`--i:${i}`}
-        >
-          <h3>{step.title}</h3>
-          <p class="body">{step.body}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
-
   {id === "zeabur" && (
-    <section class="wrap section" aria-labelledby="chapters">
-      <SectionHead id="chapters" title={f.chapters} />
-      {chapters.map((c) => {
-        const w = c.words[locale]
-        return (
-          <Chapter
-            id={`chapter-${c.group}`}
-            kicker={groupNames[locale][c.group]}
-            title={w.title}
-            body={w.body}
-            shot={chapterShot(c.shot, w.alt)}
-            link={{
-              href: `#features-${c.group}`,
-              text: f.group(features.filter((x) => x.group === c.group).length),
-            }}
-          />
-        )
-      })}
+    <section class="wrap section frame" aria-labelledby="how">
+      <SectionHead
+        id="how"
+        number={sectionNumber("how")}
+        kicker={l.how}
+        dim={t.how.titleDim}
+        title={t.how.title}
+      />
+      <ol class="grid gap-x-6 md:grid-cols-3">
+        {t.how.steps.map((step, i) => (
+          <li
+            class="flex flex-col gap-2 border-t border-site-line pt-5 pb-8"
+            data-reveal
+            style={`--i:${i}`}
+          >
+            <span class="type-mono text-site-accent">{number(i)}</span>
+            <h3>{step.title}</h3>
+            <p class="body">{step.body}</p>
+          </li>
+        ))}
+      </ol>
     </section>
   )}
 
   {id === "zeabur" && (
-    <section class="wrap section" id="features" aria-labelledby="features-title">
-      <SectionHead id="features-title" title={f.index.title} lead={f.index.lead} />
+    <section class="wrap section frame" id="features" aria-labelledby="features-title">
+      <SectionHead
+        id="features-title"
+        number={sectionNumber("features")}
+        kicker={l.features}
+        title={f.index.title}
+        lead={f.index.lead}
+      />
       <FeatureIndex locale={locale} />
     </section>
   )}
 
   {id === "identity" && t.shots && (
-    <section class="wrap section" aria-labelledby="shots">
-      <SectionHead id="shots" title={t.shots.title} />
+    <section class="wrap section frame" aria-labelledby="shots">
+      <SectionHead
+        id="shots"
+        number={sectionNumber("screens")}
+        kicker={l.screens}
+        title={t.shots.title}
+      />
       <div class="grid gap-10 md:grid-cols-2 md:gap-6">
         {["sign-in", "setup"].map((shot, i) => (
           <div data-reveal style={`--i:${i}`}>
@@ -187,8 +260,13 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
     </section>
   )}
 
-  <section class="wrap section" aria-labelledby="details">
-    <SectionHead id="details" title={t.details.title} />
+  <section class="wrap section frame" aria-labelledby="details">
+    <SectionHead
+      id="details"
+      number={sectionNumber("details")}
+      kicker={l.details}
+      title={t.details.title}
+    />
     <div class="-mx-(--gutter) overflow-x-auto px-(--gutter)" data-reveal>
       <table class="w-full min-w-[36rem] border-collapse text-base">
         <thead>
@@ -224,10 +302,14 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
     </div>
   </section>
 
-  <section class="wrap section" aria-labelledby="start">
+  <section class="wrap section frame" aria-labelledby="start">
     {file ? (
       <div class="grid12">
         <div class="flex flex-col items-start gap-4 lg:col-[1/6]" data-reveal>
+          <p class="index label">
+            <span>{sectionNumber("start")}</span>
+            <span>{l.start}</span>
+          </p>
           <h2 id="start">{t.start.title}</h2>
           <p class="lead">{t.start.sub}</p>
           <div class="mt-4 flex flex-wrap gap-3">
@@ -245,7 +327,13 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
       </div>
     ) : (
       <>
-        <SectionHead id="start" title={t.start.title} lead={t.start.sub} />
+        <SectionHead
+          id="start"
+          number={sectionNumber("start")}
+          kicker={l.start}
+          title={t.start.title}
+          lead={t.start.sub}
+        />
         <StartWays locale={locale} />
       </>
     )}

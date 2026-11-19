@@ -1,0 +1,52 @@
+---
+// A product page's stage: one panel per step, and the pipeline with the step's place lit.
+import Icon from "../../components/Icon.astro"
+import type { Node, Panel } from "../stages.ts"
+import "../stages.css"
+
+interface Props {
+  panels: Panel[]
+  nodes?: Node[]
+}
+const { panels, nodes } = Astro.props
+---
+
+<div class="app pstage" aria-hidden="true">
+  <div class="app-view">
+    {panels.map((p, i) => (
+      <div class="ppanel" data-n={i}>
+        <span class="ppanel-title">{p.title}</span>
+        {"code" in p ? (
+          <pre><code>{p.code.split("\n").map((line, j) => (
+            <span class:list={["line", p.marks?.includes(j) && "hl"]}>{line || " "}</span>
+          ))}</code></pre>
+        ) : (
+          <img
+            class:list={[p.whole && "whole"]}
+            src={p.image.src}
+            srcset={`${p.image.src} ${p.image.width}w`}
+            sizes="(min-width: 1440px) 760px, (min-width: 1024px) 55vw, 100vw"
+            width={p.image.width / 2}
+            height={p.image.height / 2}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        )}
+      </div>
+    ))}
+  </div>
+  {nodes && (
+    <ol class="pipe">
+      {nodes.map((n, i) => (
+        <li data-n={i}>
+          <Icon name={n.icon} />
+          <span class="pipe-text">
+            <b>{n.name}</b>
+            <span>{n.sub}</span>
+          </span>
+        </li>
+      ))}
+    </ol>
+  )}
+</div>
