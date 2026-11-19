@@ -1,0 +1,16 @@
+---
+// A diagram in a docs page, drawn in HTML like the post figures, so its text keeps its size on a
+// phone. The label is what a screen reader says for the whole diagram.
+import "../blog/figures/figures.css"
+import "./figure.css"
+
+interface Props {
+  label: string
+}
+---
+
+<figure class="docs-fig not-content">
+  <div class="fig" role="group" aria-label={Astro.props.label}>
+    <slot />
+  </div>
+</figure>

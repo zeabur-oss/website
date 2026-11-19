@@ -13,6 +13,17 @@ export const registry = {
     defaultIndex: z.number().int().nonnegative().optional(),
   }),
   Tab: z.strictObject({ value: z.string().optional() }),
+  Figure: z.strictObject({ label: z.string().min(1) }),
+  FigFlow: z.strictObject({}),
+  FigGroup: z.strictObject({ label: z.string().optional(), row: z.boolean().optional() }),
+  FigCard: z.strictObject({
+    title: z.string().min(1),
+    note: z.string().optional(),
+    tag: z.string().optional(),
+    hot: z.boolean().optional(),
+    accent: z.boolean().optional(),
+  }),
+  FigArrow: z.strictObject({ label: z.string().optional(), accent: z.boolean().optional() }),
   Steps: z.strictObject({}),
   Step: z.strictObject({}),
 } as const

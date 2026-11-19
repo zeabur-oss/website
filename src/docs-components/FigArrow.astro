@@ -1,0 +1,11 @@
+---
+// The arrow between two boxes of a FigFlow, with an optional label.
+import Arrow from "../blog/figures/FigArrow.astro"
+
+interface Props {
+  label?: string
+  accent?: boolean
+}
+---
+
+<Arrow label={Astro.props.label} accent={Astro.props.accent} dir="flow" />
