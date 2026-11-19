@@ -51,7 +51,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     title: "Templates and components",
     description: (t, c) =>
       `${t} app templates and ${c} cluster components you can install with Zeabur on your own server. CI installs them on Kubernetes, and each one shows the day it last passed.`,
-    browse: "Browse templates and components",
+    browse: "Browse the catalog",
     search: "Search the catalog",
     placeholder: "n8n, PostgreSQL, backup…",
     kinds: { all: "All", templates: "App templates", components: "Cluster components" },
@@ -107,7 +107,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     title: "範本和元件",
     description: (t, c) =>
       `${t} 個應用程式範本和 ${c} 個叢集元件，都可以用 Zeabur 裝到自己的伺服器。CI 會在 Kubernetes 上實際安裝，每一個都標出最近一次通過測試的日期。`,
-    browse: "看看有哪些範本和元件",
+    browse: "瀏覽範本和元件",
     search: "搜尋 Catalog",
     placeholder: "n8n、PostgreSQL、備份……",
     kinds: { all: "全部", templates: "應用程式範本", components: "叢集元件" },
@@ -159,7 +159,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     title: "模板和组件",
     description: (t, c) =>
       `${t} 个应用模板和 ${c} 个集群组件，都可以用 Zeabur 装到自己的服务器。CI 会在 Kubernetes 上实际安装，每一个都标出最近一次通过测试的日期。`,
-    browse: "看看有哪些模板和组件",
+    browse: "浏览模板和组件",
     search: "搜索 Catalog",
     placeholder: "n8n、PostgreSQL、备份……",
     kinds: { all: "全部", templates: "应用模板", components: "集群组件" },
