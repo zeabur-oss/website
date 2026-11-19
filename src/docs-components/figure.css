@@ -1,0 +1,46 @@
+/* Layout of the docs diagrams. Their parts and colours come from the post figures (figures.css). */
+
+.docs-fig {
+  margin-inline: 0;
+}
+.docs-fig-flow {
+  display: flex;
+  flex-direction: column;
+}
+.docs-fig-flow > .fig-arrow {
+  position: relative;
+  z-index: 1;
+}
+.docs-fig-stack {
+  display: grid;
+  gap: 8px;
+}
+.docs-fig-group-label {
+  margin-bottom: 8px;
+}
+.docs-fig-card {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.docs-fig-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 8px;
+}
+@container (min-width: 540px) {
+  .docs-fig-flow {
+    flex-direction: row;
+    align-items: center;
+  }
+  .docs-fig-flow > :not(.fig-arrow) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .docs-fig-row {
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+  }
+}

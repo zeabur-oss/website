@@ -1,0 +1,21 @@
+---
+// One box: a title, one line on what it is, and an optional tag. `accent` marks the one box that
+// matters; `hot` marks the one tag that matters.
+interface Props {
+  title: string
+  note?: string
+  tag?: string
+  hot?: boolean
+  accent?: boolean
+}
+const { title, note, tag, hot, accent } = Astro.props
+---
+
+<div class:list={["fig-card docs-fig-card", accent && "fig-accent"]}>
+  <div class="docs-fig-card-head">
+    <span class="fig-title">{title}</span>
+    {tag && <span class:list={["fig-tag", hot && "fig-hit"]}>{tag}</span>}
+  </div>
+  {note && <span class="fig-note">{note}</span>}
+  <slot />
+</div>

@@ -1,0 +1,15 @@
+---
+// Boxes that belong together, under a short label. They stay stacked unless `row` is set.
+interface Props {
+  label?: string
+  row?: boolean
+}
+const { label, row } = Astro.props
+---
+
+<div class="fig-group docs-fig-group">
+  {label && <div class="fig-kind docs-fig-group-label">{label}</div>}
+  <div class:list={["docs-fig-stack", row && "docs-fig-row"]}>
+    <slot />
+  </div>
+</div>
