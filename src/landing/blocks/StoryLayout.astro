@@ -1,0 +1,32 @@
+---
+// Chapters beside one pinned stage. The stage slot draws every scene; story-client.ts sets the
+// stage's data-step to the chapter in the middle of the screen.
+import "../story-base.css"
+
+interface Props {
+  label: string
+  /** What the stage shows, for screen readers. */
+  caption: string
+  id?: string
+}
+const { label, caption, id } = Astro.props
+---
+
+<section class="wrap section frame story" id={id} aria-label={label} data-story>
+  <slot name="head" />
+  <div class="story-grid">
+    <div class="story-stage" data-step="0">
+      <figure class="story-slab">
+        <slot name="stage" />
+        <figcaption class="sr-only">{caption}</figcaption>
+      </figure>
+    </div>
+    <ol class="story-chapters">
+      <slot />
+    </ol>
+  </div>
+</section>
+
+<script>
+  import "../story-client.ts"
+</script>

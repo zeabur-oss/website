@@ -23,7 +23,8 @@ export const shot = (locale: string, id: string) =>
   image("zeabur", `${locale}/images/shots/${id}.avif`, `images/shots/${id}.avif`)
 
 /** Zeabur Identity's sign-in pages, from its docs. */
-export const identityShot = (name: string) => image("identity", `images/${name}-light.avif`)
+export const identityShot = (name: string, theme: "light" | "dark" = "light") =>
+  image("identity", `images/${name}-${theme}.avif`)
 
 // The container is 1440px wide at most, with 16px or 40px gutters and 24px between grid columns.
 export const sizes = {

@@ -1,0 +1,195 @@
+@layer components {
+  .pstage .app-view {
+    background: none;
+  }
+  .ppanel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+  }
+  .ppanel-title {
+    padding: 0.85em 1.1em;
+    border-bottom: 1px solid var(--a-line);
+    color: var(--a-muted);
+    font-family: var(--font-stack-mono);
+    font-size: 0.9em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ppanel pre {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 0.9em 0;
+    overflow: hidden;
+    background: none;
+    font-size: 1.2em;
+    line-height: 1.7;
+  }
+  .ppanel .line {
+    display: block;
+    padding-inline: 1.1em;
+    white-space: pre;
+  }
+  .ppanel .hl {
+    background: linear-gradient(90deg, rgb(167 123 255 / 0.22), rgb(167 123 255 / 0.06));
+    box-shadow: inset 2px 0 var(--a-violet);
+  }
+  .ppanel img {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+  .ppanel img.whole {
+    object-fit: contain;
+    object-position: center;
+  }
+
+  /* The pipeline: done steps stay lit, the current one glows, later ones wait. */
+  .pipe {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5em;
+    margin: 0;
+    padding: 1em 1.1em;
+    border-top: 1px solid var(--a-line);
+    list-style: none;
+  }
+  .pipe li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+    min-width: 0;
+    padding: 0.65em 0.8em;
+    border: 1px solid var(--a-line);
+    border-radius: var(--radius-md);
+    background: var(--a-card);
+    color: var(--a-muted);
+  }
+  .pipe li + li::before {
+    content: "";
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 1.5em;
+    border-top: 1px dashed var(--a-line);
+  }
+  .pipe .icon {
+    width: 1.4em;
+    height: 1.4em;
+  }
+  .pipe-text {
+    display: grid;
+    min-width: 0;
+  }
+  .pipe-text > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pipe-text > span {
+    font-family: var(--font-stack-mono);
+    font-size: 0.85em;
+  }
+
+  .story-stage[data-step="0"] [data-n="0"],
+  .story-stage[data-step="1"] [data-n="1"],
+  .story-stage[data-step="2"] [data-n="2"],
+  .story-stage[data-step="3"] [data-n="3"],
+  .story-stage[data-step="4"] [data-n="4"],
+  .story-stage[data-step="5"] [data-n="5"] {
+    opacity: 1;
+    visibility: visible;
+  }
+  .story-stage[data-step="0"] .pipe [data-n="0"],
+  .story-stage[data-step="1"] .pipe [data-n="1"],
+  .story-stage[data-step="2"] .pipe [data-n="2"] {
+    border-color: var(--a-violet);
+    box-shadow: 0 0 0 3px rgb(167 123 255 / 0.18);
+    color: var(--a-text);
+  }
+  .story-stage[data-step="1"] .pipe [data-n="0"],
+  .story-stage[data-step="2"] .pipe [data-n="0"],
+  .story-stage[data-step="2"] .pipe [data-n="1"] {
+    color: var(--a-text);
+  }
+  .story-stage[data-step="1"] .pipe [data-n="1"]::before,
+  .story-stage[data-step="2"] .pipe [data-n="2"]::before {
+    border-top: 1px solid var(--a-violet);
+  }
+
+  @media (max-width: 63.99rem) {
+    .pipe {
+      gap: 1em;
+      padding: 0.6em 0.75em;
+    }
+    .pipe li + li::before {
+      width: 1em;
+    }
+    .pipe-text > span {
+      display: none;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ppanel {
+    translate: 0 0.75rem;
+    transition:
+      opacity 500ms var(--ease-site),
+      translate 600ms var(--ease-site),
+      visibility 0s 600ms;
+  }
+  .story-stage[data-step="0"] [data-n="0"],
+  .story-stage[data-step="1"] [data-n="1"],
+  .story-stage[data-step="2"] [data-n="2"],
+  .story-stage[data-step="3"] [data-n="3"],
+  .story-stage[data-step="4"] [data-n="4"],
+  .story-stage[data-step="5"] [data-n="5"] {
+    translate: none;
+    transition:
+      opacity 500ms 150ms var(--ease-site),
+      translate 600ms 150ms var(--ease-site),
+      visibility 0s;
+  }
+  .pipe li {
+    transition:
+      color 400ms,
+      border-color 400ms,
+      box-shadow 400ms;
+  }
+  .is-live .ppanel .hl {
+    background-size: 0% 100%;
+    background-repeat: no-repeat;
+  }
+  .is-live[data-step="0"] .ppanel[data-n="0"] .hl,
+  .is-live[data-step="1"] .ppanel[data-n="1"] .hl,
+  .is-live[data-step="2"] .ppanel[data-n="2"] .hl,
+  .is-live[data-step="3"] .ppanel[data-n="3"] .hl,
+  .is-live[data-step="4"] .ppanel[data-n="4"] .hl,
+  .is-live[data-step="5"] .ppanel[data-n="5"] .hl {
+    animation: pstage-mark 900ms 500ms var(--ease-site) forwards;
+  }
+  .is-live[data-step="1"] .pipe [data-n="1"]::before,
+  .is-live[data-step="2"] .pipe [data-n="2"]::before {
+    animation: pstage-line 700ms var(--ease-site) both;
+  }
+}
+
+@keyframes pstage-mark {
+  to {
+    background-size: 100% 100%;
+  }
+}
+@keyframes pstage-line {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
