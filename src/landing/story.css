@@ -1,0 +1,946 @@
+@layer components {
+  .story.section {
+    padding-top: clamp(1.5rem, 3vw, 3rem);
+  }
+  .story-grid {
+    display: grid;
+  }
+  .story-stage {
+    /* The camera: a focus point on the map (0 to 1 each way), a zoom, and how many view widths
+       the map spans. */
+    --fx: 0.5;
+    --fy: 0.5;
+    --z: 1;
+    --cw: 1.9;
+    position: sticky;
+    top: var(--header-height);
+    z-index: 2;
+    padding-block: 0.75rem;
+    background: var(--site-bg);
+  }
+  .story-chapters {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .story-chapters > li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.25rem;
+    min-height: 70svh;
+    justify-content: flex-start;
+    padding-block: 2.5rem;
+  }
+  .story-chapters > li > .index {
+    margin: 0;
+  }
+  .story-points {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .story-points li {
+    display: grid;
+    gap: 0.4rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--site-line);
+  }
+  @media (min-width: 64rem) {
+    .story-stage .app-view {
+      aspect-ratio: 1000 / 620;
+    }
+    .story-grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      column-gap: clamp(2.5rem, 5vw, 5rem);
+    }
+    .story-stage {
+      --cw: 1;
+      grid-column: 2;
+      grid-row: 1;
+      align-self: start;
+      top: max(calc(var(--header-height) + 2rem), calc(50svh - 18rem + var(--header-height) / 2));
+      padding: 0;
+      background: none;
+    }
+    .story-chapters {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .story-chapters > li {
+      justify-content: center;
+      min-height: 88svh;
+    }
+  }
+
+  /* The violet slab with a frame like the repositories' covers. */
+  .story-slab {
+    position: relative;
+    display: grid;
+    margin: 0;
+    padding: clamp(1rem, 3.5vw, 3rem);
+    border-radius: var(--radius-xl);
+    background:
+      radial-gradient(rgb(255 255 255 / 0.16) 1px, transparent 1.4px) 0 0 / 14px 14px,
+      radial-gradient(120% 90% at 85% 0%, rgb(var(--zViolet-400, 140 82 255)) 0%, transparent 60%),
+      var(--violet);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .story-slab::before {
+    content: "";
+    position: absolute;
+    inset: clamp(0.5rem, 1.6vw, 1.25rem);
+    border: 1px solid rgb(255 255 255 / 0.28);
+    border-radius: calc(var(--radius-xl) - 0.5rem);
+    pointer-events: none;
+  }
+
+  /* The web app, dark in both themes as its covers are. */
+  .app {
+    --a-bg: rgb(var(--zGray-900));
+    --a-card: rgb(var(--zGray-850));
+    --a-line: rgb(var(--zGray-800));
+    --a-text: rgb(var(--zGray-50));
+    --a-muted: rgb(var(--zGray-400));
+    --a-ok: #3ecf8e;
+    --a-bad: #ff5c62;
+    --a-violet: #a77bff;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: var(--radius-lg);
+    background: var(--a-bg);
+    color: var(--a-text);
+    box-shadow:
+      0 2.5rem 5rem -1.5rem rgb(20 0 60 / 0.65),
+      0 0 0 1px rgb(0 0 0 / 0.2);
+    font-size: clamp(0.6875rem, 0.55rem + 0.35vw, 0.875rem);
+    line-height: 1.3;
+  }
+  .app .icon {
+    width: 1.15em;
+    height: 1.15em;
+    flex: none;
+  }
+  .app .dot {
+    width: 0.55em;
+    height: 0.55em;
+    flex: none;
+    border-radius: 50%;
+    background: var(--a-ok);
+  }
+  .app .dot.wait {
+    background: var(--a-muted);
+  }
+  .app .dot.bad {
+    background: var(--a-bad);
+  }
+
+  .app-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75em 1em;
+    padding: 0.85em 1.1em;
+    border-bottom: 1px solid var(--a-line);
+    white-space: nowrap;
+  }
+  .app-project {
+    font-size: 1.25em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .app-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    background: rgb(255 92 98 / 0.14);
+    color: var(--a-bad);
+    font-size: 0.85em;
+    font-weight: 600;
+  }
+  .app-fresh {
+    color: var(--a-muted);
+    font-size: 0.85em;
+  }
+  .app-views {
+    display: inline-flex;
+    margin-left: auto;
+    padding: 0.2em;
+    border: 1px solid var(--a-line);
+    border-radius: var(--radius-md);
+    font-size: 0.85em;
+  }
+  .app-views > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.25em 0.6em;
+    border-radius: calc(var(--radius-md) - 0.15em);
+    color: var(--a-muted);
+  }
+  .app-views > .on {
+    background: var(--a-line);
+    color: var(--a-text);
+  }
+  .app-add {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.45em 0.8em;
+    border-radius: var(--radius-md);
+    background: var(--violet);
+    color: #fff;
+    font-weight: 600;
+  }
+  .app-add .icon:last-child {
+    width: 0.85em;
+    opacity: 0.8;
+  }
+
+  .app-view {
+    position: relative;
+    aspect-ratio: 10 / 9;
+    overflow: hidden;
+    container-type: size;
+    background: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1.3px) 0 0 / 16px 16px;
+  }
+  .app-canvas {
+    position: absolute;
+    width: calc(var(--cw) * 100cqw);
+    height: calc(var(--cw) * 62cqw);
+    left: clamp(
+      calc(100cqw - var(--cw) * 100cqw),
+      calc(50cqw - var(--fx) * var(--cw) * 100cqw),
+      0px
+    );
+    top: clamp(calc(100cqh - var(--cw) * 62cqw), calc(50cqh - var(--fy) * var(--cw) * 62cqw), 0px);
+    scale: var(--z);
+    transform-origin: calc(var(--fx) * 100%) calc(var(--fy) * 100%);
+    container-type: inline-size;
+    font-size: calc(var(--cw) * 1.55cqw);
+  }
+
+  .lane {
+    position: absolute;
+    border: 1px dashed rgb(255 255 255 / 0.1);
+    border-radius: 0.9em;
+    background: rgb(255 255 255 / 0.015);
+  }
+  .lane-label {
+    position: absolute;
+    top: 0.55em;
+    left: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    color: var(--a-muted);
+    font-size: 0.85em;
+    font-weight: 600;
+  }
+  .lane-label .dot {
+    width: 0.45em;
+    height: 0.45em;
+  }
+
+  .edges {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+  }
+  .edges path {
+    stroke: rgb(255 255 255 / 0.28);
+    stroke-width: 2;
+    transition: stroke 400ms;
+  }
+  .edges .guessed {
+    stroke-dasharray: 6 6;
+  }
+  .edges .fresh:not(.pulse) {
+    stroke-dasharray: 1;
+  }
+  .edges .pulse {
+    display: none;
+  }
+
+  .card {
+    position: absolute;
+    display: grid;
+    align-content: space-between;
+    width: 25%;
+    height: 17%;
+    padding: 0.85em 1em;
+    border: 1px solid var(--a-line);
+    border-radius: 0.8em;
+    background: var(--a-card);
+    box-shadow: 0 0.6em 1.4em -0.6em rgb(0 0 0 / 0.6);
+    transition:
+      border-color 400ms,
+      box-shadow 400ms;
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 1.15em;
+    font-weight: 700;
+  }
+  .card-head .icon {
+    padding: 0.2em;
+    border-radius: 0.35em;
+    background: rgb(255 255 255 / 0.07);
+    width: 1.5em;
+    height: 1.5em;
+  }
+  .card-sub,
+  .state,
+  .count {
+    display: grid;
+  }
+  .card-sub > *,
+  .state > *,
+  .count > * {
+    grid-area: 1 / 1;
+    transition: opacity 350ms;
+  }
+  .card-sub {
+    overflow: hidden;
+    color: var(--a-muted);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+  .card-sub > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9em;
+  }
+  .state > * {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+  }
+  .count {
+    color: var(--a-muted);
+    font-family: var(--font-mono);
+  }
+  .card .kinds,
+  .card .was,
+  .card .fail,
+  .card .run,
+  .card .bad-count {
+    opacity: 0;
+  }
+
+  /* The panels that come over the map. */
+  .app-attention,
+  .app-logs,
+  .app-signin {
+    position: absolute;
+    z-index: 2;
+    border: 1px solid var(--a-line);
+    border-radius: var(--radius-lg);
+    background: rgb(var(--zGray-850) / 0.94);
+    box-shadow: 0 1.5rem 3rem -1rem rgb(0 0 0 / 0.7);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 400ms,
+      translate 600ms var(--ease-site),
+      visibility 0s 600ms;
+  }
+  .app-attention {
+    top: 0.9em;
+    left: 0.9em;
+    display: grid;
+    gap: 0.6em;
+    width: min(30em, calc(100% - 1.8em));
+    padding: 0.8em 0.9em;
+    translate: 0 -1.5em;
+  }
+  .app-attention .title {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-weight: 700;
+  }
+  .app-attention .n {
+    padding: 0 0.5em;
+    border-radius: 999px;
+    background: var(--a-bad);
+    color: #fff;
+    font-size: 0.8em;
+  }
+  .app-attention .row {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    white-space: nowrap;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.15em 0.55em;
+    border-radius: 999px;
+    background: rgb(255 92 98 / 0.14);
+    color: var(--a-bad);
+    font-size: 0.85em;
+    font-weight: 600;
+  }
+  .logs-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-left: auto;
+    padding: 0.35em 0.7em;
+    border: 1px solid var(--a-line);
+    border-radius: var(--radius-md);
+    background: rgb(255 255 255 / 0.04);
+    font-weight: 600;
+    transition:
+      background 300ms,
+      border-color 300ms;
+  }
+
+  .app-logs {
+    right: 0.9em;
+    bottom: 0.9em;
+    display: grid;
+    gap: 0.25em;
+    width: min(34em, calc(100% - 1.8em));
+    padding: 0.8em 0.9em;
+    translate: 0 1.5em;
+  }
+  .app-logs .title {
+    margin-bottom: 0.3em;
+    color: var(--a-muted);
+    font-size: 0.85em;
+    font-weight: 600;
+  }
+  .app-logs code {
+    overflow: hidden;
+    color: var(--a-muted);
+    font-size: 0.85em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .app-logs .err {
+    margin-inline: -0.4em;
+    padding: 0.15em 0.4em;
+    border-radius: 0.3em;
+    background: rgb(255 92 98 / 0.14);
+    color: var(--a-bad);
+  }
+
+  .app-signin {
+    top: 50%;
+    left: 50%;
+    display: grid;
+    justify-items: center;
+    gap: 1em;
+    width: min(24em, calc(100% - 2em));
+    padding: 1.6em 1.4em;
+    translate: -50% -42%;
+    text-align: center;
+  }
+  .app-signin .who {
+    font-size: 1.2em;
+    font-weight: 700;
+  }
+  .passkey {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+    width: 100%;
+    padding: 0.7em 1em;
+    border-radius: var(--radius-md);
+    background: var(--violet);
+    color: #fff;
+    font-weight: 600;
+  }
+  .passkey .icon {
+    width: 1.4em;
+    height: 1.4em;
+  }
+  .app-signin .flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45em;
+    font-size: 0.9em;
+  }
+  .chip {
+    padding: 0.25em 0.6em;
+    border: 1px solid var(--a-line);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    transition:
+      border-color 300ms,
+      color 300ms;
+  }
+
+  /* The cluster's own heading, once Zeabur is gone. */
+  .app-k8s {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.85em 1.1em;
+    border-bottom: 1px solid var(--a-line);
+    background: var(--a-bg);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 400ms,
+      visibility 0s 400ms;
+  }
+  .app-k8s b {
+    font-size: 1.1em;
+  }
+  .app-k8s code {
+    color: var(--a-muted);
+  }
+  .app-k8s .kept {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    margin-left: auto;
+    padding: 0.3em 0.75em;
+    border: 1px solid var(--a-ok);
+    border-radius: 999px;
+    background: rgb(62 207 142 / 0.12);
+    color: var(--a-ok);
+    font-weight: 700;
+  }
+
+  /* Zeabur itself, shown only as it is removed. */
+  .card-zeabur {
+    opacity: 0;
+    visibility: hidden;
+    border-style: dashed;
+    border-color: rgb(255 92 98 / 0.6);
+    box-shadow: none;
+  }
+  .card-zeabur::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0.8em;
+    top: 1.55em;
+    height: 2px;
+    background: var(--a-bad);
+    transform-origin: left;
+  }
+  .card-zeabur .gone {
+    color: var(--a-bad);
+    font-weight: 600;
+  }
+
+  .app-top,
+  .app-view {
+    transition:
+      opacity 500ms,
+      filter 500ms,
+      margin 700ms var(--ease-site);
+  }
+  .lane,
+  .app-pill {
+    transition: opacity 400ms;
+  }
+
+  /* 01 Deploy: the whole map, with web among the others. */
+  .app-pill {
+    opacity: 0;
+  }
+
+  /* 02 Trace: worker crashes, shows under Needs attention, and its logs open on the error. */
+  .story-stage[data-step="1"] {
+    --fx: 0.5;
+    --fy: 0.5;
+    --z: 1.25;
+  }
+  [data-step="1"] .app-pill {
+    opacity: 1;
+  }
+  [data-step="1"] .card-worker {
+    border-color: var(--a-bad);
+    box-shadow:
+      0 0 0 0.35em rgb(255 92 98 / 0.18),
+      0 0.6em 1.4em -0.6em rgb(0 0 0 / 0.6);
+  }
+  [data-step="1"] .card-worker :is(.now, .ok-count) {
+    opacity: 0;
+  }
+  [data-step="1"] .card-worker :is(.fail, .bad-count) {
+    opacity: 1;
+  }
+  [data-step="1"] .card-worker .fail {
+    color: var(--a-bad);
+  }
+  [data-step="1"] .edges .worker {
+    stroke: rgb(255 92 98 / 0.55);
+  }
+  [data-step="1"] :is(.app-attention, .app-logs) {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    transition:
+      opacity 400ms var(--d, 0ms),
+      translate 600ms var(--ease-site) var(--d, 0ms),
+      visibility 0s;
+  }
+  [data-step="1"] .app-attention {
+    --d: 500ms;
+  }
+  [data-step="1"] .app-logs {
+    --d: 1700ms;
+  }
+  [data-step="1"] .logs-button {
+    border-color: var(--violet);
+    background: var(--violet);
+    color: #fff;
+    transition-delay: 1300ms;
+  }
+
+  /* 03 Access: sign in with a passkey; Zeabur and kubectl both carry it to Kubernetes RBAC. */
+  .story-stage[data-step="2"] {
+    --z: 0.92;
+  }
+  [data-step="2"] :is(.app-top, .app-canvas) {
+    opacity: 0.35;
+    filter: blur(2px);
+  }
+  [data-step="2"] .app-canvas {
+    transition:
+      opacity 500ms,
+      filter 500ms;
+  }
+  [data-step="2"] .app-signin {
+    opacity: 1;
+    visibility: visible;
+    translate: -50% -50%;
+    transition:
+      opacity 400ms 300ms,
+      translate 600ms var(--ease-site) 300ms,
+      visibility 0s;
+  }
+  [data-step="2"] .chip {
+    border-color: var(--a-violet);
+    color: var(--a-violet);
+  }
+  [data-step="2"] .chip:nth-child(2) {
+    transition-delay: 1500ms;
+  }
+  [data-step="2"] .chip:nth-child(1) {
+    transition-delay: 1300ms;
+  }
+  [data-step="2"] .chip:nth-child(4) {
+    transition-delay: 1900ms;
+  }
+
+  /* 04 Leave: Zeabur is gone; the objects it made stay and keep running. */
+  .story-stage[data-step="3"] {
+    --fy: 0.5;
+  }
+  [data-step="3"] .app-top {
+    opacity: 0;
+  }
+  [data-step="3"] .app-k8s {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 400ms 1300ms,
+      visibility 0s;
+  }
+  .story-stage[data-step="3"] .card-zeabur .sub {
+    opacity: 1;
+  }
+  [data-step="3"] .card-zeabur {
+    opacity: 0.6;
+    visibility: visible;
+  }
+  [data-step="3"] .lane {
+    opacity: 0;
+  }
+  [data-step="3"] .card :is(.sub, .now, .ok-count) {
+    opacity: 0;
+  }
+  [data-step="3"] .card :is(.kinds, .run) {
+    opacity: 1;
+  }
+  [data-step="3"] .card-worker .ok-count {
+    opacity: 1;
+  }
+
+  /* On a phone the view is narrower than the map, so each scene frames its part of it. */
+  @media (max-width: 63.99rem) {
+    /* The stage keeps to the top third, so the chapter below it stays readable. */
+    .app-view {
+      aspect-ratio: auto;
+      height: clamp(12rem, 30svh, 18rem);
+    }
+    .story-slab {
+      padding: 0.75rem;
+    }
+    .story-stage::after {
+      content: "";
+      position: absolute;
+      inset: 100% 0 auto;
+      height: 1.5rem;
+      background: linear-gradient(var(--site-bg), transparent);
+      pointer-events: none;
+    }
+    .story-chapters > li {
+      min-height: 0;
+      padding-block: 1.5rem 30svh;
+    }
+    .story-stage {
+      --fx: 0.22;
+      --fy: 0.5;
+    }
+    .story-stage[data-step="1"] {
+      --fx: 0.5;
+      --fy: 0.5;
+      --z: 1.1;
+    }
+    .story-stage[data-step="2"] {
+      --fx: 0.5;
+    }
+    .story-stage[data-step="3"] {
+      --fx: 0.55;
+      --fy: 0.66;
+    }
+    .app-views,
+    .app-fresh {
+      display: none;
+    }
+    .app-add {
+      margin-left: auto;
+    }
+  }
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .story-stage {
+      --cw: 1.2;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .app-canvas {
+    transition:
+      left 1100ms var(--ease-site),
+      top 1100ms var(--ease-site),
+      scale 1100ms var(--ease-site),
+      transform-origin 1100ms var(--ease-site),
+      opacity 500ms,
+      filter 500ms;
+  }
+
+  /* Traffic along the configured connections, once the stage is live. */
+  .is-live .edges .pulse {
+    display: inline;
+    stroke: var(--a-violet);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 0.06 0.94;
+    animation: story-flow 2.6s linear calc(var(--i) * -0.7s) infinite;
+  }
+  [data-step="1"] .edges .pulse.worker {
+    stroke: var(--a-bad);
+    animation-duration: 0.9s;
+  }
+  [data-step="3"] .edges .pulse {
+    stroke: var(--a-ok);
+  }
+
+  /* Before the stage is live, web is not there yet; then it is deployed. */
+  .story-ready .story-stage:not(.is-live) :is(.card-web, .edges .fresh) {
+    opacity: 0;
+  }
+  .is-live[data-step="0"] .app-add {
+    animation: story-press 600ms ease 250ms;
+  }
+  .is-live[data-step="0"] .card-web {
+    animation:
+      story-drop 800ms cubic-bezier(0.2, 1.4, 0.4, 1) 750ms backwards,
+      story-glow 1s ease 2.8s;
+  }
+  .is-live[data-step="0"] .card-web .was {
+    animation: story-until 2.8s step-end;
+  }
+  .is-live[data-step="0"] .card-web .now {
+    animation: story-from 2.8s step-end;
+  }
+  .is-live[data-step="0"] .card-web .wait {
+    animation: story-blink 500ms ease-in-out 750ms 4 alternate;
+  }
+  .is-live[data-step="0"] .edges .fresh:not(.pulse) {
+    animation: story-draw 900ms var(--ease-site) 2.9s backwards;
+  }
+  .is-live[data-step="0"] .edges .pulse.fresh {
+    animation:
+      story-from 3.8s step-end,
+      story-flow 2.6s linear 3.8s infinite;
+  }
+
+  [data-step="1"] .card-worker {
+    animation: story-shake 450ms ease 300ms 2;
+  }
+  [data-step="1"] .card-worker .dot.bad {
+    animation: story-ping 1.2s ease-out infinite;
+  }
+  [data-step="1"] .app-logs code {
+    animation: story-line 300ms ease backwards;
+    animation-delay: calc(1900ms + var(--n, 0) * 160ms);
+  }
+  [data-step="1"] .app-logs code:nth-of-type(2) {
+    --n: 1;
+  }
+  [data-step="1"] .app-logs code:nth-of-type(3) {
+    --n: 2;
+  }
+  [data-step="1"] .app-logs code:nth-of-type(4) {
+    --n: 3;
+  }
+
+  [data-step="2"] .passkey {
+    animation: story-press 600ms ease 1000ms;
+  }
+  [data-step="2"] .passkey .icon {
+    animation: story-ping-icon 1.2s ease 1000ms;
+  }
+
+  [data-step="3"] .card-zeabur {
+    animation: story-unplug 1.6s ease;
+  }
+  [data-step="3"] .card-zeabur::after {
+    animation: story-strike 400ms ease 800ms backwards;
+  }
+  [data-step="3"] .card-zeabur .gone {
+    animation: story-from 900ms step-end;
+  }
+  [data-step="3"] .app-k8s .kept {
+    animation: story-stamp 600ms cubic-bezier(0.2, 1.5, 0.4, 1) 1500ms backwards;
+  }
+}
+
+@keyframes story-flow {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes story-press {
+  35%,
+  65% {
+    scale: 0.94;
+    filter: brightness(1.25);
+  }
+}
+@keyframes story-drop {
+  from {
+    opacity: 0;
+    translate: 0 -2.5em;
+    scale: 0.9;
+  }
+}
+@keyframes story-glow {
+  from {
+    box-shadow: 0 0 0 0.5em rgb(62 207 142 / 0.4);
+  }
+}
+@keyframes story-until {
+  from {
+    opacity: 1;
+  }
+}
+@keyframes story-from {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes story-blink {
+  to {
+    background: var(--a-violet);
+  }
+}
+@keyframes story-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes story-shake {
+  25% {
+    translate: -0.35em 0;
+  }
+  75% {
+    translate: 0.35em 0;
+  }
+}
+@keyframes story-ping {
+  from {
+    box-shadow: 0 0 0 0 rgb(255 92 98 / 0.7);
+  }
+  to {
+    box-shadow: 0 0 0 0.7em rgb(255 92 98 / 0);
+  }
+}
+@keyframes story-ping-icon {
+  40% {
+    scale: 1.3;
+  }
+}
+@keyframes story-line {
+  from {
+    opacity: 0;
+    translate: -0.6em 0;
+  }
+}
+@keyframes story-unplug {
+  from {
+    opacity: 0;
+    translate: 0 1em;
+  }
+  15%,
+  55% {
+    opacity: 1;
+    translate: 0 0;
+    border-style: solid;
+    border-color: var(--a-line);
+  }
+}
+@keyframes story-strike {
+  from {
+    scale: 0 1;
+  }
+}
+@keyframes story-stamp {
+  from {
+    opacity: 0;
+    scale: 1.6;
+  }
+}

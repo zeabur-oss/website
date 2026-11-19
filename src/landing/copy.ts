@@ -1,242 +1,329 @@
 import { releaseTag } from "../lib/products.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 
+// The home page's words, one key per string. zh-TW is written first, then zh-CN and English;
+// all three say the same things.
+
 const zeaburVersion = releaseTag("zeabur")
 
-type Product = { tagline: string; summary: string; points: string[]; docs: string }
-type Way = { title: string; body: string; link: string }
+type Entrance = { title: string; body: string; link: string }
+type Point = { title: string; body: string; link: string }
+type Step = { title: string; body: string }
+type MemberId = "zeabur" | "desktop" | "zeatend" | "identity" | "builder" | "catalog"
 
 export type LandingCopy = {
   title: string
   description: string
-  hero: { title: string; lead: string; start: string; source: string }
-  facts: { label: string; value: string }[]
-  shots: Record<"project" | "diagnosis" | "database" | "cluster" | "installer", string>
-  projects: { title: string; lead: string; more: string }
-  zeabur: Product
-  identity: Product
-  builder: Product
-  catalog: Product
-  start: { title: string; lead: string; server: Way; cluster: Way; laptop: Way }
-  leave: { title: string; body: string; link: string }
+  hero: {
+    meta: string
+    title: string
+    lead: string
+    start: string
+    source: string
+    team: Entrance
+    machine: Entrance
+  }
+  shots: Record<
+    "project" | "diagnosis" | "change-review" | "database" | "cluster" | "installer",
+    string
+  >
+  deploy: { label: string; title: string; body: string }
+  trace: { label: string; title: string; steps: [Step, Step, Step] }
+  roles: { label: string; title: string; points: [Point, Point, Point] }
+  leave: { label: string; title: string; body: string; link: string }
+  start: {
+    label: string
+    title: string
+    lead: string
+    others: string
+    agent: { title: string; body: string }
+    zeatend: { title: string; body: string }
+    manual: { title: string; body: string; server: string; cluster: string; laptop: string }
+  }
+  members: {
+    label: string
+    title: string
+    lead: string
+    lines: Record<MemberId, string>
+    community: string
+  }
+  discord: { label: string; title: string; body: string; link: string }
 }
 
 const zhTW: LandingCopy = {
   title: "Zeabur 開源專案",
   description:
-    "在自己的 Kubernetes 上部署和管理服務。Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 都採 Apache-2.0 授權。",
+    "在自己的 Kubernetes 上部署和管理服務。Zeabur 的開源專案都採 Apache-2.0 授權，包括新加入的 Zeatend。",
   hero: {
-    title: "在自己的 Kubernetes 上部署和管理服務",
-    lead: "Zeabur 把叢集整理成專案和服務，用白話說明哪裡出了問題。改設定前，先列出這次會寫入哪些欄位，確認後才套用。整套都裝在你自己的伺服器上。",
-    start: "在一台伺服器安裝",
+    meta: `Apache-2.0 · Zeabur ${zeaburVersion}`,
+    title: "你熟悉的 Zeabur，裝在自己的伺服器上",
+    lead: "一樣用 Git、Docker Compose 或範本部署，一樣的專案和服務。差別是伺服器是你的：費用只有主機，資料留在自己的機器，原始碼全部公開。",
+    start: "開始使用",
     source: "GitHub 上的原始碼",
-  },
-  facts: [
-    { label: "授權", value: "Apache-2.0" },
-    { label: "版本", value: zeaburVersion },
-    {
-      label: "裝在哪裡",
-      value: "一台 Linux 伺服器、既有的 Kubernetes 叢集，或用 zeaburctl 在自己的電腦開啟",
+    team: {
+      title: "已經有 Kubernetes 叢集",
+      body: "用 Helm chart 裝進去，成員各用自己的帳號和權限操作。",
+      link: "裝進既有叢集",
     },
-  ],
+    machine: {
+      title: "只有一臺 Linux 伺服器",
+      body: "Zeabur Installer 檢查伺服器，一次裝好叢集和整套服務。",
+      link: "在一臺伺服器安裝",
+    },
+  },
   shots: {
     project: "shop 專案的地圖。worker 反覆崩潰，所以排在「需要處理」的第一列。",
     diagnosis:
       "worker 重新啟動了 14 次。錯誤在重新啟動前那一次執行的日誌裡，旁邊就是開啟日誌的按鈕。",
+    "change-review": "儲存 web 的變更前，先看 YAML 差異：NODE_ENV 從 production 改成 staging。",
     database:
       "只有一個執行個體的 PostgreSQL。它故障時沒有其他執行個體接手，所以 Zeabur 提醒你設定備份。",
     cluster: "叢集頁：Kubernetes 1.34 即將停止支援、節點記憶體用到 91%、磁碟用到 88%。",
     installer: "Zeabur Installer 安裝前的確認頁：記憶體夠不夠、要裝哪些元件、大約要多久。",
   },
-  projects: {
-    title: "四個專案",
-    lead: "可以整套一起用，也可以只拿其中一個，放進你現有的叢集。",
-    more: "看看能做什麼",
+  deploy: {
+    label: "部署",
+    title: "按下部署，服務就上線",
+    body: "選一個 Git 儲存庫、Docker Compose 檔或範本。Zeabur 建置好就啟動，把服務放上架構圖，連線也一起畫出來。",
   },
-  zeabur: {
-    tagline: "部署和管理服務的網頁介面",
-    summary: "把叢集整理成專案和服務，說明哪裡出錯、該怎麼處理。",
-    points: [
-      "每個請求都帶著你自己的憑證，能不能做由 kube-apiserver 決定。",
-      "改設定前先列出會寫入的欄位和目前由誰管理，確認後才套用。",
-      "所有狀態都在 Kubernetes 物件裡，沒有資料庫。一個專案就是一個 Namespace。",
+  trace: {
+    label: "出問題時",
+    title: "服務出錯，三步找到原因",
+    steps: [
+      {
+        title: "看到哪裡出錯",
+        body: "首頁把叢集裡每個問題依原因分組：叢集本身、叢集外部、設定，或應用程式自己出錯。worker 反覆崩潰，列在「應用程式出錯」。",
+      },
+      {
+        title: "找到原因",
+        body: "worker 重新啟動了 14 次。錯誤在重新啟動前那一次執行的日誌裡，按一下就能開啟。",
+      },
+      {
+        title: "確認後才套用",
+        body: "儲存之前，先列出這次會寫入的欄位。看過差異、按下確認，變更才會寫回叢集。",
+      },
     ],
-    docs: "Zeabur 文件",
   },
-  identity: {
-    tagline: "用通行密鑰登入 kubectl",
-    summary: "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的 token。",
+  roles: {
+    label: "權限",
+    title: "每個人用自己的權限",
     points: [
-      "kubectl 會打開瀏覽器，用 Touch ID、Windows Hello 或安全金鑰登入，拿到幾分鐘就到期的 token。",
-      "管理員有專用帳號，只能用通行密鑰登入，token 5 分鐘到期，工作時會自動換新。",
-      "一個約 20 MB 的 Pod，在它保護的叢集裡執行，不需要資料庫。",
+      {
+        title: "用登入者自己的憑證",
+        body: "每個請求都帶著你自己的憑證，能做什麼由 Kubernetes RBAC 決定。",
+        link: "Zeabur 需要的權限",
+      },
+      {
+        title: "用通行密鑰登入",
+        body: "成員用 Zeabur Identity 的通行密鑰登入，kubectl 拿到的 token 幾分鐘就到期。",
+        link: "Zeabur Identity",
+      },
+      {
+        title: "沒有自己的資料庫",
+        body: "所有狀態都在 Kubernetes 物件裡。一個專案就是一個 Namespace。",
+        link: "安全設計",
+      },
     ],
-    docs: "Identity 文件",
-  },
-  builder: {
-    tagline: "推送 commit，拿到映像檔 digest",
-    summary: "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。",
-    points: [
-      "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。",
-      "每個新 commit 建置一次，推到 registry，再把映像檔寫進 status.latestImage，交給你的部署工具。",
-    ],
-    docs: "Builder 文件",
-  },
-  catalog: {
-    tagline: "測試過的元件與範本",
-    summary: "叢集元件和應用程式範本，每一項都由 CI 安裝並測試。",
-    points: [
-      "元件是 ingress、憑證、監控、資料庫 operator 這類叢集層級的東西。每一項寫明用哪個 chart、哪個版本、哪些 values，以及原因。",
-      "範本是 n8n、Dify、WordPress 這類應用程式，固定映像檔版本，也設好資源需求和上限。",
-      "CI 會安裝並測試每一項。每次發版產生一份有簽章的 bundle。",
-    ],
-    docs: "Catalog 說明",
-  },
-  start: {
-    title: "從手邊的環境開始",
-    lead: "三種裝法開啟的是同一套介面，差別在 Zeabur 在哪裡執行、用誰的憑證。",
-    server: {
-      title: "一台 Linux 伺服器",
-      body: "Zeabur Installer 的網頁介面會檢查伺服器、讓你選元件，一次裝好 RKE2、Zeabur Identity 和 Zeabur。",
-      link: "在一台伺服器安裝",
-    },
-    cluster: {
-      title: "既有的 Kubernetes 叢集",
-      body: "用 Helm chart 安裝。成員用 Zeabur Identity 的通行密鑰登入，以自己的權限操作。",
-      link: "裝進既有叢集",
-    },
-    laptop: {
-      title: "自己的電腦",
-      body: "zeaburctl ui 用目前的 kubeconfig 開啟介面，叢集裡不用另外安裝東西。",
-      link: "zeaburctl 用法",
-    },
   },
   leave: {
+    label: "移除",
     title: "移除 Zeabur，服務照常執行",
     body: "Zeabur 自己不存資料。移除 chart 後，Deployment、Service、Ingress 和資料都留在叢集裡，可以繼續用 kubectl、Helm、Argo CD 或 Flux 管理。",
     link: "移除 Zeabur 的步驟",
+  },
+  start: {
+    label: "開始",
+    title: "選一種方式開始",
+    lead: "依你想自己動手的程度選擇。三種方式裝好的是同一套 Zeabur。",
+    others: "其他方式：",
+    agent: {
+      title: "交給 AI 代理",
+      body: "之後只要把一段提示貼給 Claude 或 Codex，它就會幫你安裝 Zeabur，或把 zeabur.com 上的專案搬過來。",
+    },
+    zeatend: {
+      title: "用 Zeatend 一步步安裝",
+      body: "之後可以在終端機選好發行版和設定，由 Zeatend 透過 SSH 把伺服器裝成叢集。",
+    },
+    manual: {
+      title: "自己動手安裝",
+      body: "給想看清楚每個物件的叢集管理員。這幾種方式現在就能用：",
+      server: "在一臺伺服器安裝",
+      cluster: "用 Helm chart 裝進既有叢集",
+      laptop: "用 zeaburctl 在自己的電腦開啟",
+    },
+  },
+  members: {
+    label: "專案",
+    title: "Zeabur 開源的所有專案",
+    lead: "可以整套一起用，也可以只拿其中一個，放進你現有的叢集。",
+    lines: {
+      zeabur: "把叢集整理成專案和服務，說明哪裡出錯、該怎麼處理。",
+      desktop: "在自己的電腦開啟 Zeabur。",
+      zeatend: "把一臺 Linux 伺服器變成 Kubernetes 叢集。",
+      identity: "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的 token。",
+      builder: "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。",
+      catalog: "叢集元件和應用程式範本，每一項都由 CI 安裝並測試。",
+    },
+    community: "在 GitHub 上追蹤進度、回報問題，或讀部落格上的設計說明。",
+  },
+  discord: {
+    label: "社群",
+    title: "加入 Zeabur 的 Discord",
+    body: "安裝或使用時卡住了，可以在這裡發問；想要什麼功能，也可以直接提出來。",
+    link: "加入 Discord",
   },
 }
 
 const zhCN: LandingCopy = {
   title: "Zeabur 开源项目",
   description:
-    "在自己的 Kubernetes 上部署和管理服务。Zeabur、Zeabur Identity、Zeabur Builder 和 Zeabur Catalog 均采用 Apache-2.0 许可证。",
+    "在自己的 Kubernetes 上部署和管理服务。Zeabur 的开源项目都采用 Apache-2.0 许可证，包括新加入的 Zeatend。",
   hero: {
-    title: "在自己的 Kubernetes 上部署和管理服务",
-    lead: "Zeabur 把集群整理成项目和服务，用大白话说明哪里出了问题。改配置前，先列出这次会写入哪些字段，确认后才应用。整套都装在你自己的服务器上。",
-    start: "在一台服务器上安装",
+    meta: `Apache-2.0 · Zeabur ${zeaburVersion}`,
+    title: "你熟悉的 Zeabur，装在自己的服务器上",
+    lead: "一样用 Git、Docker Compose 或模板部署，一样的项目和服务。区别是服务器是你的：费用只有主机，数据留在自己的机器上，源代码全部公开。",
+    start: "开始使用",
     source: "GitHub 上的源代码",
-  },
-  facts: [
-    { label: "许可证", value: "Apache-2.0" },
-    { label: "版本", value: zeaburVersion },
-    {
-      label: "装在哪里",
-      value: "一台 Linux 服务器、现有的 Kubernetes 集群，或用 zeaburctl 在自己的电脑上打开",
+    team: {
+      title: "已经有 Kubernetes 集群",
+      body: "用 Helm chart 装进去，成员各用自己的账号和权限操作。",
+      link: "装进现有集群",
     },
-  ],
+    machine: {
+      title: "只有一台 Linux 服务器",
+      body: "Zeabur Installer 检查服务器，一次装好集群和整套服务。",
+      link: "在一台服务器上安装",
+    },
+  },
   shots: {
-    project: "shop 项目的拓扑图。worker 反复崩溃，所以排在“需要处理”的第一行。",
+    project: "shop 项目的地图。worker 反复崩溃，所以排在“需要处理”的第一行。",
     diagnosis: "worker 重启了 14 次。错误在重启前那一次运行的日志里，旁边就是打开日志的按钮。",
-    database: "只有一个实例的 PostgreSQL。它故障时没有其他实例接手，所以 Zeabur 提醒你设置备份。",
+    "change-review": "保存 web 的变更前，先看 YAML 差异：NODE_ENV 从 production 改成 staging。",
+    database: "只有一个实例的 PostgreSQL。它出故障时没有其他实例接手，所以 Zeabur 提醒你设置备份。",
     cluster: "集群页：Kubernetes 1.34 即将停止支持，节点内存用到 91%，磁盘用到 88%。",
     installer: "Zeabur Installer 安装前的确认页：内存够不够、要装哪些组件、大约要多久。",
   },
-  projects: {
-    title: "四个项目",
-    lead: "可以整套一起用，也可以只用其中一个，放进你现有的集群。",
-    more: "看看能做什么",
+  deploy: {
+    label: "部署",
+    title: "按下部署，服务就上线",
+    body: "选一个 Git 仓库、Docker Compose 文件或模板。Zeabur 构建好就启动，把服务放上架构图，连接也一起画出来。",
   },
-  zeabur: {
-    tagline: "部署和管理服务的 Web 界面",
-    summary: "把集群整理成项目和服务，说明哪里出错、该怎么处理。",
-    points: [
-      "每个请求都带着你自己的凭据，能不能执行由 kube-apiserver 决定。",
-      "改配置前先列出会写入的字段和当前由谁管理，确认后才应用。",
-      "所有状态都在 Kubernetes 对象里，没有数据库。一个项目就是一个 Namespace。",
+  trace: {
+    label: "出问题时",
+    title: "服务出错，三步找到原因",
+    steps: [
+      {
+        title: "看到哪里出错",
+        body: "首页把集群里每个问题按原因分组：集群本身、集群外部、配置，或应用自己出错。worker 反复崩溃，列在“应用出错”。",
+      },
+      {
+        title: "找到原因",
+        body: "worker 重启了 14 次。错误在重启前那一次运行的日志里，点一下就能打开。",
+      },
+      {
+        title: "确认后才应用",
+        body: "保存之前，先列出这次会写入的字段。看过差异、点了确认，变更才会写回集群。",
+      },
     ],
-    docs: "Zeabur 文档",
   },
-  identity: {
-    tagline: "用通行密钥登录 kubectl",
-    summary: "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的 token。",
+  roles: {
+    label: "权限",
+    title: "每个人用自己的权限",
     points: [
-      "kubectl 会打开浏览器，用 Touch ID、Windows Hello 或安全密钥登录，拿到几分钟就过期的 token。",
-      "管理员有专用账号，只能用通行密钥登录，token 5 分钟过期，工作时会自动换新。",
-      "一个约 20 MB 的 Pod，运行在它保护的集群里，不需要数据库。",
+      {
+        title: "用登录者自己的凭据",
+        body: "每个请求都带着你自己的凭据，能做什么由 Kubernetes RBAC 决定。",
+        link: "Zeabur 需要的权限",
+      },
+      {
+        title: "用通行密钥登录",
+        body: "成员用 Zeabur Identity 的通行密钥登录，kubectl 拿到的 token 几分钟就过期。",
+        link: "Zeabur Identity",
+      },
+      {
+        title: "没有自己的数据库",
+        body: "所有状态都在 Kubernetes 对象里。一个项目就是一个 Namespace。",
+        link: "安全设计",
+      },
     ],
-    docs: "Identity 文档",
-  },
-  builder: {
-    tagline: "推送 commit，拿到镜像 digest",
-    summary: "用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。",
-    points: [
-      "用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。",
-      "每个新 commit 构建一次，推送到镜像仓库，再把镜像写进 status.latestImage，交给你的部署工具。",
-    ],
-    docs: "Builder 文档",
-  },
-  catalog: {
-    tagline: "经过测试的组件与模板",
-    summary: "集群组件和应用模板，每一项都由 CI 安装并测试。",
-    points: [
-      "组件是 Ingress、证书、监控、数据库 Operator 这类集群级别的东西。每一项都写明用哪个 Chart、哪个版本、哪些 values，以及原因。",
-      "模板是 n8n、Dify、WordPress 这类应用，固定镜像版本，也设置好资源请求和上限。",
-      "CI 会安装并测试每一项。每次发版生成一份带签名的 bundle。",
-    ],
-    docs: "Catalog 说明",
-  },
-  start: {
-    title: "从手头的环境开始",
-    lead: "三种装法打开的是同一套界面，区别在于 Zeabur 运行在哪里、用谁的凭据。",
-    server: {
-      title: "一台 Linux 服务器",
-      body: "Zeabur Installer 的 Web 界面会检查服务器、让你选择组件，一次装好 RKE2、Zeabur Identity 和 Zeabur。",
-      link: "在一台服务器上安装",
-    },
-    cluster: {
-      title: "现有的 Kubernetes 集群",
-      body: "用 Helm Chart 安装。成员用 Zeabur Identity 的通行密钥登录，以自己的权限操作。",
-      link: "装进现有集群",
-    },
-    laptop: {
-      title: "自己的电脑",
-      body: "zeaburctl ui 用当前的 kubeconfig 打开界面，集群里不需要另外安装任何东西。",
-      link: "zeaburctl 用法",
-    },
   },
   leave: {
+    label: "移除",
     title: "移除 Zeabur，服务照常运行",
-    body: "Zeabur 自己不存数据。移除 Chart 后，Deployment、Service、Ingress 和数据都留在集群里，可以继续用 kubectl、Helm、Argo CD 或 Flux 管理。",
+    body: "Zeabur 自己不存数据。卸载 chart 后，Deployment、Service、Ingress 和数据都留在集群里，可以继续用 kubectl、Helm、Argo CD 或 Flux 管理。",
     link: "移除 Zeabur 的步骤",
+  },
+  start: {
+    label: "开始",
+    title: "选一种方式开始",
+    lead: "按你想自己动手的程度来选。三种方式装好的是同一套 Zeabur。",
+    others: "其他方式：",
+    agent: {
+      title: "交给 AI 智能体",
+      body: "之后只要把一段提示词贴给 Claude 或 Codex，它就会帮你安装 Zeabur，或者把 zeabur.com 上的项目迁移过来。",
+    },
+    zeatend: {
+      title: "用 Zeatend 一步步安装",
+      body: "之后可以在终端里选好发行版和配置，由 Zeatend 通过 SSH 把服务器装成集群。",
+    },
+    manual: {
+      title: "自己动手安装",
+      body: "给想看清每个对象的集群管理员。下面几种方式现在就能用：",
+      server: "在一台服务器上安装",
+      cluster: "用 Helm chart 装进现有集群",
+      laptop: "用 zeaburctl 在自己的电脑上打开",
+    },
+  },
+  members: {
+    label: "项目",
+    title: "Zeabur 开源的全部项目",
+    lead: "可以整套一起用，也可以只拿其中一个，放进你现有的集群。",
+    lines: {
+      zeabur: "把集群整理成项目和服务，说明哪里出错、该怎么处理。",
+      desktop: "在自己的电脑上打开 Zeabur。",
+      zeatend: "把一台 Linux 服务器变成 Kubernetes 集群。",
+      identity: "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的 token。",
+      builder: "用 BuildKit 从 Git 构建镜像的 Kubernetes operator。",
+      catalog: "集群组件和应用模板，每一项都由 CI 安装并测试。",
+    },
+    community: "在 GitHub 上跟进进度、反馈问题，或者读博客上的设计说明。",
+  },
+  discord: {
+    label: "社区",
+    title: "加入 Zeabur 的 Discord",
+    body: "安装或使用时卡住了，可以在这里提问；想要什么功能，也可以直接提出来。",
+    link: "加入 Discord",
   },
 }
 
 const en: LandingCopy = {
   title: "Zeabur Open Source",
   description:
-    "Deploy and run services on your own Kubernetes. Zeabur, Zeabur Identity, Zeabur Builder and Zeabur Catalog are Apache-2.0 licensed.",
+    "Deploy and run services on your own Kubernetes. Every Zeabur open-source project is Apache-2.0 licensed, including the new Zeatend.",
   hero: {
-    title: "Deploy and run services on your own Kubernetes",
-    lead: "Zeabur shows your cluster as projects and services and tells you in plain words what's wrong. Before a change goes in, you see the exact fields it writes, then you apply it. It all runs on your own servers.",
-    start: "Install on one server",
+    meta: `Apache-2.0 · Zeabur ${zeaburVersion}`,
+    title: "The Zeabur you know, on your own server",
+    lead: "Deploy from Git, Docker Compose or a template, with the same projects and services. The difference is that the server is yours: you pay only for the machine, your data stays on it, and all the code is public.",
+    start: "Get started",
     source: "Source on GitHub",
-  },
-  facts: [
-    { label: "License", value: "Apache-2.0" },
-    { label: "Version", value: zeaburVersion },
-    {
-      label: "Runs on",
-      value:
-        "One Linux server, a Kubernetes cluster you already have, or your own machine with zeaburctl",
+    team: {
+      title: "You already run Kubernetes",
+      body: "Install the Helm chart. Each member works with their own account and rights.",
+      link: "Install on a cluster",
     },
-  ],
+    machine: {
+      title: "You have one Linux server",
+      body: "Zeabur Installer checks the server and sets up the cluster and everything on it in one go.",
+      link: "Install on one server",
+    },
+  },
   shots: {
     project:
       "The shop project as a map. worker keeps crashing, so it is first under Needs attention.",
     diagnosis:
       "worker has restarted 14 times. The error is in the logs of the run before the restart, and the button to open them is right there.",
+    "change-review":
+      "Before the change to web is saved, the YAML diff shows NODE_ENV going from production to staging.",
     database:
       "A PostgreSQL database with one instance. Nothing takes over if it fails, so Zeabur asks you to set up backups.",
     cluster:
@@ -244,74 +331,97 @@ const en: LandingCopy = {
     installer:
       "Zeabur Installer's review step before installing: whether memory is enough, which components go in, and how long it takes.",
   },
-  projects: {
-    title: "Four projects",
-    lead: "Use them together, or pick one and add it to the cluster you already have.",
-    more: "See what it does",
+  deploy: {
+    label: "Deploy",
+    title: "Press deploy and the service is up",
+    body: "Pick a Git repository, a Docker Compose file or a template. Zeabur builds it, starts it and puts the service on the map with its connections.",
   },
-  zeabur: {
-    tagline: "A web interface to deploy and run services",
-    summary: "Shows the cluster as projects and services, what is wrong and what to do.",
-    points: [
-      "Every request carries your own credential, and kube-apiserver decides what you can do.",
-      "A change first lists the fields it writes and who owns them now. It applies when you confirm.",
-      "All state lives in Kubernetes objects, with no database. A project is a namespace.",
+  trace: {
+    label: "When it breaks",
+    title: "A failing service, traced in three steps",
+    steps: [
+      {
+        title: "See what's wrong",
+        body: "Home groups every problem in the cluster by cause: the cluster, something outside it, a setting, or the app itself. worker keeps crashing, so it is under Errors in the app.",
+      },
+      {
+        title: "Find the cause",
+        body: "worker has restarted 14 times. The error is in the logs of the run before the restart, one click away.",
+      },
+      {
+        title: "Confirm, then apply",
+        body: "Before anything is saved, you see the fields it writes. The change reaches the cluster only after you've read the diff and confirmed.",
+      },
     ],
-    docs: "Zeabur docs",
   },
-  identity: {
-    tagline: "Sign in to kubectl with a passkey",
-    summary:
-      "kubectl signs in through your browser with a passkey and gets a token that expires in minutes.",
+  roles: {
+    label: "Access",
+    title: "Everyone works with their own rights",
     points: [
-      "kubectl opens your browser. You sign in with Touch ID, Windows Hello or a security key and get a token that expires in minutes.",
-      "Admins have their own accounts, passkey only, with tokens that last 5 minutes and renew while they work.",
-      "One Pod of about 20 MB, running inside the cluster it protects, with no database.",
+      {
+        title: "Your own credential",
+        body: "Every request carries the signed-in person's credential, and Kubernetes RBAC decides what they can do.",
+        link: "What Zeabur needs",
+      },
+      {
+        title: "Passkey sign-in",
+        body: "Members sign in with a passkey through Zeabur Identity, and kubectl gets a token that expires in minutes.",
+        link: "Zeabur Identity",
+      },
+      {
+        title: "No database of its own",
+        body: "All state lives in Kubernetes objects. A project is a namespace.",
+        link: "Security design",
+      },
     ],
-    docs: "Identity docs",
-  },
-  builder: {
-    tagline: "Push a commit, get an image digest",
-    summary: "A Kubernetes operator that builds container images from Git with BuildKit.",
-    points: [
-      "A Kubernetes operator that builds container images from Git with BuildKit.",
-      "Each new commit is built and pushed to your registry. The image goes into status.latestImage for your rollout tool to pick up.",
-    ],
-    docs: "Builder docs",
-  },
-  catalog: {
-    tagline: "Tested components and templates",
-    summary: "Cluster components and app templates, each installed and tested in CI.",
-    points: [
-      "Components are cluster-wide pieces like ingress, certificates, metrics and database operators. Each one says which chart, which version, which values, and why.",
-      "Templates are apps like n8n, Dify and WordPress, with pinned images and resource requests and limits already set.",
-      "CI installs and tests every one of them. Each release ships one signed bundle.",
-    ],
-    docs: "About Catalog",
-  },
-  start: {
-    title: "Start with what you have",
-    lead: "All three open the same interface. They differ in where Zeabur runs and whose credential it uses.",
-    server: {
-      title: "A Linux server",
-      body: "The Zeabur Installer web UI checks the server, lets you pick components, and installs RKE2, Zeabur Identity and Zeabur in one go.",
-      link: "Install on one server",
-    },
-    cluster: {
-      title: "An existing Kubernetes cluster",
-      body: "Install with the Helm chart. Your team signs in with a passkey through Zeabur Identity and works with their own rights.",
-      link: "Install on a cluster",
-    },
-    laptop: {
-      title: "Your own machine",
-      body: "zeaburctl ui opens the interface with your current kubeconfig. Nothing gets installed in the cluster.",
-      link: "Using zeaburctl",
-    },
   },
   leave: {
+    label: "Leaving",
     title: "Remove Zeabur, and your services keep running",
     body: "Zeabur keeps no data of its own. Uninstall the chart and your Deployments, Services, Ingresses and data stay in the cluster, ready for kubectl, Helm, Argo CD or Flux.",
     link: "How to remove Zeabur",
+  },
+  start: {
+    label: "Start",
+    title: "Pick a way to start",
+    lead: "Choose by how hands-on you want to be. All three end with the same Zeabur.",
+    others: "Other ways: ",
+    agent: {
+      title: "Hand it to an AI agent",
+      body: "You'll paste a prompt into Claude or Codex, and it will install Zeabur for you or move your projects over from zeabur.com.",
+    },
+    zeatend: {
+      title: "Step through it with Zeatend",
+      body: "You'll pick a distribution and settings in your terminal, and Zeatend will turn the server into a cluster over SSH.",
+    },
+    manual: {
+      title: "Install it yourself",
+      body: "For cluster admins who want to see every object. These work today:",
+      server: "Install on one server",
+      cluster: "Install the Helm chart on a cluster",
+      laptop: "Open it on your own machine with zeaburctl",
+    },
+  },
+  members: {
+    label: "Projects",
+    title: "Every Zeabur open-source project",
+    lead: "Use them together, or pick one and add it to the cluster you already have.",
+    lines: {
+      zeabur: "Shows the cluster as projects and services, what is wrong and what to do.",
+      desktop: "Zeabur on your own computer.",
+      zeatend: "Turns one Linux server into a Kubernetes cluster.",
+      identity:
+        "kubectl signs in through your browser with a passkey and gets a token that expires in minutes.",
+      builder: "A Kubernetes operator that builds container images from Git with BuildKit.",
+      catalog: "Cluster components and app templates, each installed and tested in CI.",
+    },
+    community: "Follow the work and report issues on GitHub, or read the design notes on the blog.",
+  },
+  discord: {
+    label: "Community",
+    title: "Join Zeabur on Discord",
+    body: "Ask there when you get stuck installing or using it, or suggest a feature you want.",
+    link: "Join Discord",
   },
 }
 

@@ -16,7 +16,18 @@ type Chrome = {
     home: string
     /** The mark beside the Zeabur logo. */
     openSource: string
+    product: string
+    useCases: string
+    security: string
+    start: string
+    /** Beside work that is not released yet. */
+    soon: string
+    stars: (count: string) => string
   }
+  groups: { manage: string; install: string; components: string; allInstalls: string }
+  /** Members without a product page of their own yet. */
+  members: Record<"desktop" | "zeatend", string>
+  useCases: Record<"team" | "machine", { name: string; line: string }>
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { line: string; short: string }>
   footer: { about: string; license: string; products: string; resources: string; source: string }
@@ -34,6 +45,21 @@ const zhTW: Chrome = {
     menu: "選單",
     home: "首頁",
     openSource: "開源",
+    product: "產品",
+    useCases: "使用情境",
+    security: "安全與信任",
+    start: "開始使用",
+    soon: "敬請期待",
+    stars: (count) => `GitHub 上有 ${count} 個星號`,
+  },
+  groups: { manage: "管理", install: "安裝", components: "元件", allInstalls: "所有安裝方式" },
+  members: {
+    desktop: "在自己的電腦開啟 Zeabur",
+    zeatend: "把一台 Linux 伺服器變成 Kubernetes 叢集",
+  },
+  useCases: {
+    team: { name: "團隊的叢集", line: "已經有 Kubernetes，成員各用自己的帳號和權限" },
+    machine: { name: "一台機器", line: "從一台 Linux 伺服器裝好整套" },
   },
   products: {
     zeabur: {
@@ -74,6 +100,21 @@ const zhCN: Chrome = {
     menu: "菜单",
     home: "首页",
     openSource: "开源",
+    product: "产品",
+    useCases: "使用场景",
+    security: "安全与信任",
+    start: "开始使用",
+    soon: "敬请期待",
+    stars: (count) => `GitHub 上有 ${count} 个星标`,
+  },
+  groups: { manage: "管理", install: "安装", components: "组件", allInstalls: "所有安装方式" },
+  members: {
+    desktop: "在自己的电脑上打开 Zeabur",
+    zeatend: "把一台 Linux 服务器变成 Kubernetes 集群",
+  },
+  useCases: {
+    team: { name: "团队的集群", line: "已经有 Kubernetes，成员各用自己的账号和权限" },
+    machine: { name: "一台机器", line: "从一台 Linux 服务器装好整套" },
   },
   products: {
     zeabur: {
@@ -114,6 +155,29 @@ const en: Chrome = {
     menu: "Menu",
     home: "Home",
     openSource: "Open Source",
+    product: "Product",
+    useCases: "Use cases",
+    security: "Security and trust",
+    start: "Get started",
+    soon: "Stay tuned",
+    stars: (count) => `${count} stars on GitHub`,
+  },
+  groups: {
+    manage: "Manage",
+    install: "Install",
+    components: "Components",
+    allInstalls: "All ways to install",
+  },
+  members: {
+    desktop: "Zeabur on your own computer",
+    zeatend: "Turn one Linux server into a Kubernetes cluster",
+  },
+  useCases: {
+    team: {
+      name: "A team's cluster",
+      line: "You run Kubernetes; each member uses their own account and rights",
+    },
+    machine: { name: "One machine", line: "Set up everything on one Linux server" },
   },
   products: {
     zeabur: {

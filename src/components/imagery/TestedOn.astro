@@ -14,9 +14,9 @@ const mid = (i: number) => y(i) + 21
 ---
 
 <svg class="imagery imagery-tested" viewBox="0 0 560 232" role="img" aria-label={Astro.props.label}>
-  <rect class="img-frame" x="16" y="16" width="528" height="200" rx="6"></rect>
+  <rect class="img-frame" x="16" y="16" width="528" height="200"></rect>
 
-  <rect class="img-card" x="32" y="92" width="122" height="54" rx="6"></rect>
+  <rect class="img-card" x="32" y="92" width="122" height="54"></rect>
   <text class="img-kind" x="44" y="112">
     zot, now
   </text>
@@ -33,7 +33,6 @@ const mid = (i: number) => y(i) + 21
         y={y(i)}
         width="168"
         height="42"
-        rx="6"
       />
       <text class={r.counts ? "img-name" : "img-name img-faint"} x="200" y={y(i) + 26}>
         {r.on}
@@ -67,7 +66,7 @@ const mid = (i: number) => y(i) + 21
     d={`M390 ${mid(0)} H448`}
   ></path>
   <g class="img-result">
-    <rect class="img-card" x="448" y="40" width="84" height="50" rx="6"></rect>
+    <rect class="img-card" x="448" y="40" width="84" height="50"></rect>
     <text class="img-kind" x="460" y="60">
       testedOn
     </text>

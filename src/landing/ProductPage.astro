@@ -70,7 +70,7 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
 >
   <section class="wrap hero">
     <div class="grid12">
-      <div class="stagger flex flex-col items-start gap-6 lg:col-[1/7] lg:self-center">
+      <div class="flex flex-col items-start gap-6 lg:col-[1/7] lg:self-center" data-reveal>
         <p class="inline-flex items-center gap-2.5 type-body text-site-muted">
           <span class="mark">
             <Icon name={productIcon[id]} />
@@ -78,7 +78,7 @@ const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => 
           {name}
           <span class="pill">{releaseTag(id)}</span>
         </p>
-        <h1 class="display max-w-[14em] text-[clamp(2.125rem,1.6rem+2.2vw,3.5rem)]">
+        <h1 class="display max-w-[14em]">
           <span class="text-site-faint zh:inline-block">{t.titleDim}</span>
           {locale === "en" ? " " : ""}
           <span class="zh:inline-block">{t.title}</span>

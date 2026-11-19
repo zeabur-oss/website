@@ -13,7 +13,7 @@ const adminStart = 6
 const adminTokens = [0, 1, 2].map((i) => adminStart + i * 5)
 ---
 
-<rect class="img-frame" x="16" y="16" width="448" height="288" rx="6"></rect>
+<rect class="img-frame" x="16" y="16" width="448" height="288"></rect>
 <text class="img-kind" x="32" y="78">
   passkey
 </text>
@@ -37,7 +37,6 @@ const adminTokens = [0, 1, 2].map((i) => adminStart + i * 5)
       y="124"
       width={(t.to - t.from) * perMinute - 2}
       height="30"
-      rx="3"
     />
     <text
       class="img-name"
@@ -57,7 +56,6 @@ const adminTokens = [0, 1, 2].map((i) => adminStart + i * 5)
       y="188"
       width={5 * perMinute - 2}
       height="30"
-      rx="3"
     />
     <text
       class={i === 0 ? "img-button-text" : "img-name"}

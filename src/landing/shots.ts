@@ -25,9 +25,9 @@ export const shot = (locale: string, id: string) =>
 /** Zeabur Identity's sign-in pages, from its docs. */
 export const identityShot = (name: string) => image("identity", `images/${name}-light.avif`)
 
-// The container is 1240px wide at most, with 16px or 48px gutters.
+// The container is 1440px wide at most, with 16px or 40px gutters and 24px between grid columns.
 export const sizes = {
-  full: "(min-width: 1336px) 1240px, (min-width: 768px) calc(100vw - 96px), calc(100vw - 32px)",
-  wide: "(min-width: 1336px) 819px, (min-width: 1024px) calc(66vw - 64px), (min-width: 768px) calc(100vw - 96px), calc(100vw - 32px)",
-  half: "(min-width: 1336px) 608px, (min-width: 768px) calc(50vw - 60px), calc(100vw - 32px)",
+  full: "(min-width: 1440px) 1360px, (min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)",
+  wide: "(min-width: 1440px) 899px, (min-width: 1024px) calc(66.7vw - 61px), (min-width: 768px) calc(100vw - 80px), calc(100vw - 32px)",
+  half: "(min-width: 1440px) 668px, (min-width: 768px) calc(50vw - 52px), calc(100vw - 32px)",
 }

@@ -24,8 +24,8 @@ const date = dateFormat(locale, "medium")
   image={`/og/blog/${locale}/index.png`}
   schema={{ "@type": "Blog", name: `${t.title} · Zeabur Open Source`, description: t.description }}
 >
-  <section class="wrap hero pb-0">
-    <div class="stagger flex flex-col items-start gap-6">
+  <section class="wrap hero pb-12 md:pb-16">
+    <div class="flex flex-col items-start gap-6">
       <h1 class="display max-w-[14em]">{t.title}</h1>
       <p class="lead max-w-xl">{t.description}</p>
       <a class="more mt-1" href={`${blogUrl(locale)}/rss.xml`}>
@@ -35,7 +35,7 @@ const date = dateFormat(locale, "medium")
     </div>
   </section>
 
-  <section class="wrap section before:mt-(--section-space)" aria-label={t.title}>
+  <section class="wrap section" aria-label={t.title}>
     {posts.length === 0 ? (
       <p class="lead max-w-xl" data-reveal>
         {t.empty}

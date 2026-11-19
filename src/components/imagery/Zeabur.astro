@@ -11,18 +11,18 @@ const web = [
 const worker = [box(44, 240, "Deployment", "worker"), box(162, 240, "Secret", "worker-env")]
 ---
 
-<rect class="img-frame" x="16" y="16" width="282" height="288" rx="6"></rect>
+<rect class="img-frame" x="16" y="16" width="282" height="288"></rect>
 <text class="img-kind" x="30" y="40">
   Namespace shop
 </text>
 
-<rect class="img-group" x="30" y="54" width="254" height="146" rx="4"></rect>
+<rect class="img-group" x="30" y="54" width="254" height="146"></rect>
 <text class="img-title" x="44" y="76">
   web
 </text>
 {web.map((b) => (
   <g>
-    <rect class="img-box" x={b.x} y={b.y} width="110" height="42" rx="3" />
+    <rect class="img-box" x={b.x} y={b.y} width="110" height="42" />
     <text class="img-kind" x={b.x + 10} y={b.y + 17}>
       {b.kind}
     </text>
@@ -32,13 +32,13 @@ const worker = [box(44, 240, "Deployment", "worker"), box(162, 240, "Secret", "w
   </g>
 ))}
 
-<rect class="img-group" x="30" y="210" width="254" height="84" rx="4"></rect>
+<rect class="img-group" x="30" y="210" width="254" height="84"></rect>
 <text class="img-title" x="44" y="230">
   worker
 </text>
 {worker.map((b) => (
   <g>
-    <rect class="img-box" x={b.x} y={b.y - 2} width="110" height="42" rx="3" />
+    <rect class="img-box" x={b.x} y={b.y - 2} width="110" height="42" />
     <text class="img-kind" x={b.x + 10} y={b.y + 15}>
       {b.kind}
     </text>
@@ -50,11 +50,11 @@ const worker = [box(44, 240, "Deployment", "worker"), box(162, 240, "Secret", "w
 
 <path class="img-link" d="M284 113 H318"></path>
 <g class="img-plan">
-  <rect class="img-card" x="318" y="54" width="146" height="200" rx="6"></rect>
+  <rect class="img-card" x="318" y="54" width="146" height="200"></rect>
   <text class="img-title" x="332" y="78">
     plan
   </text>
-  <rect class="img-hit" x="324" y="92" width="134" height="40" rx="3"></rect>
+  <rect class="img-hit" x="324" y="92" width="134" height="40"></rect>
   <text class="img-kind" x="332" y="108">
     ~ spec.replicas
   </text>
@@ -70,7 +70,7 @@ const worker = [box(44, 240, "Deployment", "worker"), box(162, 240, "Secret", "w
   <text class="img-kind img-faint" x="332" y="196">
     = HTTPRoute
   </text>
-  <rect class="img-button" x="332" y="214" width="118" height="26" rx="4"></rect>
+  <rect class="img-button" x="332" y="214" width="118" height="26"></rect>
   <text class="img-button-text" x="391" y="231" text-anchor="middle">
     apply
   </text>

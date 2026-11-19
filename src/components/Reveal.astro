@@ -1,36 +1,52 @@
 ---
-// Elements with data-reveal, and the children of .stagger, come in once when they enter the
-// viewport. The class that hides them is set before paint, and only when scripts run.
+// Elements with data-reveal come in once when they enter the viewport. The class that hides them
+// is set before paint, only when scripts run, and is taken away again if the observer below has
+// not started within two seconds (the module failed to load or threw).
 ---
 
 <script is:inline>
   document.documentElement.classList.add("reveal-ready")
+  setTimeout(() => {
+    if (!("revealing" in document.documentElement.dataset)) {
+      document.documentElement.classList.remove("reveal-ready")
+    }
+  }, 2000)
 </script>
 <script>
-  let observer: IntersectionObserver | undefined
+  let observers: IntersectionObserver[] = []
 
-  function reveal() {
-    observer?.disconnect()
-    const targets = document.querySelectorAll("[data-reveal]:not(.is-in), .stagger:not(.is-in)")
-    if (!("IntersectionObserver" in window)) {
-      targets.forEach((el) => el.classList.add("is-in"))
-      return
-    }
-    observer = new IntersectionObserver(
+  // A scene plays only once most of it is on screen, so the reader sees it from the start.
+  function watch(selector: string, threshold: number) {
+    const targets = document.querySelectorAll(`${selector}:not(.is-in)`)
+    const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue
           entry.target.classList.add("is-in")
-          observer?.unobserve(entry.target)
+          observer.unobserve(entry.target)
         }
       },
-      { rootMargin: "0px 0px -60px 0px", threshold: 0.05 },
+      { rootMargin: "0px 0px -60px 0px", threshold },
     )
-    targets.forEach((el) => observer!.observe(el))
+    targets.forEach((el) => observer.observe(el))
+    observers.push(observer)
+  }
+
+  function reveal() {
+    observers.forEach((o) => o.disconnect())
+    observers = []
+    document.documentElement.dataset.revealing = ""
+    if (!("IntersectionObserver" in window)) {
+      document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("is-in"))
+      return
+    }
+    watch('[data-reveal]:not([data-reveal="scene"])', 0.05)
+    watch('[data-reveal="scene"]', 0.6)
   }
 
   document.addEventListener("astro:before-swap", (event) => {
     event.newDocument.documentElement.classList.add("reveal-ready")
+    event.newDocument.documentElement.dataset.revealing = ""
   })
   document.addEventListener("astro:page-load", reveal)
 </script>
