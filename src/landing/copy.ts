@@ -35,7 +35,6 @@ export type LandingCopy = {
     label: string
     title: string
     lead: string
-    others: string
     agent: { title: string; body: string }
     zeatend: { title: string; body: string }
     manual: { title: string; body: string; server: string; cluster: string; laptop: string }
@@ -135,7 +134,6 @@ const zhTW: LandingCopy = {
     label: "開始",
     title: "選一種方式開始",
     lead: "依你想自己動手的程度選擇。三種方式裝好的是同一套 Zeabur。",
-    others: "其他方式：",
     agent: {
       title: "交給 AI 代理",
       body: "之後只要把一段提示貼給 Claude 或 Codex，它就會幫你安裝 Zeabur，或把 zeabur.com 上的專案搬過來。",
@@ -257,7 +255,6 @@ const zhCN: LandingCopy = {
     label: "开始",
     title: "选一种方式开始",
     lead: "按你想自己动手的程度来选。三种方式装好的是同一套 Zeabur。",
-    others: "其他方式：",
     agent: {
       title: "交给 AI 智能体",
       body: "之后只要把一段提示词贴给 Claude 或 Codex，它就会帮你安装 Zeabur，或者把 zeabur.com 上的项目迁移过来。",
@@ -385,7 +382,6 @@ const en: LandingCopy = {
     label: "Start",
     title: "Pick a way to start",
     lead: "Choose by how hands-on you want to be. All three end with the same Zeabur.",
-    others: "Other ways: ",
     agent: {
       title: "Hand it to an AI agent",
       body: "You'll paste a prompt into Claude or Codex, and it will install Zeabur for you or move your projects over from zeabur.com.",
