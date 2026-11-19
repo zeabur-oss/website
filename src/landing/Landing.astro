@@ -1,4 +1,5 @@
 ---
+import HeadingText from "../components/HeadingText.astro"
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
@@ -68,14 +69,16 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
       {t.hero.meta}
     </p>
     <h1 class="mega mt-6 max-w-[11em]" data-reveal="text">
-      {t.hero.title}
+      <HeadingText text={t.hero.title} />
     </h1>
     <div
       class="mt-10 flex flex-col items-start gap-8 md:mt-14 lg:max-w-[40rem]"
       data-reveal
       style="--i:1"
     >
-      <p class="lead">{t.hero.lead}</p>
+      <p class="lead">
+        <HeadingText text={t.hero.lead} />
+      </p>
       <div class="flex flex-wrap gap-3">
         <a href="#start" class="button primary">
           {t.hero.start}

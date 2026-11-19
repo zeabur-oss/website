@@ -1,4 +1,5 @@
 ---
+import HeadingText from "../../components/HeadingText.astro"
 import { cn } from "cn"
 // A section's heading: an optional number and label in mono, the title with an optional quiet
 // half, and a lead.
@@ -30,22 +31,28 @@ const gap = dim && !/[　-鿿＀-￯]$/u.test(dim) ? " " : ""
   <h2 id={id} data-reveal="text">
     {tail ? (
       <>
-        {`${title} `}
-        <span class="text-site-faint zh:inline-block">{tail}</span>
+        <HeadingText text={title!} />{" "}
+        <span class="text-site-faint zh:inline-block">
+          <HeadingText text={tail} />
+        </span>
       </>
     ) : dim ? (
       <>
-        <span class="text-site-faint zh:inline-block">{dim}</span>
+        <span class="text-site-faint zh:inline-block">
+          <HeadingText text={dim} />
+        </span>
         {gap}
-        <span class="zh:inline-block">{title}</span>
+        <span class="zh:inline-block">
+          <HeadingText text={title!} />
+        </span>
       </>
     ) : (
-      title
+      title && <HeadingText text={title} />
     )}
   </h2>
   {lead && (
     <p class="lead mt-5" data-reveal style="--i:1">
-      {lead}
+      <HeadingText text={lead} />
     </p>
   )}
 </header>

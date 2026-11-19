@@ -3,6 +3,7 @@
 // labelled from its catalogues (scenes/ui.ts). The stage holds still while the chapters scroll
 // past, and plays the chapter in the middle of the screen: a deploy, a crash and its logs, a
 // passkey sign-in, and the cluster after Zeabur is removed. Without scripts it shows the deploy.
+import HeadingText from "../components/HeadingText.astro"
 import Icon from "../components/Icon.astro"
 import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
@@ -270,20 +271,28 @@ const roleLinks = [
       <span>01</span>
       <span>{t.deploy.label}</span>
     </p>
-    <h2>{t.deploy.title}</h2>
-    <p class="lead">{t.deploy.body}</p>
+    <h2>
+      <HeadingText text={t.deploy.title} />
+    </h2>
+    <p class="lead">
+      <HeadingText text={t.deploy.body} />
+    </p>
   </li>
   <li data-chapter="1" id="trace">
     <p class="index label">
       <span>02</span>
       <span>{t.trace.label}</span>
     </p>
-    <h2>{t.trace.title}</h2>
+    <h2>
+      <HeadingText text={t.trace.title} />
+    </h2>
     <ol class="story-points">
       {t.trace.steps.map((step, i) => (
         <li>
           <span class="label text-site-accent">{number(i)}</span>
-          <h3>{step.title}</h3>
+          <h3>
+            <HeadingText text={step.title} />
+          </h3>
           <p class="body">{step.body}</p>
         </li>
       ))}
@@ -294,11 +303,15 @@ const roleLinks = [
       <span>03</span>
       <span>{t.roles.label}</span>
     </p>
-    <h2>{t.roles.title}</h2>
+    <h2>
+      <HeadingText text={t.roles.title} />
+    </h2>
     <ul class="story-points">
       {t.roles.points.map((p, i) => (
         <li>
-          <h3>{p.title}</h3>
+          <h3>
+            <HeadingText text={p.title} />
+          </h3>
           <p class="body">{p.body}</p>
           <a href={roleLinks[i]} class="more">
             {p.link}
@@ -313,8 +326,12 @@ const roleLinks = [
       <span>04</span>
       <span>{t.leave.label}</span>
     </p>
-    <h2>{t.leave.title}</h2>
-    <p class="lead">{t.leave.body}</p>
+    <h2>
+      <HeadingText text={t.leave.title} />
+    </h2>
+    <p class="lead">
+      <HeadingText text={t.leave.body} />
+    </p>
     <a href={zeaburDocs("leave/uninstall")} class="more mt-6">
       {t.leave.link}
       <Icon name="arrow-right" class="go" />

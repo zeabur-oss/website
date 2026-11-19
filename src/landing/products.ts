@@ -23,51 +23,51 @@ export type ProductCopy = {
 const zhTW: Record<ProductId, ProductCopy> = {
   zeabur: {
     meta: {
-      title: "Zeabur：在自己的 Kubernetes 上部署和管理服務",
+      title: "Zeabur：在自己的主機上，用熟悉的方式部署服務",
       description:
-        "Zeabur 把 Namespace 整理成專案和服務，用登入者自己的權限讀寫叢集。改設定前先列出會寫入的欄位，確認後才套用。",
+        "Zeabur 是開源軟體。專案、服務、網域、環境變數和應用程式範本，都和你用過的部署平台一樣。主機向哪家租、選哪個方案，由你決定。",
     },
-    titleDim: "在自己的叢集上，",
-    title: "用專案和服務管理 Kubernetes",
-    sub: "Zeabur 直接讀取 Kubernetes 物件，把 Namespace 整理成專案和服務，說明哪裡出了問題。改設定前，先列出這次會寫入哪些欄位，確認後才套用。",
+    titleDim: "在自己的主機上，",
+    title: "點幾下就部署好",
+    sub: "從 Git、Docker Compose 或應用程式範本部署，加上網域、改環境變數，都是你在其他部署平台上熟悉的用法。服務在你自己的主機上執行，費用依你選的雲端服務或機房計算。",
     docs: "閱讀 Zeabur 文件",
     source: "GitHub 上的原始碼",
     highlights: {
-      titleDim: "沒有自己的資料庫，",
-      title: "也沒有自己的權限",
+      titleDim: "用過其他部署平台？",
+      title: "大部分都一樣",
       items: [
         {
-          tag: "RBAC",
-          title: "用你自己的權限",
-          body: "每次讀寫叢集都帶著登入者的權杖，能做什麼由 Kubernetes RBAC 決定。Chart 建立的 ServiceAccount 沒有綁定任何 Role。",
+          tag: "deploy",
+          title: "部署方式一樣",
+          body: "從 Git、Docker Compose、Docker 映像檔或應用程式範本部署，也能直接上傳資料夾。",
         },
         {
-          tag: "plan",
-          title: "先檢查變更，再套用",
-          body: "按下檢查變更，畫面列出要建立、修改或刪除的物件。這份變更 10 分鐘內有效，期間有人改過同一個物件，就要重新檢查。",
+          tag: "domains",
+          title: "網域、變數和日誌",
+          body: "幫服務加上網域，在服務頁改環境變數、看日誌。新版本有問題時，回到上一個版本。",
         },
         {
-          tag: "Helm",
-          title: "其他工具管的服務不亂改",
-          body: "Helm、Argo CD、Flux 管理的物件只能重新啟動。其他修改會被擋下，並告訴你該去改 Helm values 還是 Git 儲存庫。",
+          tag: "server",
+          title: "主機是你的，由你維護",
+          body: "費用依你選的主機計算。升級 Zeabur、備份資料和維護主機，由你或你的團隊負責。",
         },
       ],
     },
     how: {
-      titleDim: "從叢集讀取，",
-      title: "確認後才寫回去",
+      titleDim: "你改設定之前，",
+      title: "先讓你看過",
       steps: [
         {
-          title: "讀取",
-          body: "依 selector、Service、HTTPRoute 和 volume 的關係，把 Deployment、PVC、Secret 這些物件組成服務。",
+          title: "整理成專案",
+          body: "Zeabur 直接讀取叢集，把服務的程式、資料庫、網域和儲存空間放在一起。它沒有自己的資料庫要備份，每次讀寫都用你自己的權限。",
         },
         {
-          title: "呈現",
-          body: "專案就是加了標籤的 Namespace。需要處理的服務排在最前面，旁邊就是記錄和事件。",
+          title: "用白話說明問題",
+          body: "需要處理的服務排在最前面，告訴你原因、該怎麼做，旁邊就是日誌。",
         },
         {
-          title: "寫入",
-          body: "每一筆寫入先送 kube-apiserver dry run，全部通過才真正寫入。物件被別人改過，就不會寫入。",
+          title: "確認後才套用",
+          body: "改設定前，先列出會建立、修改或刪除哪些東西，你確認後才寫入。有人剛改過同一個服務，就要重新檢查。",
         },
       ],
     },
@@ -95,47 +95,47 @@ const zhTW: Record<ProductId, ProductCopy> = {
   },
   identity: {
     meta: {
-      title: "Zeabur Identity：用通行密鑰登入 Kubernetes",
+      title: "Zeabur Identity：每個人用自己的帳號登入",
       description:
-        "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的權杖。管理員有專用帳號，預設用通行密鑰，或密碼加驗證碼登入。",
+        "Zeabur 的登入頁。每個人用通行密鑰、GitHub、Google 或密碼登入自己的帳號，管理員要雙重驗證。單獨使用時，也能讓 kubectl 用同樣的方式登入。",
     },
-    titleDim: "刪掉 admin.conf，",
-    title: "用通行密鑰登入叢集",
-    sub: "kubectl 會打開瀏覽器，你用 Touch ID、Windows Hello 或安全金鑰登入，拿到幾分鐘就到期的權杖。權杖由 Kubernetes 自己驗證，Zeabur Identity 不在請求路徑上。",
+    titleDim: "不共用管理員密碼，",
+    title: "每個人有自己的帳號",
+    sub: "Zeabur 的登入頁就是 Zeabur Identity，裝好 Zeabur 就有了。在成員頁邀請成員、選擇他們能用的專案。有人離開時，移除他並結束他的工作階段，10 分鐘內他就無法再存取。",
     docs: "閱讀入門指南",
     source: "GitHub 上的原始碼",
     highlights: {
-      titleDim: "成員用自己的權限，",
-      title: "管理員用專用帳號",
+      titleDim: "成員用自己的帳號，",
+      title: "管理員多一道驗證",
       items: [
         {
           tag: "passkey",
-          title: "通行密鑰，也能用密碼",
-          body: "用 Touch ID、Windows Hello 或安全金鑰登入。成員也可以設密碼，或連結 GitHub、Google 帳號，日常登入時使用。",
+          title: "用習慣的方式登入",
+          body: "通行密鑰（Touch ID、Windows Hello 或安全金鑰）、GitHub、Google、公司的登入系統，或密碼。",
         },
         {
           tag: "5 min",
-          title: "管理員有專用帳號",
+          title: "管理員要雙重驗證",
           body: "管理員帳號預設用通行密鑰，或密碼加驗證器 App 的驗證碼登入，權杖 5 分鐘到期，工作時會自動換新。日常工作用一般帳號，要改叢集時再登入管理員帳號。",
         },
         {
           tag: "~20 MB",
-          title: "跑在它保護的叢集裡",
-          body: "一個約 20 MB 的 Pod，不需要資料庫，也不用另外準備伺服器。Argo CD、Grafana 這類 OpenID Connect 應用程式也能用同一個 issuer。",
+          title: "在你的伺服器上執行",
+          body: "叢集裡只多一個約 20 MB 的程式，不需要資料庫，也不依賴外部服務，帳號就存在叢集裡。",
         },
       ],
     },
     how: {
-      titleDim: "在瀏覽器登入，",
-      title: "回到 kubectl 繼續做事",
+      titleDim: "單獨使用時，",
+      title: "kubectl 也這樣登入",
       steps: [
         {
           title: "執行 kubectl",
           body: "例如 kubectl get pods。瀏覽器會打開 Zeabur Identity 的登入頁。",
         },
         {
-          title: "用通行密鑰登入",
-          body: "kubectl 拿到 10 分鐘的權杖，你工作時它會在背景續期。",
+          title: "在瀏覽器登入",
+          body: "kubectl 拿到 10 分鐘的權杖，你工作時它會在背景更新。",
         },
         {
           title: "Kubernetes 自己驗證",
@@ -157,8 +157,8 @@ const zhTW: Record<ProductId, ProductCopy> = {
         ["Kubernetes 發行版", "CI 在 k3s 上測試", "k0s 和 kubeadm 有設定可用，安裝還沒驗證"],
         [
           "登入方式",
-          "通行密鑰、密碼，或連結的 GitHub、Google 帳號",
-          "GitHub、Google 要另外設定 OAuth 應用程式",
+          "通行密鑰、密碼，或連結的 GitHub、Google、公司登入系統帳號",
+          "GitHub、Google 和公司登入系統要另外設定",
         ],
         [
           "管理員帳號",
@@ -180,45 +180,45 @@ const zhTW: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "從一台 Ubuntu 伺服器開始",
-      sub: "入門指南會在 Ubuntu 伺服器裝好 k3s，下載並驗證 Zeabur Identity，再從你的電腦用通行密鑰登入。既有叢集用叢集管理員的 kubeconfig 執行下面幾行。",
+      sub: "用 Zeabur 的話不用另外安裝。單獨使用時，入門指南會在 Ubuntu 伺服器裝好 k3s，下載並驗證 Zeabur Identity，再從你的電腦用通行密鑰登入。既有叢集用叢集管理員的 kubeconfig 執行下面幾行。",
       cta: "閱讀入門指南",
     },
   },
   builder: {
     meta: {
-      title: "Zeabur Builder：推送 commit，拿到映像檔 digest",
+      title: "Zeabur Builder：程式碼推上 GitHub，就自動部署",
       description:
-        "用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。每個新 commit 建置一次，推到 registry，再把映像檔寫進 status.latestImage。",
+        "Zeabur 裡負責把 Git 儲存庫變成映像檔的部分。自動判斷程式碼用的語言，建置不了時可以讓 AI 寫 Dockerfile，分支一更新就重新建置，建置變數以 BuildKit secret 傳遞。",
     },
-    titleDim: "推送 commit，",
-    title: "拿到映像檔 digest",
-    sub: "Zeabur Builder 是用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。每個新 commit 建置一次，推到 registry，再把映像檔寫進 status.latestImage，交給你的部署工具。",
+    titleDim: "程式碼推上 GitHub，",
+    title: "Zeabur 就會部署",
+    sub: "跟其他部署平台一樣：在專案選擇「新增」→「從 Git 部署」。Zeabur Builder 會判斷程式碼用的語言、建置映像檔，之後分支一有更新就重新建置。",
     docs: "閱讀 Builder 文件",
     source: "GitHub 上的原始碼",
     highlights: {
-      titleDim: "只負責建置，",
-      title: "部署交給你原本的工具",
+      titleDim: "不用寫 Dockerfile，",
+      title: "推送後就換上新版本",
       items: [
         {
-          tag: "dockerfile · railpack",
-          title: "兩種建置方式",
-          body: "dockerfile 用你的 Dockerfile。沒有 Dockerfile 的儲存庫改用 Railpack 規劃建置，映像檔以 uid 1000 執行，能在 Pod Security restricted 下啟動。",
+          tag: "railpack",
+          title: "自動判斷語言",
+          body: "用 Railpack 建置 Node.js、Python、Go、PHP、Ruby、Java、Rust 等應用程式和靜態網站，不需要 Dockerfile。儲存庫裡有 Dockerfile 時，就照它建置。",
         },
         {
-          tag: "buildkitd",
-          title: "每個 Namespace 一個 buildkitd",
-          body: "各自有快取、憑證授權和 registry 路徑。快取在建置之間保留，閒置 10 分鐘後縮到零。",
+          tag: "agent",
+          title: "Railpack 建置不了，就讓 AI 寫 Dockerfile",
+          body: "沒有 Dockerfile、Railpack 也建置不起來時，可以改用 agent 建置方式：你選的模型會讀程式碼、寫 Dockerfile 並試著建置，建置成功才交給你。Anthropic、OpenAI，或自己架的 Ollama、vLLM 都能用，API 金鑰用你自己的。",
         },
         {
-          tag: "tags",
-          title: "排得出先後的標籤",
-          body: "例如 main-1761058800-3e1a9c2：分支、Unix 時間和 commit。Flux、Argo CD Image Updater 和 Keel 都能依此更新部署。",
+          tag: "push",
+          title: "分支更新就重新建置",
+          body: "Zeabur Builder 每分鐘檢查一次分支。推送後就建置新版本，服務接著換成新版本。",
         },
       ],
     },
     how: {
-      titleDim: "從 ref 到 digest，",
-      title: "每一步都是 Kubernetes 物件",
+      titleDim: "單獨使用時，",
+      title: "從 commit 到映像檔 digest",
       steps: [
         {
           title: "解析 ref",
@@ -259,45 +259,45 @@ const zhTW: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "一個 Build，對應一個儲存庫",
-      sub: "Build 寫出 Git 儲存庫和建置方式。沒寫 ref 時跟著預設分支，status.resolvedRef 會寫出是哪一個分支。",
+      sub: "單獨使用時，一個 Build 寫出 Git 儲存庫和建置方式。沒寫 ref 時跟著預設分支，status.resolvedRef 會寫出是哪一個分支。",
       cta: "閱讀 Builder 文件",
     },
   },
   catalog: {
     meta: {
-      title: "Zeabur Catalog：CI 測試過的叢集元件和範本",
+      title: "Zeabur Catalog：一鍵部署的應用程式範本，上架前先測過",
       description:
-        "叢集元件和應用程式範本的目錄。每一項寫明用哪個 chart、哪個版本、哪些 values 和原因，由 CI 安裝並測試。",
+        "在自己的伺服器上一鍵部署 n8n、WordPress、Dify、OpenClaw 等應用程式。每個範本上架前都先裝過、測過，版本固定，密碼自動產生。",
     },
-    titleDim: "叢集該裝什麼，",
-    title: "先在 CI 裡裝過一次",
-    sub: "Zeabur Catalog 是叢集元件和應用程式範本的目錄。每一項寫明用哪個 chart、哪個版本、哪些 values，以及為什麼這樣選。CI 會安裝並測試每一項。",
+    titleDim: "一鍵部署的範本，",
+    title: "上架前先測過",
+    sub: "在自己的伺服器上一鍵部署 n8n、WordPress、Dify、OpenClaw 等應用程式。Zeabur 已經內建這份目錄：在專案選擇「新增」→「應用程式範本」，挑一個就能部署。",
     docs: "閱讀 Catalog 說明",
     source: "GitHub 上的原始碼",
     highlights: {
-      titleDim: "元件和範本，",
-      title: "都是可以讀的資料",
+      titleDim: "同一個範本，",
+      title: "每次裝出同一個版本",
       items: [
         {
-          tag: "components",
-          title: "元件",
-          body: "ingress、憑證、監控、資料庫 operator 這類每個叢集裝一次的東西，分別寫出單節點和多節點的建議。",
+          tag: "CI",
+          title: "上架前先測過",
+          body: "範本的每次修改合併前，CI 都會把範本裝到 Kubernetes 叢集上，確認應用程式有回應。",
         },
         {
-          tag: "templates",
-          title: "範本",
-          body: "n8n、Dify、WordPress 這類裝進一個 Namespace 的應用程式。固定映像檔版本，設好資源需求和上限，也寫出怎麼擴充、怎麼備份資料。",
+          tag: "version",
+          title: "版本固定",
+          body: "每個範本都固定映像檔版本，同一個範本每次裝出來都是同一個應用程式版本。新版範本會隨 Zeabur 升級提供。",
         },
         {
-          tag: "bundle",
-          title: "一份有簽章的 bundle",
-          body: "每次發版產生一份。任何工具都能讀它，產生 helm install 指令、Flux 或 Argo CD manifests，或 k3s 的 HelmChart。",
+          tag: "secrets",
+          title: "密碼自動產生",
+          body: "部署時自動產生密碼和金鑰，存成 Kubernetes Secret，不會寫在範本裡。每個範本也寫明需要多少 CPU 和記憶體。",
         },
       ],
     },
     how: {
-      titleDim: "寫下選擇，",
-      title: "測過才發版",
+      titleDim: "單獨使用時，",
+      title: "元件和範本都是可以讀的資料",
       steps: [
         {
           title: "寫下選擇",
@@ -311,7 +311,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
       ],
     },
     details: {
-      title: "部分元件",
+      title: "部分叢集元件",
       cols: ["能力", "Upstream", "單節點", "多節點"],
       rows: [
         ["ingress", "Traefik", "建議", "建議"],
@@ -326,7 +326,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "讀一個元件檔",
-      sub: "每個元件都長這樣：說明為什麼推薦、授權、依賴哪些能力，以及要裝的 chart 和版本。",
+      sub: "單獨使用時，叢集管理員會先裝好元件。每個元件都長這樣：說明為什麼推薦、授權、依賴哪些能力，以及要裝的 chart 和版本。",
       cta: "閱讀 Catalog 說明",
     },
   },
@@ -335,51 +335,51 @@ const zhTW: Record<ProductId, ProductCopy> = {
 const zhCN: Record<ProductId, ProductCopy> = {
   zeabur: {
     meta: {
-      title: "Zeabur：在自己的 Kubernetes 上部署和管理服务",
+      title: "Zeabur：在自己的主机上，用熟悉的方式部署服务",
       description:
-        "Zeabur 把 Namespace 整理成项目和服务，用登录者自己的权限读写集群。改配置前先列出会写入的字段，确认后才应用。",
+        "Zeabur 是开源软件。项目、服务、域名、环境变量和应用模板，都和你用过的部署平台一样。主机找哪家租、选哪个套餐，由你决定。",
     },
-    titleDim: "在自己的集群上，",
-    title: "用项目和服务管理 Kubernetes",
-    sub: "Zeabur 直接读取 Kubernetes 对象，把 Namespace 整理成项目和服务，说明哪里出了问题。改配置前，先列出这次会写入哪些字段，确认后才应用。",
+    titleDim: "在自己的主机上，",
+    title: "点几下就部署好",
+    sub: "从 Git、Docker Compose 或应用模板部署，绑定域名、修改环境变量，都是你在其他部署平台上熟悉的用法。服务运行在你自己的主机上，费用按你选的云服务或机房计算。",
     docs: "阅读 Zeabur 文档",
     source: "GitHub 上的源代码",
     highlights: {
-      titleDim: "没有自己的数据库，",
-      title: "也没有自己的权限",
+      titleDim: "用过其他部署平台？",
+      title: "大部分都一样",
       items: [
         {
-          tag: "RBAC",
-          title: "用你自己的权限",
-          body: "每次读写集群都带着登录者的令牌，能做什么由 Kubernetes RBAC 决定。Chart 创建的 ServiceAccount 没有绑定任何 Role。",
+          tag: "deploy",
+          title: "部署方式一样",
+          body: "从 Git、Docker Compose、Docker 镜像或应用模板部署，也能直接上传文件夹。",
         },
         {
-          tag: "plan",
-          title: "先检查变更，再应用",
-          body: "点击检查变更，页面列出要创建、修改或删除的对象。这份变更 10 分钟内有效，期间有人改过同一个对象，就要重新检查。",
+          tag: "domains",
+          title: "域名、变量和日志",
+          body: "给服务绑定域名，在服务页修改环境变量、查看日志。新版本有问题时，回滚到上一个版本。",
         },
         {
-          tag: "Helm",
-          title: "其他工具管的服务不乱改",
-          body: "Helm、Argo CD、Flux 管理的对象只能重启。其他修改会被拦下，并告诉你该去改 Helm values 还是 Git 仓库。",
+          tag: "server",
+          title: "主机是你的，由你维护",
+          body: "费用按你选的主机计算。升级 Zeabur、备份数据和维护主机，由你或你的团队负责。",
         },
       ],
     },
     how: {
-      titleDim: "从集群读取，",
-      title: "确认后才写回去",
+      titleDim: "你改配置之前，",
+      title: "先让你看过",
       steps: [
         {
-          title: "读取",
-          body: "按 selector、Service、HTTPRoute 和 volume 的关系，把 Deployment、PVC、Secret 这些对象组成服务。",
+          title: "整理成项目",
+          body: "Zeabur 直接读取集群，把服务的程序、数据库、域名和存储放在一起。它没有自己的数据库要备份，每次读写都用你自己的权限。",
         },
         {
-          title: "呈现",
-          body: "项目就是加了标签的 Namespace。需要处理的服务排在最前面，旁边就是日志和事件。",
+          title: "用大白话说明问题",
+          body: "需要处理的服务排在最前面，告诉你原因、该怎么做，旁边就是日志。",
         },
         {
-          title: "写入",
-          body: "每一次写入先发给 kube-apiserver dry run，全部通过才真正写入。对象被别人改过，就不会写入。",
+          title: "确认后才应用",
+          body: "改配置前，先列出会创建、修改或删除哪些东西，你确认后才写入。有人刚改过同一个服务，就要重新检查。",
         },
       ],
     },
@@ -407,45 +407,45 @@ const zhCN: Record<ProductId, ProductCopy> = {
   },
   identity: {
     meta: {
-      title: "Zeabur Identity：用通行密钥登录 Kubernetes",
+      title: "Zeabur Identity：每个人用自己的账号登录",
       description:
-        "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的令牌。管理员有专用账号，默认用通行密钥，或密码加验证码登录。",
+        "Zeabur 的登录页。每个人用通行密钥、GitHub、Google 或密码登录自己的账号，管理员要双重验证。单独使用时，也能让 kubectl 用同样的方式登录。",
     },
-    titleDim: "删掉 admin.conf，",
-    title: "用通行密钥登录集群",
-    sub: "kubectl 会打开浏览器，你用 Touch ID、Windows Hello 或安全密钥登录，拿到几分钟就过期的令牌。令牌由 Kubernetes 自己验证，Zeabur Identity 不在请求路径上。",
+    titleDim: "不共用管理员密码，",
+    title: "每个人有自己的账号",
+    sub: "Zeabur 的登录页就是 Zeabur Identity，装好 Zeabur 就有了。在成员页邀请成员、选择他们能用的项目。有人离开时，移除他并结束他的会话，10 分钟内他就无法再访问。",
     docs: "阅读入门指南",
     source: "GitHub 上的源代码",
     highlights: {
-      titleDim: "成员用自己的权限，",
-      title: "管理员用专用账号",
+      titleDim: "成员用自己的账号，",
+      title: "管理员多一道验证",
       items: [
         {
           tag: "passkey",
-          title: "通行密钥，也能用密码",
-          body: "用 Touch ID、Windows Hello 或安全密钥登录。成员也可以设密码，或关联 GitHub、Google 账号，日常登录时使用。",
+          title: "用习惯的方式登录",
+          body: "通行密钥（Touch ID、Windows Hello 或安全密钥）、GitHub、Google、公司的登录系统，或密码。",
         },
         {
           tag: "5 min",
-          title: "管理员有专用账号",
+          title: "管理员要双重验证",
           body: "管理员账号默认用通行密钥，或密码加身份验证器 App 的验证码登录，令牌 5 分钟过期，工作时会自动换新。日常工作用普通账号，要改集群时再登录管理员账号。",
         },
         {
           tag: "~20 MB",
-          title: "运行在它保护的集群里",
-          body: "一个约 20 MB 的 Pod，不需要数据库，也不用另外准备服务器。Argo CD、Grafana 这类 OpenID Connect 应用也能用同一个 issuer。",
+          title: "运行在你的服务器上",
+          body: "集群里只多一个约 20 MB 的程序，不需要数据库，也不依赖外部服务，账号就存在集群里。",
         },
       ],
     },
     how: {
-      titleDim: "在浏览器登录，",
-      title: "回到 kubectl 继续工作",
+      titleDim: "单独使用时，",
+      title: "kubectl 也这样登录",
       steps: [
         {
           title: "运行 kubectl",
           body: "例如 kubectl get pods。浏览器会打开 Zeabur Identity 的登录页。",
         },
-        { title: "用通行密钥登录", body: "kubectl 拿到 10 分钟的令牌，你工作时它会在后台续期。" },
+        { title: "在浏览器登录", body: "kubectl 拿到 10 分钟的令牌，你工作时它会在后台更新。" },
         {
           title: "Kubernetes 自己验证",
           body: "kube-apiserver 通过 OpenID Connect 验证令牌。撤销某人的会话后，他手上的令牌最多十分钟就失效。",
@@ -466,8 +466,8 @@ const zhCN: Record<ProductId, ProductCopy> = {
         ["Kubernetes 发行版", "CI 在 k3s 上测试", "k0s 和 kubeadm 有配置可用，安装尚未验证"],
         [
           "登录方式",
-          "通行密钥、密码，或关联的 GitHub、Google 账号",
-          "GitHub、Google 需要另外配置 OAuth 应用",
+          "通行密钥、密码，或关联的 GitHub、Google、公司登录系统账号",
+          "GitHub、Google 和公司登录系统需要另外配置",
         ],
         [
           "管理员账号",
@@ -489,45 +489,45 @@ const zhCN: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "从一台 Ubuntu 服务器开始",
-      sub: "入门指南会在 Ubuntu 服务器上装好 k3s，下载并验证 Zeabur Identity，再从你的电脑用通行密钥登录。现有集群用集群管理员的 kubeconfig 运行下面几行。",
+      sub: "用 Zeabur 的话不用另外安装。单独使用时，入门指南会在 Ubuntu 服务器上装好 k3s，下载并验证 Zeabur Identity，再从你的电脑用通行密钥登录。现有集群用集群管理员的 kubeconfig 运行下面几行。",
       cta: "阅读入门指南",
     },
   },
   builder: {
     meta: {
-      title: "Zeabur Builder：推送 commit，拿到镜像 digest",
+      title: "Zeabur Builder：代码推到 GitHub，就自动部署",
       description:
-        "用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。每个新 commit 构建一次，推送到镜像仓库，再把镜像写进 status.latestImage。",
+        "Zeabur 里负责把 Git 仓库变成镜像的部分。自动识别代码用的语言，构建不了时可以让 AI 写 Dockerfile，分支一更新就重新构建，构建变量以 BuildKit secret 传递。",
     },
-    titleDim: "推送 commit，",
-    title: "拿到镜像 digest",
-    sub: "Zeabur Builder 是用 BuildKit 从 Git 构建镜像的 Kubernetes Operator。每个新 commit 构建一次，推送到镜像仓库，再把镜像写进 status.latestImage，交给你的部署工具。",
+    titleDim: "代码推到 GitHub，",
+    title: "Zeabur 就会部署",
+    sub: "跟其他部署平台一样：在项目里选择“新建”→“从 Git 部署”。Zeabur Builder 会识别代码用的语言、构建镜像，之后分支一有更新就重新构建。",
     docs: "阅读 Builder 文档",
     source: "GitHub 上的源代码",
     highlights: {
-      titleDim: "只负责构建，",
-      title: "部署交给你原来的工具",
+      titleDim: "不用写 Dockerfile，",
+      title: "推送后就换上新版本",
       items: [
         {
-          tag: "dockerfile · railpack",
-          title: "两种构建方式",
-          body: "dockerfile 用你的 Dockerfile。没有 Dockerfile 的仓库改用 Railpack 规划构建，镜像以 uid 1000 运行，能在 Pod Security restricted 下启动。",
+          tag: "railpack",
+          title: "自动识别语言",
+          body: "用 Railpack 构建 Node.js、Python、Go、PHP、Ruby、Java、Rust 等应用和静态网站，不需要 Dockerfile。仓库里有 Dockerfile 时，就按它构建。",
         },
         {
-          tag: "buildkitd",
-          title: "每个 Namespace 一个 buildkitd",
-          body: "各自有缓存、证书颁发机构和镜像仓库路径。缓存在构建之间保留，空闲 10 分钟后缩容到零。",
+          tag: "agent",
+          title: "Railpack 构建不了，就让 AI 写 Dockerfile",
+          body: "没有 Dockerfile、Railpack 也构建不起来时，可以改用 agent 构建方式：你选的模型会读代码、写 Dockerfile 并试着构建，构建成功才交给你。Anthropic、OpenAI，或自己部署的 Ollama、vLLM 都能用，API 密钥用你自己的。",
         },
         {
-          tag: "tags",
-          title: "排得出先后的标签",
-          body: "例如 main-1761058800-3e1a9c2：分支、Unix 时间和 commit。Flux、Argo CD Image Updater 和 Keel 都能据此更新部署。",
+          tag: "push",
+          title: "分支更新就重新构建",
+          body: "Zeabur Builder 每分钟检查一次分支。推送后就构建新版本，服务接着换成新版本。",
         },
       ],
     },
     how: {
-      titleDim: "从 ref 到 digest，",
-      title: "每一步都是 Kubernetes 对象",
+      titleDim: "单独使用时，",
+      title: "从 commit 到镜像 digest",
       steps: [
         {
           title: "解析 ref",
@@ -568,45 +568,45 @@ const zhCN: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "一个 Build，对应一个仓库",
-      sub: "Build 写明 Git 仓库和构建方式。没写 ref 时跟随默认分支，status.resolvedRef 会写出是哪个分支。",
+      sub: "单独使用时，一个 Build 写明 Git 仓库和构建方式。没写 ref 时跟随默认分支，status.resolvedRef 会写出是哪个分支。",
       cta: "阅读 Builder 文档",
     },
   },
   catalog: {
     meta: {
-      title: "Zeabur Catalog：经过 CI 测试的集群组件和模板",
+      title: "Zeabur Catalog：一键部署的应用模板，上架前先测过",
       description:
-        "集群组件和应用模板的目录。每一项写明用哪个 chart、哪个版本、哪些 values 和原因，由 CI 安装并测试。",
+        "在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。每个模板上架前都先装过、测过，版本固定，密码自动生成。",
     },
-    titleDim: "集群该装什么，",
-    title: "先在 CI 里装过一次",
-    sub: "Zeabur Catalog 是集群组件和应用模板的目录。每一项写明用哪个 chart、哪个版本、哪些 values，以及为什么这样选。CI 会安装并测试每一项。",
+    titleDim: "一键部署的模板，",
+    title: "上架前先测过",
+    sub: "在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。Zeabur 已经内置这份目录：在项目里选择“新建”→“应用模板”，挑一个就能部署。",
     docs: "阅读 Catalog 说明",
     source: "GitHub 上的源代码",
     highlights: {
-      titleDim: "组件和模板，",
-      title: "都是可以读的数据",
+      titleDim: "同一个模板，",
+      title: "每次装出同一个版本",
       items: [
         {
-          tag: "components",
-          title: "组件",
-          body: "Ingress、证书、监控、数据库 Operator 这类每个集群装一次的东西，分别写出单节点和多节点的建议。",
+          tag: "CI",
+          title: "上架前先测过",
+          body: "模板的每次修改合并前，CI 都会把模板装到 Kubernetes 集群上，确认应用有响应。",
         },
         {
-          tag: "templates",
-          title: "模板",
-          body: "n8n、Dify、WordPress 这类装进一个 Namespace 的应用。固定镜像版本，设好资源请求和上限，也写出怎么扩容、怎么备份数据。",
+          tag: "version",
+          title: "版本固定",
+          body: "每个模板都固定镜像版本，同一个模板每次装出来都是同一个应用版本。新版模板随 Zeabur 升级提供。",
         },
         {
-          tag: "bundle",
-          title: "一份带签名的 bundle",
-          body: "每次发版生成一份。任何工具都能读取它，生成 helm install 命令、Flux 或 Argo CD manifests，或 k3s 的 HelmChart。",
+          tag: "secrets",
+          title: "密码自动生成",
+          body: "部署时自动生成密码和密钥，存成 Kubernetes Secret，不会写在模板里。每个模板也写明需要多少 CPU 和内存。",
         },
       ],
     },
     how: {
-      titleDim: "写下选择，",
-      title: "测过才发版",
+      titleDim: "单独使用时，",
+      title: "组件和模板都是可以读的数据",
       steps: [
         {
           title: "写下选择",
@@ -620,7 +620,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
       ],
     },
     details: {
-      title: "部分组件",
+      title: "部分集群组件",
       cols: ["能力", "Upstream", "单节点", "多节点"],
       rows: [
         ["ingress", "Traefik", "推荐", "推荐"],
@@ -635,7 +635,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "读一个组件文件",
-      sub: "每个组件都是这样：说明为什么推荐、许可证、依赖哪些能力，以及要装的 chart 和版本。",
+      sub: "单独使用时，集群管理员会先装好组件。每个组件都是这样：说明为什么推荐、许可证、依赖哪些能力，以及要装的 chart 和版本。",
       cta: "阅读 Catalog 说明",
     },
   },
@@ -644,51 +644,51 @@ const zhCN: Record<ProductId, ProductCopy> = {
 const en: Record<ProductId, ProductCopy> = {
   zeabur: {
     meta: {
-      title: "Zeabur: deploy and run services on your own Kubernetes",
+      title: "Zeabur: deploy on your own server in a few clicks",
       description:
-        "Zeabur shows namespaces as projects and services and works with the signed-in person's own rights. A change lists the fields it writes and applies when you confirm.",
+        "Zeabur is open source. Projects, services, domains, variables and templates work as they do on the deployment platforms you know. You choose the hosting provider and the plan.",
     },
-    titleDim: "On your own cluster,",
-    title: "run Kubernetes as projects and services.",
-    sub: "Zeabur reads Kubernetes objects directly, shows each namespace as a project with its services, and tells you what is wrong. A change first lists the fields it will write, and applies when you confirm.",
+    titleDim: "On your own server,",
+    title: "deploy in a few clicks.",
+    sub: "Deploy from Git, Docker Compose or a template, add a domain and change variables, the way you know from other deployment platforms. Your services run on your own server, and you pay the cloud or data center you chose.",
     docs: "Read the Zeabur docs",
     source: "Source on GitHub",
     highlights: {
-      titleDim: "No database of its own,",
-      title: "and no rights of its own.",
+      titleDim: "Used a deployment platform?",
+      title: "Most of it is the same.",
       items: [
         {
-          tag: "RBAC",
-          title: "Your own rights",
-          body: "Every read and write carries the signed-in person's token, and Kubernetes RBAC decides. The chart's ServiceAccount is bound to no Role.",
+          tag: "deploy",
+          title: "The same ways to deploy",
+          body: "Deploy from Git, Docker Compose, a Docker image or a template, or upload a folder.",
         },
         {
-          tag: "plan",
-          title: "Review, then apply",
-          body: "Review changes lists the objects to create, change or delete. The review is valid for 10 minutes, and if someone changes the same object meanwhile, you review again.",
+          tag: "domains",
+          title: "Domains, variables and logs",
+          body: "Add a domain to a service, change its variables and read its logs on the service page. If a new version has a problem, roll back.",
         },
         {
-          tag: "Helm",
-          title: "Hands off other tools' services",
-          body: "Objects managed by Helm, Argo CD or Flux can only be restarted. Other edits are refused with a pointer to the Helm values or the Git repository.",
+          tag: "server",
+          title: "Your server, your upkeep",
+          body: "You pay for the server you chose. You or your team upgrade Zeabur, back up data and look after the server.",
         },
       ],
     },
     how: {
-      titleDim: "Read from the cluster,",
-      title: "write back only when you confirm.",
+      titleDim: "Before your change applies,",
+      title: "you see it first.",
       steps: [
         {
-          title: "Read",
-          body: "Selectors, Services, HTTPRoutes and volumes tie Deployments, PVCs and Secrets together into services.",
+          title: "Grouped into projects",
+          body: "Zeabur reads the cluster directly and puts each service's app, database, domains and storage together. It has no database of its own to back up, and every read and write uses your own rights.",
         },
         {
-          title: "Show",
-          body: "A project is a labelled namespace. Services that need attention come first, with their logs and events beside them.",
+          title: "Problems in plain words",
+          body: "Services that need attention come first, with the cause, what to do next and the logs beside them.",
         },
         {
-          title: "Write",
-          body: "Every write goes through a kube-apiserver dry run first, and only when all pass are they applied. An object someone else changed is not written.",
+          title: "Applied when you confirm",
+          body: "A change first lists what it will create, change or delete, and writes only when you confirm. If someone just changed the same service, you review again.",
         },
       ],
     },
@@ -728,46 +728,46 @@ const en: Record<ProductId, ProductCopy> = {
   },
   identity: {
     meta: {
-      title: "Zeabur Identity: sign in to Kubernetes with a passkey",
+      title: "Zeabur Identity: an account for each person",
       description:
-        "kubectl signs in through your browser with a passkey and gets a token that expires in minutes. Admins have their own accounts, with a passkey or a password and code by default.",
+        "Zeabur's sign-in page. Each person signs in to their own account with a passkey, GitHub, Google or a password, and admins use two factors. On its own, it signs kubectl in the same way.",
     },
-    titleDim: "Delete admin.conf.",
-    title: "Sign in to your cluster with a passkey.",
-    sub: "kubectl opens your browser, you sign in with Touch ID, Windows Hello or a security key, and get a token that expires in minutes. Kubernetes checks the token itself; Zeabur Identity is never in the path of your requests.",
+    titleDim: "No shared admin password.",
+    title: "An account for each person.",
+    sub: "Zeabur's sign-in page is Zeabur Identity, so it comes with Zeabur. Invite people and choose their projects on the Members page. When someone leaves, remove them and end their sessions, and they lose access within 10 minutes.",
     docs: "Read the getting-started guide",
     source: "Source on GitHub",
     highlights: {
-      titleDim: "Members use their own rights,",
-      title: "admins use their own accounts.",
+      titleDim: "Members use their own accounts,",
+      title: "admins add a second factor.",
       items: [
         {
           tag: "passkey",
-          title: "Passkeys, or a password",
-          body: "Touch ID, Windows Hello or a security key. Teammates can also set a password or link a GitHub or Google account for everyday sign-in.",
+          title: "Sign in the way you already do",
+          body: "A passkey (Touch ID, Windows Hello or a security key), GitHub, Google, your company's sign-in, or a password.",
         },
         {
           tag: "5 min",
-          title: "Admins have their own accounts",
+          title: "Two factors for admins",
           body: "By default, an admin account signs in with a passkey, or a password and a code from an authenticator app. Its token lasts 5 minutes and renews while you work. Use a regular account day to day, and the admin account when you change the cluster.",
         },
         {
           tag: "~20 MB",
-          title: "Runs inside the cluster it protects",
-          body: "One pod of about 20 MB, no database, no extra servers. OpenID Connect apps such as Argo CD or Grafana can use the same issuer.",
+          title: "Runs on your server",
+          body: "One small program of about 20 MB in your cluster. No database and no outside service; the accounts live in the cluster.",
         },
       ],
     },
     how: {
-      titleDim: "Sign in in the browser,",
-      title: "carry on in kubectl.",
+      titleDim: "On its own,",
+      title: "kubectl signs in the same way.",
       steps: [
         {
           title: "Run kubectl",
           body: "kubectl get pods, for example. Your browser opens Zeabur Identity's sign-in page.",
         },
         {
-          title: "Use your passkey",
+          title: "Sign in in the browser",
           body: "kubectl gets a token valid for ten minutes and renews it quietly while you work.",
         },
         {
@@ -794,8 +794,8 @@ const en: Record<ProductId, ProductCopy> = {
         ],
         [
           "Sign-in",
-          "Passkeys, passwords, or a linked GitHub or Google account",
-          "GitHub and Google need an OAuth app of your own",
+          "Passkeys, passwords, or a linked GitHub, Google or company account",
+          "GitHub, Google and company sign-in need setting up first",
         ],
         [
           "Admin accounts",
@@ -821,45 +821,45 @@ const en: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "Start from one Ubuntu server",
-      sub: "The guide installs k3s on an Ubuntu server, downloads and verifies Zeabur Identity, and signs you in with a passkey from your computer. On a cluster you already have, run these lines with your cluster-admin kubeconfig.",
+      sub: "With Zeabur there is nothing to install. For standalone use, the guide installs k3s on an Ubuntu server, downloads and verifies Zeabur Identity, and signs you in with a passkey from your computer. On a cluster you already have, run these lines with your cluster-admin kubeconfig.",
       cta: "Read the getting-started guide",
     },
   },
   builder: {
     meta: {
-      title: "Zeabur Builder: push a commit, get an image digest",
+      title: "Zeabur Builder: push your code to GitHub, and Zeabur deploys it",
       description:
-        "A Kubernetes operator that builds container images from Git with BuildKit. Each new commit is built once, pushed, and written to status.latestImage.",
+        "The part of Zeabur that turns a Git repository into an image. It finds your language, lets AI write a Dockerfile when that fails, rebuilds when the branch changes, and passes build variables as BuildKit secrets.",
     },
-    titleDim: "Push a commit,",
-    title: "get an image digest.",
-    sub: "Zeabur Builder is a Kubernetes operator that builds container images from Git with BuildKit. Each new commit is built once and pushed to your registry, and the image goes into status.latestImage for your rollout tool.",
+    titleDim: "Push your code to GitHub,",
+    title: "and Zeabur deploys it.",
+    sub: "Just as on other deployment platforms: in a project, choose Add → Deploy from Git. Zeabur Builder finds the language your code uses, builds an image, and builds again whenever the branch changes.",
     docs: "Read the Builder docs",
     source: "Source on GitHub",
     highlights: {
-      titleDim: "It builds images,",
-      title: "your rollout tool deploys them.",
+      titleDim: "No Dockerfile needed,",
+      title: "and a push brings the new version.",
       items: [
         {
-          tag: "dockerfile · railpack",
-          title: "Two builders",
-          body: "dockerfile builds your Dockerfile. Repositories without one are planned with Railpack, and those images run as uid 1000, so they start under Pod Security restricted.",
+          tag: "railpack",
+          title: "Finds your language",
+          body: "Railpack builds Node.js, Python, Go, PHP, Ruby, Java, Rust and other apps, and static sites, with no Dockerfile. If the repository has a Dockerfile, it builds that.",
         },
         {
-          tag: "buildkitd",
-          title: "One buildkitd per namespace",
-          body: "Each has its own cache, certificate authority and registry path. The cache stays between builds, and an idle buildkitd scales to zero after 10 minutes.",
+          tag: "agent",
+          title: "AI writes the Dockerfile Railpack can't",
+          body: "When a repository has no Dockerfile and Railpack can't build it, switch to the agent builder: a model you choose reads the code, writes a Dockerfile and trial-builds it, and you get the Dockerfile only once it builds. Use Anthropic, OpenAI, or your own Ollama or vLLM, with your own API key.",
         },
         {
-          tag: "tags",
-          title: "Tags that sort",
-          body: "main-1761058800-3e1a9c2: branch, Unix time and commit. Flux, Argo CD Image Updater and Keel can roll out from them.",
+          tag: "push",
+          title: "Rebuilds when the branch changes",
+          body: "Zeabur Builder checks the branch every minute. After a push it builds the new version, and the service switches to it.",
         },
       ],
     },
     how: {
-      titleDim: "From ref to digest,",
-      title: "every step is a Kubernetes object.",
+      titleDim: "On its own,",
+      title: "from a commit to an image digest.",
       steps: [
         {
           title: "Resolve the ref",
@@ -903,45 +903,45 @@ const en: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "One Build per repository",
-      sub: "A Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.",
+      sub: "Without Zeabur, a Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.",
       cta: "Read the Builder docs",
     },
   },
   catalog: {
     meta: {
-      title: "Zeabur Catalog: cluster components and templates, tested in CI",
+      title: "Zeabur Catalog: one-click templates, tested before they ship",
       description:
-        "A catalog of cluster components and app templates. Each says which chart, which version, which values and why, and CI installs and tests it.",
+        "Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. Every template is installed and tested before it ships, with pinned versions and generated passwords.",
     },
-    titleDim: "What a cluster needs,",
-    title: "installed once in CI first.",
-    sub: "Zeabur Catalog lists cluster components and app templates. Each entry says which chart, which version, which values, and why. CI installs and tests every one of them.",
+    titleDim: "One-click templates,",
+    title: "tested before they ship.",
+    sub: "Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. The catalog comes with Zeabur: in a project, choose Add → App template and pick an app.",
     docs: "About Catalog",
     source: "Source on GitHub",
     highlights: {
-      titleDim: "Components and templates,",
-      title: "as data any tool can read.",
+      titleDim: "The same template",
+      title: "installs the same version every time.",
       items: [
         {
-          tag: "components",
-          title: "Components",
-          body: "Ingress, certificates, metrics, database operators: what a cluster gets once, with separate advice for one node and for several.",
+          tag: "CI",
+          title: "Tested before it ships",
+          body: "Before any change to a template merges, CI installs it on a Kubernetes cluster and checks that the app responds.",
         },
         {
-          tag: "templates",
-          title: "Templates",
-          body: "Apps such as n8n, Dify and WordPress, installed into one namespace. Images are pinned, requests and limits set, and each says how it scales and how its data is backed up.",
+          tag: "version",
+          title: "Pinned versions",
+          body: "Every template pins its image, so it installs the same app version every time. New template versions come with Zeabur upgrades.",
         },
         {
-          tag: "bundle",
-          title: "One signed bundle",
-          body: "Each release publishes one. Any tool can read it to generate helm install commands, Flux or Argo CD manifests, or k3s HelmChart objects.",
+          tag: "secrets",
+          title: "Passwords generated for you",
+          body: "Passwords and keys are generated at deploy time and stored as Kubernetes Secrets, never in the template. Each template also states the CPU and memory it needs.",
         },
       ],
     },
     how: {
-      titleDim: "Write the choice down,",
-      title: "release it once it passes.",
+      titleDim: "On its own,",
+      title: "components and templates are data you can read.",
       steps: [
         {
           title: "Write it down",
@@ -958,7 +958,7 @@ const en: Record<ProductId, ProductCopy> = {
       ],
     },
     details: {
-      title: "Some of the components",
+      title: "Some of the cluster components",
       cols: ["Capability", "Upstream", "Single node", "Multi-node"],
       rows: [
         ["ingress", "Traefik", "Recommended", "Recommended"],
@@ -973,7 +973,7 @@ const en: Record<ProductId, ProductCopy> = {
     },
     start: {
       title: "Read one component file",
-      sub: "Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install.",
+      sub: "Without Zeabur, a cluster admin installs the components first. Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install.",
       cta: "About Catalog",
     },
   },
