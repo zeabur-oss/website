@@ -188,7 +188,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur Builder：程式碼推上 GitHub，就自動部署",
       description:
-        "Zeabur 裡負責把 Git 儲存庫變成映像檔的部分。自動判斷程式碼用的語言，分支一更新就重新建置，建置變數以 BuildKit secret 傳遞。",
+        "Zeabur 裡負責把 Git 儲存庫變成映像檔的部分。自動判斷程式碼用的語言，建置不了時可以讓 AI 寫 Dockerfile，分支一更新就重新建置，建置變數以 BuildKit secret 傳遞。",
     },
     titleDim: "程式碼推上 GitHub，",
     title: "Zeabur 就會部署",
@@ -205,14 +205,14 @@ const zhTW: Record<ProductId, ProductCopy> = {
           body: "用 Railpack 建置 Node.js、Python、Go、PHP、Ruby、Java、Rust 等應用程式和靜態網站，不需要 Dockerfile。儲存庫裡有 Dockerfile 時，就照它建置。",
         },
         {
+          tag: "agent",
+          title: "Railpack 建置不了，就讓 AI 寫 Dockerfile",
+          body: "沒有 Dockerfile、Railpack 也建置不起來時，可以改用 agent 建置方式：你選的模型會讀程式碼、寫 Dockerfile 並試著建置，建置成功才交給你。Anthropic、OpenAI，或自己架的 Ollama、vLLM 都能用，API 金鑰用你自己的。",
+        },
+        {
           tag: "push",
           title: "分支更新就重新建置",
           body: "Zeabur Builder 每分鐘檢查一次分支。推送後就建置新版本，服務接著換成新版本。",
-        },
-        {
-          tag: "secrets",
-          title: "機密變數不會留在映像檔裡",
-          body: "建置變數，例如下載私有套件用的權杖，以 BuildKit secret 傳遞。除非建置過程自己把值複製進去，否則不會存進映像檔。",
         },
       ],
     },
@@ -497,7 +497,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur Builder：代码推到 GitHub，就自动部署",
       description:
-        "Zeabur 里负责把 Git 仓库变成镜像的部分。自动识别代码用的语言，分支一更新就重新构建，构建变量以 BuildKit secret 传递。",
+        "Zeabur 里负责把 Git 仓库变成镜像的部分。自动识别代码用的语言，构建不了时可以让 AI 写 Dockerfile，分支一更新就重新构建，构建变量以 BuildKit secret 传递。",
     },
     titleDim: "代码推到 GitHub，",
     title: "Zeabur 就会部署",
@@ -514,14 +514,14 @@ const zhCN: Record<ProductId, ProductCopy> = {
           body: "用 Railpack 构建 Node.js、Python、Go、PHP、Ruby、Java、Rust 等应用和静态网站，不需要 Dockerfile。仓库里有 Dockerfile 时，就按它构建。",
         },
         {
+          tag: "agent",
+          title: "Railpack 构建不了，就让 AI 写 Dockerfile",
+          body: "没有 Dockerfile、Railpack 也构建不起来时，可以改用 agent 构建方式：你选的模型会读代码、写 Dockerfile 并试着构建，构建成功才交给你。Anthropic、OpenAI，或自己部署的 Ollama、vLLM 都能用，API 密钥用你自己的。",
+        },
+        {
           tag: "push",
           title: "分支更新就重新构建",
           body: "Zeabur Builder 每分钟检查一次分支。推送后就构建新版本，服务接着换成新版本。",
-        },
-        {
-          tag: "secrets",
-          title: "机密变量不会留在镜像里",
-          body: "构建变量，例如下载私有依赖用的令牌，以 BuildKit secret 传递。除非构建过程自己把值复制进去，否则不会存进镜像。",
         },
       ],
     },
@@ -829,7 +829,7 @@ const en: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur Builder: push your code to GitHub, and Zeabur deploys it",
       description:
-        "The part of Zeabur that turns a Git repository into an image. It finds your language, rebuilds when the branch changes, and passes build variables as BuildKit secrets.",
+        "The part of Zeabur that turns a Git repository into an image. It finds your language, lets AI write a Dockerfile when that fails, rebuilds when the branch changes, and passes build variables as BuildKit secrets.",
     },
     titleDim: "Push your code to GitHub,",
     title: "and Zeabur deploys it.",
@@ -846,14 +846,14 @@ const en: Record<ProductId, ProductCopy> = {
           body: "Railpack builds Node.js, Python, Go, PHP, Ruby, Java, Rust and other apps, and static sites, with no Dockerfile. If the repository has a Dockerfile, it builds that.",
         },
         {
+          tag: "agent",
+          title: "AI writes the Dockerfile Railpack can't",
+          body: "When a repository has no Dockerfile and Railpack can't build it, switch to the agent builder: a model you choose reads the code, writes a Dockerfile and trial-builds it, and you get the Dockerfile only once it builds. Use Anthropic, OpenAI, or your own Ollama or vLLM, with your own API key.",
+        },
+        {
           tag: "push",
           title: "Rebuilds when the branch changes",
           body: "Zeabur Builder checks the branch every minute. After a push it builds the new version, and the service switches to it.",
-        },
-        {
-          tag: "secrets",
-          title: "Build secrets stay out of the image",
-          body: "Build variables, such as a token for private packages, reach the build as BuildKit secrets. They are not stored in the image unless the build itself copies the value in.",
         },
       ],
     },
