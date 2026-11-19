@@ -5,9 +5,11 @@ import { chineseTextSegments } from "./chinese-text.ts"
 
 interface Props {
   text: string
-  locale: string
+  /** Defaults to the page's locale. */
+  locale?: string
 }
-const { text, locale } = Astro.props
+const { text } = Astro.props
+const locale = Astro.props.locale ?? Astro.currentLocale ?? "en"
 const plain = locale === "en" || !/\p{Script=Han}/u.test(text)
 ---
 

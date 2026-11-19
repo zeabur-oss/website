@@ -1,4 +1,5 @@
 ---
+import HeadingText from "../components/HeadingText.astro"
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
@@ -126,16 +127,22 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
       <span class="pill">{releaseTag(id)}</span>
     </p>
     <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
-      <span class="text-site-faint zh:inline-block">{t.titleDim}</span>
+      <span class="text-site-faint zh:inline-block">
+        <HeadingText text={t.titleDim} />
+      </span>
       {gap}
-      <span class="zh:inline-block">{t.title}</span>
+      <span class="zh:inline-block">
+        <HeadingText text={t.title} />
+      </span>
     </h1>
     <div
       class="mt-10 flex flex-col items-start gap-8 md:mt-14 lg:max-w-[40rem]"
       data-reveal
       style="--i:1"
     >
-      <p class="lead">{t.sub}</p>
+      <p class="lead">
+        <HeadingText text={t.sub} />
+      </p>
       <div class="flex flex-wrap gap-3">
         <a href={docs} class="button primary">
           {t.docs}
@@ -167,8 +174,12 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           <span>{number(i)}</span>
           <span>{c.kicker}</span>
         </p>
-        <h2>{c.title}</h2>
-        <p class="lead">{c.body}</p>
+        <h2>
+          <HeadingText text={c.title} />
+        </h2>
+        <p class="lead">
+          <HeadingText text={c.body} />
+        </p>
         {c.link && (
           <a href={c.link.href} class="more more-down mt-2">
             {c.link.text}
@@ -199,7 +210,9 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           style={`--i:${i}`}
         >
           <span class="type-mono text-site-faint">{item.tag}</span>
-          <h3>{item.title}</h3>
+          <h3>
+            <HeadingText text={item.title} />
+          </h3>
           <p class="body">{item.body}</p>
         </li>
       ))}
@@ -223,7 +236,9 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
             style={`--i:${i}`}
           >
             <span class="type-mono text-site-accent">{number(i)}</span>
-            <h3>{step.title}</h3>
+            <h3>
+              <HeadingText text={step.title} />
+            </h3>
             <p class="body">{step.body}</p>
           </li>
         ))}
@@ -317,8 +332,12 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
             <span>{sectionNumber("start")}</span>
             <span>{l.start}</span>
           </p>
-          <h2 id="start">{t.start.title}</h2>
-          <p class="lead">{t.start.sub}</p>
+          <h2 id="start">
+            <HeadingText text={t.start.title} />
+          </h2>
+          <p class="lead">
+            <HeadingText text={t.start.sub} />
+          </p>
           <div class="mt-4 flex flex-wrap gap-3">
             <a href={docs} class="button primary">
               {t.start.cta}
