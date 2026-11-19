@@ -46,8 +46,10 @@ const f = featureCopy[locale]
 const productShots = productCopy[locale].identity.shots?.captions ?? {}
 const known = home.shots as Record<string, string>
 const chapterShot = (s: (typeof chapters)[number]["shot"], fallback: string) => {
-  if (s.from === "identity") return { src: identityShot(s.id), alt: productShots[s.id] ?? fallback }
-  return { src: shot(locale, s.id), alt: known[s.id] ?? fallback }
+  if (s.from === "identity") {
+    return { src: identityShot(s.id, "dark"), alt: productShots[s.id] ?? fallback, whole: true }
+  }
+  return { src: shot(locale, s.id), alt: known[s.id] ?? fallback, whole: false }
 }
 const l = sectionLabels[locale]
 const number = (i: number) => String(i + 1).padStart(2, "0")
@@ -69,7 +71,12 @@ const story =
             href: `#features-${c.group}`,
             text: f.group(features.filter((x) => x.group === c.group).length),
           },
-          panel: { title: groupNames[locale][c.group], image: s.src, alt: s.alt } as Panel,
+          panel: {
+            title: groupNames[locale][c.group],
+            image: s.src,
+            alt: s.alt,
+            whole: s.whole,
+          } as Panel,
         }
       })
     : t.how.steps.map((step) => ({
