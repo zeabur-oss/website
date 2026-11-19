@@ -1120,7 +1120,7 @@ export const chapters: Chapter[] = [
         alt: "web 服务的网络页：3 个域名，其中一个找不到 DNS 记录，页面直接写出要新增哪一条",
       },
       en: {
-        title: "Domains, certificates, who connects",
+        title: "Domains and certificates",
         body: "Adding a domain shows the DNS records to set, and certificates renew on their own. When a URL fails, the connection check says whether DNS, the ingress or the service is at fault.",
         alt: "The web service's networking tab: 3 domains, one without its DNS record, and the record to add",
       },
@@ -1152,18 +1152,18 @@ export const chapters: Chapter[] = [
     shot: { from: "docs", id: "diagnosis" },
     words: {
       "zh-TW": {
-        title: "用一般話說哪裡壞了",
-        body: "服務不健康時，畫面說明原因，附上依據和下一步，不靠 AI。同一個原因拖垮好幾個服務時，只算一件事。",
+        title: "服務出問題，直接告訴你原因",
+        body: "服務一直當機、記憶體用完，或映像檔拉不下來時，概覽最上方會寫出原因和怎麼處理，旁邊就有開啟日誌、調整記憶體的按鈕。同一個原因影響很多服務時，首頁會把它們合成一組。",
         alt: "服務的診斷，說明它為什麼一直重新啟動",
       },
       "zh-CN": {
-        title: "用平常的话说哪里坏了",
-        body: "服务不健康时，页面说明原因，附上依据和下一步，不靠 AI。同一个原因拖垮好几个服务时，只算一件事。",
+        title: "服务出问题，直接告诉你原因",
+        body: "服务一直崩溃、内存用完，或镜像拉不下来时，概览最上方会写出原因和怎么处理，旁边就有打开日志、调整内存的按钮。同一个原因影响很多服务时，首页会把它们合成一组。",
         alt: "服务的诊断，说明它为什么一直重启",
       },
       en: {
-        title: "What broke, in plain words",
-        body: "When a service is unhealthy, the page says why, shows the evidence and the next step, without AI. One cause behind several broken services is one item.",
+        title: "When a service breaks, it tells you why",
+        body: "When a service keeps crashing, runs out of memory or cannot pull its image, the top of its overview says why and what to do, with buttons to open the logs or change its memory. When one cause hits many services, the home page groups them.",
         alt: "A service's diagnosis, saying why it keeps restarting",
       },
     },
@@ -1173,18 +1173,18 @@ export const chapters: Chapter[] = [
     shot: { from: "identity", id: "sign-in" },
     words: {
       "zh-TW": {
-        title: "通行密鑰，加上你自己的權限",
-        body: "成員用通行密鑰登入，每個請求都帶著自己的權杖，能做什麼由 Kubernetes RBAC 決定。管理員另有專用帳號，預設用通行密鑰或密碼加驗證碼，權杖 5 分鐘就到期。",
+        title: "每個人用自己的帳號登入",
+        body: "成員用通行密鑰、GitHub、Google 或密碼登入，只能用你指派給他的專案。管理員帳號預設要通行密鑰，或密碼加驗證碼，權杖 5 分鐘就到期。",
         alt: "Zeabur Identity 的登入頁，用通行密鑰登入",
       },
       "zh-CN": {
-        title: "通行密钥，加上你自己的权限",
-        body: "成员用通行密钥登录，每个请求都带着自己的令牌，能做什么由 Kubernetes RBAC 决定。管理员另有专用账号，默认用通行密钥或密码加验证码，令牌 5 分钟就到期。",
+        title: "每个人用自己的账号登录",
+        body: "成员用通行密钥、GitHub、Google 或密码登录，只能用你分配给他的项目。管理员账号默认要通行密钥，或密码加验证码，令牌 5 分钟就到期。",
         alt: "Zeabur Identity 的登录页，用通行密钥登录",
       },
       en: {
-        title: "Passkeys and your own permissions",
-        body: "Members sign in with a passkey, and every request carries their own token for Kubernetes RBAC to judge. Admins have their own accounts, with a passkey or a password and code by default, and tokens that last 5 minutes.",
+        title: "Everyone signs in with their own account",
+        body: "Members sign in with a passkey, GitHub, Google or a password, and use only the projects you give them. Admin accounts need a passkey, or a password and a code, by default, and their tokens last 5 minutes.",
         alt: "The Zeabur Identity sign-in page with a passkey button",
       },
     },
@@ -1194,18 +1194,18 @@ export const chapters: Chapter[] = [
     shot: { from: "docs", id: "cluster" },
     words: {
       "zh-TW": {
-        title: "叢集本身也看得到",
-        body: "Kubernetes 支援到什麼時候、版本差多少、哪些元件落後，都在總覽上。加節點、維護、移除都有步驟，維護時會遵守 PodDisruptionBudget。",
+        title: "主機快出問題時會先提醒你",
+        body: "Kubernetes 版本快停止支援、主機的記憶體或磁碟快用完，叢集頁都會提醒你。加主機、維護和移除主機，都有一步一步的說明。",
         alt: "叢集總覽，顯示節點、Kubernetes 版本和元件狀態",
       },
       "zh-CN": {
-        title: "集群本身也看得到",
-        body: "Kubernetes 支持到什么时候、版本差多少、哪些组件落后，都在总览上。加节点、维护、移除都有步骤，维护时会遵守 PodDisruptionBudget。",
+        title: "主机快出问题时会先提醒你",
+        body: "Kubernetes 版本快停止支持、主机的内存或磁盘快用完，集群页都会提醒你。添加主机、维护和移除主机，都有一步一步的说明。",
         alt: "集群总览，显示节点、Kubernetes 版本和组件状态",
       },
       en: {
-        title: "The cluster itself, in view",
-        body: "Support dates, version skew and outdated components sit on the overview. Adding, draining and removing nodes each have their steps, and draining honours PodDisruptionBudgets.",
+        title: "Warned before your server runs short",
+        body: "The cluster page warns you when your Kubernetes version nears its end of support, or a server is running low on memory or disk. Adding, maintaining and removing servers each come with step-by-step instructions.",
         alt: "The cluster overview with nodes, the Kubernetes version and components",
       },
     },
