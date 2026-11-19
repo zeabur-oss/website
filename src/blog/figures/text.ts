@@ -1,11 +1,11 @@
-import type { SiteLocale } from "../../lib/urls.ts"
+import { sourceLocale, type SiteLocale } from "../../lib/urls.ts"
 
-/** A figure's text in `locale`, or in zh-TW until that locale is written. */
+/** A figure's text in `locale`, or in the source language until that locale is written. */
 export function figureCopy<T>(
-  copy: { "zh-TW": T } & Partial<Record<SiteLocale, T>>,
+  copy: { [K in typeof sourceLocale]: T } & Partial<Record<SiteLocale, T>>,
   locale: SiteLocale,
 ) {
-  return copy[locale] ?? copy["zh-TW"]
+  return copy[locale] ?? copy[sourceLocale]
 }
 
 /** A field path or label key cut after each `.` and `/`, where a long one may wrap. */

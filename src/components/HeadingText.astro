@@ -1,6 +1,7 @@
 ---
 // Breaks Chinese only between words: keep-all holds each word together, <wbr> marks the gaps,
 // and text-wrap picks among them.
+import { localeInfo } from "../lib/urls.ts"
 import { chineseTextSegments } from "./chinese-text.ts"
 
 interface Props {
@@ -10,7 +11,7 @@ interface Props {
 }
 const { text } = Astro.props
 const locale = Astro.props.locale ?? Astro.currentLocale ?? "en"
-const plain = locale === "en" || !/\p{Script=Han}/u.test(text)
+const plain = localeInfo(locale).han === null || !/\p{Script=Han}/u.test(text)
 ---
 
 {plain ? (

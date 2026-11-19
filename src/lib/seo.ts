@@ -1,5 +1,5 @@
 import { githubOrg } from "./site.ts"
-import { siteOrigin } from "./urls.ts"
+import { isSiteLocale, localeTable, siteOrigin } from "./urls.ts"
 
 /** Social images are the size of the repository covers in the design system. */
 export const OG_WIDTH = 1280
@@ -7,7 +7,7 @@ export const OG_HEIGHT = 640
 
 /** `zh-TW` → `zh_TW`, the form Open Graph expects. */
 export function ogLocale(lang: string) {
-  return { en: "en_US", "zh-TW": "zh_TW", "zh-CN": "zh_CN" }[lang] ?? lang.replace("-", "_")
+  return isSiteLocale(lang) ? localeTable[lang].og : lang.replace("-", "_")
 }
 
 /** The first paragraph of a Markdown or MDX page as plain text, for its description. */

@@ -1,14 +1,33 @@
 export const siteOrigin = "https://oss.zeabur.com"
-/** The site's languages, in the order a page without a translation falls back. */
-export const locales = ["en", "zh-TW", "zh-CN"] as const
-export type SiteLocale = (typeof locales)[number]
+/**
+ * The site's languages, in the order a page without a translation falls back. Adding a language
+ * is one row: its URL prefix, its Open Graph locale, its Han script (for fonts and word breaks)
+ * and the text between the two halves of a title.
+ */
+export const localeTable = {
+  en: { prefix: "", og: "en_US", han: null, titleGap: " " },
+  "zh-TW": { prefix: "/zh-TW", og: "zh_TW", han: "tc", titleGap: "" },
+  "zh-CN": { prefix: "/zh-CN", og: "zh_CN", han: "sc", titleGap: "" },
+} as const satisfies Record<
+  string,
+  { prefix: string; og: string; han: "tc" | "sc" | null; titleGap: string }
+>
+export type SiteLocale = keyof typeof localeTable
+export const locales = Object.keys(localeTable) as SiteLocale[]
+/** The language every text exists in; a figure without a translation shows it. */
+export const sourceLocale = "zh-TW" satisfies SiteLocale
 
 export function isSiteLocale(value: unknown): value is SiteLocale {
   return (locales as readonly unknown[]).includes(value)
 }
 
+/** The row of `locale`; a language outside the table reads as English. */
+export function localeInfo(locale: string) {
+  return localeTable[isSiteLocale(locale) ? locale : "en"]
+}
+
 export function localePrefix(locale: string) {
-  return locale === "en" ? "" : `/${locale}`
+  return localeInfo(locale).prefix
 }
 
 export function docsUrl(locale: string, repo: string, slug = "index") {
@@ -18,7 +37,7 @@ export function docsUrl(locale: string, repo: string, slug = "index") {
 /** Route params for a page in every locale: English at the root, the others under their prefix. */
 export const localePaths = () =>
   locales.map((locale) => ({
-    params: { locale: locale === "en" ? undefined : locale },
+    params: { locale: localePrefix(locale).slice(1) || undefined },
     props: { locale },
   }))
 
@@ -26,9 +45,16 @@ export const homeUrl = (locale: string) => localePrefix(locale) || "/"
 export const productUrl = (locale: string, id: string) => `${localePrefix(locale)}/${id}`
 export const blogUrl = (locale: string) => `${localePrefix(locale)}/blog`
 
-/** The same path in another locale: en has no prefix, the others are /zh-TW and /zh-CN. */
+const otherPrefix = new RegExp(
+  `^(${locales
+    .map((l) => localePrefix(l))
+    .filter(Boolean)
+    .join("|")})(?=/|$)`,
+)
+
+/** The same path in another locale. */
 export function pathInLocale(pathname: string, locale: string) {
-  const bare = pathname.replace(/^\/(zh-TW|zh-CN)(?=\/|$)/, "") || "/"
+  const bare = pathname.replace(otherPrefix, "") || "/"
   const prefix = localePrefix(locale)
   return bare === "/" ? prefix || "/" : `${prefix}${bare}`.replace(/\/$/, "")
 }
