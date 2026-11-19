@@ -8,7 +8,7 @@ async function read(): Promise<number | undefined> {
   const headers: Record<string, string> = { accept: "application/vnd.github+json" }
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   try {
-    const response = await fetch("https://api.github.com/repos/zeabur-oss/zeabur", {
+    const response = await fetch(`https://api.github.com/repos${new URL(starredRepo).pathname}`, {
       headers,
       signal: AbortSignal.timeout(5000),
     })
