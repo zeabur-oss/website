@@ -1,0 +1,71 @@
+---
+status: released
+lines:
+  nav: 用通行密鑰登入 kubectl，權杖幾分鐘就到期
+  landing: kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的 token。
+meta:
+  title: Zeabur Identity：每個人用自己的帳號登入
+  description: Zeabur 的登入頁。每個人用通行密鑰、GitHub、Google 或密碼登入自己的帳號，管理員要雙重驗證。單獨使用時，也能讓 kubectl 用同樣的方式登入。
+titleDim: 不共用管理員密碼，
+title: 每個人有自己的帳號
+sub: Zeabur 的登入頁就是 Zeabur Identity，裝好 Zeabur 就有了。在成員頁邀請成員、選擇他們能用的專案。有人離開時，移除他並結束他的工作階段，10 分鐘內他就無法再存取。
+docs: 閱讀入門指南
+source: GitHub 上的原始碼
+highlights:
+  titleDim: 成員用自己的帳號，
+  title: 管理員多一道驗證
+  items:
+    - tag: passkey
+      title: 用習慣的方式登入
+      body: 通行密鑰（Touch ID、Windows Hello 或安全金鑰）、GitHub、Google、公司的登入系統，或密碼。
+    - tag: 5 min
+      title: 管理員要雙重驗證
+      body: 管理員帳號預設用通行密鑰，或密碼加驗證器 App 的驗證碼登入，權杖 5 分鐘到期，工作時會自動換新。日常工作用一般帳號，要改叢集時再登入管理員帳號。
+    - tag: ~20 MB
+      title: 在你的伺服器上執行
+      body: 叢集裡只多一個約 20 MB 的程式，不需要資料庫，也不依賴外部服務，帳號就存在叢集裡。
+how:
+  titleDim: 單獨使用時，
+  title: kubectl 也這樣登入
+  steps:
+    - title: 執行 kubectl
+      body: 例如 kubectl get pods。瀏覽器會打開 Zeabur Identity 的登入頁。
+    - title: 在瀏覽器登入
+      body: kubectl 拿到 10 分鐘的權杖，你工作時它會在背景更新。
+    - title: Kubernetes 自己驗證
+      body: kube-apiserver 透過 OpenID Connect 驗證權杖。撤銷某人的工作階段後，他手上的權杖最多十分鐘就失效。
+shots:
+  title: 登入時看到的頁面
+  captions:
+    sign-in: 日常登入：帳號密碼、通行密鑰和「使用 GitHub 繼續」
+    setup: 加入：用一次性連結建立通行密鑰
+details:
+  title: 支援範圍
+  cols:
+    - 項目
+    - 範圍
+    - 條件
+  rows:
+    - - Kubernetes 發行版
+      - CI 在 k3s 上測試
+      - k0s 和 kubeadm 有設定可用，安裝還沒驗證
+    - - 登入方式
+      - 通行密鑰、密碼，或連結的 GitHub、Google、公司登入系統帳號
+      - GitHub、Google 和公司登入系統要另外設定
+    - - 管理員帳號
+      - 預設用通行密鑰，或密碼加驗證碼；權杖 5 分鐘
+      - 用 zeabur-identityctl 設定帳號類型
+    - - 其他應用程式
+      - 用 zeabur-identityctl client create 登錄 Grafana、Argo CD
+      - 應用程式支援 OpenID Connect
+    - - 成員
+      - 群組、管理員帳號、遺失通行密鑰、移除成員，也能從目錄同步
+      - 同步要自己寫一小段腳本
+    - - 你的電腦
+      - macOS、Linux 或 Windows 上的 kubectl
+      - 依入門指南設定 kubeconfig
+start:
+  title: 從一台 Ubuntu 伺服器開始
+  sub: 用 Zeabur 的話不用另外安裝。單獨使用時，入門指南會在 Ubuntu 伺服器裝好 k3s，下載並驗證 Zeabur Identity，再從你的電腦用通行密鑰登入。既有叢集用叢集管理員的 kubeconfig 執行下面幾行。
+  cta: 閱讀入門指南
+---

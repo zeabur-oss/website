@@ -1,0 +1,66 @@
+---
+status: released
+lines:
+  nav: 在自己的叢集部署和管理服務的網頁介面
+  landing: 把叢集整理成專案和服務，說明哪裡出錯、該怎麼處理。
+meta:
+  title: Zeabur：在自己的主機上，用熟悉的方式部署服務
+  description: Zeabur 是開源軟體。專案、服務、網域、環境變數和應用程式範本，都和你用過的部署平台一樣。主機向哪家租、選哪個方案，由你決定。
+titleDim: 在自己的主機上，
+title: 點幾下就部署好
+sub: 從 Git、Docker Compose 或應用程式範本部署，加上網域、改環境變數，都是你在其他部署平台上熟悉的用法。服務在你自己的主機上執行，費用依你選的雲端服務或機房計算。
+docs: 閱讀 Zeabur 文件
+source: GitHub 上的原始碼
+highlights:
+  titleDim: 用過其他部署平台？
+  title: 大部分都一樣
+  items:
+    - tag: deploy
+      title: 部署方式一樣
+      body: 從 Git、Docker Compose、Docker 映像檔或應用程式範本部署，也能直接上傳資料夾。
+    - tag: domains
+      title: 網域、變數和日誌
+      body: 幫服務加上網域，在服務頁改環境變數、看日誌。新版本有問題時，回到上一個版本。
+    - tag: server
+      title: 主機是你的，由你維護
+      body: 費用依你選的主機計算。升級 Zeabur、備份資料和維護主機，由你或你的團隊負責。
+how:
+  titleDim: 你改設定之前，
+  title: 先讓你看過
+  steps:
+    - title: 整理成專案
+      body: Zeabur 直接讀取叢集，把服務的程式、資料庫、網域和儲存空間放在一起。它沒有自己的資料庫要備份，每次讀寫都用你自己的權限。
+    - title: 用白話說明問題
+      body: 需要處理的服務排在最前面，告訴你原因、該怎麼做，旁邊就是日誌。
+    - title: 確認後才套用
+      body: 改設定前，先列出會建立、修改或刪除哪些東西，你確認後才寫入。有人剛改過同一個服務，就要重新檢查。
+details:
+  title: 能做什麼，需要準備什麼
+  cols:
+    - 功能
+    - 範圍
+    - 叢集裡需要
+  rows:
+    - - 從 Git 部署
+      - 推送後自動建置並部署
+      - Zeabur Builder
+    - - 映像檔與 Compose
+      - 部署容器映像檔，匯入 Docker Compose 服務
+      - 不用另外安裝
+    - - 資料庫
+      - 建立、備份與還原
+      - 對應的資料庫 operator，例如 CloudNativePG
+    - - 物件儲存
+      - 建立 S3 物件儲存與儲存貯體
+      - SeaweedFS operator
+    - - 公開網域
+      - 加上網域與 HTTPS，顯示維護與錯誤頁面
+      - ingress controller 或 Gateway，以及 cert-manager
+    - - 管理叢集
+      - 成員權限、節點、警示通知、叢集備份、元件
+      - 管理員權限
+start:
+  title: 從手邊的環境開始
+  sub: 三種裝法開啟的是同一套介面，差別在 Zeabur 跑在哪裡、用誰的憑證。
+  cta: 在一台伺服器安裝
+---

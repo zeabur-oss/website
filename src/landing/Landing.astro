@@ -4,10 +4,10 @@ import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
 import { chrome } from "../lib/chrome.ts"
-import { productName, releaseTag } from "../lib/products.ts"
+import { sitePages } from "../lib/site-pages.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
-import { blogUrl, docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { blogUrl, docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
 import StartWays from "./StartWays.astro"
 import Story from "./Story.astro"
@@ -25,27 +25,13 @@ const entrances = [
   { ...t.hero.team, href: zeaburDocs("install/existing-cluster") },
   { ...t.hero.machine, href: zeaburDocs("get-started/quickstart") },
 ]
-const members = [
-  {
-    name: productName.zeabur,
-    line: t.members.lines.zeabur,
-    href: productUrl(locale, "zeabur"),
-    status: releaseTag("zeabur"),
-  },
-  { name: "Zeabur Desktop", line: t.members.lines.desktop, soon: true },
-  {
-    name: "Zeabur Zeatend",
-    line: t.members.lines.zeatend,
-    href: `${githubOrg}/zeatend`,
-    soon: true,
-  },
-  ...(["identity", "builder", "catalog"] as const).map((id) => ({
-    name: productName[id],
-    line: t.members.lines[id],
-    href: productUrl(locale, id),
-    status: releaseTag(id),
-  })),
-]
+const members = (await sitePages(locale)).map((p) => ({
+  name: p.name,
+  line: p.landingLine,
+  href: p.href ?? p.landingHref,
+  status: p.tag,
+  soon: !p.released,
+}))
 const number = (i: number) => String(i + 1).padStart(2, "0")
 ---
 

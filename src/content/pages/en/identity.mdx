@@ -1,0 +1,71 @@
+---
+status: released
+lines:
+  nav: kubectl signs in with a passkey, tokens last minutes
+  landing: kubectl signs in through your browser with a passkey and gets a token that expires in minutes.
+meta:
+  title: "Zeabur Identity: an account for each person"
+  description: Zeabur's sign-in page. Each person signs in to their own account with a passkey, GitHub, Google or a password, and admins use two factors. On its own, it signs kubectl in the same way.
+titleDim: No shared admin password.
+title: An account for each person.
+sub: Zeabur's sign-in page is Zeabur Identity, so it comes with Zeabur. Invite people and choose their projects on the Members page. When someone leaves, remove them and end their sessions, and they lose access within 10 minutes.
+docs: Read the getting-started guide
+source: Source on GitHub
+highlights:
+  titleDim: Members use their own accounts,
+  title: admins add a second factor.
+  items:
+    - tag: passkey
+      title: Sign in the way you already do
+      body: A passkey (Touch ID, Windows Hello or a security key), GitHub, Google, your company's sign-in, or a password.
+    - tag: 5 min
+      title: Two factors for admins
+      body: By default, an admin account signs in with a passkey, or a password and a code from an authenticator app. Its token lasts 5 minutes and renews while you work. Use a regular account day to day, and the admin account when you change the cluster.
+    - tag: ~20 MB
+      title: Runs on your server
+      body: One small program of about 20 MB in your cluster. No database and no outside service; the accounts live in the cluster.
+how:
+  titleDim: On its own,
+  title: kubectl signs in the same way.
+  steps:
+    - title: Run kubectl
+      body: kubectl get pods, for example. Your browser opens Zeabur Identity's sign-in page.
+    - title: Sign in in the browser
+      body: kubectl gets a token valid for ten minutes and renews it quietly while you work.
+    - title: Kubernetes checks it
+      body: kube-apiserver verifies the token through OpenID Connect. Revoke someone's sessions and their token in hand stops working within ten minutes.
+shots:
+  title: The pages you sign in on
+  captions:
+    sign-in: "Everyday sign-in: username and password, a passkey and Continue with GitHub"
+    setup: "Joining: create a passkey from a one-time link"
+details:
+  title: What it supports
+  cols:
+    - Item
+    - Scope
+    - Conditions
+  rows:
+    - - Kubernetes distributions
+      - Tested in CI on k3s
+      - k0s and kubeadm configuration is available; installation is unverified
+    - - Sign-in
+      - Passkeys, passwords, or a linked GitHub, Google or company account
+      - GitHub, Google and company sign-in need setting up first
+    - - Admin accounts
+      - A passkey, or a password and code, by default; 5-minute tokens
+      - Set the account type with zeabur-identityctl
+    - - Other apps
+      - Register Grafana or Argo CD with zeabur-identityctl client create
+      - The app speaks OpenID Connect
+    - - People
+      - Groups, admin accounts, lost passkeys, removal, sync from a directory
+      - Sync needs a small script of your own
+    - - Your computer
+      - kubectl on macOS, Linux or Windows
+      - A kubeconfig set up as in the guide
+start:
+  title: Start from one Ubuntu server
+  sub: With Zeabur there is nothing to install. For standalone use, the guide installs k3s on an Ubuntu server, downloads and verifies Zeabur Identity, and signs you in with a passkey from your computer. On a cluster you already have, run these lines with your cluster-admin kubeconfig.
+  cta: Read the getting-started guide
+---

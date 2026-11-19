@@ -1,0 +1,66 @@
+---
+status: released
+lines:
+  nav: A web interface to deploy and run services on your cluster
+  landing: Shows the cluster as projects and services, what is wrong and what to do.
+meta:
+  title: "Zeabur: deploy on your own server in a few clicks"
+  description: Zeabur is open source. Projects, services, domains, variables and templates work as they do on the deployment platforms you know. You choose the hosting provider and the plan.
+titleDim: On your own server,
+title: deploy in a few clicks.
+sub: Deploy from Git, Docker Compose or a template, add a domain and change variables, the way you know from other deployment platforms. Your services run on your own server, and you pay the cloud or data center you chose.
+docs: Read the Zeabur docs
+source: Source on GitHub
+highlights:
+  titleDim: Used a deployment platform?
+  title: Most of it is the same.
+  items:
+    - tag: deploy
+      title: The same ways to deploy
+      body: Deploy from Git, Docker Compose, a Docker image or a template, or upload a folder.
+    - tag: domains
+      title: Domains, variables and logs
+      body: Add a domain to a service, change its variables and read its logs on the service page. If a new version has a problem, roll back.
+    - tag: server
+      title: Your server, your upkeep
+      body: You pay for the server you chose. You or your team upgrade Zeabur, back up data and look after the server.
+how:
+  titleDim: Before your change applies,
+  title: you see it first.
+  steps:
+    - title: Grouped into projects
+      body: Zeabur reads the cluster directly and puts each service's app, database, domains and storage together. It has no database of its own to back up, and every read and write uses your own rights.
+    - title: Problems in plain words
+      body: Services that need attention come first, with the cause, what to do next and the logs beside them.
+    - title: Applied when you confirm
+      body: A change first lists what it will create, change or delete, and writes only when you confirm. If someone just changed the same service, you review again.
+details:
+  title: What it does, and what it needs
+  cols:
+    - Feature
+    - Scope
+    - Needs in the cluster
+  rows:
+    - - Deploy from Git
+      - Build and deploy on every push
+      - Zeabur Builder
+    - - Images and Compose
+      - Deploy container images, import Docker Compose services
+      - Nothing extra
+    - - Databases
+      - Create, back up and restore
+      - The database's operator, such as CloudNativePG
+    - - Object storage
+      - Create S3 object storage and buckets
+      - SeaweedFS operator
+    - - Public domains
+      - Domains with HTTPS, maintenance and error pages
+      - An ingress controller or Gateway, and cert-manager
+    - - Cluster
+      - Member rights, nodes, alert notifications, cluster backups, components
+      - Admin rights
+start:
+  title: Start with what you have
+  sub: All three open the same interface. They differ in where Zeabur runs and whose credential it uses.
+  cta: Install on one server
+---

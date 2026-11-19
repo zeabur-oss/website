@@ -20,7 +20,7 @@ interface Props {
 const { locale, section, alternates = {}, docs = false } = Astro.props
 const Outer = docs ? "div" : "header"
 const t = chrome[locale]
-const nav = siteNav(locale)
+const nav = await siteNav(locale)
 const stars = await starCount(locale)
 const here = Astro.url.pathname.replace(/\/$/, "") || "/"
 const langHref = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)

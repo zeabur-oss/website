@@ -12,7 +12,7 @@ interface Props {
 }
 const { locale } = Astro.props
 const t = chrome[locale]
-const nav = siteNav(locale)
+const nav = await siteNav(locale)
 const columns = [
   { title: t.nav.product, links: nav.product.flatMap((g) => g.items).filter((i) => i.line) },
   { title: t.nav.useCases, links: nav.useCases },

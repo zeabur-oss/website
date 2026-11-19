@@ -26,8 +26,45 @@ const blog = defineCollection({
   }),
 })
 
+const text = z.string()
+// The site's own pages: src/content/pages/<locale>/<slug>.mdx, one file per locale with the same
+// slug (the row of src/lib/site-pages.ts says where the page shows up).
+const pages = defineCollection({
+  loader: glob({
+    base: "./src/content/pages",
+    pattern: "**/*.mdx",
+    generateId: ({ entry }) => entry.replace(/\.mdx$/, ""),
+  }),
+  schema: z.object({
+    /** A page that is not released shows "Stay tuned" in place of its release tag. */
+    status: z.enum(["released", "soon"]),
+    /** The line under the page's name in the header menu and on the home page. */
+    lines: z.object({ nav: text, landing: text }),
+    meta: z.object({ title: text, description: text }),
+    titleDim: text,
+    title: text,
+    sub: text,
+    docs: text,
+    source: text,
+    highlights: z.object({
+      titleDim: text,
+      title: text,
+      items: z.array(z.object({ tag: text, title: text, body: text })),
+    }),
+    how: z.object({
+      titleDim: text,
+      title: text,
+      steps: z.array(z.object({ title: text, body: text })),
+    }),
+    shots: z.object({ title: text, captions: z.record(z.string(), text) }).optional(),
+    details: z.object({ title: text, cols: z.array(text), rows: z.array(z.array(text)) }),
+    start: z.object({ title: text, sub: text, cta: text }),
+  }),
+})
+
 export const collections = {
   blog,
+  pages,
   // Starlight labels a note 「注意」, which reads like a caution.
   i18n: defineCollection({ loader: i18nLoader(), schema: i18nSchema() }),
   docs: defineCollection({

@@ -1,0 +1,71 @@
+---
+status: released
+lines:
+  nav: 用通行密钥登录 kubectl，令牌几分钟就过期
+  landing: kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的 token。
+meta:
+  title: Zeabur Identity：每个人用自己的账号登录
+  description: Zeabur 的登录页。每个人用通行密钥、GitHub、Google 或密码登录自己的账号，管理员要双重验证。单独使用时，也能让 kubectl 用同样的方式登录。
+titleDim: 不共用管理员密码，
+title: 每个人有自己的账号
+sub: Zeabur 的登录页就是 Zeabur Identity，装好 Zeabur 就有了。在成员页邀请成员、选择他们能用的项目。有人离开时，移除他并结束他的会话，10 分钟内他就无法再访问。
+docs: 阅读入门指南
+source: GitHub 上的源代码
+highlights:
+  titleDim: 成员用自己的账号，
+  title: 管理员多一道验证
+  items:
+    - tag: passkey
+      title: 用习惯的方式登录
+      body: 通行密钥（Touch ID、Windows Hello 或安全密钥）、GitHub、Google、公司的登录系统，或密码。
+    - tag: 5 min
+      title: 管理员要双重验证
+      body: 管理员账号默认用通行密钥，或密码加身份验证器 App 的验证码登录，令牌 5 分钟过期，工作时会自动换新。日常工作用普通账号，要改集群时再登录管理员账号。
+    - tag: ~20 MB
+      title: 运行在你的服务器上
+      body: 集群里只多一个约 20 MB 的程序，不需要数据库，也不依赖外部服务，账号就存在集群里。
+how:
+  titleDim: 单独使用时，
+  title: kubectl 也这样登录
+  steps:
+    - title: 运行 kubectl
+      body: 例如 kubectl get pods。浏览器会打开 Zeabur Identity 的登录页。
+    - title: 在浏览器登录
+      body: kubectl 拿到 10 分钟的令牌，你工作时它会在后台更新。
+    - title: Kubernetes 自己验证
+      body: kube-apiserver 通过 OpenID Connect 验证令牌。撤销某人的会话后，他手上的令牌最多十分钟就失效。
+shots:
+  title: 登录时看到的页面
+  captions:
+    sign-in: 日常登录：账号密码、通行密钥和“使用 GitHub 继续”
+    setup: 加入：用一次性链接创建通行密钥
+details:
+  title: 支持范围
+  cols:
+    - 项目
+    - 范围
+    - 条件
+  rows:
+    - - Kubernetes 发行版
+      - CI 在 k3s 上测试
+      - k0s 和 kubeadm 有配置可用，安装尚未验证
+    - - 登录方式
+      - 通行密钥、密码，或关联的 GitHub、Google、公司登录系统账号
+      - GitHub、Google 和公司登录系统需要另外配置
+    - - 管理员账号
+      - 默认用通行密钥，或密码加验证码；令牌 5 分钟
+      - 用 zeabur-identityctl 设置账号类型
+    - - 其他应用
+      - 用 zeabur-identityctl client create 注册 Grafana、Argo CD
+      - 应用支持 OpenID Connect
+    - - 成员
+      - 用户组、管理员账号、丢失通行密钥、移除成员，也能从目录同步
+      - 同步需要自己写一小段脚本
+    - - 你的电脑
+      - macOS、Linux 或 Windows 上的 kubectl
+      - 按入门指南配置 kubeconfig
+start:
+  title: 从一台 Ubuntu 服务器开始
+  sub: 用 Zeabur 的话不用另外安装。单独使用时，入门指南会在 Ubuntu 服务器上装好 k3s，下载并验证 Zeabur Identity，再从你的电脑用通行密钥登录。现有集群用集群管理员的 kubeconfig 运行下面几行。
+  cta: 阅读入门指南
+---
