@@ -97,7 +97,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur Identity：用通行密鑰登入 Kubernetes",
       description:
-        "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的權杖。管理員有專用帳號，只能用通行密鑰登入。",
+        "kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的權杖。管理員有專用帳號，預設用通行密鑰，或密碼加驗證碼登入。",
     },
     titleDim: "刪掉 admin.conf，",
     title: "用通行密鑰登入叢集",
@@ -110,13 +110,13 @@ const zhTW: Record<ProductId, ProductCopy> = {
       items: [
         {
           tag: "passkey",
-          title: "通行密鑰，不用密碼",
-          body: "用 Touch ID、Windows Hello 或安全金鑰登入。成員也可以連結 GitHub 或 Google 帳號，日常登入時使用。",
+          title: "通行密鑰，也能用密碼",
+          body: "用 Touch ID、Windows Hello 或安全金鑰登入。成員也可以設密碼，或連結 GitHub、Google 帳號，日常登入時使用。",
         },
         {
           tag: "5 min",
           title: "管理員有專用帳號",
-          body: "管理員帳號只能用通行密鑰登入，權杖 5 分鐘到期，工作時會自動換新。日常工作用一般帳號，要改叢集時再登入管理員帳號。",
+          body: "管理員帳號預設用通行密鑰，或密碼加驗證器 App 的驗證碼登入，權杖 5 分鐘到期，工作時會自動換新。日常工作用一般帳號，要改叢集時再登入管理員帳號。",
         },
         {
           tag: "~20 MB",
@@ -146,7 +146,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
     shots: {
       title: "登入時看到的頁面",
       captions: {
-        "sign-in": "日常登入：通行密鑰按鈕和「使用 GitHub 繼續」",
+        "sign-in": "日常登入：帳號密碼、通行密鑰和「使用 GitHub 繼續」",
         setup: "加入：用一次性連結建立通行密鑰",
       },
     },
@@ -157,10 +157,14 @@ const zhTW: Record<ProductId, ProductCopy> = {
         ["Kubernetes 發行版", "CI 在 k3s 上測試", "k0s 和 kubeadm 有設定可用，安裝還沒驗證"],
         [
           "登入方式",
-          "通行密鑰，或連結的 GitHub、Google 帳號",
+          "通行密鑰、密碼，或連結的 GitHub、Google 帳號",
           "GitHub、Google 要另外設定 OAuth 應用程式",
         ],
-        ["管理員帳號", "只能用通行密鑰，權杖 5 分鐘", "用 zeabur-identityctl 設定帳號類型"],
+        [
+          "管理員帳號",
+          "預設用通行密鑰，或密碼加驗證碼；權杖 5 分鐘",
+          "用 zeabur-identityctl 設定帳號類型",
+        ],
         [
           "其他應用程式",
           "用 zeabur-identityctl client create 登錄 Grafana、Argo CD",
@@ -405,7 +409,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur Identity：用通行密钥登录 Kubernetes",
       description:
-        "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的令牌。管理员有专用账号，只能用通行密钥登录。",
+        "kubectl 通过浏览器用通行密钥登录，拿到几分钟就过期的令牌。管理员有专用账号，默认用通行密钥，或密码加验证码登录。",
     },
     titleDim: "删掉 admin.conf，",
     title: "用通行密钥登录集群",
@@ -418,13 +422,13 @@ const zhCN: Record<ProductId, ProductCopy> = {
       items: [
         {
           tag: "passkey",
-          title: "通行密钥，不用密码",
-          body: "用 Touch ID、Windows Hello 或安全密钥登录。成员也可以关联 GitHub 或 Google 账号，日常登录时使用。",
+          title: "通行密钥，也能用密码",
+          body: "用 Touch ID、Windows Hello 或安全密钥登录。成员也可以设密码，或关联 GitHub、Google 账号，日常登录时使用。",
         },
         {
           tag: "5 min",
           title: "管理员有专用账号",
-          body: "管理员账号只能用通行密钥登录，令牌 5 分钟过期，工作时会自动换新。日常工作用普通账号，要改集群时再登录管理员账号。",
+          body: "管理员账号默认用通行密钥，或密码加身份验证器 App 的验证码登录，令牌 5 分钟过期，工作时会自动换新。日常工作用普通账号，要改集群时再登录管理员账号。",
         },
         {
           tag: "~20 MB",
@@ -451,7 +455,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
     shots: {
       title: "登录时看到的页面",
       captions: {
-        "sign-in": "日常登录：通行密钥按钮和“使用 GitHub 继续”",
+        "sign-in": "日常登录：账号密码、通行密钥和“使用 GitHub 继续”",
         setup: "加入：用一次性链接创建通行密钥",
       },
     },
@@ -462,10 +466,14 @@ const zhCN: Record<ProductId, ProductCopy> = {
         ["Kubernetes 发行版", "CI 在 k3s 上测试", "k0s 和 kubeadm 有配置可用，安装尚未验证"],
         [
           "登录方式",
-          "通行密钥，或关联的 GitHub、Google 账号",
+          "通行密钥、密码，或关联的 GitHub、Google 账号",
           "GitHub、Google 需要另外配置 OAuth 应用",
         ],
-        ["管理员账号", "只能用通行密钥，令牌 5 分钟", "用 zeabur-identityctl 设置账号类型"],
+        [
+          "管理员账号",
+          "默认用通行密钥，或密码加验证码；令牌 5 分钟",
+          "用 zeabur-identityctl 设置账号类型",
+        ],
         [
           "其他应用",
           "用 zeabur-identityctl client create 注册 Grafana、Argo CD",
@@ -722,7 +730,7 @@ const en: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur Identity: sign in to Kubernetes with a passkey",
       description:
-        "kubectl signs in through your browser with a passkey and gets a token that expires in minutes. Admins have their own accounts, passkey only.",
+        "kubectl signs in through your browser with a passkey and gets a token that expires in minutes. Admins have their own accounts, with a passkey or a password and code by default.",
     },
     titleDim: "Delete admin.conf.",
     title: "Sign in to your cluster with a passkey.",
@@ -735,13 +743,13 @@ const en: Record<ProductId, ProductCopy> = {
       items: [
         {
           tag: "passkey",
-          title: "Passkeys, not passwords",
-          body: "Touch ID, Windows Hello or a security key. Teammates can also link a GitHub or Google account for everyday sign-in.",
+          title: "Passkeys, or a password",
+          body: "Touch ID, Windows Hello or a security key. Teammates can also set a password or link a GitHub or Google account for everyday sign-in.",
         },
         {
           tag: "5 min",
           title: "Admins have their own accounts",
-          body: "An admin account signs in with a passkey only, and its token lasts 5 minutes and renews while you work. Use a regular account day to day, and the admin account when you change the cluster.",
+          body: "By default, an admin account signs in with a passkey, or a password and a code from an authenticator app. Its token lasts 5 minutes and renews while you work. Use a regular account day to day, and the admin account when you change the cluster.",
         },
         {
           tag: "~20 MB",
@@ -771,7 +779,7 @@ const en: Record<ProductId, ProductCopy> = {
     shots: {
       title: "The pages you sign in on",
       captions: {
-        "sign-in": "Everyday sign-in: a passkey button and Continue with GitHub",
+        "sign-in": "Everyday sign-in: username and password, a passkey and Continue with GitHub",
         setup: "Joining: create a passkey from a one-time link",
       },
     },
@@ -786,12 +794,12 @@ const en: Record<ProductId, ProductCopy> = {
         ],
         [
           "Sign-in",
-          "Passkeys, or a linked GitHub or Google account",
+          "Passkeys, passwords, or a linked GitHub or Google account",
           "GitHub and Google need an OAuth app of your own",
         ],
         [
           "Admin accounts",
-          "Passkey only, 5-minute tokens",
+          "A passkey, or a password and code, by default; 5-minute tokens",
           "Set the account type with zeabur-identityctl",
         ],
         [

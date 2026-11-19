@@ -744,9 +744,9 @@ export const features: Feature[] = [
   {
     group: "team",
     doc: "identity",
-    "zh-TW": ["通行密鑰登入", "用 Touch ID、Windows Hello 或安全金鑰，沒有密碼。"],
-    "zh-CN": ["通行密钥登录", "用 Touch ID、Windows Hello 或安全密钥，没有密码。"],
-    en: ["Passkey sign-in", "Touch ID, Windows Hello or a security key. No passwords."],
+    "zh-TW": ["通行密鑰登入", "用 Touch ID、Windows Hello 或安全金鑰，也能改用密碼。"],
+    "zh-CN": ["通行密钥登录", "用 Touch ID、Windows Hello 或安全密钥，也能改用密码。"],
+    en: ["Passkey sign-in", "Touch ID, Windows Hello or a security key, or a password."],
   },
   {
     group: "team",
@@ -1174,17 +1174,17 @@ export const chapters: Chapter[] = [
     words: {
       "zh-TW": {
         title: "通行密鑰，加上你自己的權限",
-        body: "成員用通行密鑰登入，每個請求都帶著自己的權杖，能做什麼由 Kubernetes RBAC 決定。管理員另有專用帳號，只能用通行密鑰，權杖 5 分鐘就到期。",
+        body: "成員用通行密鑰登入，每個請求都帶著自己的權杖，能做什麼由 Kubernetes RBAC 決定。管理員另有專用帳號，預設用通行密鑰或密碼加驗證碼，權杖 5 分鐘就到期。",
         alt: "Zeabur Identity 的登入頁，用通行密鑰登入",
       },
       "zh-CN": {
         title: "通行密钥，加上你自己的权限",
-        body: "成员用通行密钥登录，每个请求都带着自己的令牌，能做什么由 Kubernetes RBAC 决定。管理员另有专用账号，只能用通行密钥，令牌 5 分钟就到期。",
+        body: "成员用通行密钥登录，每个请求都带着自己的令牌，能做什么由 Kubernetes RBAC 决定。管理员另有专用账号，默认用通行密钥或密码加验证码，令牌 5 分钟就到期。",
         alt: "Zeabur Identity 的登录页，用通行密钥登录",
       },
       en: {
         title: "Passkeys and your own permissions",
-        body: "Members sign in with a passkey, and every request carries their own token for Kubernetes RBAC to judge. Admins have their own accounts, passkey only, with tokens that last 5 minutes.",
+        body: "Members sign in with a passkey, and every request carries their own token for Kubernetes RBAC to judge. Admins have their own accounts, with a passkey or a password and code by default, and tokens that last 5 minutes.",
         alt: "The Zeabur Identity sign-in page with a passkey button",
       },
     },
