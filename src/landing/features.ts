@@ -1223,7 +1223,7 @@ export const featureCopy: Record<
   }
 > = {
   "zh-TW": {
-    chapters: "從部署到出問題",
+    chapters: "從安裝到日常維護",
     all: (n) => `看全部 ${n} 項功能`,
     group: (n) => `這組的 ${n} 項功能`,
     index: {
@@ -1233,7 +1233,7 @@ export const featureCopy: Record<
     partial: "還沒做完",
   },
   "zh-CN": {
-    chapters: "从部署到出问题",
+    chapters: "从安装到日常维护",
     all: (n) => `看全部 ${n} 项功能`,
     group: (n) => `这组的 ${n} 项功能`,
     index: {
@@ -1243,7 +1243,7 @@ export const featureCopy: Record<
     partial: "还没做完",
   },
   en: {
-    chapters: "From deploying to fixing",
+    chapters: "From install to everyday upkeep",
     all: (n) => `All ${n} features`,
     group: (n) => `${n} features in this group`,
     index: {
