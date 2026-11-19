@@ -7,15 +7,8 @@ import { copyFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node
 import { dirname, join } from "node:path"
 import { stringify as toYaml } from "yaml"
 import sharp from "sharp"
-import { docsUrl, localePrefix } from "../src/lib/urls.ts"
-import {
-  fallbackOrder,
-  readRepoDocs,
-  readText,
-  siteLocales,
-  splitFrontmatter,
-  type RepoDocs,
-} from "./lib/docs.ts"
+import { docsUrl, localePrefix, locales } from "../src/lib/urls.ts"
+import { readRepoDocs, readText, splitFrontmatter, type RepoDocs } from "./lib/docs.ts"
 import { readLock, root, snapshot, type LockRepo, type Snapshot } from "./lib/repos.ts"
 import {
   readComponents,
@@ -168,8 +161,8 @@ export async function sync() {
     site.repos.push({ name: repo.name, label: repo.label, github: repo.github, ref: repo.ref })
     const titles: Record<string, Record<string, string>> = {}
     for (const page of docs.pages) {
-      for (const locale of siteLocales) {
-        const contentLocale = [locale, ...fallbackOrder].find((l) => page.files[l])!
+      for (const locale of locales) {
+        const contentLocale = [locale, ...locales].find((l) => page.files[l])!
         const source = page.files[contentLocale]!
         const navTitle = docs.labels[locale]?.pages[page.slug]
         const { frontmatter, body } = normalise(readText(snap, source), navTitle ?? page.slug)
@@ -188,11 +181,11 @@ export async function sync() {
         }
       }
     }
-    for (const locale of siteLocales) {
+    for (const locale of locales) {
       ;(nav[locale] ??= {})[repo.name] = navOf(locale, repo, docs, titles[locale] ?? {})
     }
     for (const [from, to] of Object.entries(docs.redirects)) {
-      for (const locale of siteLocales) {
+      for (const locale of locales) {
         site.redirects.push({
           from: `${localePrefix(locale)}/docs/${repo.name}/${from}`,
           to: docsUrl(locale, repo.name, to),
