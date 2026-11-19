@@ -2,12 +2,8 @@ import { createHash } from "node:crypto"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { parse as parseYaml } from "yaml"
+import { locales } from "../../src/lib/urls.ts"
 import type { Snapshot } from "./repos.ts"
-
-export const siteLocales = ["en", "zh-TW", "zh-CN"] as const
-export type Locale = (typeof siteLocales)[number]
-/** The order in which a locale falls back when a page has no translation for it. */
-export const fallbackOrder: Locale[] = ["en", "zh-TW", "zh-CN"]
 
 export type NavGroup = { group: string; label: string; pages: string[] }
 export type NavLabels = { groups: Record<string, string>; pages: Record<string, string> }
@@ -37,9 +33,7 @@ const pageExtensions = [".mdx", ".md"]
 export const reservedNames = ["internal", "images"]
 
 export function isLocaleName(name: string) {
-  return (
-    (siteLocales as readonly string[]).includes(name) || /^[a-z]{2}(-[A-Za-z]{2,4})?$/.test(name)
-  )
+  return (locales as readonly string[]).includes(name) || /^[a-z]{2}(-[A-Za-z]{2,4})?$/.test(name)
 }
 
 export function readText(snap: Snapshot, path: string) {

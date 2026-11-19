@@ -7,6 +7,7 @@ import tailwindcss from "@tailwindcss/vite"
 import { defineConfig } from "astro/config"
 import type { SiteData } from "./scripts/sync-docs.ts"
 import { starlightIcons } from "./src/lib/icons.ts"
+import { chrome } from "./src/lib/chrome.ts"
 import { githubOrg } from "./src/lib/site.ts"
 import { docsUrl, localePrefix, locales, siteOrigin } from "./src/lib/urls.ts"
 import { rehypeReferences } from "./src/blog/rehype-references.ts"
@@ -57,11 +58,9 @@ export default defineConfig({
     starlight({
       title: "Zeabur OSS",
       defaultLocale: "root",
-      locales: {
-        root: { label: "English", lang: "en" },
-        "zh-TW": { label: "繁體中文", lang: "zh-TW" },
-        "zh-CN": { label: "简体中文", lang: "zh-CN" },
-      },
+      locales: Object.fromEntries(
+        locales.map((lang) => [lang === "en" ? "root" : lang, { label: chrome[lang].lang, lang }]),
+      ),
       favicon: "/favicon.svg",
       social: [{ icon: "github", label: "GitHub", href: githubOrg }],
       customCss: ["./src/styles/docs.css"],

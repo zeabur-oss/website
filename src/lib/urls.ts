@@ -1,4 +1,5 @@
 export const siteOrigin = "https://oss.zeabur.com"
+/** The site's languages, in the order a page without a translation falls back. */
 export const locales = ["en", "zh-TW", "zh-CN"] as const
 export type SiteLocale = (typeof locales)[number]
 
