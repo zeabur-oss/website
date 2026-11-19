@@ -1,0 +1,86 @@
+---
+import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "./copy.ts"
+import { catalog, entryUrl } from "./data.ts"
+import EntryPage from "./EntryPage.astro"
+import Pills from "./Pills.astro"
+import Section from "./Section.astro"
+
+interface Props {
+  locale: SiteLocale
+  component: CatalogComponent
+}
+const { locale, component: x } = Astro.props
+const t = catalogCopy[locale]
+const w = t.component
+const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
+const usedBy = catalog.templates.filter((tpl) => tpl.requires.includes(x.id))
+const needs = x.requires.map((r) =>
+  "component" in r
+    ? {
+        text: componentName.get(r.component) ?? r.component,
+        href: entryUrl(locale, "components", r.component),
+      }
+    : { text: w.capability(r.capability) },
+)
+const defaults = [
+  { label: w.defaults.singleNode, state: x.defaults.singleNode },
+  { label: w.defaults.multiNode, state: x.defaults.multiNode },
+]
+---
+
+<EntryPage
+  locale={locale}
+  kind="components"
+  entry={x}
+  title={w.pageTitle(x.name)}
+  facts={[{ label: t.facts.capability, value: x.capability }]}
+  actions={[
+    { href: docsUrl(locale, "zeabur", "cluster/components"), text: w.install, icon: "arrow-right" },
+    { href: docsUrl(locale, "catalog", "reference/components"), text: w.list, icon: "list" },
+  ]}
+>
+  <Section id="defaults" title={w.defaults.title}>
+    <dl class="grid gap-x-6 sm:grid-cols-2">
+      {defaults.map((d) => (
+        <div class="flex items-baseline justify-between gap-4 border-t border-site-line py-4">
+          <dt class="text-site-muted">{d.label}</dt>
+          <dd class="m-0 font-medium">{w.state[d.state]}</dd>
+        </div>
+      ))}
+    </dl>
+  </Section>
+
+  <Section id="security" title={t.security}>
+    <p class="body" lang="en">
+      {x.security}
+    </p>
+  </Section>
+
+  <Section id="releases" title={w.releases}>
+    <Pills
+      items={x.releases.map((r) => ({
+        text: r.version ? `${r.name} ${r.version}` : r.name,
+        mono: true,
+      }))}
+    />
+    {needs.length > 0 && (
+      <div class="grid gap-3">
+        <h3 class="label text-site-faint">{w.needs}</h3>
+        <Pills items={needs} />
+      </div>
+    )}
+    {usedBy.length > 0 && (
+      <div class="grid gap-3">
+        <h3 class="label text-site-faint">{w.usedBy}</h3>
+        <Pills
+          items={usedBy.map((tpl) => ({
+            text: tpl.name,
+            href: entryUrl(locale, "templates", tpl.id),
+          }))}
+        />
+      </div>
+    )}
+  </Section>
+</EntryPage>

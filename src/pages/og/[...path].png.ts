@@ -2,6 +2,8 @@ import type { APIRoute, GetStaticPaths } from "astro"
 import { getCollection } from "astro:content"
 import { dateFormat, postSlug, postsFor } from "../../blog/blog.ts"
 import { blogCopy } from "../../blog/copy.ts"
+import { catalogCopy } from "../../catalog/copy.ts"
+import { catalog } from "../../catalog/data.ts"
 import { landingCopy } from "../../landing/copy.ts"
 import { chrome } from "../../lib/chrome.ts"
 import { productIds, productName, type ProductId } from "../../lib/products.ts"
@@ -21,6 +23,7 @@ const notFound: Record<SiteLocale, { title: string; sub: string }> = {
 }
 
 // /og/home/<locale>.png, /og/blog/<locale>/index.png, /og/blog/<locale>/<slug>.png,
+// /og/catalog/<locale>/index.png, /og/catalog/<locale>/<templates|components>/<id>.png,
 // /og/<docs page path>.png for each page in the language it is written in, /og/404/<locale>.png.
 // The product pages use their README covers, which scripts/sync-docs.ts copies to /og/<id>.png.
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -43,6 +46,26 @@ export const getStaticPaths: GetStaticPaths = async () => {
       sub: t.description,
       han: han(locale),
     })
+    const tc = catalogCopy[locale]
+    add(`catalog/${locale}/index`, {
+      kicker: productName.catalog,
+      title: tc.title,
+      sub: tc.description(catalog.templates.length, catalog.components.length),
+      han: han(locale),
+    })
+    for (const [kind, entries] of [
+      ["templates", catalog.templates],
+      ["components", catalog.components],
+    ] as const) {
+      for (const x of entries) {
+        add(`catalog/${locale}/${kind}/${x.id}`, {
+          kicker: `${productName.catalog} · ${(kind === "templates" ? tc.template : tc.component).kind}`,
+          title: x.name,
+          sub: x.summary[locale],
+          han: han(locale),
+        })
+      }
+    }
     for (const post of await postsFor(locale)) {
       add(`blog/${locale}/${postSlug(post.id)}`, {
         kicker: `${t.title} · ${date.format(post.data.pubDate)}`,

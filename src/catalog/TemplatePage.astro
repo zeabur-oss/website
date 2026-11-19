@@ -1,0 +1,72 @@
+---
+import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "./copy.ts"
+import { catalog, entryUrl } from "./data.ts"
+import EntryPage from "./EntryPage.astro"
+import Pills from "./Pills.astro"
+import Section from "./Section.astro"
+
+interface Props {
+  locale: SiteLocale
+  template: CatalogTemplate
+}
+const { locale, template: x } = Astro.props
+const t = catalogCopy[locale]
+const w = t.template
+const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
+---
+
+<EntryPage
+  locale={locale}
+  kind="templates"
+  entry={x}
+  title={w.pageTitle(x.name)}
+  facts={[{ label: t.facts.version, value: x.version }]}
+  actions={[
+    { href: docsUrl(locale, "zeabur", "deploy/templates"), text: w.deploy, icon: "arrow-right" },
+    {
+      href: docsUrl(locale, "catalog", "get-started/deploy-a-template"),
+      text: w.deployCli,
+      icon: "terminal",
+    },
+  ]}
+>
+  <Section id="security" title={t.security}>
+    <p class="body">{x.security.summary[locale]}</p>
+    {x.security.risks.length > 0 && (
+      <div>
+        <h3 class="label text-site-faint">{w.risks.title}</h3>
+        <ol class="mt-4 grid list-none p-0">
+          {x.security.risks.map((r) => (
+            <li class="grid gap-3 border-t border-site-line py-5 md:grid-cols-2 md:gap-6">
+              <div class="grid content-start gap-1.5">
+                <p class="label text-site-faint">{w.risks.risk}</p>
+                <p class="body">{r.risk[locale]}</p>
+              </div>
+              <div class="grid content-start gap-1.5">
+                <p class="label text-site-faint">{w.risks.mitigation}</p>
+                <p class="body">{r.mitigation[locale]}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    )}
+  </Section>
+
+  <Section id="needs" title={w.needs.title} body={w.needs.body}>
+    {x.requires.length > 0 && (
+      <Pills
+        items={x.requires.map((id) => ({
+          text: componentName.get(id) ?? id,
+          href: componentName.has(id) ? entryUrl(locale, "components", id) : undefined,
+        }))}
+      />
+    )}
+    <div class="grid gap-3">
+      <h3 class="label text-site-faint">{w.runs}</h3>
+      <Pills items={x.services.map((text) => ({ text, mono: true }))} />
+    </div>
+  </Section>
+</EntryPage>

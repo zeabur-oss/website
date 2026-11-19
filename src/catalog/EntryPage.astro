@@ -1,0 +1,167 @@
+---
+import { cn } from "cn"
+import type { TestRun } from "../../scripts/lib/catalog.ts"
+import { dateFormat } from "../blog/blog.ts"
+import Icon from "../components/Icon.astro"
+import Site from "../layouts/Site.astro"
+import { productName } from "../lib/products.ts"
+import { productUrl, siteOrigin, type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "./copy.ts"
+import Section from "./Section.astro"
+import { browseUrl, catalog, entryUrl, lastTested, sourceUrl, type EntryKind } from "./data.ts"
+
+// The top of a template's or a component's page and its CI runs; the rest goes in the slot.
+interface Props {
+  locale: SiteLocale
+  kind: EntryKind
+  entry: {
+    id: string
+    name: string
+    summary: Record<SiteLocale, string>
+    license: string
+    homepage: string
+    source: string
+    tests: TestRun[]
+  }
+  title: string
+  /** Facts before the licence, homepage and source file. */
+  facts: { label: string; value: string }[]
+  actions: { href: string; text: string; icon: string }[]
+}
+const { locale, kind, entry: x, title, facts, actions } = Astro.props
+const t = catalogCopy[locale]
+const words = kind === "templates" ? t.template : t.component
+const date = dateFormat(locale, "medium")
+const day = (d: string) => date.format(new Date(`${d}T12:00:00Z`))
+const tested = lastTested(x.tests)
+const summary = x.summary[locale]
+const description = tested
+  ? locale === "en"
+    ? `${summary} ${t.tested(day(tested))}.`
+    : `${summary}${t.tested(day(tested))}。`
+  : summary
+const host = new URL(x.homepage).host.replace(/^www\./, "")
+const crumbs = [
+  { name: productName.catalog, url: productUrl(locale, "catalog") },
+  { name: t.title, url: browseUrl(locale) },
+  { name: x.name, url: entryUrl(locale, kind, x.id) },
+]
+const allFacts = [
+  ...facts,
+  { label: t.facts.license, value: x.license },
+  { label: t.facts.homepage, value: host, href: x.homepage },
+  { label: t.facts.source, value: `${x.source} @ ${catalog.ref}`, href: sourceUrl(x.source) },
+]
+---
+
+<Site
+  locale={locale}
+  title={title}
+  description={description}
+  section="products"
+  image={`/og/catalog/${locale}/${kind}/${x.id}.png`}
+  schema={{
+    "@type": "WebPage",
+    name: title,
+    description,
+    ...(tested && { dateModified: tested }),
+    about: {
+      "@type": "SoftwareApplication",
+      name: x.name,
+      description: summary,
+      operatingSystem: "Kubernetes",
+      url: x.homepage,
+    },
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: crumbs.map((c, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: c.name,
+        item: `${siteOrigin}${c.url}`,
+      })),
+    },
+  }}
+>
+  <section class="wrap hero pb-12 md:pb-16">
+    <a href={browseUrl(locale)} class="more">
+      <Icon name="arrow-left" />
+      {t.back}
+    </a>
+    <p class="label mt-10 text-site-muted md:mt-14">{words.kind}</p>
+    <h1 class="display mt-4" translate="no">
+      {x.name}
+    </h1>
+    <p class="lead mt-6">{summary}</p>
+    <p
+      class={cn(
+        "mt-6 inline-flex items-center gap-2 text-sm font-medium",
+        tested ? "text-site-accent" : "text-site-faint",
+      )}
+    >
+      {tested && <Icon name="seal-check" weight="fill" class="size-4.5" />}
+      {tested ? <time datetime={tested}>{t.tested(day(tested))}</time> : t.untested}
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      {actions.map((a, i) => (
+        <a href={a.href} class={cn("button", i === 0 && "primary")}>
+          {i > 0 && <Icon name={a.icon} />}
+          {a.text}
+          {i === 0 && <Icon name={a.icon} class="go" />}
+        </a>
+      ))}
+    </div>
+    <dl class="mt-12 grid gap-x-6 gap-y-5 border-t border-site-line pt-6 sm:grid-cols-2 lg:grid-cols-4">
+      {allFacts.map((f) => (
+        <div class="grid min-w-0 content-start gap-1.5">
+          <dt class="label text-site-faint">{f.label}</dt>
+          <dd class="m-0 font-mono text-sm break-words">
+            {"href" in f ? (
+              <a href={f.href} class="text-site-text underline-offset-4 hover:text-site-accent">
+                {f.value}
+              </a>
+            ) : (
+              f.value
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  {x.tests.length > 0 && (
+    <Section id="tests" title={t.tests.title} body={t.tests.body}>
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[34rem] border-collapse text-left text-sm">
+          <thead>
+            <tr class="border-b border-site-line">
+              {t.tests.cols.map((col, i) => (
+                <th
+                  scope="col"
+                  class={cn("label pb-3 font-medium text-site-faint", i === 4 && "text-right")}
+                >
+                  {col}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody class="font-mono">
+            {x.tests.map((run) => (
+              <tr class="border-b border-site-line">
+                <td class="py-3 pr-4">{run.distribution}</td>
+                <td class="py-3 pr-4 text-site-muted">{run.platform}</td>
+                <td class="py-3 pr-4 text-site-muted">{run.kubernetesVersion}</td>
+                <td class="py-3 pr-4 text-site-muted">
+                  <time datetime={run.date}>{run.date}</time>
+                </td>
+                <td class="py-3 text-right tabular-nums">{run.memoryMiB} MiB</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Section>
+  )}
+
+  <slot />
+</Site>

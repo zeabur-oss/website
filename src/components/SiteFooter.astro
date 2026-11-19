@@ -4,6 +4,8 @@ import { githubOrg } from "../lib/site.ts"
 import { chrome } from "../lib/chrome.ts"
 import { siteNav } from "../lib/nav.ts"
 import { type SiteLocale } from "../lib/urls.ts"
+import { catalogCopy } from "../catalog/copy.ts"
+import { browseUrl } from "../catalog/data.ts"
 
 interface Props {
   locale: SiteLocale
@@ -19,6 +21,7 @@ const columns = [
     links: [
       { name: t.nav.docs, href: nav.docs },
       { name: t.nav.security, href: nav.security },
+      { name: catalogCopy[locale].title, href: browseUrl(locale) },
       { name: t.nav.blog, href: nav.blog },
       { name: "RSS", href: `${nav.blog}/rss.xml` },
       { name: "GitHub", href: githubOrg },

@@ -1,0 +1,17 @@
+---
+import ComponentPage from "../../../../catalog/ComponentPage.astro"
+import { catalog } from "../../../../catalog/data.ts"
+import { localePaths } from "../../../../lib/urls.ts"
+
+export function getStaticPaths() {
+  return localePaths().flatMap(({ params, props }) =>
+    catalog.components.map((component) => ({
+      params: { ...params, component: component.id },
+      props: { ...props, component },
+    })),
+  )
+}
+const { locale, component } = Astro.props
+---
+
+<ComponentPage locale={locale} component={component} />

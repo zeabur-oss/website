@@ -1,6 +1,7 @@
 // Reads each repository's docs/ at the tag in docs.lock.json and writes what Starlight reads:
 // src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and content/nav.json (the sidebar),
-// and the images and social images under public/.
+// content/catalog.json (the catalog's components and templates), and the images and social images
+// under public/.
 //   bun scripts/sync-docs.ts
 import { copyFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
@@ -16,6 +17,12 @@ import {
   type RepoDocs,
 } from "./lib/docs.ts"
 import { readLock, root, snapshot, type LockRepo, type Snapshot } from "./lib/repos.ts"
+import {
+  readComponents,
+  readTemplates,
+  type CatalogComponent,
+  type CatalogTemplate,
+} from "./lib/catalog.ts"
 
 export type SitePage = {
   repo: string
@@ -42,6 +49,14 @@ export type RepoLinks = {
   translations: string[]
   published: string[]
   files: string[]
+}
+
+/** The catalog's components and templates at the tag docs.lock.json pins. */
+export type CatalogData = {
+  github: string
+  ref: string
+  components: CatalogComponent[]
+  templates: CatalogTemplate[]
 }
 
 export type NavItem = { label: string; href: string; slug: string }
@@ -146,6 +161,7 @@ export async function sync() {
   const nav: SiteNav = {}
   const site: SiteData = { repos: [], pages: {}, redirects: [] }
   const links: Record<string, RepoLinks> = {}
+  let catalog: CatalogData | undefined
   for (const repo of lock) {
     const snap = await snapshot(repo)
     const docs = readRepoDocs(snap)
@@ -191,6 +207,14 @@ export async function sync() {
       published: docs.pages.map((p) => p.slug),
       files: [...snap.files],
     }
+    if (repo.name === "catalog") {
+      catalog = {
+        github: repo.github,
+        ref: repo.ref,
+        components: readComponents(snap),
+        templates: readTemplates(snap),
+      }
+    }
     copyAssets(snap)
     await writeSocialImage(snap)
     console.log(
@@ -201,6 +225,8 @@ export async function sync() {
   writeFile(join(content, "site.json"), JSON.stringify(site, null, 2))
   writeFile(join(content, "links.json"), JSON.stringify(links))
   writeFile(join(content, "nav.json"), JSON.stringify(nav, null, 2))
+  if (!catalog) throw new Error("docs.lock.json: the catalog pages need the catalog repository")
+  writeFile(join(content, "catalog.json"), JSON.stringify(catalog, null, 2))
 }
 
 if (import.meta.main) await sync()

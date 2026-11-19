@@ -1,0 +1,21 @@
+---
+// A section of an entry page: its heading on the left from 1024px, the content on the right.
+interface Props {
+  id: string
+  title: string
+  body?: string
+}
+const { id, title, body } = Astro.props
+---
+
+<section class="wrap section grid12" aria-labelledby={id}>
+  <div class="grid content-start gap-4 lg:col-span-4">
+    <h2 id={id} class="text-(length:--fs-h3)">
+      {title}
+    </h2>
+    {body && <p class="body">{body}</p>}
+  </div>
+  <div class="grid min-w-0 content-start gap-8 lg:col-span-8">
+    <slot />
+  </div>
+</section>
