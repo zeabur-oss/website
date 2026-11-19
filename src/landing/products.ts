@@ -25,15 +25,15 @@ const zhTW: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur：在自己的主機上，用熟悉的方式部署服務",
       description:
-        "Zeabur 是開源軟體。專案、服務、網域、環境變數和應用程式範本，都和你用過的 PaaS 一樣。主機向哪家租、選哪個方案，由你決定。",
+        "Zeabur 是開源軟體。專案、服務、網域、環境變數和應用程式範本，都和你用過的部署平台一樣。主機向哪家租、選哪個方案，由你決定。",
     },
     titleDim: "在自己的主機上，",
-    title: "像用 PaaS 一樣部署",
-    sub: "從 Git、Docker Compose 或應用程式範本部署，加上網域、改環境變數，都是你在 PaaS 上熟悉的用法。服務在你自己的主機上執行，費用依你選的雲端服務或機房計算。",
+    title: "點幾下就部署好",
+    sub: "從 Git、Docker Compose 或應用程式範本部署，加上網域、改環境變數，都是你在其他部署平台上熟悉的用法。服務在你自己的主機上執行，費用依你選的雲端服務或機房計算。",
     docs: "閱讀 Zeabur 文件",
     source: "GitHub 上的原始碼",
     highlights: {
-      titleDim: "用過 PaaS？",
+      titleDim: "用過其他部署平台？",
       title: "大部分都一樣",
       items: [
         {
@@ -192,7 +192,7 @@ const zhTW: Record<ProductId, ProductCopy> = {
     },
     titleDim: "程式碼推上 GitHub，",
     title: "Zeabur 就會部署",
-    sub: "跟用 PaaS 一樣：在專案選擇「新增」→「從 Git 部署」。Zeabur Builder 會判斷程式碼用的語言、建置映像檔，之後分支一有更新就重新建置。",
+    sub: "跟其他部署平台一樣：在專案選擇「新增」→「從 Git 部署」。Zeabur Builder 會判斷程式碼用的語言、建置映像檔，之後分支一有更新就重新建置。",
     docs: "閱讀 Builder 文件",
     source: "GitHub 上的原始碼",
     highlights: {
@@ -337,15 +337,15 @@ const zhCN: Record<ProductId, ProductCopy> = {
     meta: {
       title: "Zeabur：在自己的主机上，用熟悉的方式部署服务",
       description:
-        "Zeabur 是开源软件。项目、服务、域名、环境变量和应用模板，都和你用过的 PaaS 一样。主机找哪家租、选哪个套餐，由你决定。",
+        "Zeabur 是开源软件。项目、服务、域名、环境变量和应用模板，都和你用过的部署平台一样。主机找哪家租、选哪个套餐，由你决定。",
     },
     titleDim: "在自己的主机上，",
-    title: "像用 PaaS 一样部署",
-    sub: "从 Git、Docker Compose 或应用模板部署，绑定域名、修改环境变量，都是你在 PaaS 上熟悉的用法。服务运行在你自己的主机上，费用按你选的云服务或机房计算。",
+    title: "点几下就部署好",
+    sub: "从 Git、Docker Compose 或应用模板部署，绑定域名、修改环境变量，都是你在其他部署平台上熟悉的用法。服务运行在你自己的主机上，费用按你选的云服务或机房计算。",
     docs: "阅读 Zeabur 文档",
     source: "GitHub 上的源代码",
     highlights: {
-      titleDim: "用过 PaaS？",
+      titleDim: "用过其他部署平台？",
       title: "大部分都一样",
       items: [
         {
@@ -501,7 +501,7 @@ const zhCN: Record<ProductId, ProductCopy> = {
     },
     titleDim: "代码推到 GitHub，",
     title: "Zeabur 就会部署",
-    sub: "跟用 PaaS 一样：在项目里选择“新建”→“从 Git 部署”。Zeabur Builder 会识别代码用的语言、构建镜像，之后分支一有更新就重新构建。",
+    sub: "跟其他部署平台一样：在项目里选择“新建”→“从 Git 部署”。Zeabur Builder 会识别代码用的语言、构建镜像，之后分支一有更新就重新构建。",
     docs: "阅读 Builder 文档",
     source: "GitHub 上的源代码",
     highlights: {
@@ -644,17 +644,17 @@ const zhCN: Record<ProductId, ProductCopy> = {
 const en: Record<ProductId, ProductCopy> = {
   zeabur: {
     meta: {
-      title: "Zeabur: deploy on your own server, the way you do on a PaaS",
+      title: "Zeabur: deploy on your own server in a few clicks",
       description:
-        "Zeabur is open source. Projects, services, domains, variables and templates work as they do on the PaaS you know. You choose the hosting provider and the plan.",
+        "Zeabur is open source. Projects, services, domains, variables and templates work as they do on the deployment platforms you know. You choose the hosting provider and the plan.",
     },
     titleDim: "On your own server,",
-    title: "deploy the way you do on a PaaS.",
-    sub: "Deploy from Git, Docker Compose or a template, add a domain and change variables, the way you know from a PaaS. Your services run on your own server, and you pay the cloud or data center you chose.",
+    title: "deploy in a few clicks.",
+    sub: "Deploy from Git, Docker Compose or a template, add a domain and change variables, the way you know from other deployment platforms. Your services run on your own server, and you pay the cloud or data center you chose.",
     docs: "Read the Zeabur docs",
     source: "Source on GitHub",
     highlights: {
-      titleDim: "Used a PaaS before?",
+      titleDim: "Used a deployment platform?",
       title: "Most of it is the same.",
       items: [
         {
@@ -833,7 +833,7 @@ const en: Record<ProductId, ProductCopy> = {
     },
     titleDim: "Push your code to GitHub,",
     title: "and Zeabur deploys it.",
-    sub: "Just as on a PaaS: in a project, choose Add → Deploy from Git. Zeabur Builder finds the language your code uses, builds an image, and builds again whenever the branch changes.",
+    sub: "Just as on other deployment platforms: in a project, choose Add → Deploy from Git. Zeabur Builder finds the language your code uses, builds an image, and builds again whenever the branch changes.",
     docs: "Read the Builder docs",
     source: "Source on GitHub",
     highlights: {
