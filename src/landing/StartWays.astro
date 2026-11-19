@@ -54,19 +54,6 @@ const manual = [
           ))}
         </ul>
       )}
-      <p class="mt-auto pt-2 text-sm text-site-muted">
-        {t.others}
-        {ways
-          .filter((other) => other.id !== way.id)
-          .map((other, j) => (
-            <>
-              {j > 0 && " · "}
-              <a href={`#${other.id}`} class="text-site-text underline underline-offset-4">
-                {other.title}
-              </a>
-            </>
-          ))}
-      </p>
     </li>
   ))}
 </ol>
