@@ -1131,18 +1131,18 @@ export const chapters: Chapter[] = [
     shot: { from: "docs", id: "database" },
     words: {
       "zh-TW": {
-        title: "資料庫和備份放在一起",
-        body: "選一種資料庫，由它自己的 operator 管。排程備份到 S3，需要時還原成新的資料庫，確認沒問題再把服務指過去。",
+        title: "資料庫定期備份，也能還原",
+        body: "建立 PostgreSQL、MySQL 這類資料庫，畫面附上連線資訊。定期備份到 S3，需要時還原成一個新的資料庫，確認沒問題再讓服務改連過去。",
         alt: "資料庫頁面，顯示連線資訊和備份紀錄",
       },
       "zh-CN": {
-        title: "数据库和备份放在一起",
-        body: "选一种数据库，由它自己的 operator 管理。定时备份到 S3，需要时恢复成新的数据库，确认没问题再把服务指过去。",
+        title: "数据库定时备份，也能恢复",
+        body: "创建 PostgreSQL、MySQL 这类数据库，页面附上连接信息。定时备份到 S3，需要时恢复成一个新的数据库，确认没问题再让服务改连过去。",
         alt: "数据库页面，显示连接信息和备份记录",
       },
       en: {
-        title: "Databases with their backups",
-        body: "Pick a database and its operator runs it. Back up to S3 on a schedule, restore into a new database and point services at it once it looks right.",
+        title: "Databases, backed up and restorable",
+        body: "Create a database such as PostgreSQL or MySQL, with its connection details on the page. Back it up to S3 on a schedule, restore into a new database when you need to, and switch your services over once it looks right.",
         alt: "A database page with its connection details and backups",
       },
     },
