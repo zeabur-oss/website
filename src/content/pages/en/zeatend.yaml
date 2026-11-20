@@ -55,7 +55,7 @@ start:
   title: Download it on the server and install
   sub: Run these commands on the Linux server that becomes the cluster. It boots with systemd and runs on amd64 or arm64; K3s needs at least 2 GiB of memory, and the disk with the cluster's data at least 10 GiB free.
   cta: Read the full install guide
-  anchor: install
+  anchor: download-zeatend
   hero: Run these lines on a Linux server to open the install screens.
   steps:
     - title: Download and check zeatend

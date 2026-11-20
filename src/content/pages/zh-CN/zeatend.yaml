@@ -55,7 +55,7 @@ start:
   title: 在服务器上下载并安装
   sub: 在要安装集群的 Linux 服务器上运行下面的命令。主机要用 systemd 启动，处理器为 amd64 或 arm64；K3s 至少要 2 GiB 内存，数据所在的磁盘至少要有 10 GiB 可用空间。
   cta: 阅读完整的安装说明
-  anchor: 安装
+  anchor: 下载-zeatend
   hero: 在 Linux 服务器上运行这几行，就会打开安装界面：
   steps:
     - title: 下载并校验 zeatend

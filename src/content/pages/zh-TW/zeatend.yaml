@@ -55,7 +55,7 @@ start:
   title: 在伺服器上下載並安裝
   sub: 在要安裝叢集的 Linux 伺服器上執行下面的指令。主機要以 systemd 啟動，處理器是 amd64 或 arm64；K3s 至少要 2 GiB 記憶體，資料所在的磁碟至少要有 10 GiB 可用空間。
   cta: 閱讀完整的安裝說明
-  anchor: 安裝
+  anchor: 下載-zeatend
   hero: 在 Linux 伺服器上執行這幾行，就會開啟安裝畫面：
   steps:
     - title: 下載並核對 zeatend

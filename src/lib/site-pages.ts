@@ -85,6 +85,7 @@ const siteRows: Row[] = [
   {
     slug: "zeatend",
     repo: "zeatend",
+    docs: "get-started/install",
     group: "install",
     sections: steps,
     start: { kind: "commands", commands: zeatendCommands },
