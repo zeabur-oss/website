@@ -98,6 +98,18 @@ the registry, GitHub URLs of docs pages, and GitHub URLs of files in the page's 
 repository, and images outside `docs/` or written by reference, which the site does not serve. It lists stale translations and
 pages that are not published.
 
+Each repository in `docs.lock.json` runs it on every pull request and in the merge queue, through
+the composite action `.github/actions/docs-check`, so a broken link fails before a release. The
+job in its `ci.yml` pins this repository by commit, and Renovate moves the pin:
+
+```yaml
+docs:
+  runs-on: instabox-small
+  timeout-minutes: 10
+  steps:
+    - uses: zeabur-oss/website/.github/actions/docs-check@<commit> # main
+```
+
 ## Design system
 
 The site uses `@zeabur-oss/design-system`, pinned to an exact version in `package.json`.

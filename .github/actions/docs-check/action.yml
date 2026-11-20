@@ -1,0 +1,30 @@
+name: Docs check
+description: >-
+  Checks out the calling repository and runs scripts/docs-check.ts of this website, at the commit
+  the caller pins, on its docs/: the check fails on errors and lists stale translations. On a pull
+  request or in the merge queue, a page that the base has and the head removed without a redirect
+  is an error too. Call it from a job of the repository's ci.yml.
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
+    - uses: zeabur-oss/.github/actions/ci-setup@f3ae87d7ef3c37447432e398200d200b546dfa46 # main
+    - name: Check docs/
+      shell: bash
+      env:
+        BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+        NAME: ${{ github.event.repository.name }}
+        WEBSITE: ${{ github.action_path }}/../../..
+      run: |
+        set -euo pipefail
+        website=$(realpath "$WEBSITE")
+        args=("$GITHUB_WORKSPACE" --name "$NAME")
+        if [[ -n $BASE ]]; then
+          git fetch --no-tags --depth=1 origin "$BASE"
+          args+=(--base "$BASE")
+        fi
+        cd "$website"
+        nix develop "path:$website#docs-check" -c bun install --frozen-lockfile --production
+        nix develop "path:$website#docs-check" -c bun scripts/docs-check.ts "${args[@]}"
