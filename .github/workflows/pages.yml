@@ -28,8 +28,8 @@ jobs:
       - uses: zeabur-oss/.github/actions/ci-setup@f3ae87d7ef3c37447432e398200d200b546dfa46 # main
       - name: Shellcheck
         run: nix develop --command shellcheck scripts/*.sh
-      - name: No double casts
-        run: scripts/check-casts.sh
+      - name: Lint
+        run: nix develop --command sh -c 'bun install --frozen-lockfile && bun run lint'
       - name: Build
         env:
           # The docs sync reads each locked repository's tarball from GitHub.
