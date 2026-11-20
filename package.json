@@ -29,7 +29,6 @@
     "@phosphor-icons/core": "2.1.1",
     "@resvg/resvg-js": "2.6.2",
     "@zeabur-oss/design-system": "0.1.4",
-    "acorn": "8.19.0",
     "astro": "7.4.11",
     "cn": "0.5.2",
     "posthog-js": "1.447.12",
