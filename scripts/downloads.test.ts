@@ -1,56 +1,27 @@
 import { expect, test } from "bun:test"
-import { detectPlatform, downloadTable, fileFor } from "../src/lib/desktop-download.ts"
-import { pickDesktop } from "../src/lib/github.ts"
+import { detectPlatform, downloadTable, fileFor } from "../src/lib/downloads.ts"
 
-const release = (tag: string, prerelease: boolean, files: string[], draft = false) => ({
-  tag_name: tag,
-  html_url: `https://github.com/zeabur-oss/zeabur/releases/tag/${tag}`,
-  draft,
-  prerelease,
-  assets: files.map((name) => ({ name, browser_download_url: `https://example.test/${name}` })),
-})
-
-test("the newest release with Desktop's files wins, pre-release or not", () => {
-  const picked = pickDesktop([
-    release("v0.4.0", false, [], true),
-    release("v0.3.1", false, ["zeaburctl-v0.3.1-linux-amd64.tar.gz"]),
-    release("v0.3.0-beta.1", true, [
-      "zeabur-desktop-v0.3.0-beta.1-darwin-arm64.dmg",
-      "zeabur-v0.3.0-beta.1-linux-amd64.tar.gz",
-    ]),
-    release("v0.2.0", false, ["zeabur-desktop-v0.2.0-darwin-arm64.dmg"]),
-  ])
-  expect(picked.tag).toBe("v0.3.0-beta.1")
-  expect(picked.prerelease).toBe(true)
-  expect(picked.page).toBe("https://github.com/zeabur-oss/zeabur/releases/tag/v0.3.0-beta.1")
-  expect(picked.files).toEqual([
-    {
-      name: "zeabur-desktop-v0.3.0-beta.1-darwin-arm64.dmg",
-      url: "https://example.test/zeabur-desktop-v0.3.0-beta.1-darwin-arm64.dmg",
-    },
-  ])
-})
-
-test("without a release with Desktop's files, the page links the list of releases", () => {
-  for (const body of [
-    [],
-    [release("v0.2.0", false, ["SHA256SUMS"])],
-    { message: "rate limited" },
-  ]) {
-    const picked = pickDesktop(body)
-    expect(picked.tag).toBeUndefined()
-    expect(picked.page).toBe("https://github.com/zeabur-oss/zeabur/releases")
-  }
-})
-
-test("the macOS app's update archive is not a file to download", () => {
-  const picked = pickDesktop([
-    release("v0.3.0", false, [
+test("the table lists only installers, not the update archive or other files of the release", () => {
+  const table = downloadTable(
+    [
       "zeabur-desktop-v0.3.0-darwin-arm64.app.tar.gz",
       "zeabur-desktop-v0.3.0-darwin-arm64.dmg",
-    ]),
+      "zeaburctl-v0.3.0-darwin-arm64.tar.gz",
+      "SHA256SUMS",
+    ].map((name) => ({ name })),
+  )
+  expect(table).toEqual([
+    {
+      os: "macos",
+      rows: [
+        {
+          kind: "dmg",
+          ext: ".dmg",
+          builds: [{ arch: "arm64", file: { name: "zeabur-desktop-v0.3.0-darwin-arm64.dmg" } }],
+        },
+      ],
+    },
   ])
-  expect(picked.files.map((f) => f.name)).toEqual(["zeabur-desktop-v0.3.0-darwin-arm64.dmg"])
 })
 
 const files = [

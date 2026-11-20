@@ -1,5 +1,6 @@
-// Zeabur Desktop's files by computer. The build sorts the release's files with this, and the page
-// picks the one for the visitor's computer in the browser.
+// An app's installers in a release, by computer: <name>-<os>-<arch><tail>, such as
+// zeabur-desktop-v0.3.0-darwin-arm64.dmg. The build sorts the release's files with this, and the
+// page picks the one for the visitor's computer in the browser.
 
 export type Os = "macos" | "windows" | "linux"
 export type Arch = "arm64" | "amd64"
