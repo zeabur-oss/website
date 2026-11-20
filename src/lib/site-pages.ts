@@ -1,7 +1,6 @@
 // The site's pages in the order the header and the home page list them. A page is one row here
 // and one src/content/pages/<locale>/<slug>.mdx per locale.
 import { getEntry } from "astro:content"
-import { desktopRelease } from "./github.ts"
 import { productIcon, productName, releaseTag, type ProductId } from "./products.ts"
 import { productUrl, type SiteLocale } from "./urls.ts"
 
@@ -10,10 +9,18 @@ export type NavGroup = "manage" | "install" | "components"
 type Row = {
   slug: string
   group: NavGroup
-  /** The repository the product ships from: its docs, source and, unless `app`, name and icon. */
+  /** The repository the page's product ships from: its docs, source, release and, by default, name and icon. */
   repo: ProductId
-  /** An app that ships in its repository's releases, with a name and icon of its own. */
-  app?: { name: string; icon: string }
+  /** A page about one part of its repository's release has a name and an icon of its own. */
+  name?: string
+  icon?: string
+  /** The docs page to read first, under the repository's docs. */
+  docs?: string
+  /**
+   * The release files the page offers, by the start of their names, and the Homebrew cask that
+   * installs them, shown once the tap has it.
+   */
+  downloads?: { files: string; cask?: string }
   /** What the page's story walks through: Zeabur's jobs on its own screens, or the steps. */
   story?: "chapters" | "steps"
   /** The start section shows a file to copy instead of the three ways to start. */
@@ -29,7 +36,10 @@ const siteRows: Row[] = [
   {
     slug: "desktop",
     repo: "zeabur",
-    app: { name: "Zeabur Desktop", icon: "desktop" },
+    name: "Zeabur Desktop",
+    icon: "desktop",
+    docs: "install/desktop",
+    downloads: { files: "zeabur-desktop-", cask: "zeabur-oss/tap/zeabur-desktop" },
     group: "manage",
     story: "steps",
   },
@@ -41,7 +51,14 @@ const siteRows: Row[] = [
     example: true,
     monoNames: true,
   },
-  { slug: "identity", repo: "identity", group: "components", story: "steps", example: true },
+  {
+    slug: "identity",
+    repo: "identity",
+    docs: "get-started",
+    group: "components",
+    story: "steps",
+    example: true,
+  },
   { slug: "builder", repo: "builder", group: "components", story: "steps", example: true },
   {
     slug: "catalog",
@@ -70,20 +87,17 @@ export type SitePage = {
 export const pageEntry = (locale: SiteLocale, slug: string) =>
   getEntry("pages", `${locale}/${slug}`)
 
-/**
- * The row of a page, with its name, icon and the release it shows: for an app, the newest release
- * with its files, which can be a pre-release; otherwise the release docs.lock.json pins.
- */
-export async function pageRow(slug: string) {
+/** The row of a page, with its name, icon and the release docs.lock.json pins for its repository. */
+export function pageRow(slug: string) {
   const row = siteRows.find((r) => r.slug === slug)
   if (!row) throw new Error(`no page row for ${slug}`)
-  const app = row.app ? await desktopRelease() : undefined
+  const tag = releaseTag(row.repo)
   return {
     ...row,
-    name: row.app?.name ?? productName[row.repo],
-    icon: row.app?.icon ?? productIcon[row.repo],
-    tag: app ? app.tag : releaseTag(row.repo),
-    beta: app?.prerelease ?? false,
+    name: row.name ?? productName[row.repo],
+    icon: row.icon ?? productIcon[row.repo],
+    tag,
+    beta: tag.includes("-"),
   }
 }
 
@@ -91,7 +105,7 @@ export async function pageRow(slug: string) {
 export async function sitePages(locale: SiteLocale): Promise<SitePage[]> {
   return Promise.all(
     siteRows.map(async ({ slug }): Promise<SitePage> => {
-      const row = await pageRow(slug)
+      const row = pageRow(slug)
       const entry = await pageEntry(locale, slug)
       if (!entry) throw new Error(`no page ${locale}/${slug}`)
       const released = entry.data.status === "released"

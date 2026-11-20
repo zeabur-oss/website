@@ -1,24 +1,33 @@
-// The star count beside the GitHub link, read once at build time. A build without network or over
-// the rate limit shows the link without a count.
+// What the site reads from GitHub at build time: the star count and the pinned releases. A build
+// without network or over the rate limit leaves out what it could not read.
+import { z } from "astro/zod"
+import { releaseTag, type ProductId } from "./products.ts"
 import { githubOrg } from "./site.ts"
 
 export const starredRepo = `${githubOrg}/zeabur`
 
-async function read(): Promise<number | undefined> {
+/** A reply of GitHub's REST API for `path` under /repos/zeabur-oss, or undefined on any failure. */
+async function api<T>(path: string, schema: z.ZodType<T>): Promise<T | undefined> {
   const headers: Record<string, string> = { accept: "application/vnd.github+json" }
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   try {
-    const response = await fetch(`https://api.github.com/repos${new URL(starredRepo).pathname}`, {
-      headers,
-      signal: AbortSignal.timeout(5000),
-    })
+    const response = await fetch(
+      `https://api.github.com/repos${new URL(githubOrg).pathname}/${path}`,
+      {
+        headers,
+        signal: AbortSignal.timeout(5000),
+      },
+    )
     if (!response.ok) return undefined
-    const body = (await response.json()) as { stargazers_count?: unknown }
-    return typeof body.stargazers_count === "number" ? body.stargazers_count : undefined
+    const reply = schema.safeParse(await response.json())
+    return reply.success ? reply.data : undefined
   } catch {
     return undefined
   }
 }
+
+const read = async () =>
+  (await api("zeabur", z.object({ stargazers_count: z.number() })))?.stargazers_count
 
 let stars: Promise<number | undefined> | undefined
 
@@ -32,102 +41,58 @@ export async function starCount(locale: string): Promise<string | undefined> {
   )
 }
 
-/** A release as the GitHub API returns it, with the fields the Desktop page reads. */
-type Release = {
-  tag_name: string
-  html_url: string
-  draft: boolean
-  prerelease: boolean
-  assets: { name: string; browser_download_url: string }[]
-}
+/** The fields of a GitHub release that the product pages read. */
+const releaseReply = z.object({
+  html_url: z.string(),
+  assets: z.array(z.object({ name: z.string(), browser_download_url: z.string() })),
+})
 
-function isRelease(value: unknown): value is Release {
-  if (typeof value !== "object" || value === null) return false
-  const r: Partial<Record<keyof Release, unknown>> = value
-  return (
-    typeof r.tag_name === "string" &&
-    typeof r.html_url === "string" &&
-    typeof r.draft === "boolean" &&
-    typeof r.prerelease === "boolean" &&
-    Array.isArray(r.assets) &&
-    r.assets.every(
-      (a: unknown) =>
-        typeof a === "object" &&
-        a !== null &&
-        "name" in a &&
-        typeof a.name === "string" &&
-        "browser_download_url" in a &&
-        typeof a.browser_download_url === "string",
-    )
-  )
-}
-
-export type DesktopRelease = {
-  /** The release page, or the list of releases when no release has Desktop's files. */
+export type Release = {
+  tag: string
+  /** A tag with a suffix, like v0.3.0-beta.1. */
+  beta: boolean
   page: string
-  tag?: string
-  prerelease: boolean
-  /** Desktop's files to install, with their download links; not the macOS app's update archive. */
+  /** The release's files with their download links. */
   files: { name: string; url: string }[]
 }
 
-const desktopPrefix = "zeabur-desktop-"
-
-const noDesktop: DesktopRelease = { page: `${starredRepo}/releases`, prerelease: false, files: [] }
-
-/**
- * The newest release with Desktop's files in a reply of GitHub's list of releases, which comes
- * newest first. Pre-releases count: GitHub never marks one as latest.
- */
-export function pickDesktop(body: unknown): DesktopRelease {
-  if (!Array.isArray(body)) return noDesktop
-  const release = body
-    .filter(isRelease)
-    .find((r) => !r.draft && r.assets.some((a) => a.name.startsWith(desktopPrefix)))
-  if (!release) return noDesktop
+async function readRelease(id: ProductId): Promise<Release> {
+  const tag = releaseTag(id)
+  const pinned: Release = {
+    tag,
+    beta: tag.includes("-"),
+    page: `${githubOrg}/${id}/releases/tag/${tag}`,
+    files: [],
+  }
+  const reply = await api(`${id}/releases/tags/${tag}`, releaseReply)
+  if (!reply) return pinned
   return {
-    page: release.html_url,
-    tag: release.tag_name,
-    prerelease: release.prerelease,
-    files: release.assets
-      .filter((a) => a.name.startsWith(desktopPrefix) && !a.name.endsWith(".tar.gz"))
-      .map((a) => ({ name: a.name, url: a.browser_download_url })),
+    ...pinned,
+    page: reply.html_url,
+    files: reply.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
   }
 }
 
-async function readDesktop(): Promise<DesktopRelease> {
-  const headers: Record<string, string> = { accept: "application/vnd.github+json" }
-  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
-  try {
-    const response = await fetch(
-      `https://api.github.com/repos${new URL(starredRepo).pathname}/releases?per_page=30`,
-      { headers, signal: AbortSignal.timeout(5000) },
-    )
-    if (!response.ok) return noDesktop
-    return pickDesktop(await response.json())
-  } catch {
-    return noDesktop
-  }
-}
-
-let desktop: Promise<DesktopRelease> | undefined
+const releases = new Map<ProductId, Promise<Release>>()
 
 /**
- * The newest release of Zeabur with Zeabur Desktop's files, read once at build time. A build
- * without network links the list of releases.
+ * The release docs.lock.json pins for a repository, with its files, read once per build. A build
+ * without network gets the tag and its release page, without files.
  */
-export function desktopRelease(): Promise<DesktopRelease> {
-  desktop ??= readDesktop()
-  return desktop
+export function release(id: ProductId): Promise<Release> {
+  let r = releases.get(id)
+  if (!r) {
+    r = readRelease(id)
+    releases.set(id, r)
+  }
+  return r
 }
 
-/** The command that installs Desktop from Zeabur's Homebrew tap. */
-export const desktopBrew = "brew install --cask zeabur-oss/tap/zeabur-desktop"
-
-async function readCask(): Promise<boolean> {
+async function readCask(cask: string): Promise<boolean> {
+  const [owner, tap, name] = cask.split("/")
   try {
     const response = await fetch(
-      `https://raw.githubusercontent.com/${new URL(githubOrg).pathname.slice(1)}/homebrew-tap/main/Casks/zeabur-desktop.rb`,
+      `https://raw.githubusercontent.com/${owner}/homebrew-${tap}/main/Casks/${name}.rb`,
       { method: "HEAD", signal: AbortSignal.timeout(5000) },
     )
     return response.ok
@@ -136,13 +101,14 @@ async function readCask(): Promise<boolean> {
   }
 }
 
-let cask: Promise<boolean> | undefined
+const casks = new Map<string, Promise<boolean>>()
 
-/**
- * Whether the Homebrew tap has Desktop's cask, read once at build time. The tap gets it with the
- * first release that is not a pre-release.
- */
-export function desktopCask(): Promise<boolean> {
-  cask ??= readCask()
-  return cask
+/** Whether a Homebrew tap has `cask` (owner/tap/name), read once per build. */
+export function hasCask(cask: string): Promise<boolean> {
+  let c = casks.get(cask)
+  if (!c) {
+    c = readCask(cask)
+    casks.set(cask, c)
+  }
+  return c
 }
