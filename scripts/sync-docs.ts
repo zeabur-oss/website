@@ -87,10 +87,13 @@ function normalise(text: string, fallbackTitle: string) {
   let rest = body
   let title = typeof data.title === "string" ? data.title : undefined
   if (!title) {
-    // The README's cover picture repeats the title as an image.
-    rest = rest.replace(/^\s*<picture>[\s\S]*?<\/picture>\s*/, "")
+    // Above a README's title: the cover picture, which repeats the title, and the links to its
+    // translations, which the site's language menu replaces.
     const heading = /^#\s+(.+)\n/m.exec(rest)
-    if (heading && rest.slice(0, heading.index).trim() === "") {
+    const above = rest
+      .slice(0, heading?.index)
+      .replace(/<picture>[\s\S]*?<\/picture>|<!--[\s\S]*?-->|^.*\]\(README[^)]*\.md\).*$/gm, "")
+    if (heading && above.trim() === "") {
       title = group(heading).trim()
       rest = rest.slice(heading.index + heading[0].length)
     }

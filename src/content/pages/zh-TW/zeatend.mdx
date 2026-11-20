@@ -1,0 +1,59 @@
+---
+status: released
+lines:
+  nav: 把 Linux 伺服器裝成 Kubernetes 叢集
+  landing: 在 Linux 伺服器上安裝並管理 K3s、RKE2 或 KubeSolo 叢集。
+meta:
+  title: Zeabur Zeatend：在終端機把 Linux 伺服器裝成叢集
+  description: Zeatend 在 Linux 伺服器上安裝依 CIS 基準強化的 K3s、RKE2 或 KubeSolo。照著終端機畫面選好設定，看過安裝計畫才套用，之後也能加入節點、檢查和升級叢集。
+titleDim: 一台 Linux 伺服器，
+title: 裝成可以直接用的叢集
+sub: 在伺服器上執行 sudo zeatend，選擇 K3s、RKE2 或 KubeSolo，填好 API 伺服器的位址和節點名稱。Zeatend 先列出安裝計畫，你確認後才開始安裝。
+docs: 閱讀 Zeatend 文件
+source: GitHub 上的原始碼
+highlights:
+  titleDim: 裝好之後，
+  title: 也交給 Zeatend 維護
+  items:
+    - tag: doctor
+      title: 檢查主機和叢集
+      body: zeatend doctor 檢查叢集服務、API 伺服器和節點是否就緒，也檢查 Secret 有沒有加密儲存。沒通過的項目會寫出該執行的指令。
+    - tag: node add
+      title: 加入新的節點
+      body: 在 server 上執行 zeatend node add，畫面會印出新 VM 要用的設定、指令和 join token，K3s 和 RKE2 叢集都能用。
+    - tag: upgrade
+      title: 一次升一個小版本
+      body: 用新版的 Zeatend 執行 apply，就會升級這台主機。先一台一台升級 server，再升級 worker。版本差距超出 Kubernetes 的版本偏差政策時，apply 不做任何變更，並告訴你要先套用哪個版本。
+how:
+  titleDim: 在終端機裡，
+  title: 看過計畫才安裝
+  steps:
+    - title: 選擇發行版
+      body: 畫面顯示主機資訊和檢查結果，讓你選擇 K3s、RKE2 或 KubeSolo，三種都依 CIS 基準強化。
+    - title: 確認安裝計畫
+      body: 填好 API 伺服器的位址、DNS 名稱和節點名稱後，畫面列出要安裝的版本和設定，你確認後才開始安裝。
+    - title: 開始安裝
+      body: 主機有 systemd 時，安裝在 systemd 單元裡執行，SSH 斷線也不會中斷。再執行一次 sudo zeatend apply，就能接著看進度。
+details:
+  title: 常用的指令
+  cols:
+    - 指令
+    - 用途
+  rows:
+    - - sudo zeatend
+      - 開啟安裝畫面，可以選擇英文、繁體中文或簡體中文
+    - - zeatend plan
+      - 顯示 apply 會安裝哪些東西，並執行主機檢查；加上 --json 以 JSON 輸出計畫
+    - - zeatend apply
+      - 安裝，或讓現有的安裝符合設定檔，重複執行也沒有問題；--plan 套用先前輸出的計畫
+    - - zeatend doctor
+      - 檢查主機和叢集，以結束碼回報結果，可以接上監控
+    - - zeatend node add
+      - 印出新節點加入 K3s 或 RKE2 叢集要用的設定和指令
+    - - zeatend uninstall
+      - 移除叢集和 Zeatend 寫入的檔案；加上 --delete-volumes 才會刪除磁碟區
+start:
+  title: 在伺服器上下載並執行
+  sub: 在要裝成叢集的那台 Linux 伺服器上，以 root 身分執行 Zeatend，有 amd64 和 arm64 兩種版本。不想開畫面時，把設定寫進 /etc/zeatend/config.yaml，再執行 zeatend apply。
+  cta: 閱讀 Zeatend 文件
+---

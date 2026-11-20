@@ -1,0 +1,59 @@
+---
+status: released
+lines:
+  nav: Turn a Linux server into a Kubernetes cluster
+  landing: Installs and manages K3s, RKE2 or KubeSolo clusters on Linux servers.
+meta:
+  title: "Zeabur Zeatend: turn a Linux server into a cluster from your terminal"
+  description: Zeatend installs K3s, RKE2 or KubeSolo, hardened to the CIS benchmark, on a Linux server. Pick your settings on its terminal screens and review the install plan before it runs; later, add nodes, check and upgrade the cluster with it.
+titleDim: One Linux server,
+title: a cluster ready to use.
+sub: Run sudo zeatend on the server, choose K3s, RKE2 or KubeSolo, and fill in the API server's address and the node name. Zeatend shows the install plan first and installs once you confirm it.
+docs: Read the Zeatend docs
+source: Source on GitHub
+highlights:
+  titleDim: After the install,
+  title: Zeatend checks, grows and upgrades it.
+  items:
+    - tag: doctor
+      title: Checks the host and the cluster
+      body: zeatend doctor checks the cluster's service, the API server and that the nodes are Ready, and that Secrets are stored encrypted. Each line that fails names the command to run.
+    - tag: node add
+      title: Adds nodes
+      body: Run zeatend node add on a server. It prints the configuration, the commands and the join token for the new VM, on K3s and RKE2 clusters.
+    - tag: upgrade
+      title: One minor version at a time
+      body: apply from a newer Zeatend upgrades the host it runs on. Upgrade the servers one at a time, then the workers. When a step would break the Kubernetes version skew policy, apply changes nothing and names the release to apply first.
+how:
+  titleDim: In your terminal,
+  title: review the plan, then install.
+  steps:
+    - title: Choose a distribution
+      body: The screen shows the host and the results of its checks. Choose K3s, RKE2 or KubeSolo, each hardened to the CIS benchmark.
+    - title: Review the install plan
+      body: Fill in the API server's address, its DNS name and the node name. The screen lists the release and the settings to install, and the install starts only once you confirm.
+    - title: Install
+      body: On a host with systemd, the install runs in a systemd unit and goes on when the SSH session ends. Run sudo zeatend apply again to follow its progress.
+details:
+  title: The commands
+  cols:
+    - Command
+    - What it does
+  rows:
+    - - sudo zeatend
+      - Opens the install screens, in English, 繁體中文 or 简体中文
+    - - zeatend plan
+      - Shows what apply will install and runs the host checks; --json prints the plan as JSON
+    - - zeatend apply
+      - Installs, or brings an install in line with the configuration file, and is safe to run again; --plan applies a plan you saved
+    - - zeatend doctor
+      - Checks the host and the cluster and reports with its exit code, for monitoring
+    - - zeatend node add
+      - Prints the configuration and commands that join a new node to a K3s or RKE2 cluster
+    - - zeatend uninstall
+      - Removes the cluster and the files Zeatend wrote; volumes go only with --delete-volumes
+start:
+  title: Download it on the server and run it
+  sub: Run Zeatend as root on the Linux server that becomes the cluster. It has builds for amd64 and arm64. To skip the screens, write the settings to /etc/zeatend/config.yaml and run zeatend apply.
+  cta: Read the Zeatend docs
+---

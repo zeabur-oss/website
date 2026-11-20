@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { avifFileSize } from "../lib/avif.ts"
 
@@ -25,6 +25,15 @@ export const shot = (locale: string, id: string) =>
 /** Zeabur Identity's sign-in pages, from its docs. */
 export const identityShot = (name: string, theme: "light" | "dark" = "light") =>
   image("identity", `images/${name}-${theme}.avif`)
+
+/** A screen of Zeatend's terminal interface, 80 × 24, from its docs. */
+export function zeatendScreen(locale: string, name: string): ShotImage {
+  const src = `/docs-assets/zeatend/docs/screens/80x24/${locale.replace("-", "_")}-${name}.svg`
+  const svg = readFileSync(join(process.cwd(), "public", src), "utf8")
+  const size = /<svg[^>]* width="(\d+)" height="(\d+)"/.exec(svg)
+  if (!size) throw new Error(`${src}: no width and height`)
+  return { src, width: Number(size[1]), height: Number(size[2]) }
+}
 
 // The container is 1440px wide at most, with 16px or 40px gutters and 24px between grid columns.
 export const sizes = {

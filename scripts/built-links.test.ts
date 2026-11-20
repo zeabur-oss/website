@@ -28,10 +28,14 @@ test("docs text links stay on the site", () => {
     const text = html.slice(start, end < 0 ? undefined : end)
     for (const match of text.matchAll(/href="(https:\/\/github\.com\/[^"]+)"/g)) {
       const href = group(match)
-      const path = new URL(href).pathname
-      if (
-        /\/(blob|tree)\/[^/]+\/(docs\/.*\.mdx?|(zh-TW\/|zh-CN\/)?docs\/[a-z]+(\/|$))/.test(path)
-      ) {
+      const path =
+        /^\/[^/]+\/([^/]+)\/(?:blob|tree)\/[^/]+\/docs\/(?:zh-TW\/|zh-CN\/)?(.+?)(?:\.mdx?)?\/?$/.exec(
+          new URL(href).pathname,
+        )
+      if (!path) continue
+      const [, repo = "", slug = ""] = path
+      const served = join(dist, "docs", repo, slug.replace(/(^|\/)index$/, ""), "index.html")
+      if (existsSync(served)) {
         wrong.push(`${page.slice(dist.length)}: ${href}`)
       }
     }

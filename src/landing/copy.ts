@@ -9,7 +9,7 @@ const zeaburVersion = releaseTag("zeabur")
 type Entrance = { title: string; body: string; link: string }
 type Point = { title: string; body: string; link: string }
 type Step = { title: string; body: string }
-type MemberId = "desktop" | "zeatend"
+type MemberId = "desktop"
 
 export type LandingCopy = {
   title: string
@@ -36,7 +36,7 @@ export type LandingCopy = {
     title: string
     lead: string
     agent: { title: string; body: string }
-    zeatend: { title: string; body: string }
+    zeatend: { title: string; body: string; steps: string; cluster: string }
     manual: { title: string; body: string; server: string; cluster: string; laptop: string }
   }
   members: {
@@ -140,7 +140,9 @@ const zhTW: LandingCopy = {
     },
     zeatend: {
       title: "用 Zeatend 一步步安裝",
-      body: "之後可以在終端機選好發行版和設定，由 Zeatend 透過 SSH 把伺服器裝成叢集。",
+      body: "在伺服器上執行 Zeatend，照著終端機畫面選好發行版和設定，就能把這台伺服器裝成 Kubernetes 叢集。叢集裝好後，再用 Helm chart 裝上 Zeabur。",
+      steps: "Zeatend 的安裝步驟",
+      cluster: "用 Helm chart 裝上 Zeabur",
     },
     manual: {
       title: "自己動手安裝",
@@ -156,7 +158,6 @@ const zhTW: LandingCopy = {
     lead: "可以整套一起用，也可以只拿其中一個，放進你現有的叢集。",
     lines: {
       desktop: "在自己的電腦開啟 Zeabur。",
-      zeatend: "把一臺 Linux 伺服器變成 Kubernetes 叢集。",
     },
     community: "在 GitHub 上追蹤進度、回報問題，或讀部落格上的設計說明。",
   },
@@ -257,7 +258,9 @@ const zhCN: LandingCopy = {
     },
     zeatend: {
       title: "用 Zeatend 一步步安装",
-      body: "之后可以在终端里选好发行版和配置，由 Zeatend 通过 SSH 把服务器装成集群。",
+      body: "在服务器上运行 Zeatend，在终端界面里选好发行版和配置，就能把这台服务器装成 Kubernetes 集群。集群装好后，再用 Helm chart 装上 Zeabur。",
+      steps: "Zeatend 的安装步骤",
+      cluster: "用 Helm chart 装上 Zeabur",
     },
     manual: {
       title: "自己动手安装",
@@ -273,7 +276,6 @@ const zhCN: LandingCopy = {
     lead: "可以整套一起用，也可以只拿其中一个，放进你现有的集群。",
     lines: {
       desktop: "在自己的电脑上打开 Zeabur。",
-      zeatend: "把一台 Linux 服务器变成 Kubernetes 集群。",
     },
     community: "在 GitHub 上跟进进度、反馈问题，或者读博客上的设计说明。",
   },
@@ -380,7 +382,9 @@ const en: LandingCopy = {
     },
     zeatend: {
       title: "Step through it with Zeatend",
-      body: "You'll pick a distribution and settings in your terminal, and Zeatend will turn the server into a cluster over SSH.",
+      body: "Run Zeatend on the server and pick a distribution and settings on its terminal screens. It turns the server into a Kubernetes cluster, and then you install Zeabur with the Helm chart.",
+      steps: "Zeatend's install steps",
+      cluster: "Install Zeabur with the Helm chart",
     },
     manual: {
       title: "Install it yourself",
@@ -396,7 +400,6 @@ const en: LandingCopy = {
     lead: "Use them together, or pick one and add it to the cluster you already have.",
     lines: {
       desktop: "Zeabur on your own computer.",
-      zeatend: "Turns one Linux server into a Kubernetes cluster.",
     },
     community: "Follow the work and report issues on GitHub, or read the design notes on the blog.",
   },

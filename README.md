@@ -51,7 +51,8 @@ From `docs/nav.yaml` it writes the pages to `src/content/docs/[<locale>/]docs/<r
 Starlight reads them, plus `content/nav.json` for the sidebar (one per repository) and
 `content/site.json` (every page, its source locale, redirects). Images and other files under `docs/` are copied to
 `public/docs-assets/<repo>/`. A repository with no `nav.yaml` gets its README as the home page,
-followed by the pages directly in `docs/`, in the order the README links them.
+followed by the pages directly in `docs/`, in the order the README links them. `README.<locale>.md`
+is the home page in that locale.
 
 Links between pages become site URLs, and so do GitHub URLs of published docs pages. Files under
 `docs/` are served from `/docs-assets/`. A relative link to any other file of the repository goes

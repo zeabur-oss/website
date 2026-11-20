@@ -1,5 +1,4 @@
-import type { ProductId } from "../lib/products.ts"
-import { identityShot, type ShotImage } from "./shots.ts"
+import { identityShot, zeatendScreen, type ShotImage } from "./shots.ts"
 
 // What the stage of a product page shows at each of its three steps: a panel with the object
 // of that step, and the pipeline below it with the step's place lit. Field names and formats
@@ -133,5 +132,32 @@ Groups      [zeabur:dev system:authenticated]`,
   ],
 })
 
-export const stageOf = (id: Exclude<ProductId, "zeabur">, signInAlt: string): Stage =>
-  ({ builder, catalog, identity: identity(signInAlt) })[id]
+const zeatend = (locale: string, alts: string[]): Stage => ({
+  panels: ["server", "review", "done"].map((name, i) => ({
+    title: "sudo zeatend",
+    image: zeatendScreen(locale, name),
+    alt: alts[i] ?? "",
+    whole: true,
+  })),
+  nodes: [
+    { icon: "hard-drives", name: "Server", sub: "sudo zeatend" },
+    { icon: "list-checks", name: "Review", sub: "zeatend plan" },
+    { icon: "check-circle", name: "Install", sub: "zeatend apply" },
+  ],
+})
+
+/** The stage of a page whose story walks through steps; `alts` describe the steps. */
+export const stageOf = (slug: string, locale: string, alts: string[], signInAlt: string): Stage => {
+  switch (slug) {
+    case "builder":
+      return builder
+    case "catalog":
+      return catalog
+    case "identity":
+      return identity(signInAlt)
+    case "zeatend":
+      return zeatend(locale, alts)
+    default:
+      throw new Error(`no stage for ${slug}`)
+  }
+}

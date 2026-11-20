@@ -10,7 +10,7 @@ import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "../catalog/copy.ts"
 import { browseUrl } from "../catalog/data.ts"
 import { landingCopy } from "./copy.ts"
-import { builderExample, catalogExample, identityExample } from "./examples.ts"
+import { builderExample, catalogExample, identityExample, zeatendExample } from "./examples.ts"
 import { pageEntry, pageRow } from "../lib/site-pages.ts"
 import { chrome } from "../lib/chrome.ts"
 import { sectionLabels } from "./products.ts"
@@ -44,12 +44,16 @@ const docs = {
   identity: docsUrl(locale, "identity", "get-started"),
   builder: docsUrl(locale, "builder"),
   catalog: docsUrl(locale, "catalog"),
+  zeatend: docsUrl(locale, "zeatend"),
 }[id]
 
 const file = spec.example
-  ? { identity: identityExample, builder: builderExample, catalog: catalogExample }[
-      id as "identity" | "builder" | "catalog"
-    ]
+  ? {
+      identity: identityExample,
+      builder: builderExample,
+      catalog: catalogExample,
+      zeatend: zeatendExample,
+    }[id as "identity" | "builder" | "catalog" | "zeatend"]
   : undefined
 
 const f = featureCopy[locale]
@@ -98,7 +102,12 @@ const story = chaptered
     }))
 const stage = chaptered
   ? { panels: story.flatMap((c) => (c.panel ? [c.panel] : [])) }
-  : stageOf(id as Exclude<typeof id, "zeabur">, productShots["sign-in"] ?? "")
+  : stageOf(
+      id,
+      locale,
+      story.map((c) => c.alt),
+      productShots["sign-in"] ?? "",
+    )
 const sections = [
   "highlights",
   ...(chaptered ? ["how", "features"] : []),
