@@ -8,6 +8,8 @@ type Chrome = {
   nav: {
     products: string
     docs: string
+    /** The list of templates and components. */
+    templates: string
     blog: string
     language: string
     theme: string
@@ -38,6 +40,7 @@ const zhTW: Chrome = {
   nav: {
     products: "專案",
     docs: "文件",
+    templates: "範本",
     blog: "部落格",
     language: "語言",
     theme: "切換亮色或暗色",
@@ -89,6 +92,7 @@ const zhCN: Chrome = {
   nav: {
     products: "项目",
     docs: "文档",
+    templates: "模板",
     blog: "博客",
     language: "语言",
     theme: "切换浅色或深色",
@@ -140,6 +144,7 @@ const en: Chrome = {
   nav: {
     products: "Projects",
     docs: "Docs",
+    templates: "Templates",
     blog: "Blog",
     language: "Language",
     theme: "Switch between light and dark",
