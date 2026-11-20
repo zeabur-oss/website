@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { detectPlatform, fileFor } from "../src/lib/desktop-download.ts"
+import { detectPlatform, downloadTable, fileFor } from "../src/lib/desktop-download.ts"
 import { pickDesktop } from "../src/lib/github.ts"
 
 const release = (tag: string, prerelease: boolean, files: string[], draft = false) => ({
@@ -76,7 +76,7 @@ const ua = {
 
 const chosen = (userAgent: string, hints?: Parameters<typeof detectPlatform>[1]) => {
   const platform = detectPlatform(userAgent, hints)
-  return platform && fileFor(platform, files)?.name
+  return platform && fileFor(platform, files)?.file.name
 }
 
 test("each computer gets the file that installs on it", () => {
@@ -89,11 +89,23 @@ test("each computer gets the file that installs on it", () => {
   )
 })
 
-test("a computer without a build, or a phone, keeps the release page", () => {
+test("a computer without a build, or a phone, gets no file", () => {
   expect(chosen(ua.mac, { platform: "macOS", mobile: false, architecture: "x86" })).toBeUndefined()
   expect(
     chosen(ua.windows, { platform: "Windows", mobile: false, architecture: "arm" }),
   ).toBeUndefined()
   expect(chosen(ua.iphone)).toBeUndefined()
   expect(chosen(ua.android)).toBeUndefined()
+})
+
+test("the list groups files by system and leaves out ways with no file", () => {
+  const table = downloadTable(files).map((g) => ({
+    os: g.os,
+    rows: g.rows.map((r) => `${r.kind}:${r.builds.map((b) => b.arch).join(",")}`),
+  }))
+  expect(table).toEqual([
+    { os: "macos", rows: ["dmg:arm64"] },
+    { os: "windows", rows: ["setup:amd64", "portable:amd64"] },
+    { os: "linux", rows: ["deb:amd64", "appimage:amd64,arm64"] },
+  ])
 })

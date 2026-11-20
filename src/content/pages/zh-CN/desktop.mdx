@@ -1,43 +1,57 @@
 ---
 status: released
 lines:
-  nav: 在自己的电脑上打开 Zeabur
-  landing: 选一个 kubeconfig 里的集群，在自己的电脑上打开 Zeabur。
+  nav: 用 Zeabur 管理现有的集群
+  landing: 你熟悉的 Zeabur，直接打开在现有的 Kubernetes 集群上，集群不用先改。
 meta:
-  title: Zeabur Desktop：在自己的电脑上打开集群
-  description: Zeabur Desktop 列出 kubeconfig 里的集群，你选哪一个，就在新窗口里为那个集群打开 Zeabur。可以在 macOS、Windows 和 Linux 上使用，集群里不用先安装 Zeabur。
-titleDim: kubeconfig 里的集群，
-title: 选一个就能打开
-sub: Zeabur Desktop 列出你电脑上 kubeconfig 文件里的 context。选一个，它就在新窗口里为那个集群打开 Zeabur。做的事和 zeaburctl ui 一样，只是不用打开终端。
-download: 下载 Zeabur Desktop
-releasePage: 发布页面上的 SHA256SUMS 和说明
+  title: Zeabur Desktop：用 Zeabur 管理现有的集群
+  description: Zeabur Desktop 用你电脑上的 kubeconfig 打开 Zeabur，操作和你熟悉的 Zeabur 一样。集群不用先安装任何东西，现有的应用也不用重新部署。可以在 macOS、Windows 和 Linux 使用。
+titleDim: 你熟悉的 Zeabur，
+title: 直接用在现有的集群上
+sub: Zeabur Desktop 用你电脑上的 kubeconfig 连上集群，窗口里就是同一套 Zeabur。集群不用先安装任何东西，你应用变更之前，集群也不会有任何改动。
+download:
+  button: 下载 Zeabur Desktop
+  for:
+    macos: 下载 macOS 版
+    windows: 下载 Windows 版
+    linux: 下载 Linux 版
+  all: 所有版本
+  apple: Apple 芯片
+  kinds:
+    dmg: 安装映像
+    setup: 安装程序
+    portable: 免安装版
+    deb: Debian、Ubuntu
+    rpm: Fedora、RHEL、openSUSE
+    appimage: 其他 Linux
+  releasePage: 发布页面上的 SHA256SUMS 和说明
 docs: 阅读安装说明
 source: GitHub 上的源代码
 highlights:
-  titleDim: 集群里不用安装，
-  title: 用你自己的权限操作
+  titleDim: 集群原来的样子，
+  title: 都会保留
   items:
-    - tag: kubeconfig
-      title: 直接用现有的 kubeconfig
-      body: kubeconfig 文件里的每个 context，Zeabur Desktop 都会列出来。读取集群、检查变更和应用变更，都使用那个 context 的权限。
     - tag: zeabur-local
-      title: 在你的电脑上运行 Zeabur
-      body: 每个集群窗口都会启动自己的本地服务，和 zeaburctl ui 用的是同一个，所以集群里不用先安装 Zeabur 服务器。
-    - tag: update
-      title: 启动时检查更新
-      body: 有新版本时，侧边栏会显示版本号。先看过更新内容，点击“更新并重启”才会安装。预发布版本不会出现在更新里。
+      title: 集群里不用安装 Zeabur
+      body: Zeabur 在你的电脑上运行，和 zeaburctl ui 用的是同一个本地服务。它不会在集群安装组件，也不用准备域名和登录服务。
+    - tag: Namespace
+      title: 现有的应用照常运行
+      body: 把已有的 Namespace 添加为项目时，Zeabur 只加上项目标签，里面的服务、数据和安全设置都保持原样。不想用了，去掉标签就行。
+    - tag: RBAC
+      title: 用你自己的权限
+      body: 读取、检查变更和应用，都用那个 context 的权限，集群的 RBAC 照常生效。团队只开放了部分权限，Zeabur Desktop 就只能做那些。
 how:
-  titleDim: 从下载到打开，
-  title: 只要三步
+  titleDim: 不用改集群，
+  title: 打开就能上手
   steps:
-    - title: 下载并安装
-      body: 到发布页面下载适合你电脑的文件。Apple 芯片的 Mac 用 .dmg，Windows 用 -setup.exe，Linux 有 .deb、.rpm 和 AppImage。
     - title: 选一个集群
-      body: Zeabur Desktop 列出 kubeconfig 文件里的 context，从中选出要打开的集群。
-    - title: 在新窗口里使用 Zeabur
-      body: 窗口里就是你熟悉的 Zeabur，项目、服务、域名和日志都在。每个打开的 context 都有自己的窗口。
+      body: Zeabur Desktop 列出 kubeconfig 里的每个 context。Zeatend 装的个人服务器、云厂商的 Kubernetes、团队给你的 kubeconfig 都能用。
+    - title: 就是你熟悉的 Zeabur
+      body: 新窗口打开的是同一套 Zeabur 界面。有管理权限的话，集群里已经在运行的应用可以直接添加为项目，不用重新部署。
+    - title: 确认之后才写入
+      body: 每个变更都会先列出要写入集群的内容，确认应用后才生效，而且只用你 kubeconfig 的权限。
 details:
-  title: 下载哪个文件
+  title: 各版本怎么安装和更新
   cols:
     - 电脑
     - 文件
@@ -62,7 +76,7 @@ details:
       - .AppImage，amd64 或 arm64
       - 自动更新
 start:
-  title: 到发布页面下载
-  sub: 每个版本都附带 SHA256SUMS，可以核对下载的文件。目前没有适用于 Intel Mac 和 Arm 架构 Windows 的文件。
+  title: 下载 Zeabur Desktop
+  sub: 按钮会选好适合你电脑的版本，其他版本都列在下面。目前没有适用于 Intel Mac 和 Arm 架构 Windows 的版本。
   cta: 下载 Zeabur Desktop
 ---

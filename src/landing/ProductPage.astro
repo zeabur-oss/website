@@ -4,6 +4,7 @@ import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
 import { desktopRelease } from "../lib/github.ts"
+import { downloadTable, fileFor, oses, type Arch, type Os } from "../lib/desktop-download.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
@@ -51,8 +52,33 @@ const docs = desktop
       catalog: docsUrl(locale, "catalog"),
       zeatend: docsUrl(locale, "zeatend"),
     }[id]
-const download =
-  desktop && t.download ? { href: app.page, text: t.download, files: app.files } : undefined
+const dl = desktop ? t.download : undefined
+const archName = (os: Os, arch: Arch) =>
+  dl && os === "macos" && arch === "arm64" ? dl.apple : arch === "arm64" ? "Arm64" : "x64"
+const osNames: Record<Os, { name: string; icon: string }> = {
+  macos: { name: "macOS", icon: "apple-logo" },
+  windows: { name: "Windows", icon: "windows-logo" },
+  linux: { name: "Linux", icon: "linux-logo" },
+}
+// The main button's file for each computer, which the page's script picks from.
+const choices = dl
+  ? Object.fromEntries(
+      oses.flatMap((os) =>
+        (["arm64", "amd64"] as const).flatMap((arch) => {
+          const c = fileFor({ os, arch }, app.files)
+          if (!c) return []
+          const caption = [archName(os, arch), c.ext, app.tag].filter(Boolean).join(" · ")
+          return [[`${os}-${arch}`, { url: c.file.url, label: dl.for[os], caption }]]
+        }),
+      ),
+    )
+  : {}
+const download = dl && {
+  ...dl,
+  href: app.files.length > 0 ? "#downloads" : app.page,
+  page: app.page,
+  table: downloadTable(app.files),
+}
 
 const file = spec.example
   ? {
@@ -114,7 +140,6 @@ const stage = chaptered
       locale,
       story.map((c) => c.alt),
       productShots["sign-in"] ?? "",
-      app,
     )
 const sections = [
   "highlights",
@@ -176,7 +201,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
         {download && (
           <a href={download.href} class="button primary" data-desktop-download>
             <Icon name="download-simple" />
-            {download.text}
+            <span data-desktop-label>{download.button}</span>
           </a>
         )}
         <a href={docs} class={download ? "button" : "button primary"}>
@@ -402,55 +427,70 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           lead={t.start.sub}
         />
         {download ? (
-          <div class="grid gap-8" data-reveal>
-            <div class="grid gap-3">
+          <div class="grid gap-12" data-reveal>
+            <div class="grid justify-items-start gap-3">
               <div class="flex flex-wrap gap-3">
                 <a href={download.href} class="button primary" data-desktop-download>
                   <Icon name="download-simple" />
-                  {t.start.cta}
+                  <span data-desktop-label>{download.button}</span>
                 </a>
                 <a href={docs} class="button">
                   {t.docs}
                   <Icon name="arrow-right" class="go" />
                 </a>
               </div>
-              <p class="type-mono text-sm text-site-muted" data-desktop-file hidden />
+              <p class="text-sm text-site-muted" data-desktop-caption hidden />
             </div>
-            <ul class="grid max-w-3xl border-t border-site-line">
-              {download.files.map((f) => (
-                <li class="border-b border-site-line">
-                  <a
-                    href={f.url}
-                    class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 text-site-text no-underline transition-colors duration-quick hover:bg-site-hover type-mono text-sm"
-                  >
-                    <span class="min-w-0">
-                      {f.name.split(/(?<=-)/).map((part) => (
-                        <>
-                          {part}
-                          <wbr />
-                        </>
-                      ))}
-                    </span>
-                    <Icon name="download-simple" class="size-4 shrink-0" />
-                  </a>
-                </li>
-              ))}
-              {t.releasePage && (
-                <li class="border-b border-site-line">
-                  <a
-                    href={download.href}
-                    class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 text-site-text no-underline transition-colors duration-quick hover:bg-site-hover font-semibold"
-                  >
-                    {t.releasePage}
-                    <Icon name="arrow-up-right" class="size-4 shrink-0" />
-                  </a>
-                </li>
-              )}
-            </ul>
+            {download.table.length > 0 && (
+              <div id="downloads" class="grid scroll-mt-24 gap-6">
+                <h3 class="text-lg font-semibold">{download.all}</h3>
+                <div class="grid gap-8 md:grid-cols-3">
+                  {download.table.map((group) => (
+                    <div class="grid content-start gap-2">
+                      <h4 class="flex items-center gap-2 font-semibold">
+                        <Icon name={osNames[group.os].icon} class="size-5" />
+                        {osNames[group.os].name}
+                      </h4>
+                      <ul class="grid border-t border-site-line">
+                        {group.rows.map((row) => (
+                          <li class="flex min-h-14 items-center justify-between gap-3 border-b border-site-line py-2">
+                            <span class="min-w-0">
+                              {download.kinds[row.kind]}
+                              <span class="ms-1.5 type-mono text-xs text-site-muted">
+                                {row.ext}
+                              </span>
+                            </span>
+                            <span class="flex shrink-0 gap-2">
+                              {row.builds.map((build) => (
+                                <a
+                                  href={build.file.url}
+                                  title={build.file.name}
+                                  class="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-site-line px-2.5 text-sm text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
+                                >
+                                  <Icon name="download-simple" class="size-4" />
+                                  {archName(group.os, build.arch)}
+                                </a>
+                              ))}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href={download.page}
+                  class="inline-flex items-center gap-1.5 justify-self-start text-sm text-site-muted hover:text-site-text"
+                >
+                  {download.releasePage}
+                  <Icon name="arrow-up-right" class="size-4" />
+                </a>
+              </div>
+            )}
             <script
               type="application/json"
-              id="desktop-files"
-              set:html={JSON.stringify(download.files)}
+              id="desktop-choices"
+              set:html={JSON.stringify(choices)}
             />
           </div>
         ) : (
@@ -462,10 +502,9 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
 </Site>
 
 <script>
-  import { detectPlatform, fileFor } from "../lib/desktop-download.ts"
+  import { detectPlatform } from "../lib/desktop-download.ts"
 
-  // Points the download buttons at the file for this computer; without one they keep the
-  // release page.
+  // Points the download buttons at the file for this computer; without one they go to the list.
   type Hints = { platform?: string; mobile?: boolean; architecture?: string }
   type UserAgentData = {
     platform: string
@@ -484,22 +523,25 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
       return named
     }
   }
-  const list = document.getElementById("desktop-files")
-  if (list) {
-    const files: { name: string; url: string }[] = JSON.parse(list.textContent ?? "[]")
+  async function pointDownloads() {
+    const data = document.getElementById("desktop-choices")
+    if (!data) return
+    const choices: Record<string, { url: string; label: string; caption: string }> = JSON.parse(
+      data.textContent ?? "{}",
+    )
     const platform = detectPlatform(navigator.userAgent, await hints())
-    const file = platform && fileFor(platform, files)
-    if (file) {
-      for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-desktop-download]")) {
-        link.href = file.url
-      }
-      for (const note of document.querySelectorAll<HTMLElement>("[data-desktop-file]")) {
-        // Breaks only after a hyphen, as in the list of files.
-        note.replaceChildren(
-          ...file.name.split(/(?<=-)/).flatMap((part) => [part, document.createElement("wbr")]),
-        )
-        note.hidden = false
-      }
+    const choice = platform && choices[`${platform.os}-${platform.arch}`]
+    if (!choice) return
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-desktop-download]")) {
+      link.href = choice.url
+    }
+    for (const label of document.querySelectorAll("[data-desktop-label]")) {
+      label.textContent = choice.label
+    }
+    for (const caption of document.querySelectorAll<HTMLElement>("[data-desktop-caption]")) {
+      caption.textContent = choice.caption
+      caption.hidden = false
     }
   }
+  document.addEventListener("astro:page-load", pointDownloads)
 </script>

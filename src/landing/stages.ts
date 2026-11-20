@@ -1,4 +1,3 @@
-import type { DesktopRelease } from "../lib/github.ts"
 import { identityShot, shot, zeatendScreen, type ShotImage } from "./shots.ts"
 
 // What the stage of a product page shows at each of its three steps: a panel with the object
@@ -147,25 +146,11 @@ const zeatend = (locale: string, alts: string[]): Stage => ({
   ],
 })
 
-const desktop = (locale: string, alts: string[], release: DesktopRelease): Stage => {
-  const file = (rest: string) => `zeabur-desktop-${release.tag ?? "v<version>"}-${rest}`
-  return {
-    panels: [
-      {
-        title: release.page.replace(/^https:\/\//, ""),
-        code: [
-          file("darwin-arm64.dmg"),
-          file("windows-amd64-setup.exe"),
-          file("linux-amd64.deb"),
-          file("linux-amd64.rpm"),
-          file("linux-amd64.AppImage"),
-          "SHA256SUMS",
-        ].join("\n"),
-        marks: [0],
-      },
-      {
-        title: "~/.kube/config",
-        code: `apiVersion: v1
+const desktop = (locale: string, alts: string[]): Stage => ({
+  panels: [
+    {
+      title: "~/.kube/config",
+      code: `apiVersion: v1
 kind: Config
 current-context: staging
 contexts:
@@ -173,17 +158,17 @@ contexts:
     context: {cluster: staging, user: staging-admin}
   - name: office-k3s
     context: {cluster: office-k3s, user: office-admin}`,
-        marks: [4, 6],
-      },
-      { title: "Zeabur · staging", image: shot(locale, "project"), alt: alts[2] ?? "" },
-    ],
-    nodes: [
-      { icon: "download-simple", name: "Release", sub: "dmg · exe · deb" },
-      { icon: "file-text", name: "kubeconfig", sub: "context" },
-      { icon: "app-window", name: "Zeabur", sub: "zeabur-local" },
-    ],
-  }
-}
+      marks: [4, 6],
+    },
+    { title: "Zeabur · staging", image: shot(locale, "existing-namespaces"), alt: alts[1] ?? "" },
+    { title: "Zeabur · staging", image: shot(locale, "change-review"), alt: alts[2] ?? "" },
+  ],
+  nodes: [
+    { icon: "file-text", name: "kubeconfig", sub: "context" },
+    { icon: "app-window", name: "Zeabur", sub: "zeabur-local" },
+    { icon: "list-checks", name: "Review", sub: "apply" },
+  ],
+})
 
 /** The stage of a page whose story walks through steps; `alts` describe the steps. */
 export const stageOf = (
@@ -191,7 +176,6 @@ export const stageOf = (
   locale: string,
   alts: string[],
   signInAlt: string,
-  release: DesktopRelease,
 ): Stage => {
   switch (slug) {
     case "builder":
@@ -203,7 +187,7 @@ export const stageOf = (
     case "zeatend":
       return zeatend(locale, alts)
     case "desktop":
-      return desktop(locale, alts, release)
+      return desktop(locale, alts)
     default:
       throw new Error(`no stage for ${slug}`)
   }
