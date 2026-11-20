@@ -58,7 +58,18 @@ const pages = defineCollection({
     }),
     shots: z.object({ title: text, captions: z.record(z.string(), text) }).optional(),
     details: z.object({ title: text, cols: z.array(text), rows: z.array(z.array(text)) }),
-    start: z.object({ title: text, sub: text, cta: text }),
+    start: z.object({
+      title: text,
+      sub: text,
+      cta: text,
+      /** The heading in the docs page that the button links to. */
+      anchor: text.optional(),
+      /** The line above the hero's command block. */
+      hero: text.optional(),
+      /** First steps, each with the key of its commands in examples.ts. */
+      steps: z.array(z.object({ title: text, body: text, code: z.string() })).optional(),
+      copy: z.object({ label: text, done: text, failed: text }).optional(),
+    }),
   }),
 })
 

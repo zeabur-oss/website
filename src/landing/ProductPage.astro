@@ -10,12 +10,19 @@ import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "../catalog/copy.ts"
 import { browseUrl } from "../catalog/data.ts"
 import { landingCopy } from "./copy.ts"
-import { builderExample, catalogExample, identityExample, zeatendExample } from "./examples.ts"
+import {
+  builderExample,
+  catalogExample,
+  identityExample,
+  zeatendCommands,
+  zeatendExample,
+} from "./examples.ts"
 import { pageEntry, pageRow } from "../lib/site-pages.ts"
 import { chrome } from "../lib/chrome.ts"
 import { sectionLabels } from "./products.ts"
 import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
+import CommandBlock from "./CommandBlock.astro"
 import ProductStage from "./blocks/ProductStage.astro"
 import StoryLayout from "./blocks/StoryLayout.astro"
 import FeatureIndex from "./blocks/FeatureIndex.astro"
@@ -55,6 +62,16 @@ const file = spec.example
       zeatend: zeatendExample,
     }[id as "identity" | "builder" | "catalog" | "zeatend"]
   : undefined
+
+// A page with first steps shows each step's commands, and the hero the short path.
+const steps =
+  t.start.steps && t.start.copy ? { list: t.start.steps, copy: t.start.copy } : undefined
+const commands = (key: string) => {
+  const code = zeatendCommands[key]
+  if (code === undefined) throw new Error(`no commands named ${key}`)
+  return code
+}
+const installDocs = t.start.anchor ? `${docs}#${encodeURIComponent(t.start.anchor)}` : docs
 
 const f = featureCopy[locale]
 const productShots = (await pageEntry(locale, "identity"))?.data.shots?.captions ?? {}
@@ -175,6 +192,12 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           {t.source}
         </a>
       </div>
+      {steps && t.start.hero && (
+        <div class="grid w-full gap-3">
+          <p class="body text-site-muted">{t.start.hero}</p>
+          <CommandBlock id="install-quick" code={commands("quick")} copy={steps.copy} />
+        </div>
+      )}
     </div>
   </section>
 
@@ -347,7 +370,46 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
   </section>
 
   <section class="wrap section frame" aria-labelledby="start">
-    {file ? (
+    {steps ? (
+      <>
+        <SectionHead
+          id="start"
+          number={sectionNumber("start")}
+          kicker={l.start}
+          title={t.start.title}
+          lead={t.start.sub}
+        />
+        <ol class="grid">
+          {steps.list.map((step, i) => (
+            <li
+              class="grid12 gap-y-4 border-t border-site-line pt-5 pb-8"
+              data-reveal
+              style={`--i:${i}`}
+            >
+              <div class="flex flex-col gap-2 lg:col-[1/6]">
+                <span class="type-mono text-site-accent">{number(i)}</span>
+                <h3>
+                  <HeadingText text={step.title} />
+                </h3>
+                <p class="body">{step.body}</p>
+              </div>
+              <CommandBlock
+                id={`install-${step.code}`}
+                code={commands(step.code)}
+                copy={steps.copy}
+                class="self-start lg:col-[6/13]"
+              />
+            </li>
+          ))}
+        </ol>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href={installDocs} class="button primary">
+            {t.start.cta}
+            <Icon name="arrow-right" class="go" />
+          </a>
+        </div>
+      </>
+    ) : file ? (
       <div class="grid12">
         <div class="flex flex-col items-start gap-4 lg:col-[1/6]" data-reveal>
           <p class="index label">
