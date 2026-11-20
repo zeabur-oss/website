@@ -103,7 +103,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const words = chrome[lang]
     const product = (productIds as readonly string[]).includes(data.repo)
       ? productName[data.repo as ProductId]
-      : data.repo
+      : "Zeabur Open Source"
     add(entry.id.toLowerCase(), {
       kicker: `${product} · ${words.nav.docs}`,
       title: data.title,

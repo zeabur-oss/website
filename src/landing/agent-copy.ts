@@ -21,13 +21,13 @@ export type AgentCopy = {
 
 const zhTW: AgentCopy = {
   meta: {
-    title: "交給 AI 代理：從 zeabur.com 搬到自己的伺服器",
+    title: "交給 Agent：從 zeabur.com 搬到自己的伺服器",
     description:
-      "在 Claude Code 或 Codex 貼上一句話，Agent 會準備伺服器、裝好 Zeabur，把 zeabur.com 上的服務搬過來。",
+      "在 Claude Code 或 Codex 貼上一句話，Agent 會準備伺服器、裝好 Zeabur 開源版，把 zeabur.com 上的服務搬過來。",
   },
-  label: "交給 AI 代理",
+  label: "交給 Agent",
   title: "貼上一句話，讓 Agent 幫你搬家",
-  lead: "zeabur.com 會在 2026 年 12 月 31 日停止運作。Claude Code 或 Codex 這類 Coding Agent 可以準備伺服器、裝好 Zeabur，再把你在 zeabur.com 的服務搬過來。要花錢或改動的地方，都會先問你。",
+  lead: "zeabur.com 會在 2026 年 12 月 31 日停止運作。Claude Code 或 Codex 這類 Coding Agent 可以準備伺服器、裝好 Zeabur 開源版，再把你在 zeabur.com 的服務搬過來。要花錢或改動的地方，都會先問你。",
   prompt: {
     label: "在 Claude Code 或 Codex 貼上",
     text: `讀 ${agentGuideMarkdown("zh-TW")}，把我在 zeabur.com 的服務搬到我自己的伺服器上，用 Zeabur 管理。`,
@@ -65,13 +65,13 @@ const zhTW: AgentCopy = {
 
 const zhCN: AgentCopy = {
   meta: {
-    title: "交给 AI 智能体：从 zeabur.com 迁到自己的服务器",
+    title: "交给 Agent：从 zeabur.com 迁到自己的服务器",
     description:
-      "在 Claude Code 或 Codex 粘贴一句话，Agent 会准备服务器、装好 Zeabur，把 zeabur.com 上的服务迁过来。",
+      "在 Claude Code 或 Codex 粘贴一句话，Agent 会准备服务器、装好 Zeabur 开源版，把 zeabur.com 上的服务迁过来。",
   },
-  label: "交给 AI 智能体",
+  label: "交给 Agent",
   title: "粘贴一句话，让 Agent 帮你迁移",
-  lead: "zeabur.com 会在 2026 年 12 月 31 日停止运行。Claude Code 或 Codex 这类 Coding Agent 可以准备服务器、装好 Zeabur，再把你在 zeabur.com 的服务迁过来。要花钱或改动的地方，都会先问你。",
+  lead: "zeabur.com 会在 2026 年 12 月 31 日停止运行。Claude Code 或 Codex 这类 Coding Agent 可以准备服务器、装好 Zeabur 开源版，再把你在 zeabur.com 的服务迁过来。要花钱或改动的地方，都会先问你。",
   prompt: {
     label: "在 Claude Code 或 Codex 粘贴",
     text: `读 ${agentGuideMarkdown("zh-CN")}，把我在 zeabur.com 的服务迁到我自己的服务器上，用 Zeabur 管理。`,
@@ -109,11 +109,11 @@ const zhCN: AgentCopy = {
 
 const en: AgentCopy = {
   meta: {
-    title: "Hand it to an AI agent: move from zeabur.com to your own server",
+    title: "Hand it to an agent: move from zeabur.com to your own server",
     description:
       "Paste one sentence into Claude Code or Codex. The agent gets a server, installs Zeabur, and moves your services over from zeabur.com.",
   },
-  label: "Hand it to an AI agent",
+  label: "Hand it to an agent",
   title: "Paste one sentence, and an agent does the move",
   lead: "zeabur.com stops running on December 31, 2026. A coding agent such as Claude Code or Codex can get a server, install Zeabur, and move your services over from zeabur.com. It asks you before anything that costs money or changes something.",
   prompt: {

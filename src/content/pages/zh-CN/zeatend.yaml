@@ -3,7 +3,7 @@ lines:
   nav: 把 Linux 服务器装成 Kubernetes 集群
   landing: 在 Linux 服务器上安装并管理 K3s、RKE2 或 KubeSolo 集群。
 meta:
-  title: Zeabur Zeatend：在终端里把 Linux 服务器装成集群
+  title: Zeatend：在终端里把 Linux 服务器装成集群
   description: Zeatend 在 Linux 服务器上安装按 CIS 基准加固的 K3s、RKE2 或 KubeSolo。在终端界面里选好配置，看过安装计划才应用，之后还能加入节点、检查和升级集群。
 titleDim: 一台 Linux 服务器，
 title: 装成可以直接用的集群

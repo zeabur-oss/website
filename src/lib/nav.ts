@@ -50,6 +50,7 @@ export async function siteNav(locale: SiteLocale) {
     useCases,
     docs: zeaburDocs(),
     security: zeaburDocs("reference/security"),
+    glossary: docsUrl(locale, "glossary"),
     blog: blogUrl(locale),
     start: homeSection(locale, "start"),
   }

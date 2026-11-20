@@ -19,7 +19,7 @@ export const productName: Record<ProductId, string> = {
   identity: "Zeabur Identity",
   builder: "Zeabur Builder",
   catalog: "Zeabur Catalog",
-  zeatend: "Zeabur Zeatend",
+  zeatend: "Zeatend",
 }
 
 /** The release tag docs.lock.json pins each product's docs to. */

@@ -3,14 +3,16 @@ import ProductLink from "../ProductLink.astro"
 import Default from "@astrojs/starlight/components/Sidebar.astro"
 import Icon from "../Icon.astro"
 import { chrome } from "../../lib/chrome.ts"
-import { productIcon, productIds, productName, type ProductId } from "../../lib/products.ts"
+import { productIcon, productIds, productName } from "../../lib/products.ts"
 import { blogUrl, docsUrl, homeUrl, isSiteLocale } from "../../lib/urls.ts"
 
 // The product whose docs these are, as a menu at the top, then that product's pages.
 const { lang, entry } = Astro.locals.starlightRoute
 const locale = isSiteLocale(lang) ? lang : "en"
 const t = chrome[locale]
-const current = (entry.data as { repo?: string }).repo as ProductId | undefined
+const repo = (entry.data as { repo?: string }).repo
+// The glossary is a docs page of the site itself, not of a product.
+const current = productIds.find((id) => id === repo)
 ---
 
 {current && (

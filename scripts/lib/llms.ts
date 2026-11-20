@@ -4,10 +4,10 @@ import { markdownPath, siteOrigin } from "../../src/lib/urls.ts"
 import type { SiteData, SiteNav } from "../sync-docs.ts"
 
 const summary =
-  "Zeabur is an open-source management interface for Kubernetes clusters. Zeatend sets up Kubernetes on your own servers, Zeabur Identity signs people in with passkeys, Zeabur Builder builds services from Git, and the Zeabur Catalog holds the components and templates."
+  "Zeabur is an open-source web interface that deploys and runs services on your own Kubernetes cluster. Zeatend sets up Kubernetes on a Linux server, one `helm install` installs Zeabur with Zeabur Identity for sign-in, and Zeabur installs components and templates from the Zeabur Catalog, such as Zeabur Builder, which builds services from Git."
 
 const about = [
-  "Each link below is the Markdown copy of a docs page. The same page as HTML is at the URL without `.md`. Each page is also in Traditional Chinese under `/zh-TW` and in Simplified Chinese under `/zh-CN`, as HTML and as Markdown.",
+  "The glossary names each project and its role; read it first. Each link below is the Markdown copy of a docs page. The same page as HTML is at the URL without `.md`. Each page is also in Traditional Chinese under `/zh-TW` and in Simplified Chinese under `/zh-CN`, as HTML and as Markdown.",
 ]
 
 export function llmsTxt(nav: SiteNav[string], site: SiteData): string {
@@ -25,7 +25,7 @@ export function llmsTxt(nav: SiteNav[string], site: SiteData): string {
     lines.push("")
   }
   lines.push("## Optional", "")
-  for (const repo of site.repos) {
+  for (const repo of site.repos.filter((r) => r.github !== "zeabur-oss/website")) {
     lines.push(
       `- [${repo.label} on GitHub](https://github.com/${repo.github}): Source code and releases.`,
     )

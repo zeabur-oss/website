@@ -21,6 +21,7 @@ type Chrome = {
     product: string
     useCases: string
     security: string
+    glossary: string
     start: string
     /** Beside work that is not released yet. */
     soon: string
@@ -51,6 +52,7 @@ const zhTW: Chrome = {
     product: "產品",
     useCases: "使用情境",
     security: "安全與信任",
+    glossary: "名詞說明",
     start: "開始使用",
     soon: "敬請期待",
     stars: (count) => `GitHub 上有 ${count} 個星號`,
@@ -110,6 +112,7 @@ const zhCN: Chrome = {
     product: "产品",
     useCases: "使用场景",
     security: "安全与信任",
+    glossary: "术语说明",
     start: "开始使用",
     soon: "敬请期待",
     stars: (count) => `GitHub 上有 ${count} 个星标`,
@@ -169,6 +172,7 @@ const en: Chrome = {
     product: "Product",
     useCases: "Use cases",
     security: "Security and trust",
+    glossary: "Glossary",
     start: "Get started",
     soon: "Stay tuned",
     stars: (count) => `${count} stars on GitHub`,

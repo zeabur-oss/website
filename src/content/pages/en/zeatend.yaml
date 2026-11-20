@@ -3,7 +3,7 @@ lines:
   nav: Turn a Linux server into a Kubernetes cluster
   landing: Installs and manages K3s, RKE2 or KubeSolo clusters on Linux servers.
 meta:
-  title: "Zeabur Zeatend: turn a Linux server into a cluster from your terminal"
+  title: "Zeatend: turn a Linux server into a cluster from your terminal"
   description: Zeatend installs K3s, RKE2 or KubeSolo, hardened to the CIS benchmark, on a Linux server. Pick your settings on its terminal screens and review the install plan before it runs; later, add nodes, check and upgrade the cluster with it.
 titleDim: One Linux server,
 title: a cluster ready to use.

@@ -22,10 +22,7 @@ export type LandingCopy = {
     team: Entrance
     machine: Entrance
   }
-  shots: Record<
-    "project" | "diagnosis" | "change-review" | "database" | "cluster" | "installer",
-    string
-  >
+  shots: Record<"project" | "diagnosis" | "change-review" | "database" | "cluster", string>
   deploy: { label: string; title: string; body: string }
   trace: { label: string; title: string; steps: [Step, Step, Step] }
   roles: { label: string; title: string; points: [Point, Point, Point] }
@@ -64,7 +61,7 @@ const zhTW: LandingCopy = {
     },
     machine: {
       title: "只有一臺 Linux 伺服器",
-      body: "Zeabur Installer 檢查伺服器，一次裝好叢集和整套服務。",
+      body: "Zeatend 先裝好 Kubernetes，再一次 helm install 裝好 Zeabur 開源版。",
       link: "在一臺伺服器安裝",
     },
   },
@@ -76,7 +73,6 @@ const zhTW: LandingCopy = {
     database:
       "只有一個執行個體的 PostgreSQL。它故障時沒有其他執行個體接手，所以 Zeabur 提醒你設定備份。",
     cluster: "叢集頁：Kubernetes 1.34 即將停止支援、節點記憶體用到 91%、磁碟用到 88%。",
-    installer: "Zeabur Installer 安裝前的確認頁：記憶體夠不夠、要裝哪些元件、大約要多久。",
   },
   deploy: {
     label: "部署",
@@ -133,9 +129,9 @@ const zhTW: LandingCopy = {
     title: "選一種方式開始",
     lead: "依你想自己動手的程度選擇。三種方式裝好的是同一套 Zeabur。",
     agent: {
-      title: "交給 AI 代理",
-      body: "之後只要把一段提示貼給 Claude 或 Codex，它就會幫你安裝 Zeabur，或把 zeabur.com 上的專案搬過來。",
-      link: "看看怎麼交給 AI 代理",
+      title: "交給 Agent",
+      body: "把一句話貼給 Claude Code 或 Codex 這類 Coding Agent，它會照著文件安裝 Zeabur 開源版，或把 zeabur.com 上的專案搬過來。",
+      link: "看看怎麼交給 Agent",
     },
     zeatend: {
       title: "用 Zeatend 一步步安裝",
@@ -182,7 +178,7 @@ const zhCN: LandingCopy = {
     },
     machine: {
       title: "只有一台 Linux 服务器",
-      body: "Zeabur Installer 检查服务器，一次装好集群和整套服务。",
+      body: "Zeatend 先装好 Kubernetes，再运行一次 helm install 装好 Zeabur 开源版。",
       link: "在一台服务器上安装",
     },
   },
@@ -192,7 +188,6 @@ const zhCN: LandingCopy = {
     "change-review": "保存 web 的变更前，先看 YAML 差异：NODE_ENV 从 production 改成 staging。",
     database: "只有一个实例的 PostgreSQL。它出故障时没有其他实例接手，所以 Zeabur 提醒你设置备份。",
     cluster: "集群页：Kubernetes 1.34 即将停止支持，节点内存用到 91%，磁盘用到 88%。",
-    installer: "Zeabur Installer 安装前的确认页：内存够不够、要装哪些组件、大约要多久。",
   },
   deploy: {
     label: "部署",
@@ -249,9 +244,9 @@ const zhCN: LandingCopy = {
     title: "选一种方式开始",
     lead: "按你想自己动手的程度来选。三种方式装好的是同一套 Zeabur。",
     agent: {
-      title: "交给 AI 智能体",
-      body: "之后只要把一段提示词贴给 Claude 或 Codex，它就会帮你安装 Zeabur，或者把 zeabur.com 上的项目迁移过来。",
-      link: "看看怎么交给 AI 智能体",
+      title: "交给 Agent",
+      body: "把一句话粘贴给 Claude Code 或 Codex 这类 Coding Agent，它会按照文档安装 Zeabur 开源版，或者把 zeabur.com 上的项目迁移过来。",
+      link: "看看怎么交给 Agent",
     },
     zeatend: {
       title: "用 Zeatend 一步步安装",
@@ -298,7 +293,7 @@ const en: LandingCopy = {
     },
     machine: {
       title: "You have one Linux server",
-      body: "Zeabur Installer checks the server and sets up the cluster and everything on it in one go.",
+      body: "Zeatend sets up Kubernetes, then one helm install adds Zeabur.",
       link: "Install on one server",
     },
   },
@@ -313,8 +308,6 @@ const en: LandingCopy = {
       "A PostgreSQL database with one instance. Nothing takes over if it fails, so Zeabur asks you to set up backups.",
     cluster:
       "The cluster page: Kubernetes 1.34 reaches end of life, a node is at 91% memory and its disk at 88%.",
-    installer:
-      "Zeabur Installer's review step before installing: whether memory is enough, which components go in, and how long it takes.",
   },
   deploy: {
     label: "Deploy",
@@ -371,8 +364,8 @@ const en: LandingCopy = {
     title: "Pick a way to start",
     lead: "Choose by how hands-on you want to be. All three end with the same Zeabur.",
     agent: {
-      title: "Hand it to an AI agent",
-      body: "You'll paste a prompt into Claude or Codex, and it will install Zeabur for you or move your projects over from zeabur.com.",
+      title: "Hand it to an agent",
+      body: "Paste one prompt into a coding agent such as Claude Code or Codex. It follows the docs to install Zeabur, or to move your projects over from zeabur.com.",
       link: "See how it works",
     },
     zeatend: {
