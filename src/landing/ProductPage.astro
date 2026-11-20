@@ -423,7 +423,14 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
                     href={f.url}
                     class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 text-site-text no-underline transition-colors duration-quick hover:bg-site-hover type-mono text-sm"
                   >
-                    <span class="min-w-0 break-all">{f.name}</span>
+                    <span class="min-w-0">
+                      {f.name.split(/(?<=-)/).map((part) => (
+                        <>
+                          {part}
+                          <wbr />
+                        </>
+                      ))}
+                    </span>
                     <Icon name="download-simple" class="size-4 shrink-0" />
                   </a>
                 </li>
@@ -487,7 +494,10 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
         link.href = file.url
       }
       for (const note of document.querySelectorAll<HTMLElement>("[data-desktop-file]")) {
-        note.textContent = file.name
+        // Breaks only after a hyphen, as in the list of files.
+        note.replaceChildren(
+          ...file.name.split(/(?<=-)/).flatMap((part) => [part, document.createElement("wbr")]),
+        )
         note.hidden = false
       }
     }
