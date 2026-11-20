@@ -1,0 +1,19 @@
+---
+// A list item's text: a small mark (its number or a tag), a heading and a paragraph.
+import HeadingText from "../../components/HeadingText.astro"
+
+interface Props {
+  mark: string
+  title: string
+  body: string
+  /** Set the mark in the accent colour, for a number. */
+  accent?: boolean
+}
+const { mark, title, body, accent } = Astro.props
+---
+
+<span class:list={["type-mono", accent ? "text-site-accent" : "text-site-faint"]}>{mark}</span>
+<h3>
+  <HeadingText text={title} />
+</h3>
+<p class="body">{body}</p>

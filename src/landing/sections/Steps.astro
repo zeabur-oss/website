@@ -1,0 +1,50 @@
+---
+// The page's steps beside one stage that shows each step.
+import HeadingText from "../../components/HeadingText.astro"
+import { chrome } from "../../lib/chrome.ts"
+import { localeInfo } from "../../lib/urls.ts"
+import ProductStage from "../blocks/ProductStage.astro"
+import SectionHead from "../blocks/SectionHead.astro"
+import StoryLayout from "../blocks/StoryLayout.astro"
+import DesktopScenes from "../scenes/DesktopScenes.astro"
+import { stageOf } from "../stages.ts"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, row, text: t, first } = Astro.props
+const steps = t.how.steps
+const alts = steps.map((s) => s.body)
+const stage = stageOf(row.slug, locale, alts, t.shots?.captions["sign-in"] ?? "")
+// Pages whose steps are drawn scenes instead of panels.
+const scenes: Record<string, typeof DesktopScenes | undefined> = { desktop: DesktopScenes }
+const Scenes = scenes[row.slug]
+---
+
+<StoryLayout
+  id="how-it-works"
+  label={`${t.how.titleDim}${localeInfo(locale).titleGap}${t.how.title}`}
+  caption={alts.join(" ")}
+>
+  <SectionHead slot="head" id="story-title" dim={t.how.titleDim} title={t.how.title} />
+  <ProductStage slot="stage" {...stage}>
+    {Scenes && <Scenes slot="panels" locale={locale} />}
+  </ProductStage>
+  {steps.map((step, i) => (
+    <li data-chapter={i}>
+      <p class="index label">
+        <span>{number(first + i)}</span>
+        <span>{chrome[locale].sections.how}</span>
+      </p>
+      <h2>
+        <HeadingText text={step.title} />
+      </h2>
+      <p class="lead">
+        <HeadingText text={step.body} />
+      </p>
+    </li>
+  ))}
+</StoryLayout>
+
+<div class="wrap band" aria-hidden="true">
+  <span class="bg-hatch"></span>
+</div>

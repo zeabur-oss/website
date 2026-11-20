@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: 推送 commit，拿到映像檔 digest
@@ -57,4 +56,3 @@ start:
   title: 一個 Build，對應一個儲存庫
   sub: 單獨使用時，一個 Build 寫出 Git 儲存庫和建置方式。沒寫 ref 時跟著預設分支，status.resolvedRef 會寫出是哪一個分支。
   cta: 閱讀 Builder 文件
----

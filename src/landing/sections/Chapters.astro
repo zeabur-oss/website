@@ -1,0 +1,59 @@
+---
+// Zeabur's jobs beside one stage, each on its own screen, with a link to its features.
+import HeadingText from "../../components/HeadingText.astro"
+import Icon from "../../components/Icon.astro"
+import { pageText } from "../../lib/site-pages.ts"
+import ProductStage from "../blocks/ProductStage.astro"
+import SectionHead from "../blocks/SectionHead.astro"
+import StoryLayout from "../blocks/StoryLayout.astro"
+import { landingCopy } from "../copy.ts"
+import { chapters, featureCopy, features, groupNames } from "../features.ts"
+import { identityShot, shot } from "../shots.ts"
+import type { Panel } from "../stages.ts"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, first } = Astro.props
+const f = featureCopy[locale]
+const identityCaptions = (await pageText(locale, "identity")).shots?.captions ?? {}
+const homeShots: Record<string, string> = landingCopy[locale].shots
+const story = chapters.map((c) => {
+  const w = c.words[locale]
+  const fromIdentity = c.shot.from === "identity"
+  const alt = (fromIdentity ? identityCaptions : homeShots)[c.shot.id] ?? w.alt
+  const panel: Panel = {
+    title: groupNames[locale][c.group],
+    image: fromIdentity ? identityShot(c.shot.id, "dark") : shot(locale, c.shot.id),
+    alt,
+    whole: fromIdentity,
+  }
+  return { group: c.group, title: w.title, body: w.body, alt, panel }
+})
+---
+
+<StoryLayout id="how-it-works" label={f.chapters} caption={story.map((c) => c.alt).join(" ")}>
+  <SectionHead slot="head" id="story-title" title={f.chapters} />
+  <ProductStage slot="stage" panels={story.map((c) => c.panel)} />
+  {story.map((c, i) => (
+    <li data-chapter={i} id={`chapter-${c.group}`}>
+      <p class="index label">
+        <span>{number(first + i)}</span>
+        <span>{groupNames[locale][c.group]}</span>
+      </p>
+      <h2>
+        <HeadingText text={c.title} />
+      </h2>
+      <p class="lead">
+        <HeadingText text={c.body} />
+      </p>
+      <a href={`#features-${c.group}`} class="more more-down mt-2">
+        {f.group(features.filter((x) => x.group === c.group).length)}
+        <Icon name="arrow-down" class="go" />
+      </a>
+    </li>
+  ))}
+</StoryLayout>
+
+<div class="wrap band" aria-hidden="true">
+  <span class="bg-hatch"></span>
+</div>

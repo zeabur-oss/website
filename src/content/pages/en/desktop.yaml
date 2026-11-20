@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: Zeabur on the clusters you already have
@@ -79,4 +78,3 @@ start:
   title: Download Zeabur Desktop
   sub: The button picks the file for your computer, and every other file is listed below. There are no builds for Intel Macs or Windows on Arm.
   cta: Download Zeabur Desktop
----

@@ -98,7 +98,25 @@ site with that repository's next release; a docs-only patch release is fine.
 
 ## Copy
 
-The landing copy is in `src/landing/copy.ts`, in en, zh-TW and zh-CN. Its screenshots are the docs
+Every string is in en, zh-TW and zh-CN, and lives in one of these places. Components hold no
+text of their own.
+
+| Text                                                                      | Where                                                         |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| A product page                                                            | `src/content/pages/<locale>/<slug>.yaml`, one file per locale |
+| The home page                                                             | `src/landing/copy.ts`                                         |
+| The agent page                                                            | `src/landing/agent-copy.ts`                                   |
+| Zeabur's features on its page, beside their ids and screenshots           | `src/landing/features.ts`                                     |
+| The catalog pages                                                         | `src/catalog/copy.ts`                                         |
+| The blog's own words                                                      | `src/blog/copy.ts`                                            |
+| Words on more than one page: header, footer, product list, section labels | `src/lib/chrome.ts`                                           |
+| Labels quoted from a product's screens, in the drawn scenes               | `src/landing/scenes/ui.ts`                                    |
+
+`src/lib/site-pages.ts` is the list of product pages. A page's row holds what is not text: its
+group, repository, docs page, sections and the way to start. A row needs a text file for every
+locale, and a text file needs a row; the build stops otherwise.
+
+The home page's screenshots are the docs
 screenshots of the zeabur repository (`docs/images/shots/`, from its `docs/shots.yaml`), taken at
 twice the pixel density: show every product image at half its width or less, with `sizes`.
 

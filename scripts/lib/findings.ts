@@ -37,7 +37,6 @@ export type FindingCode =
   | "component-unknown"
   | "component-props-literal"
   | "component-props-invalid"
-  | "page-translation-missing"
 
 export type Add = (
   level: Finding["level"],

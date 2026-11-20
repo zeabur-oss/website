@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: 推送 commit，拿到镜像 digest
@@ -57,4 +56,3 @@ start:
   title: 一个 Build，对应一个仓库
   sub: 单独使用时，一个 Build 写明 Git 仓库和构建方式。没写 ref 时跟随默认分支，status.resolvedRef 会写出是哪个分支。
   cta: 阅读 Builder 文档
----

@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: Push a commit, get an image digest
@@ -57,4 +56,3 @@ start:
   title: One Build per repository
   sub: Without Zeabur, a Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.
   cta: Read the Builder docs
----

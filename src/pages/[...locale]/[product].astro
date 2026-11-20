@@ -1,17 +1,17 @@
 ---
 import { getCollection } from "astro:content"
 import ProductPage from "../../landing/ProductPage.astro"
+import { pageSlugs } from "../../lib/site-pages.ts"
 import { localePaths } from "../../lib/urls.ts"
 
 export async function getStaticPaths() {
-  const pages = await getCollection("pages")
+  for (const { id } of await getCollection("pages")) {
+    const slug = id.slice(id.indexOf("/") + 1)
+    if (!pageSlugs.includes(slug))
+      throw new Error(`src/content/pages/${id}.yaml has no row in site-pages.ts`)
+  }
   return localePaths().flatMap(({ params, props }) =>
-    pages
-      .filter((page) => page.id.startsWith(`${props.locale}/`))
-      .map((page) => {
-        const product = page.id.slice(props.locale.length + 1)
-        return { params: { ...params, product }, props: { ...props, product } }
-      }),
+    pageSlugs.map((product) => ({ params: { ...params, product }, props: { ...props, product } })),
   )
 }
 const { locale, product } = Astro.props

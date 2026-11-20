@@ -27,13 +27,13 @@ const blog = defineCollection({
 })
 
 const text = z.string()
-// The site's own pages: src/content/pages/<locale>/<slug>.mdx, one file per locale with the same
-// slug (the row of src/lib/site-pages.ts says where the page shows up).
+// The text of the site's product pages: src/content/pages/<locale>/<slug>.yaml, one file per locale
+// for each row of src/lib/site-pages.ts.
 const pages = defineCollection({
   loader: glob({
     base: "./src/content/pages",
-    pattern: "**/*.mdx",
-    generateId: ({ entry }) => entry.replace(/\.mdx$/, ""),
+    pattern: "**/*.yaml",
+    generateId: ({ entry }) => entry.replace(/\.yaml$/, ""),
   }),
   schema: z.object({
     /** A page that is not released shows "Stay tuned" in place of its release tag. */

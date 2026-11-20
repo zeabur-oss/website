@@ -1,0 +1,51 @@
+---
+import { cn } from "cn"
+import { chrome } from "../../lib/chrome.ts"
+import SectionHead from "../blocks/SectionHead.astro"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, row, text: t, first } = Astro.props
+---
+
+<section class="wrap section frame" aria-labelledby="details">
+  <SectionHead
+    id="details"
+    number={number(first)}
+    kicker={chrome[locale].sections.details}
+    title={t.details.title}
+  />
+  <div class="-mx-(--gutter) overflow-x-auto px-(--gutter)" data-reveal>
+    <table class="w-full min-w-[36rem] border-collapse text-base">
+      <thead>
+        <tr>
+          {t.details.cols.map((c) => (
+            <th
+              scope="col"
+              class="border-b border-site-line-strong pr-4 pb-3 text-left type-body font-medium text-site-faint"
+            >
+              {c}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {t.details.rows.map((cells) => (
+          <tr>
+            {cells.map((cell, i) => (
+              <td
+                class={cn(
+                  "border-b border-site-line py-3.5 pr-4 align-top leading-[1.55] text-site-muted",
+                  i === 0 && "text-site-text",
+                  i === 0 && (row.monoNames ? "type-mono" : "font-medium"),
+                )}
+              >
+                {cell}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>

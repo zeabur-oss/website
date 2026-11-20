@@ -1,0 +1,34 @@
+---
+// Identity's sign-in and setup screens.
+import { chrome } from "../../lib/chrome.ts"
+import SectionHead from "../blocks/SectionHead.astro"
+import Shot from "../Shot.astro"
+import { identityShot, sizes } from "../shots.ts"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, row, text: t, first } = Astro.props
+const shots = t.shots
+if (!shots) throw new Error(`${row.slug} shows screens but its text has no shots`)
+const screens = ["sign-in", "setup"].map((name) => {
+  const caption = shots.captions[name]
+  if (!caption) throw new Error(`${row.slug} has no caption for ${name}`)
+  return { src: identityShot(name), caption }
+})
+---
+
+<section class="wrap section frame" aria-labelledby="shots">
+  <SectionHead
+    id="shots"
+    number={number(first)}
+    kicker={chrome[locale].sections.screens}
+    title={shots.title}
+  />
+  <div class="grid gap-10 md:grid-cols-2 md:gap-6">
+    {screens.map((s, i) => (
+      <div data-reveal style={`--i:${i}`}>
+        <Shot src={s.src} alt={s.caption} caption={s.caption} sizes={sizes.half} />
+      </div>
+    ))}
+  </div>
+</section>

@@ -1,10 +1,48 @@
-// The site's pages in the order the header and the home page list them. A page is one row here
-// and one src/content/pages/<locale>/<slug>.mdx per locale.
+// The site's pages in the order the header and the home page list them. This list is the only one:
+// each row is a route under every locale, and has a text file
+// src/content/pages/<locale>/<slug>.yaml for each locale.
 import { getEntry } from "astro:content"
+import {
+  builderExample,
+  catalogExample,
+  identityExample,
+  zeatendCommands,
+} from "../landing/examples.ts"
 import { productIcon, productName, releaseTag, type ProductId } from "./products.ts"
 import { productUrl, type SiteLocale } from "./urls.ts"
 
 export type NavGroup = "manage" | "install" | "components"
+
+/** The sections of a product page after its hero, in the order the page shows them. */
+export type Section =
+  /** Zeabur's jobs, each on its own screen. */
+  | "chapters"
+  /** The page's steps beside one stage. */
+  | "steps"
+  | "highlights"
+  /** The steps as a numbered list, for a page whose story is chapters. */
+  | "how"
+  | "features"
+  | "screens"
+  | "details"
+  | "start"
+
+/** What the start section offers. */
+type Start =
+  /** The ways to start Zeabur, as on the home page. */
+  | { kind: "ways" }
+  /**
+   * First steps, each with the commands its `code` names; the hero shows the commands named
+   * `quick`.
+   */
+  | { kind: "commands"; commands: Record<string, string> }
+  /** A file to copy beside the link to the docs. */
+  | { kind: "file"; file: string }
+  /**
+   * The release files whose names start with `files`, and the Homebrew cask that installs them,
+   * shown once the tap has it.
+   */
+  | { kind: "downloads"; files: string; cask?: string }
 
 type Row = {
   slug: string
@@ -16,39 +54,40 @@ type Row = {
   icon?: string
   /** The docs page to read first, under the repository's docs. */
   docs?: string
-  /**
-   * The release files the page offers, by the start of their names, and the Homebrew cask that
-   * installs them, shown once the tap has it.
-   */
-  downloads?: { files: string; cask?: string }
-  /** What the page's story walks through: Zeabur's jobs on its own screens, or the steps. */
-  story?: "chapters" | "steps"
-  /** The start section shows a file to copy instead of the three ways to start. */
-  example?: boolean
-  /** The page links to the catalog's browse page. */
+  sections: Section[]
+  start: Start
+  /** The hero links to the catalog's browse page. */
   browse?: boolean
   /** The first column of the details table holds names to copy, set in monospace. */
   monoNames?: boolean
 }
 
+const steps: Section[] = ["steps", "highlights", "details", "start"]
+
 const siteRows: Row[] = [
-  { slug: "zeabur", repo: "zeabur", group: "manage", story: "chapters" },
+  {
+    slug: "zeabur",
+    repo: "zeabur",
+    group: "manage",
+    sections: ["chapters", "highlights", "how", "features", "details", "start"],
+    start: { kind: "ways" },
+  },
   {
     slug: "desktop",
     repo: "zeabur",
     name: "Zeabur Desktop",
     icon: "desktop",
     docs: "install/desktop",
-    downloads: { files: "zeabur-desktop-", cask: "zeabur-oss/tap/zeabur-desktop" },
     group: "manage",
-    story: "steps",
+    sections: steps,
+    start: { kind: "downloads", files: "zeabur-desktop-", cask: "zeabur-oss/tap/zeabur-desktop" },
   },
   {
     slug: "zeatend",
     repo: "zeatend",
     group: "install",
-    story: "steps",
-    example: true,
+    sections: steps,
+    start: { kind: "commands", commands: zeatendCommands },
     monoNames: true,
   },
   {
@@ -56,36 +95,30 @@ const siteRows: Row[] = [
     repo: "identity",
     docs: "get-started",
     group: "components",
-    story: "steps",
-    example: true,
+    sections: ["steps", "highlights", "screens", "details", "start"],
+    start: { kind: "file", file: identityExample },
   },
-  { slug: "builder", repo: "builder", group: "components", story: "steps", example: true },
+  {
+    slug: "builder",
+    repo: "builder",
+    group: "components",
+    sections: steps,
+    start: { kind: "file", file: builderExample },
+  },
   {
     slug: "catalog",
     repo: "catalog",
     group: "components",
-    story: "steps",
-    example: true,
+    sections: steps,
+    start: { kind: "file", file: catalogExample },
     browse: true,
     monoNames: true,
   },
 ]
 
-export type SitePage = {
-  slug: string
-  name: string
-  icon: string
-  group: NavGroup
-  href: string
-  released: boolean
-  /** The release tag, once released. */
-  tag?: string
-  navLine: string
-  landingLine: string
-}
+export const pageSlugs = siteRows.map((r) => r.slug)
 
-export const pageEntry = (locale: SiteLocale, slug: string) =>
-  getEntry("pages", `${locale}/${slug}`)
+export type PageRow = ReturnType<typeof pageRow>
 
 /** The row of a page, with its name, icon and the release docs.lock.json pins for its repository. */
 export function pageRow(slug: string) {
@@ -101,14 +134,35 @@ export function pageRow(slug: string) {
   }
 }
 
-/** Every row for `locale`. */
+/** The text of a page in `locale`. */
+export async function pageText(locale: SiteLocale, slug: string) {
+  const entry = await getEntry("pages", `${locale}/${slug}`)
+  if (!entry) throw new Error(`no text for ${locale}/${slug}`)
+  return entry.data
+}
+
+export type PageText = Awaited<ReturnType<typeof pageText>>
+
+export type SitePage = {
+  slug: string
+  name: string
+  icon: string
+  group: NavGroup
+  href: string
+  released: boolean
+  /** The release tag, once released. */
+  tag?: string
+  navLine: string
+  landingLine: string
+}
+
+/** Every page for `locale`. */
 export async function sitePages(locale: SiteLocale): Promise<SitePage[]> {
   return Promise.all(
-    siteRows.map(async ({ slug }): Promise<SitePage> => {
+    pageSlugs.map(async (slug): Promise<SitePage> => {
       const row = pageRow(slug)
-      const entry = await pageEntry(locale, slug)
-      if (!entry) throw new Error(`no page ${locale}/${slug}`)
-      const released = entry.data.status === "released"
+      const text = await pageText(locale, slug)
+      const released = text.status === "released"
       return {
         slug,
         name: row.name,
@@ -117,8 +171,8 @@ export async function sitePages(locale: SiteLocale): Promise<SitePage[]> {
         href: productUrl(locale, slug),
         released,
         tag: released ? row.tag : undefined,
-        navLine: entry.data.lines.nav,
-        landingLine: entry.data.lines.landing,
+        navLine: text.lines.nav,
+        landingLine: text.lines.landing,
       }
     }),
   )

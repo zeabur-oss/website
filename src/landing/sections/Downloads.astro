@@ -1,0 +1,141 @@
+---
+// An app's downloads: the main button picks the file for the visitor's computer, then every file
+// by system and way to install.
+import Icon from "../../components/Icon.astro"
+import type { Os } from "../../lib/downloads.ts"
+import type { PageRow, PageText } from "../../lib/site-pages.ts"
+import { pageDownloads } from "./downloads.ts"
+
+interface Props {
+  row: PageRow
+  text: PageText
+  /** The docs page beside the main button. */
+  docs: string
+}
+const { row, text: t, docs } = Astro.props
+const download = await pageDownloads(row, t)
+if (!download) throw new Error(`${row.slug} offers no downloads`)
+const osNames: Record<Os, { name: string; icon: string }> = {
+  macos: { name: "macOS", icon: "apple-logo" },
+  windows: { name: "Windows", icon: "windows-logo" },
+  linux: { name: "Linux", icon: "linux-logo" },
+}
+---
+
+<div class="grid gap-12" data-reveal>
+  <div class="grid justify-items-start gap-3">
+    <div class="flex flex-wrap gap-3">
+      <a href={download.href} class="button primary" data-download>
+        <Icon name="download-simple" />
+        <span data-download-label>{download.words.button}</span>
+      </a>
+      <a href={docs} class="button">
+        {t.docs}
+        <Icon name="arrow-right" class="go" />
+      </a>
+    </div>
+    <p class="text-sm text-site-muted" data-download-caption hidden />
+  </div>
+  {download.table.length > 0 && (
+    <div id="downloads" class="grid scroll-mt-24 gap-6">
+      <h3 class="text-lg font-semibold">{download.words.all}</h3>
+      <div class="grid gap-8 md:grid-cols-3">
+        {download.table.map((group) => (
+          <div class="grid content-start gap-2">
+            <h4 class="flex items-center gap-2 font-semibold">
+              <Icon name={osNames[group.os].icon} class="size-5" />
+              {osNames[group.os].name}
+            </h4>
+            <ul class="grid border-t border-site-line">
+              {group.rows.map((line) => (
+                <li class="flex min-h-14 items-center justify-between gap-3 border-b border-site-line py-2">
+                  <span class="min-w-0">
+                    {download.words.kinds[line.kind]}
+                    <span class="ms-1.5 type-mono text-xs text-site-muted">{line.ext}</span>
+                  </span>
+                  <span class="flex shrink-0 gap-2">
+                    {line.builds.map((build) => (
+                      <a
+                        href={build.file.url}
+                        title={build.file.name}
+                        class="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-site-line px-2.5 text-sm text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
+                      >
+                        <Icon name="download-simple" class="size-4" />
+                        {download.archName(group.os, build.arch)}
+                      </a>
+                    ))}
+                  </span>
+                </li>
+              ))}
+              {group.os === "macos" && download.brew && (
+                <li class="grid gap-1.5 border-b border-site-line py-3">
+                  Homebrew
+                  <code class="type-mono text-xs break-all text-site-muted select-all">
+                    {download.brew}
+                  </code>
+                </li>
+              )}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <a
+        href={download.page}
+        class="inline-flex items-center gap-1.5 justify-self-start text-sm text-site-muted hover:text-site-text"
+      >
+        {download.words.releasePage}
+        <Icon name="arrow-up-right" class="size-4" />
+      </a>
+    </div>
+  )}
+  <script
+    type="application/json"
+    id="download-choices"
+    set:html={JSON.stringify(download.choices)}
+  />
+</div>
+
+<script>
+  import { detectPlatform } from "../../lib/downloads.ts"
+
+  // Points the download buttons at the file for this computer; without one they go to the list.
+  type Hints = { platform?: string; mobile?: boolean; architecture?: string }
+  type UserAgentData = {
+    platform: string
+    mobile: boolean
+    getHighEntropyValues(keys: string[]): Promise<Hints>
+  }
+  const isUserAgentData = (value: unknown): value is UserAgentData =>
+    typeof value === "object" && value !== null && "getHighEntropyValues" in value
+  async function hints(): Promise<Hints | undefined> {
+    const data: unknown = Reflect.get(navigator, "userAgentData")
+    if (!isUserAgentData(data)) return undefined
+    const named = { platform: data.platform, mobile: data.mobile }
+    try {
+      return { ...(await data.getHighEntropyValues(["architecture"])), ...named }
+    } catch {
+      return named
+    }
+  }
+  async function pointDownloads() {
+    const data = document.getElementById("download-choices")
+    if (!data) return
+    const choices: Record<string, { url: string; label: string; caption: string }> = JSON.parse(
+      data.textContent ?? "{}",
+    )
+    const platform = detectPlatform(navigator.userAgent, await hints())
+    const choice = platform && choices[`${platform.os}-${platform.arch}`]
+    if (!choice) return
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-download]")) {
+      link.href = choice.url
+    }
+    for (const label of document.querySelectorAll("[data-download-label]")) {
+      label.textContent = choice.label
+    }
+    for (const caption of document.querySelectorAll<HTMLElement>("[data-download-caption]")) {
+      caption.textContent = choice.caption
+      caption.hidden = false
+    }
+  }
+  document.addEventListener("astro:page-load", pointDownloads)
+</script>

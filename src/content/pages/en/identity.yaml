@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: kubectl signs in with a passkey, tokens last minutes
@@ -68,4 +67,3 @@ start:
   title: Start from one Ubuntu server
   sub: With Zeabur there is nothing to install. For standalone use, the guide installs k3s on an Ubuntu server, downloads and verifies Zeabur Identity, and signs you in with a passkey from your computer. On a cluster you already have, run these lines with your cluster-admin kubeconfig.
   cta: Read the getting-started guide
----

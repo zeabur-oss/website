@@ -1,0 +1,81 @@
+---
+import HeadingText from "../../components/HeadingText.astro"
+import Icon from "../../components/Icon.astro"
+import { catalogCopy } from "../../catalog/copy.ts"
+import { browseUrl } from "../../catalog/data.ts"
+import { chrome } from "../../lib/chrome.ts"
+import { githubOrg } from "../../lib/site.ts"
+import { docsUrl, localeInfo } from "../../lib/urls.ts"
+import CommandBlock from "../CommandBlock.astro"
+import { pageDownloads } from "./downloads.ts"
+import { command, type SectionProps } from "./section.ts"
+
+type Props = Omit<SectionProps, "first">
+const { locale, row, text: t } = Astro.props
+const released = t.status === "released"
+const docs = docsUrl(locale, row.repo, row.docs)
+const download = await pageDownloads(row, t)
+const quick =
+  row.start.kind === "commands" && t.start.hero && t.start.copy
+    ? { code: command(row.start.commands, "quick"), copy: t.start.copy }
+    : undefined
+---
+
+<section class="wrap hero frame">
+  <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
+    <Icon name={row.icon} class="size-4" />
+    <span translate="no">{row.name}</span>
+    {released ? (
+      <span class="pill">{row.tag}</span>
+    ) : (
+      <span class="pill">{chrome[locale].nav.soon}</span>
+    )}
+    {released && row.beta && <span class="pill">Beta</span>}
+  </p>
+  <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
+    <span class="text-site-faint zh:inline-block">
+      <HeadingText text={t.titleDim} />
+    </span>
+    {localeInfo(locale).titleGap}
+    <span class="zh:inline-block">
+      <HeadingText text={t.title} />
+    </span>
+  </h1>
+  <div
+    class="mt-10 flex flex-col items-start gap-8 md:mt-14 lg:max-w-[40rem]"
+    data-reveal
+    style="--i:1"
+  >
+    <p class="lead">
+      <HeadingText text={t.sub} />
+    </p>
+    <div class="flex flex-wrap gap-3">
+      {download && (
+        <a href={download.href} class="button primary" data-download>
+          <Icon name="download-simple" />
+          <span data-download-label>{download.words.button}</span>
+        </a>
+      )}
+      <a href={docs} class={download ? "button" : "button primary"}>
+        {t.docs}
+        <Icon name="arrow-right" class="go" />
+      </a>
+      {row.browse && (
+        <a href={browseUrl(locale)} class="button">
+          <Icon name="squares-four" />
+          {catalogCopy[locale].browse}
+        </a>
+      )}
+      <a href={`${githubOrg}/${row.repo}`} class="button">
+        <Icon name="github-logo" />
+        {t.source}
+      </a>
+    </div>
+    {quick && (
+      <div class="grid w-full gap-3">
+        <p class="body text-site-muted">{t.start.hero}</p>
+        <CommandBlock id="install-quick" code={quick.code} copy={quick.copy} />
+      </div>
+    )}
+  </div>
+</section>

@@ -1,0 +1,30 @@
+---
+import { chrome } from "../../lib/chrome.ts"
+import ItemText from "../blocks/ItemText.astro"
+import SectionHead from "../blocks/SectionHead.astro"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, text: t, first } = Astro.props
+---
+
+<section class="wrap section frame" aria-labelledby="highlights">
+  <SectionHead
+    id="highlights"
+    number={number(first)}
+    kicker={chrome[locale].sections.highlights}
+    dim={t.highlights.titleDim}
+    title={t.highlights.title}
+  />
+  <ul class="grid gap-x-6 md:grid-cols-3">
+    {t.highlights.items.map((item, i) => (
+      <li
+        class="flex flex-col gap-2 border-t border-site-line pt-5 pb-8"
+        data-reveal
+        style={`--i:${i}`}
+      >
+        <ItemText mark={item.tag} title={item.title} body={item.body} />
+      </li>
+    ))}
+  </ul>
+</section>

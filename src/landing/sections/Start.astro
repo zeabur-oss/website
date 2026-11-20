@@ -1,0 +1,100 @@
+---
+// How to start: the ways to start Zeabur, first steps with commands, a file to copy, or downloads.
+import HeadingText from "../../components/HeadingText.astro"
+import Icon from "../../components/Icon.astro"
+import { chrome } from "../../lib/chrome.ts"
+import { docsUrl } from "../../lib/urls.ts"
+import ItemText from "../blocks/ItemText.astro"
+import SectionHead from "../blocks/SectionHead.astro"
+import CommandBlock from "../CommandBlock.astro"
+import StartWays from "../StartWays.astro"
+import Downloads from "./Downloads.astro"
+import { command, number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, row, text: t, first } = Astro.props
+const start = row.start
+const label = chrome[locale].sections.start
+const docs = docsUrl(locale, row.repo, row.docs)
+const commands = start.kind === "commands" ? start.commands : undefined
+const steps =
+  commands && t.start.steps && t.start.copy
+    ? {
+        copy: t.start.copy,
+        list: t.start.steps.map((s) => ({ ...s, key: s.code, code: command(commands, s.code) })),
+        docs: t.start.anchor ? `${docs}#${encodeURIComponent(t.start.anchor)}` : docs,
+      }
+    : undefined
+if (commands && !steps) throw new Error(`${row.slug} starts with commands but has no steps`)
+---
+
+<section class="wrap section frame" aria-labelledby="start">
+  {start.kind === "file" ? (
+    <div class="grid12">
+      <div class="flex flex-col items-start gap-4 lg:col-[1/6]" data-reveal>
+        <p class="index label">
+          <span>{number(first)}</span>
+          <span>{label}</span>
+        </p>
+        <h2 id="start">
+          <HeadingText text={t.start.title} />
+        </h2>
+        <p class="lead">
+          <HeadingText text={t.start.sub} />
+        </p>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <a href={docs} class="button primary">
+            {t.start.cta}
+            <Icon name="arrow-right" class="go" />
+          </a>
+        </div>
+      </div>
+      <pre
+        class="min-w-0 self-start overflow-x-auto rounded-lg border border-site-line bg-site-bg-soft px-5 py-4 type-mono leading-[1.65] lg:col-[6/13]"
+        data-reveal
+        style="--i:1"
+      ><code>{start.file}</code></pre>
+    </div>
+  ) : (
+    <>
+      <SectionHead
+        id="start"
+        number={number(first)}
+        kicker={label}
+        title={t.start.title}
+        lead={t.start.sub}
+      />
+      {start.kind === "ways" && <StartWays locale={locale} />}
+      {start.kind === "downloads" && <Downloads row={row} text={t} docs={docs} />}
+      {steps && (
+        <>
+          <ol class="grid">
+            {steps.list.map((step, i) => (
+              <li
+                class="grid12 gap-y-4 border-t border-site-line pt-5 pb-8"
+                data-reveal
+                style={`--i:${i}`}
+              >
+                <div class="flex flex-col gap-2 lg:col-[1/6]">
+                  <ItemText mark={number(i)} title={step.title} body={step.body} accent />
+                </div>
+                <CommandBlock
+                  id={`install-${step.key}`}
+                  code={step.code}
+                  copy={steps.copy}
+                  class="self-start lg:col-[6/13]"
+                />
+              </li>
+            ))}
+          </ol>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <a href={steps.docs} class="button primary">
+              {t.start.cta}
+              <Icon name="arrow-right" class="go" />
+            </a>
+          </div>
+        </>
+      )}
+    </>
+  )}
+</section>
