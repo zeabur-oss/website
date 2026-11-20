@@ -79,10 +79,24 @@ test("language links and hreflang alternates go to built pages", () => {
   expect(missing).toEqual([])
 })
 
-test("every link in llms.txt is a built page", () => {
-  const text = readFileSync(join(import.meta.dir, "..", "public", "llms.txt"), "utf8")
+test("every link in llms.txt is a built Markdown page", () => {
+  const text = readFileSync(join(dist, "llms.txt"), "utf8")
   const missing = [...text.matchAll(/\]\(https:\/\/oss\.zeabur\.com(\/[^)]*)\)/g)]
     .map((match) => group(match))
-    .filter((path) => !existsSync(join(dist, path, "index.html")))
+    .filter((path) => !path.endsWith(".md") || !existsSync(join(dist, path)))
+  expect(missing).toEqual([])
+})
+
+test("every docs page links to its built Markdown copy", () => {
+  const missing: string[] = []
+  for (const page of pages(join(dist, "docs"))) {
+    const html = readFileSync(page, "utf8")
+    if (html.includes('http-equiv="refresh"')) continue
+    const link =
+      /<link rel="alternate" type="text\/markdown" href="https:\/\/oss\.zeabur\.com([^"]+)"/.exec(
+        html,
+      )
+    if (!link || !existsSync(join(dist, group(link)))) missing.push(page.slice(dist.length))
+  }
   expect(missing).toEqual([])
 })

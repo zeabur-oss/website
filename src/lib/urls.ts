@@ -34,6 +34,11 @@ export function docsUrl(locale: string, repo: string, slug = "index") {
   return `${localePrefix(locale)}/docs/${repo}${slug === "index" ? "" : `/${slug}`}`
 }
 
+/** The Markdown copy of a page (scripts/sync-docs.ts): its path plus `.md`, or `index.md` after a slash. */
+export function markdownPath(pathname: string) {
+  return pathname.endsWith("/") ? `${pathname}index.md` : `${pathname}.md`
+}
+
 /** Route params for a page in every locale: English at the root, the others under their prefix. */
 export const localePaths = () =>
   locales.map((locale) => ({

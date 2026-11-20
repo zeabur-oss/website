@@ -1,15 +1,18 @@
 // Reads each repository's docs/ at the tag in docs.lock.json and writes what Starlight reads:
 // src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and content/nav.json (the sidebar),
-// content/catalog.json (the catalog's components and templates), and the images and social images
-// under public/.
+// content/catalog.json (the catalog's components and templates), the images and social images
+// under public/, and for agents a Markdown copy of each page at its URL plus `.md` and /llms.txt.
 //   bun scripts/sync-docs.ts
-import { copyFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs"
+import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { stringify as toYaml } from "yaml"
 import sharp from "sharp"
-import { docsUrl, localePrefix, locales } from "../src/lib/urls.ts"
+import { docsUrl, localePrefix, locales, markdownPath, siteOrigin } from "../src/lib/urls.ts"
+import { rewriteHref, rewriteSrc, type Context } from "../src/mdx/remark-docs.ts"
 import { group } from "../src/lib/capture.ts"
 import { readRepoDocs, readText, splitFrontmatter, type RepoDocs } from "./lib/docs.ts"
+import { llmsTxt } from "./lib/llms.ts"
+import { toMarkdown } from "./lib/markdown.ts"
 import { readLock, root, snapshot, type LockRepo, type Snapshot } from "./lib/repos.ts"
 import {
   readComponents,
@@ -23,6 +26,7 @@ export type SitePage = {
   slug: string
   locale: string
   title: string
+  description?: string
   /** The repository path the content comes from. */
   source: string
   /** The language the content is written in; differs from `locale` for a fallback. */
@@ -165,6 +169,9 @@ export async function sync() {
   const lock = readLock()
   rmSync(content, { recursive: true, force: true })
   rmSync(pagesDir, { recursive: true, force: true })
+  for (const locale of locales) {
+    rmSync(join(publicDir, localePrefix(locale), "docs"), { recursive: true, force: true })
+  }
   const nav: SiteNav = {}
   const site: SiteData = { repos: [], pages: {}, redirects: [] }
   const links: Record<string, RepoLinks> = {}
@@ -189,6 +196,7 @@ export async function sync() {
           slug: page.slug,
           locale,
           title: frontmatter.title,
+          description: frontmatter.description,
           source,
           contentLocale,
         }
@@ -233,6 +241,45 @@ export async function sync() {
   writeFile(join(content, "nav.json"), JSON.stringify(nav, null, 2))
   if (!catalog) throw new Error("docs.lock.json: the catalog pages need the catalog repository")
   writeFile(join(content, "catalog.json"), JSON.stringify(catalog, null, 2))
+  writeMarkdown(site, links)
+  writeFile(join(publicDir, "llms.txt"), llmsTxt(nav.en ?? {}, site))
+}
+
+/** Each page in each locale as Markdown, at its URL plus `.md`, with absolute links. */
+function writeMarkdown(site: SiteData, links: Record<string, RepoLinks>) {
+  const files = new Map(
+    Object.values(links).map((repo) => [
+      repo.name,
+      {
+        files: new Set(repo.files),
+        translations: repo.translations,
+        published: new Set(repo.published),
+      },
+    ]),
+  )
+  for (const page of Object.values(site.pages)) {
+    const repo = links[page.repo]
+    const repoFiles = files.get(page.repo)
+    if (!repo || !repoFiles) continue
+    const context: Context = { page, repo, files: repoFiles }
+    const absolute = (url: string) => (url.startsWith("/") ? siteOrigin + url : url)
+    const pageUrl = docsUrl(page.locale, page.repo, page.slug)
+    const ext = page.source.endsWith(".mdx") ? ".mdx" : ".md"
+    const { body } = splitFrontmatter(
+      readFileSync(pagePath(page.locale, page.repo, page.slug, ext), "utf8"),
+    )
+    const markdown = toMarkdown({
+      title: page.title,
+      description: page.description,
+      body,
+      mdx: ext === ".mdx",
+      url: (href, image) =>
+        href.startsWith("#")
+          ? siteOrigin + pageUrl + href
+          : absolute(image ? rewriteSrc(href, context) : rewriteHref(href, context)),
+    })
+    writeFile(join(publicDir, markdownPath(pageUrl).slice(1)), markdown)
+  }
 }
 
 if (import.meta.main) await sync()
