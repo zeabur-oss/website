@@ -1,8 +1,10 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "jsPlugins": ["@zeabur-oss/design-system/lint"],
+  "jsPlugins": ["@zeabur-oss/design-system/lint", "./lint/no-unsound-cast.js"],
   "rules": {
     "zeabur/no-unguarded-motion": "error",
+    "typescript/no-explicit-any": "error",
+    "casts/no-unsound-cast": "error",
     "no-restricted-imports": [
       "error",
       {
