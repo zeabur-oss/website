@@ -13,7 +13,7 @@ docs: Read the Zeatend docs
 source: Source on GitHub
 highlights:
   titleDim: After the install,
-  title: Zeatend keeps looking after it.
+  title: Zeatend checks, grows and upgrades it.
   items:
     - tag: doctor
       title: Checks the host and the cluster
@@ -23,7 +23,7 @@ highlights:
       body: Run zeatend node add on a server. It prints the configuration, the commands and the join token for the new VM, on K3s and RKE2 clusters.
     - tag: upgrade
       title: One minor version at a time
-      body: apply from a newer Zeatend upgrades the cluster, servers first, then workers. When a step would break the Kubernetes version skew policy, apply changes nothing and names the release to apply first.
+      body: apply from a newer Zeatend upgrades the host it runs on. Upgrade the servers one at a time, then the workers. When a step would break the Kubernetes version skew policy, apply changes nothing and names the release to apply first.
 how:
   titleDim: In your terminal,
   title: review the plan, then install.
@@ -31,9 +31,9 @@ how:
     - title: Choose a distribution
       body: The screen shows the host and the results of its checks. Choose K3s, RKE2 or KubeSolo, each hardened to the CIS benchmark.
     - title: Review the install plan
-      body: Fill in the API server's address and DNS name and the node name, and the screen lists the release and the node name it will install. If the host changes after you review the plan, Zeatend changes nothing.
+      body: Fill in the API server's address, its DNS name and the node name. The screen lists the release and the settings to install, and the install starts only once you confirm.
     - title: Install
-      body: The install runs in a systemd unit and goes on when the SSH session ends. Run sudo zeatend again to follow its progress.
+      body: On a host with systemd, the install runs in a systemd unit and goes on when the SSH session ends. Run sudo zeatend apply again to follow its progress.
 details:
   title: The commands
   cols:
@@ -54,6 +54,6 @@ details:
       - Removes the cluster and the files Zeatend wrote; volumes go only with --delete-volumes
 start:
   title: Download it on the server and run it
-  sub: Zeatend runs as root on the Linux server it installs, with builds for amd64 and arm64. To skip the screens, write the settings to /etc/zeatend/config.yaml and run zeatend apply.
+  sub: Run Zeatend as root on the Linux server that becomes the cluster. It has builds for amd64 and arm64. To skip the screens, write the settings to /etc/zeatend/config.yaml and run zeatend apply.
   cta: Read the Zeatend docs
 ---

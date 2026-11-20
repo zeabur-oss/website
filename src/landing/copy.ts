@@ -258,7 +258,7 @@ const zhCN: LandingCopy = {
     },
     zeatend: {
       title: "用 Zeatend 一步步安装",
-      body: "在服务器上运行 Zeatend，按终端里的界面选好发行版和配置，就能把这台服务器装成 Kubernetes 集群。集群装好后，再用 Helm chart 装上 Zeabur。",
+      body: "在服务器上运行 Zeatend，在终端界面里选好发行版和配置，就能把这台服务器装成 Kubernetes 集群。集群装好后，再用 Helm chart 装上 Zeabur。",
       steps: "Zeatend 的安装步骤",
       cluster: "用 Helm chart 装上 Zeabur",
     },

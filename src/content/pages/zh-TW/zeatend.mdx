@@ -23,7 +23,7 @@ highlights:
       body: 在 server 上執行 zeatend node add，畫面會印出新 VM 要用的設定、指令和 join token，K3s 和 RKE2 叢集都能用。
     - tag: upgrade
       title: 一次升一個小版本
-      body: 用新版的 Zeatend 執行 apply 就會升級叢集，先升 server 再升 worker。版本差距超出 Kubernetes 的版本偏差政策時，apply 不做任何變更，並告訴你要先套用哪個版本。
+      body: 用新版的 Zeatend 執行 apply，就會升級這台主機。先一台一台升級 server，再升級 worker。版本差距超出 Kubernetes 的版本偏差政策時，apply 不做任何變更，並告訴你要先套用哪個版本。
 how:
   titleDim: 在終端機裡，
   title: 看過計畫才安裝
@@ -31,9 +31,9 @@ how:
     - title: 選擇發行版
       body: 畫面顯示主機資訊和檢查結果，讓你選擇 K3s、RKE2 或 KubeSolo，三種都依 CIS 基準強化。
     - title: 確認安裝計畫
-      body: 填好 API 伺服器的位址、DNS 名稱和節點名稱後，畫面列出要安裝的版本和節點名稱。主機在你看過計畫後有了變化，Zeatend 就不做任何變更。
+      body: 填好 API 伺服器的位址、DNS 名稱和節點名稱後，畫面列出要安裝的版本和設定，你確認後才開始安裝。
     - title: 開始安裝
-      body: 安裝在 systemd 單元裡執行，SSH 斷線也不會中斷。再執行一次 sudo zeatend，就能接著看進度。
+      body: 主機有 systemd 時，安裝在 systemd 單元裡執行，SSH 斷線也不會中斷。再執行一次 sudo zeatend apply，就能接著看進度。
 details:
   title: 常用的指令
   cols:
@@ -54,6 +54,6 @@ details:
       - 移除叢集和 Zeatend 寫入的檔案；加上 --delete-volumes 才會刪除磁碟區
 start:
   title: 在伺服器上下載並執行
-  sub: Zeatend 要以 root 身分，在它安裝的那台 Linux 伺服器上執行，有 amd64 和 arm64 兩種版本。不想開畫面時，把設定寫進 /etc/zeatend/config.yaml，再執行 zeatend apply。
+  sub: 在要裝成叢集的那台 Linux 伺服器上，以 root 身分執行 Zeatend，有 amd64 和 arm64 兩種版本。不想開畫面時，把設定寫進 /etc/zeatend/config.yaml，再執行 zeatend apply。
   cta: 閱讀 Zeatend 文件
 ---
