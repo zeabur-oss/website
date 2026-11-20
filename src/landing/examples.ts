@@ -44,7 +44,7 @@ zeabur-identityctl setup-link --username admin`
 const zeatendTag = releaseTag("zeatend")
 const zeatendArch = `arch=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')`
 const zeatendInstall = "sudo install -m 0755 zeatend /usr/local/bin/zeatend"
-export const zeatendExample = `version=${zeatendTag}
+const zeatendExample = `version=${zeatendTag}
 ${zeatendArch}
 base=https://github.com/zeabur-oss/zeatend/releases/download/$version
 curl -fsSLO "$base/zeatend-$version-linux-$arch.tar.gz" &&

@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: 用 Zeabur 管理现有的集群
@@ -79,4 +78,3 @@ start:
   title: 下载 Zeabur Desktop
   sub: 按钮会选好适合你电脑的版本，其他版本都列在下面。目前没有适用于 Intel Mac 和 Arm 架构 Windows 的版本。
   cta: 下载 Zeabur Desktop
----

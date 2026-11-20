@@ -1,5 +1,5 @@
-// The words around every page: header, footer, the product list. Product pages and the landing
-// have their own copy in src/landing/.
+// Words on more than one page: the header, the footer, the product list and the product pages'
+// section labels. CONTRIBUTING.md lists where every other text lives.
 import type { ProductId } from "./products.ts"
 import type { SiteLocale } from "./urls.ts"
 
@@ -31,6 +31,8 @@ type Chrome = {
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { short: string }>
   footer: { about: string; license: string; products: string; resources: string; source: string }
+  /** The labels of the product pages' sections. */
+  sections: Record<"how" | "highlights" | "screens" | "features" | "details" | "start", string>
 }
 
 const zhTW: Chrome = {
@@ -82,6 +84,14 @@ const zhTW: Chrome = {
     resources: "資源",
     source: "原始碼",
   },
+  sections: {
+    how: "運作方式",
+    highlights: "重點",
+    screens: "畫面",
+    features: "功能",
+    details: "範圍",
+    start: "開始",
+  },
 }
 
 const zhCN: Chrome = {
@@ -132,6 +142,14 @@ const zhCN: Chrome = {
     products: "项目",
     resources: "资源",
     source: "源代码",
+  },
+  sections: {
+    how: "运作方式",
+    highlights: "要点",
+    screens: "画面",
+    features: "功能",
+    details: "范围",
+    start: "开始",
   },
 }
 
@@ -192,6 +210,14 @@ const en: Chrome = {
     products: "Projects",
     resources: "Resources",
     source: "Source",
+  },
+  sections: {
+    how: "How it works",
+    highlights: "Highlights",
+    screens: "Screens",
+    features: "Features",
+    details: "Scope",
+    start: "Get started",
   },
 }
 

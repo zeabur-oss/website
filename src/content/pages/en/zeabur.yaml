@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: A web interface to deploy and run services on your cluster
@@ -63,4 +62,3 @@ start:
   title: Start with what you have
   sub: All three open the same interface. They differ in where Zeabur runs and whose credential it uses.
   cta: Install on one server
----

@@ -1,13 +1,11 @@
 // Checks a repository's docs/ (nav.yaml, links, redirects, frontmatter, MDX components)
-// and lists stale translations. With no argument it also checks the site's own pages, which
-// need the same slug in every locale. Exits 1 on errors only.
+// and lists stale translations. Exits 1 on errors only.
 //   bun scripts/docs-check.ts                            every repository in docs.lock.json
 //   bun scripts/docs-check.ts <dir> [--base <rev>]       a working tree, as each repository's CI does
 import { basename, resolve } from "node:path"
 import { parseArgs } from "node:util"
 import { checkRepo } from "./lib/check.ts"
 import type { Finding } from "./lib/findings.ts"
-import { checkSitePages } from "./lib/site-pages.ts"
 import { fromDirectory, fromRevision, readLock, snapshot, type Snapshot } from "./lib/repos.ts"
 
 const { values, positionals } = parseArgs({
@@ -43,11 +41,5 @@ for (const { snap, base } of targets) {
     const line = f.line === undefined ? "" : `line ${f.line}: `
     console.log(`  ${f.level.padEnd(7)} ${f.file}: ${line}${f.message}`)
   }
-}
-if (!positionals.length) {
-  const pages = checkSitePages("src/content/pages")
-  errors += pages.length
-  console.log(`site pages: ${pages.length} errors`)
-  for (const f of pages) console.log(`  ${f.level.padEnd(7)} ${f.file}: ${f.message}`)
 }
 process.exit(errors ? 1 : 0)

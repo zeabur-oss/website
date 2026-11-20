@@ -7,7 +7,7 @@ import { catalog } from "../../catalog/data.ts"
 import { landingCopy } from "../../landing/copy.ts"
 import { chrome } from "../../lib/chrome.ts"
 import { productIds, productName, type ProductId } from "../../lib/products.ts"
-import { pageRow } from "../../lib/site-pages.ts"
+import { pageRow, pageSlugs, pageText } from "../../lib/site-pages.ts"
 import { renderOg, type OgCard } from "../../lib/og.ts"
 import { summary } from "../../lib/seo.ts"
 import { localeInfo, locales, type SiteLocale } from "../../lib/urls.ts"
@@ -43,13 +43,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
       han: han(locale),
     })
     add(`404/${locale}`, { kicker: "404", ...notFound[locale], han: han(locale) })
-    for (const page of await getCollection("pages")) {
-      const slug = page.id.slice(locale.length + 1)
-      if (!page.id.startsWith(`${locale}/`) || slug === pageRow(slug).repo) continue
+    for (const slug of pageSlugs) {
+      const row = pageRow(slug)
+      if (slug === row.repo) continue
+      const text = await pageText(locale, slug)
       add(`${slug}/${locale}`, {
-        kicker: pageRow(slug).name,
-        title: `${page.data.titleDim}${localeInfo(locale).titleGap}${page.data.title}`,
-        sub: page.data.meta.description,
+        kicker: row.name,
+        title: `${text.titleDim}${localeInfo(locale).titleGap}${text.title}`,
+        sub: text.meta.description,
         han: han(locale),
       })
     }

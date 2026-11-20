@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: CI 測試過的叢集元件和應用程式範本
@@ -78,4 +77,3 @@ start:
   title: 讀一個元件檔
   sub: 單獨使用時，叢集管理員會先裝好元件。每個元件都長這樣：說明為什麼推薦、授權、依賴哪些能力，以及要裝的 chart 和版本。
   cta: 閱讀 Catalog 說明
----

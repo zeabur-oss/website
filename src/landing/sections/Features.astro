@@ -1,0 +1,22 @@
+---
+import { chrome } from "../../lib/chrome.ts"
+import FeatureIndex from "../blocks/FeatureIndex.astro"
+import SectionHead from "../blocks/SectionHead.astro"
+import { featureCopy } from "../features.ts"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, first } = Astro.props
+const f = featureCopy[locale]
+---
+
+<section class="wrap section frame" id="features" aria-labelledby="features-title">
+  <SectionHead
+    id="features-title"
+    number={number(first)}
+    kicker={chrome[locale].sections.features}
+    title={f.index.title}
+    lead={f.index.lead}
+  />
+  <FeatureIndex locale={locale} />
+</section>

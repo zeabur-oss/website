@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: 把 Linux 伺服器裝成 Kubernetes 叢集
@@ -72,4 +71,3 @@ start:
     label: 複製指令
     done: 已複製
     failed: 無法複製
----

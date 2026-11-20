@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: 用通行密鑰登入 kubectl，權杖幾分鐘就到期
@@ -68,4 +67,3 @@ start:
   title: 從一台 Ubuntu 伺服器開始
   sub: 用 Zeabur 的話不用另外安裝。單獨使用時，入門指南會在 Ubuntu 伺服器裝好 k3s，下載並驗證 Zeabur Identity，再從你的電腦用通行密鑰登入。既有叢集用叢集管理員的 kubeconfig 執行下面幾行。
   cta: 閱讀入門指南
----

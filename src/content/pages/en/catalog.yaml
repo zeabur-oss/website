@@ -1,4 +1,3 @@
----
 status: released
 lines:
   nav: Cluster components and app templates, tested in CI
@@ -78,4 +77,3 @@ start:
   title: Read one component file
   sub: "Without Zeabur, a cluster admin installs the components first. Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install."
   cta: About Catalog
----

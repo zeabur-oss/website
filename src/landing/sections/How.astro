@@ -1,0 +1,30 @@
+---
+import { chrome } from "../../lib/chrome.ts"
+import ItemText from "../blocks/ItemText.astro"
+import SectionHead from "../blocks/SectionHead.astro"
+import { number, type SectionProps } from "./section.ts"
+
+type Props = SectionProps
+const { locale, text: t, first } = Astro.props
+---
+
+<section class="wrap section frame" aria-labelledby="how">
+  <SectionHead
+    id="how"
+    number={number(first)}
+    kicker={chrome[locale].sections.how}
+    dim={t.how.titleDim}
+    title={t.how.title}
+  />
+  <ol class="grid gap-x-6 md:grid-cols-3">
+    {t.how.steps.map((step, i) => (
+      <li
+        class="flex flex-col gap-2 border-t border-site-line pt-5 pb-8"
+        data-reveal
+        style={`--i:${i}`}
+      >
+        <ItemText mark={number(i)} title={step.title} body={step.body} accent />
+      </li>
+    ))}
+  </ol>
+</section>
