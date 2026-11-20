@@ -47,19 +47,19 @@ const zeatendInstall = "sudo install -m 0755 zeatend /usr/local/bin/zeatend"
 export const zeatendExample = `version=${zeatendTag}
 ${zeatendArch}
 base=https://github.com/zeabur-oss/zeatend/releases/download/$version
-curl -fsSLO "$base/zeatend-$version-linux-$arch.tar.gz"
-curl -fsSLO "$base/SHA256SUMS"
-sha256sum --ignore-missing -c SHA256SUMS
-tar -xzf "zeatend-$version-linux-$arch.tar.gz" zeatend
-${zeatendInstall}`
+curl -fsSLO "$base/zeatend-$version-linux-$arch.tar.gz" &&
+  curl -fsSLO "$base/SHA256SUMS" &&
+  sha256sum --ignore-missing -c SHA256SUMS &&
+  tar -xzf "zeatend-$version-linux-$arch.tar.gz" zeatend &&
+  ${zeatendInstall}`
 
 /** The commands of the Zeatend page: the hero's short path and one block for each start step. */
 export const zeatendCommands: Record<string, string> = {
   quick: `${zeatendArch}
 url=https://github.com/zeabur-oss/zeatend/releases/download/${zeatendTag}
-curl -fsSL "$url/zeatend-${zeatendTag}-linux-$arch.tar.gz" | tar -xzf - zeatend
-${zeatendInstall}
-sudo zeatend`,
+curl -fsSL "$url/zeatend-${zeatendTag}-linux-$arch.tar.gz" | tar -xzf - zeatend &&
+  ${zeatendInstall} &&
+  sudo zeatend`,
   download: zeatendExample,
   install: "sudo zeatend",
   check: "sudo zeatend doctor",
