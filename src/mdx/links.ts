@@ -1,4 +1,5 @@
 import { posix } from "node:path"
+import { group } from "../lib/capture.ts"
 import { siteOrigin } from "../lib/urls.ts"
 
 export type LinkTarget =
@@ -35,8 +36,7 @@ export function githubDocsLink(href: string) {
 export function githubFileLink(href: string) {
   const match = githubFile.exec(href)
   if (!match) return undefined
-  const [, github, path, hash = ""] = match
-  return { github: github!, path: path!, hash }
+  return { github: group(match), path: group(match, 2), hash: match[3] ?? "" }
 }
 
 /** Files a page may link to on the site: what sync-docs.ts copies to /docs-assets/<repo>/. */
@@ -48,9 +48,8 @@ export function slugOfPath(path: string, translations: string[]): string | undef
   if (path === "README.md") return "index"
   const match = /^docs\/(.+)\.mdx?$/.exec(path)
   if (!match) return undefined
-  const parts = match[1]!.split("/")
-  if (translations.includes(parts[0]!)) parts.shift()
-  return parts.join("/")
+  const [first = "", ...rest] = group(match).split("/")
+  return (translations.includes(first) ? rest : [first, ...rest]).join("/")
 }
 
 /** What a link or image reference in the repository file `from` points to. */
@@ -92,8 +91,12 @@ export function classifyLink(href: string, from: string, repo: RepoFiles): LinkT
 export function resolveImage(path: string, repo: RepoFiles) {
   if (repo.files.has(path)) return path
   const match = /^docs\/([^/]+)\/(images\/.+)$/.exec(path)
-  if (match && repo.translations.includes(match[1]!) && repo.files.has(`docs/${match[2]}`)) {
-    return `docs/${match[2]}`
+  if (
+    match &&
+    repo.translations.includes(group(match)) &&
+    repo.files.has(`docs/${group(match, 2)}`)
+  ) {
+    return `docs/${group(match, 2)}`
   }
   return undefined
 }

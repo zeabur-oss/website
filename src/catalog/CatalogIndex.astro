@@ -207,14 +207,16 @@ const kinds = [
 </Site>
 
 <script>
+  import { dataOf, required } from "../lib/dom.ts"
+
   function setUp() {
     const form = document.querySelector<HTMLFormElement>("[data-catalog-search]")
     if (!form) return
-    const input = form.querySelector<HTMLInputElement>("input[name=q]")!
-    const status = form.querySelector<HTMLElement>("[role=status]")!
-    const none = document.querySelector<HTMLElement>("[data-none]")!
+    const input = required<HTMLInputElement>(form, "input[name=q]")
+    const status = required<HTMLElement>(form, "[role=status]")
+    const none = required<HTMLElement>(document, "[data-none]")
     const groups = [...document.querySelectorAll<HTMLElement>("[data-group]")]
-    const total = status.dataset.total!
+    const total = dataOf(status, "total")
 
     const apply = () => {
       const kind = new FormData(form).get("kind") || ""
@@ -223,24 +225,25 @@ const kinds = [
       for (const group of groups) {
         let count = 0
         for (const item of group.querySelectorAll<HTMLElement>("li[data-search]")) {
-          const match = words.every((w) => item.dataset.search!.includes(w))
+          const match = words.every((w) => dataOf(item, "search").includes(w))
           item.hidden = !match
           if (match) count++
         }
-        group.querySelector("[data-count]")!.textContent = String(count)
+        required(group, "[data-count]").textContent = String(count)
         group.hidden = count === 0 || (kind !== "" && group.dataset.group !== kind)
         if (!group.hidden) shown += count
       }
       none.hidden = shown > 0
-      const line = words.length || kind ? status.dataset.some! : status.dataset.all!
+      const line = words.length || kind ? dataOf(status, "some") : dataOf(status, "all")
       status.textContent = line.replace("{count}", String(shown)).replace("{total}", total)
       const url = new URL(location.href)
-      for (const [key, value] of [
+      const fields: [string, string][] = [
         ["q", input.value.trim()],
         ["kind", String(kind)],
-      ]) {
-        if (value) url.searchParams.set(key!, value)
-        else url.searchParams.delete(key!)
+      ]
+      for (const [key, value] of fields) {
+        if (value) url.searchParams.set(key, value)
+        else url.searchParams.delete(key)
       }
       history.replaceState(history.state, "", url)
     }

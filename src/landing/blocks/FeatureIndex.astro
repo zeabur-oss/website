@@ -13,8 +13,8 @@ const names = groupNames[locale]
 const t = featureCopy[locale]
 const groups = Object.keys(names) as GroupId[]
 const href = (doc: string) => {
-  const [repo, ...rest] = doc.split("/")
-  return docsUrl(locale, repo!, rest.join("/") || "index")
+  const [repo = "", ...rest] = doc.split("/")
+  return docsUrl(locale, repo, rest.join("/") || "index")
 }
 const featureName = "leading-normal font-semibold text-site-text no-underline"
 ---

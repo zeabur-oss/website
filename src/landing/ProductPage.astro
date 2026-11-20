@@ -31,7 +31,8 @@ interface Props {
 const { locale, slug } = Astro.props
 const spec = pageRow(slug)
 const id = spec.repo
-const page = (await pageEntry(locale, slug))!
+const page = await pageEntry(locale, slug)
+if (!page) throw new Error(`no page ${locale}/${slug}`)
 const t = page.data
 const released = t.status === "released"
 const chaptered = spec.story === "chapters"
@@ -96,7 +97,7 @@ const story = chaptered
       panel: undefined,
     }))
 const stage = chaptered
-  ? { panels: story.map((c) => c.panel!) }
+  ? { panels: story.flatMap((c) => (c.panel ? [c.panel] : [])) }
   : stageOf(id as Exclude<typeof id, "zeabur">, productShots["sign-in"] ?? "")
 const sections = [
   "highlights",

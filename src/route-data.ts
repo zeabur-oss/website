@@ -24,7 +24,8 @@ export const onRequest = defineRouteMiddleware(async (context) => {
   await searchHead(route, context.url.pathname)
   const data = route.entry.data as { repo?: string; sourcePath?: string }
   if (!data.repo) return
-  const repo = site.repos.find((r) => r.name === data.repo)!
+  const repo = site.repos.find((r) => r.name === data.repo)
+  if (!repo) return
   const here = context.url.pathname.replace(/\/$/, "")
   const links: SidebarLink[] = []
   const link = (item: { label: string; href: string }): SidebarLink => {
@@ -64,7 +65,18 @@ export const onRequest = defineRouteMiddleware(async (context) => {
   route.editUrl = new URL(`https://github.com/${repo.github}/blob/main/${data.sourcePath}`)
 })
 
-let written: Map<string, string> | undefined
+let writtenIn: Map<string, string> | undefined
+
+/** The language each docs page is written in, by its lower-cased path. */
+async function writtenLanguages() {
+  writtenIn ??= new Map(
+    (await getCollection("docs")).map((e) => [
+      `/${e.id}`.toLowerCase(),
+      (e.data as { contentLocale?: string }).contentLocale ?? "",
+    ]),
+  )
+  return writtenIn
+}
 
 /**
  * A page shown in another language because it has no translation (scripts/sync-docs.ts copies
@@ -72,18 +84,13 @@ let written: Map<string, string> | undefined
  * only the languages it is really written in.
  */
 async function searchHead(route: StarlightRouteData, pathname: string) {
-  written ??= new Map(
-    (await getCollection("docs")).map((e) => [
-      `/${e.id}`.toLowerCase(),
-      (e.data as { contentLocale?: string }).contentLocale ?? "",
-    ]),
-  )
+  const written = await writtenLanguages()
   const data = route.entry.data as { title: string; description?: string; contentLocale?: string }
   const here = pathname.replace(/\/$/, "")
   const prefix = localePrefix(route.lang)
   const path = prefix && here.startsWith(prefix) ? here.slice(prefix.length) : here
   const at = (lang: string) => `${localePrefix(lang)}${path}`
-  const ownLanguage = (lang: string) => written!.get(at(lang).toLowerCase()) === lang
+  const ownLanguage = (lang: string) => written.get(at(lang).toLowerCase()) === lang
   const contentLocale = data.contentLocale ?? route.lang
   const canonical = `${siteOrigin}${at(contentLocale)}`
   if (data.contentLocale) route.entryMeta = { ...route.entryMeta, lang: contentLocale }
@@ -96,13 +103,14 @@ async function searchHead(route: StarlightRouteData, pathname: string) {
         typeof tag.attrs.hreflang === "string"
       ),
   )
-  if (languages.length > 1) {
+  const [first] = languages
+  if (first !== undefined && languages.length > 1) {
     for (const lang of languages)
       head.push({
         tag: "link",
         attrs: { rel: "alternate", hreflang: lang, href: `${siteOrigin}${at(lang)}` },
       })
-    const fallback = languages.includes("en") ? "en" : languages[0]!
+    const fallback = languages.includes("en") ? "en" : first
     head.push({
       tag: "link",
       attrs: { rel: "alternate", hreflang: "x-default", href: `${siteOrigin}${at(fallback)}` },

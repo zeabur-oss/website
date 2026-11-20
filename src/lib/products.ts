@@ -22,5 +22,7 @@ export const productName: Record<ProductId, string> = {
 
 /** The release tag docs.lock.json pins each product's docs to. */
 export function releaseTag(id: ProductId): string {
-  return lock.repos.find((r) => r.name === id)!.tag
+  const repo = lock.repos.find((r) => r.name === id)
+  if (!repo) throw new Error(`docs.lock.json has no ${id}`)
+  return repo.tag
 }

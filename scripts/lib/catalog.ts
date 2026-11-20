@@ -9,6 +9,7 @@ import { parse as parseYaml } from "yaml"
 import { z } from "zod"
 import { locales, type SiteLocale } from "../../src/lib/urls.ts"
 import type { Snapshot } from "./repos.ts"
+import { group } from "../../src/lib/capture.ts"
 
 const localized = <T extends z.ZodRawShape>(shape: T) =>
   z.object({
@@ -139,7 +140,22 @@ function digest(snap: Snapshot, files: [name: string, path: string][]) {
 const mebibytes = (quantity: string) => {
   const [, value, unit = ""] = /^(\d+(?:\.\d+)?)([KMG]i)?$/.exec(quantity) ?? []
   if (value === undefined) throw new Error(`unknown memory quantity "${quantity}"`)
-  return Number(value) * { "": 1 / 2 ** 20, Ki: 1 / 1024, Mi: 1, Gi: 1024 }[unit]!
+  return Number(value) * mebibytesPer(unit)
+}
+
+function mebibytesPer(unit: string): number {
+  switch (unit) {
+    case "":
+      return 1 / 2 ** 20
+    case "Ki":
+      return 1 / 1024
+    case "Mi":
+      return 1
+    case "Gi":
+      return 1024
+    default:
+      throw new Error(`unknown memory unit "${unit}"`)
+  }
 }
 
 /**
@@ -180,9 +196,13 @@ function testsOf(snap: Snapshot, measurement: string, sourceDigest: string): Tes
 }
 
 export function readTemplates(snap: Snapshot): CatalogTemplate[] {
-  const sources = [...snap.files].filter((f) => /^templates\/[^/]+\/template\.yaml$/.test(f)).sort()
-  return sources.map((source) => {
-    const id = source.split("/")[1]!
+  const sources = [...snap.files]
+    .flatMap((source) => {
+      const match = /^templates\/([^/]+)\/template\.yaml$/.exec(source)
+      return match ? [{ source, id: group(match) }] : []
+    })
+    .sort((a, b) => (a.source < b.source ? -1 : 1))
+  return sources.map(({ source, id }) => {
     const { metadata, requires, services, security } = parse(templateFile, snap, source)
     const dir = `templates/${id}/`
     const files = [...snap.files]

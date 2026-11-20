@@ -8,6 +8,7 @@ import { dirname, join } from "node:path"
 import { stringify as toYaml } from "yaml"
 import sharp from "sharp"
 import { docsUrl, localePrefix, locales } from "../src/lib/urls.ts"
+import { group } from "../src/lib/capture.ts"
 import { readRepoDocs, readText, splitFrontmatter, type RepoDocs } from "./lib/docs.ts"
 import { readLock, root, snapshot, type LockRepo, type Snapshot } from "./lib/repos.ts"
 import {
@@ -67,6 +68,15 @@ function pagePath(locale: string, repo: string, slug: string, ext: string) {
   return join(pagesDir, locale === "en" ? "" : locale, "docs", repo, slug + ext)
 }
 
+/** The page's file in `locale`, or in the first locale that has one, with that locale. */
+function contentOf(files: Partial<Record<string, string>>, locale: string): [string, string] {
+  for (const l of [locale, ...locales]) {
+    const file = files[l]
+    if (file) return [l, file]
+  }
+  throw new Error("a docs page has no file in any locale")
+}
+
 function pageKey(locale: string, repo: string, slug: string) {
   return `${locale}/${repo}/${slug}`
 }
@@ -81,11 +91,11 @@ function normalise(text: string, fallbackTitle: string) {
     rest = rest.replace(/^\s*<picture>[\s\S]*?<\/picture>\s*/, "")
     const heading = /^#\s+(.+)\n/m.exec(rest)
     if (heading && rest.slice(0, heading.index).trim() === "") {
-      title = heading[1]!.trim()
+      title = group(heading).trim()
       rest = rest.slice(heading.index + heading[0].length)
     }
   }
-  const frontmatter: Record<string, string> = { title: title ?? fallbackTitle }
+  const frontmatter: { title: string; description?: string } = { title: title ?? fallbackTitle }
   if (typeof data.description === "string") frontmatter.description = data.description
   return { frontmatter, body: rest.replace(/^\n+/, "") }
 }
@@ -102,7 +112,8 @@ function navOf(locale: string, repo: LockRepo, docs: RepoDocs, titles: Record<st
     label: titles[slug] ?? slug,
     href: docsUrl(locale, repo.name, slug),
   })
-  const groups: NavGroup[] = [{ items: [item("index")] }]
+  const home: NavGroup = { items: [item("index")] }
+  const groups: NavGroup[] = [home]
   if (docs.hasNav) {
     for (const group of docs.groups) {
       const slugs = docs.pages.filter((p) => p.group === group.group).map((p) => p.slug)
@@ -110,7 +121,7 @@ function navOf(locale: string, repo: LockRepo, docs: RepoDocs, titles: Record<st
       groups.push({ label: labels?.groups[group.group] ?? group.label, items: slugs.map(item) })
     }
   } else {
-    groups[0]!.items.push(...docs.pages.filter((p) => p.slug !== "index").map((p) => item(p.slug)))
+    home.items.push(...docs.pages.filter((p) => p.slug !== "index").map((p) => item(p.slug)))
   }
   return groups
 }
@@ -162,20 +173,19 @@ export async function sync() {
     const titles: Record<string, Record<string, string>> = {}
     for (const page of docs.pages) {
       for (const locale of locales) {
-        const contentLocale = [locale, ...locales].find((l) => page.files[l])!
-        const source = page.files[contentLocale]!
+        const [contentLocale, source] = contentOf(page.files, locale)
         const navTitle = docs.labels[locale]?.pages[page.slug]
         const { frontmatter, body } = normalise(readText(snap, source), navTitle ?? page.slug)
         const ext = source.endsWith(".mdx") ? ".mdx" : ".md"
         const data = { ...frontmatter, repo: repo.name, contentLocale, sourcePath: source }
         const path = pagePath(locale, repo.name, page.slug, ext)
         writeFile(path, `---\n${toYaml(data).trimEnd()}\n---\n\n${body}`)
-        ;(titles[locale] ??= {})[page.slug] = navTitle ?? frontmatter.title!
+        ;(titles[locale] ??= {})[page.slug] = navTitle ?? frontmatter.title
         site.pages[pageKey(locale, repo.name, page.slug)] = {
           repo: repo.name,
           slug: page.slug,
           locale,
-          title: frontmatter.title!,
+          title: frontmatter.title,
           source,
           contentLocale,
         }

@@ -17,6 +17,7 @@ import { readText, sourceHash, splitFrontmatter } from "./docs.ts"
 import type { Add } from "./findings.ts"
 import { props } from "./jsx-props.ts"
 import type { Snapshot } from "./repos.ts"
+import { group } from "../../src/lib/capture.ts"
 
 const parsers = {
   md: createProcessor({ format: "md", remarkPlugins: [remarkGfm] }),
@@ -36,7 +37,8 @@ export function checkPage(
   const mdx = path.endsWith(".mdx")
   const { data, body } = splitFrontmatter(text)
   const offset = text.split("\n").length - body.split("\n").length
-  const translation = locale !== "en" && !!original
+  const translatedFrom = locale !== "en" && original ? original : undefined
+  const translation = translatedFrom !== undefined
 
   if (!isReadme) {
     if (!mdx)
@@ -59,8 +61,8 @@ export function checkPage(
         )
     }
   }
-  if (translation) {
-    const expected = sourceHash(readText(snap, original!))
+  if (translatedFrom !== undefined) {
+    const expected = sourceHash(readText(snap, translatedFrom))
     if (data.source === undefined)
       add(
         "stale",
@@ -181,7 +183,7 @@ export function checkPage(
         break
       case "html":
         for (const m of node.value.matchAll(/\s(href|src|srcset)="([^"]+)"/g)) {
-          checkRef(m[2]!.split(/[\s,]+/)[0]!, line, m[1] !== "href")
+          checkRef(firstUrl(group(m, 2)), line, group(m) !== "href")
         }
         break
       case "mdxJsxFlowElement":
@@ -226,4 +228,10 @@ export function checkPage(
       }
     }
   })
+}
+
+/** The first URL of an `href`, `src` or `srcset` value. */
+function firstUrl(value: string): string {
+  const [first = ""] = value.split(/[\s,]+/)
+  return first
 }

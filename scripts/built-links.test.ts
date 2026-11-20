@@ -4,6 +4,7 @@
 import { expect, test } from "bun:test"
 import { existsSync, readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
+import { group } from "../src/lib/capture.ts"
 
 const dist = join(import.meta.dir, "..", "dist")
 
@@ -25,8 +26,9 @@ test("docs text links stay on the site", () => {
     // The text ends where Starlight's footer (with the edit link) starts.
     const end = html.indexOf("<footer", start)
     const text = html.slice(start, end < 0 ? undefined : end)
-    for (const [, href] of text.matchAll(/href="(https:\/\/github\.com\/[^"]+)"/g)) {
-      const path = new URL(href!).pathname
+    for (const match of text.matchAll(/href="(https:\/\/github\.com\/[^"]+)"/g)) {
+      const href = group(match)
+      const path = new URL(href).pathname
       if (
         /\/(blob|tree)\/[^/]+\/(docs\/.*\.mdx?|(zh-TW\/|zh-CN\/)?docs\/[a-z]+(\/|$))/.test(path)
       ) {
@@ -47,8 +49,8 @@ test("every page's social image is built", () => {
       /<meta property="og:image" content="https:\/\/oss\.zeabur\.com([^"]+)"/,
     )
     if (!image) missing.push(`${page.slice(dist.length)}: no og:image`)
-    else if (!existsSync(join(dist, image[1]!)))
-      missing.push(`${page.slice(dist.length)}: ${image[1]}`)
+    else if (!existsSync(join(dist, group(image))))
+      missing.push(`${page.slice(dist.length)}: ${group(image)}`)
   }
   expect(missing).toEqual([])
 })
@@ -65,8 +67,9 @@ test("language links and hreflang alternates go to built pages", () => {
         /<link rel="alternate" hreflang="[^"]+" href="https:\/\/oss\.zeabur\.com(\/[^"#]*)/g,
       ),
     ]
-    for (const [, path] of links) {
-      if (!built(path!)) missing.push(`${page.slice(dist.length)}: ${path}`)
+    for (const link of links) {
+      const path = group(link)
+      if (!built(path)) missing.push(`${page.slice(dist.length)}: ${path}`)
     }
   }
   expect(missing).toEqual([])
@@ -75,7 +78,7 @@ test("language links and hreflang alternates go to built pages", () => {
 test("every link in llms.txt is a built page", () => {
   const text = readFileSync(join(import.meta.dir, "..", "public", "llms.txt"), "utf8")
   const missing = [...text.matchAll(/\]\(https:\/\/oss\.zeabur\.com(\/[^)]*)\)/g)]
-    .map(([, path]) => path!)
+    .map((match) => group(match))
     .filter((path) => !existsSync(join(dist, path, "index.html")))
   expect(missing).toEqual([])
 })

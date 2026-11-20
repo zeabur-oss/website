@@ -13,11 +13,6 @@ export type NavGroup = "manage" | "install" | "components"
 type Row = {
   slug: string
   group: NavGroup
-  /** The product whose release tag, name and icon the page shows. */
-  repo?: ProductId
-  /** Shown for a row without a repo. */
-  name?: string
-  icon?: string
   /** What the page's story walks through: Zeabur's jobs on its own screens, or the steps. */
   story?: "chapters" | "steps"
   /** The start section shows a file to copy instead of the three ways to start. */
@@ -28,7 +23,20 @@ type Row = {
   monoNames?: boolean
   /** The home page's link for a row without a page. */
   landingHref?: string
-}
+} & (
+  | {
+      /** The product whose release tag, name and icon the page shows. */
+      repo: ProductId
+      name?: undefined
+      icon?: undefined
+    }
+  | {
+      repo?: undefined
+      /** Shown for a row without a repo. */
+      name: string
+      icon: string
+    }
+)
 
 const siteRows: Row[] = [
   { slug: "zeabur", repo: "zeabur", group: "manage", story: "chapters" },
@@ -79,8 +87,8 @@ export async function sitePages(locale: SiteLocale): Promise<SitePage[]> {
     siteRows.map(async (row): Promise<SitePage> => {
       const entry = await pageEntry(locale, row.slug)
       const released = entry?.data.status === "released"
-      const name = row.repo ? productName[row.repo] : row.name!
-      const icon = row.repo ? productIcon[row.repo] : row.icon!
+      const name = row.repo ? productName[row.repo] : row.name
+      const icon = row.repo ? productIcon[row.repo] : row.icon
       const base = {
         slug: row.slug,
         name,
