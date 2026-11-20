@@ -51,7 +51,8 @@ const docs = desktop
       catalog: docsUrl(locale, "catalog"),
       zeatend: docsUrl(locale, "zeatend"),
     }[id]
-const download = desktop && t.download ? { href: app.page, text: t.download } : undefined
+const download =
+  desktop && t.download ? { href: app.page, text: t.download, files: app.files } : undefined
 
 const file = spec.example
   ? {
@@ -173,7 +174,7 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
       </p>
       <div class="flex flex-wrap gap-3">
         {download && (
-          <a href={download.href} class="button primary">
+          <a href={download.href} class="button primary" data-desktop-download>
             <Icon name="download-simple" />
             {download.text}
           </a>
@@ -401,15 +402,49 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           lead={t.start.sub}
         />
         {download ? (
-          <div class="flex flex-wrap gap-3" data-reveal>
-            <a href={download.href} class="button primary">
-              <Icon name="download-simple" />
-              {t.start.cta}
-            </a>
-            <a href={docs} class="button">
-              {t.docs}
-              <Icon name="arrow-right" class="go" />
-            </a>
+          <div class="grid gap-8" data-reveal>
+            <div class="grid gap-3">
+              <div class="flex flex-wrap gap-3">
+                <a href={download.href} class="button primary" data-desktop-download>
+                  <Icon name="download-simple" />
+                  {t.start.cta}
+                </a>
+                <a href={docs} class="button">
+                  {t.docs}
+                  <Icon name="arrow-right" class="go" />
+                </a>
+              </div>
+              <p class="type-mono text-sm text-site-muted" data-desktop-file hidden />
+            </div>
+            <ul class="grid max-w-3xl border-t border-site-line">
+              {download.files.map((f) => (
+                <li class="border-b border-site-line">
+                  <a
+                    href={f.url}
+                    class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 text-site-text no-underline transition-colors duration-quick hover:bg-site-hover type-mono text-sm"
+                  >
+                    <span class="min-w-0 break-all">{f.name}</span>
+                    <Icon name="download-simple" class="size-4 shrink-0" />
+                  </a>
+                </li>
+              ))}
+              {t.releasePage && (
+                <li class="border-b border-site-line">
+                  <a
+                    href={download.href}
+                    class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 text-site-text no-underline transition-colors duration-quick hover:bg-site-hover font-semibold"
+                  >
+                    {t.releasePage}
+                    <Icon name="arrow-up-right" class="size-4 shrink-0" />
+                  </a>
+                </li>
+              )}
+            </ul>
+            <script
+              type="application/json"
+              id="desktop-files"
+              set:html={JSON.stringify(download.files)}
+            />
           </div>
         ) : (
           <StartWays locale={locale} />
@@ -418,3 +453,43 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
     )}
   </section>
 </Site>
+
+<script>
+  import { detectPlatform, fileFor } from "../lib/desktop-download.ts"
+
+  // Points the download buttons at the file for this computer; without one they keep the
+  // release page.
+  type Hints = { platform?: string; mobile?: boolean; architecture?: string }
+  type UserAgentData = {
+    platform: string
+    mobile: boolean
+    getHighEntropyValues(keys: string[]): Promise<Hints>
+  }
+  const isUserAgentData = (value: unknown): value is UserAgentData =>
+    typeof value === "object" && value !== null && "getHighEntropyValues" in value
+  async function hints(): Promise<Hints | undefined> {
+    const data: unknown = Reflect.get(navigator, "userAgentData")
+    if (!isUserAgentData(data)) return undefined
+    const named = { platform: data.platform, mobile: data.mobile }
+    try {
+      return { ...(await data.getHighEntropyValues(["architecture"])), ...named }
+    } catch {
+      return named
+    }
+  }
+  const list = document.getElementById("desktop-files")
+  if (list) {
+    const files: { name: string; url: string }[] = JSON.parse(list.textContent ?? "[]")
+    const platform = detectPlatform(navigator.userAgent, await hints())
+    const file = platform && fileFor(platform, files)
+    if (file) {
+      for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-desktop-download]")) {
+        link.href = file.url
+      }
+      for (const note of document.querySelectorAll<HTMLElement>("[data-desktop-file]")) {
+        note.textContent = file.name
+        note.hidden = false
+      }
+    }
+  }
+</script>

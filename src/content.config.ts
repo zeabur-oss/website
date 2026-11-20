@@ -47,6 +47,8 @@ const pages = defineCollection({
     docs: text,
     /** The download button of an app, before the docs button. */
     download: text.optional(),
+    /** The link to an app's release page, below the list of its files. */
+    releasePage: text.optional(),
     source: text,
     highlights: z.object({
       titleDim: text,

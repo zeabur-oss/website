@@ -38,7 +38,7 @@ type Release = {
   html_url: string
   draft: boolean
   prerelease: boolean
-  assets: { name: string }[]
+  assets: { name: string; browser_download_url: string }[]
 }
 
 function isRelease(value: unknown): value is Release {
@@ -52,7 +52,12 @@ function isRelease(value: unknown): value is Release {
     Array.isArray(r.assets) &&
     r.assets.every(
       (a: unknown) =>
-        typeof a === "object" && a !== null && "name" in a && typeof a.name === "string",
+        typeof a === "object" &&
+        a !== null &&
+        "name" in a &&
+        typeof a.name === "string" &&
+        "browser_download_url" in a &&
+        typeof a.browser_download_url === "string",
     )
   )
 }
@@ -62,11 +67,13 @@ export type DesktopRelease = {
   page: string
   tag?: string
   prerelease: boolean
+  /** Desktop's files to install, with their download links; not the macOS app's update archive. */
+  files: { name: string; url: string }[]
 }
 
 const desktopPrefix = "zeabur-desktop-"
 
-const noDesktop: DesktopRelease = { page: `${starredRepo}/releases`, prerelease: false }
+const noDesktop: DesktopRelease = { page: `${starredRepo}/releases`, prerelease: false, files: [] }
 
 /**
  * The newest release with Desktop's files in a reply of GitHub's list of releases, which comes
@@ -82,6 +89,9 @@ export function pickDesktop(body: unknown): DesktopRelease {
     page: release.html_url,
     tag: release.tag_name,
     prerelease: release.prerelease,
+    files: release.assets
+      .filter((a) => a.name.startsWith(desktopPrefix) && !a.name.endsWith(".tar.gz"))
+      .map((a) => ({ name: a.name, url: a.browser_download_url })),
   }
 }
 
