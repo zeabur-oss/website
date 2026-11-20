@@ -28,10 +28,33 @@ const requirement = z.union([
   z.object({ capability: z.string() }),
 ])
 
+const quantities = z.object({ cpu: z.string(), memory: z.string() })
+
+const input = z.union([
+  z.object({ generate: z.object({}), secret: z.object({ name: z.string(), key: z.string() }) }),
+  localized({ label: z.string(), description: z.string() }).extend({
+    required: z.boolean(),
+    default: z.string().optional(),
+  }),
+])
+
 const templateFile = z.object({
-  metadata: metadata.extend({ version: z.string() }),
+  metadata: localized({ summary: z.string() }).extend({
+    name: z.string(),
+    license: z.string(),
+    homepage: z.string().url(),
+    docs: z.string().url(),
+    version: z.string(),
+  }),
   requires: z.array(z.object({ component: z.string() })).default([]),
-  services: z.array(z.object({ name: z.string() })),
+  services: z.array(
+    z.object({
+      name: z.string(),
+      ports: z.array(z.object({ name: z.string(), port: z.number() })).default([]),
+      resources: z.object({ requests: quantities, limits: quantities }),
+    }),
+  ),
+  inputs: z.array(input).default([]),
   security: localized({ summary: z.string() }).extend({
     risks: z.array(localized({ risk: z.string(), mitigation: z.string() })).default([]),
   }),
@@ -66,6 +89,21 @@ const measurementFile = z.object({
 /** A text in each site locale; a locale the catalog does not translate gets the English text. */
 export type Localized = Record<SiteLocale, string>
 
+/**
+ * The level-2 sections of a template README (`templates/<id>/README.md`, `README.<locale>.md`)
+ * in their order, with their heading in each locale, as `readmeSections` in the catalog's
+ * tools/internal/templates/readme.go.
+ */
+const readmeHeadings = {
+  introduction: { en: "Introduction", "zh-TW": "簡介", "zh-CN": "简介" },
+  "getting-started": { en: "Getting started", "zh-TW": "開始使用", "zh-CN": "开始使用" },
+  configuration: { en: "Configuration", "zh-TW": "設定", "zh-CN": "配置" },
+  troubleshooting: { en: "Troubleshooting", "zh-TW": "疑難排解", "zh-CN": "故障排除" },
+} as const satisfies Record<string, Localized>
+
+/** A level-2 section of a template README: its Markdown without the heading. */
+export type ReadmeSection = { id: keyof typeof readmeHeadings; title: string; markdown: string }
+
 /** The newest CI run on one distribution and platform that installed these very files and passed. */
 export type TestRun = {
   distribution: string
@@ -91,11 +129,36 @@ type Entry = {
   tests: TestRun[]
 }
 
+/** A value the person deploying gives. */
+export type ProvidedInput = {
+  label: Localized
+  description: Localized
+  required: boolean
+  default?: string
+}
+
+/** A Kubernetes quantity, such as `250m` CPU or `512Mi` memory. */
+type Quantities = { cpu: string; memory: string }
+
+export type TemplateService = {
+  name: string
+  ports: { name: string; port: number }[]
+  requests: Quantities
+  limits: Quantities
+}
+
 export type CatalogTemplate = Entry & {
   version: string
+  /** The upstream usage docs. */
+  docs: string
+  /** The README of each locale, by section. */
+  readme: Record<SiteLocale, ReadmeSection[]>
   /** Component IDs the cluster needs first. */
   requires: string[]
-  services: string[]
+  services: TemplateService[]
+  provided: ProvidedInput[]
+  /** Values generated at deploy, as `<Secret>/<key>`. */
+  generated: string[]
   security: { summary: Localized; risks: { risk: Localized; mitigation: Localized }[] }
 }
 
@@ -122,6 +185,27 @@ function parse<T extends z.ZodType>(schema: T, snap: Snapshot, path: string): z.
   const parsed = schema.safeParse(parseYaml(readFileSync(join(snap.dir, path), "utf8")))
   if (!parsed.success) throw new Error(`${path}: ${z.prettifyError(parsed.error)}`)
   return parsed.data
+}
+
+function readmeOf(snap: Snapshot, dir: string, locale: SiteLocale): ReadmeSection[] {
+  const path = `${dir}README${locale === "en" ? "" : `.${locale}`}.md`
+  const sections: ReadmeSection[] = []
+  let fenced = false
+  for (const line of readFileSync(join(snap.dir, path), "utf8").split("\n")) {
+    if (line.startsWith("```")) fenced = !fenced
+    const title = !fenced && line.startsWith("## ") ? line.slice(3).trim() : undefined
+    if (title !== undefined) {
+      const id = (Object.keys(readmeHeadings) as ReadmeSection["id"][]).find(
+        (k) => readmeHeadings[k][locale] === title,
+      )
+      if (!id) throw new Error(`${path}: unknown heading "${line}"`)
+      sections.push({ id, title, markdown: "" })
+    } else {
+      const last = sections.at(-1)
+      if (last) last.markdown += `${line}\n`
+    }
+  }
+  return sections
 }
 
 /** Go's dirhash.Hash1 over `name → repository path`: the `sourceDigest` measurements name. */
@@ -203,10 +287,13 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
     })
     .sort((a, b) => (a.source < b.source ? -1 : 1))
   return sources.map(({ source, id }) => {
-    const { metadata, requires, services, security } = parse(templateFile, snap, source)
+    const { metadata, requires, services, inputs, security } = parse(templateFile, snap, source)
     const dir = `templates/${id}/`
     const files = [...snap.files]
-      .filter((f) => f.startsWith(dir))
+      // As the catalog's sourceDigest: e2e.yaml and the READMEs change no measurement.
+      .filter(
+        (f) => f.startsWith(dir) && !/^(e2e\.yaml|README[^/]*\.md)$/.test(f.slice(dir.length)),
+      )
       .map((f): [string, string] => [f.slice(dir.length), f])
     return {
       id,
@@ -217,8 +304,30 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
       source,
       tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
       version: metadata.version,
+      docs: metadata.docs,
+      readme: Object.fromEntries(
+        locales.map((locale) => [locale, readmeOf(snap, dir, locale)]),
+      ) as CatalogTemplate["readme"],
       requires: requires.map((r) => r.component),
-      services: services.map((s) => s.name),
+      services: services.map((s) => ({
+        name: s.name,
+        ports: s.ports,
+        requests: s.resources.requests,
+        limits: s.resources.limits,
+      })),
+      provided: inputs.flatMap((i) =>
+        "secret" in i
+          ? []
+          : [
+              {
+                label: pick(i, "label"),
+                description: pick(i, "description"),
+                required: i.required,
+                ...(i.default !== undefined && { default: i.default }),
+              },
+            ],
+      ),
+      generated: inputs.flatMap((i) => ("secret" in i ? [`${i.secret.name}/${i.secret.key}`] : [])),
       security: {
         summary: pick(security, "summary"),
         risks: security.risks.map((r) => ({

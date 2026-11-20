@@ -50,7 +50,25 @@ type CatalogCopy = {
     deploy: string
     deployCli: string
     needs: { title: string; body: string }
-    runs: string
+    start: { deploy: string; docs: (name: string) => string }
+    values: {
+      title: string
+      none: string
+      required: string
+      optional: string
+      default: string
+      generated: string
+      generatedBody: string
+    }
+    resources: {
+      title: string
+      body: string
+      ports: string
+      cpu: string
+      memory: string
+      range: (from: string, to: string) => string
+      cores: (n: string) => string
+    }
     risks: { title: string; risk: string; mitigation: string }
   }
   component: {
@@ -115,7 +133,29 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         title: "What the cluster needs",
         body: "Zeabur suggests the components a cluster is missing. Without Zeabur, install them first.",
       },
-      runs: "What runs",
+      start: {
+        deploy: "How to deploy a template",
+        docs: (name) => `${name} docs`,
+      },
+      values: {
+        title: "Values you provide",
+        none: "You don’t fill in anything when you deploy.",
+        required: "Required",
+        optional: "Optional",
+        default: "Default",
+        generated: "Made for you",
+        generatedBody:
+          "These values are generated at deploy and kept in a Kubernetes Secret, shown as Secret/key.",
+      },
+      resources: {
+        title: "Resources",
+        body: "Each service is guaranteed the first amount and can use up to the second.",
+        ports: "Ports",
+        cpu: "CPU",
+        memory: "Memory",
+        range: (from, to) => `${from} to ${to}`,
+        cores: (n) => `${n} ${n === "1" ? "core" : "cores"}`,
+      },
       risks: { title: "Known risks", risk: "Risk", mitigation: "How it is handled" },
     },
     component: {
@@ -183,7 +223,28 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         title: "叢集需要的元件",
         body: "Zeabur 會提示叢集缺哪些元件。沒有用 Zeabur 的話，請先自己裝好。",
       },
-      runs: "會跑哪些服務",
+      start: {
+        deploy: "怎麼部署範本",
+        docs: (name) => `${name} 說明文件`,
+      },
+      values: {
+        title: "要填的值",
+        none: "部署時不用填任何東西。",
+        required: "必填",
+        optional: "選填",
+        default: "預設值",
+        generated: "自動產生",
+        generatedBody: "這些值會在部署時自動產生，存在 Kubernetes Secret 裡，格式是 Secret/key。",
+      },
+      resources: {
+        title: "資源",
+        body: "每個服務保證拿到前面的量，最多可以用到後面的量。",
+        ports: "連接埠",
+        cpu: "CPU",
+        memory: "記憶體",
+        range: (from, to) => `${from} 到 ${to}`,
+        cores: (n) => `${n} 核`,
+      },
       risks: { title: "已知風險", risk: "風險", mitigation: "怎麼處理" },
     },
     component: {
@@ -251,7 +312,28 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         title: "集群需要的组件",
         body: "Zeabur 会提示集群缺哪些组件。没有用 Zeabur 的话，请先自己装好。",
       },
-      runs: "会运行哪些服务",
+      start: {
+        deploy: "怎么部署模板",
+        docs: (name) => `${name} 文档`,
+      },
+      values: {
+        title: "要填的值",
+        none: "部署时不用填任何东西。",
+        required: "必填",
+        optional: "选填",
+        default: "默认值",
+        generated: "自动生成",
+        generatedBody: "这些值会在部署时自动生成，存在 Kubernetes Secret 里，格式是 Secret/key。",
+      },
+      resources: {
+        title: "资源",
+        body: "每个服务保证拿到前面的量，最多可以用到后面的量。",
+        ports: "端口",
+        cpu: "CPU",
+        memory: "内存",
+        range: (from, to) => `${from} 到 ${to}`,
+        cores: (n) => `${n} 核`,
+      },
       risks: { title: "已知风险", risk: "风险", mitigation: "怎么处理" },
     },
     component: {

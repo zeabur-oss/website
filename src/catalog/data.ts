@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
+import { createMarkdownProcessor } from "@astrojs/markdown-remark"
 import type { CatalogData } from "../../scripts/sync-docs.ts"
 import { localePrefix } from "../lib/urls.ts"
 
@@ -33,3 +34,16 @@ export const formatMemory = (mib: number) =>
 /** CPU families the passing runs used, as a server's spec sheet names them. */
 export const cpus = (tests: { platform: string }[]) =>
   (["amd64", "arm64"] as const).filter((arch) => tests.some((t) => t.platform.endsWith(`/${arch}`)))
+
+/** A Kubernetes CPU quantity in cores: `250m` is 0.25. */
+export const formatCpu = (quantity: string) =>
+  quantity.endsWith("m") ? String(Number(quantity.slice(0, -1)) / 1000) : quantity
+
+/** A Kubernetes memory quantity with its unit spelled out: `512Mi` is 512 MiB. */
+export const formatBytes = (quantity: string) => {
+  const [, value, unit = ""] = /^(\d+)([KMGT]i?)?$/.exec(quantity) ?? []
+  return value === undefined ? quantity : `${value} ${unit}B`
+}
+
+/** Renders the Markdown of a template README; code blocks stay plain so they follow the theme. */
+export const markdown = createMarkdownProcessor({ syntaxHighlight: false })
