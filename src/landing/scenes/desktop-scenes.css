@@ -127,49 +127,35 @@
     white-space: nowrap;
   }
 
-  .ddiff {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-    border: 1px solid var(--a-line);
-    border-radius: var(--radius-md);
-    background: var(--a-card);
+  .dissue {
+    display: grid;
+    gap: 0.6em;
+    padding: 0.9em 1em;
   }
-  .ddiff-title {
-    padding: 0.6em 1em;
-    border-bottom: 1px solid var(--a-line);
+  .dissue + .dissue {
+    border-top: 1px solid var(--a-line);
+  }
+  .dissue.on {
+    background: linear-gradient(90deg, rgb(255 92 98 / 0.14), rgb(255 92 98 / 0.03));
+    box-shadow: inset 2px 0 var(--a-bad);
+  }
+  .dissue .icon {
+    color: var(--a-bad);
+  }
+  .dbad {
+    border-color: var(--a-bad);
+    color: var(--a-bad);
+  }
+  .dhint {
     color: var(--a-muted);
-    font-size: 0.85em;
-  }
-  .ddiff pre {
-    margin: 0;
-    padding: 0.7em 0;
-    background: none;
-    font-size: 1.05em;
-    line-height: 1.75;
-  }
-  .ddiff .line {
-    display: block;
-    padding-inline: 1em;
-    color: var(--a-muted);
-    white-space: pre;
-  }
-  .ddiff .add {
-    background: rgb(62 207 142 / 0.14);
-    box-shadow: inset 2px 0 var(--a-ok);
-    color: var(--a-ok);
+    font-size: 0.9em;
+    line-height: 1.5;
   }
   .dactions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 0.75em;
+    gap: 0.6em;
     margin: 0;
-  }
-  .dactions .dmono {
-    margin-right: auto;
   }
 
   @media (max-width: 63.99rem) {
@@ -190,6 +176,13 @@
     }
     .dlist > :nth-child(2) {
       display: flex;
+    }
+    .dissue {
+      gap: 0.45em;
+      padding: 0.7em 0.8em;
+    }
+    .dissue:not(.on) .dactions {
+      display: none;
     }
   }
 }

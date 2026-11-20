@@ -133,11 +133,17 @@ type DesktopUi = {
   adopt: string
   /** phase.Running */
   running: string
-  /** create.review, plan.diff, plan.cancel, plan.apply */
-  review: string
-  diff: string
-  cancel: string
-  apply: string
+  /** home.title, home.nodesReady, attention.title */
+  home: string
+  nodes: (ready: number, total: number) => string
+  attention: string
+  /** reason.outOfMemory, reason.crashing, usage.note.oomHint */
+  oom: string
+  crashing: string
+  oomHint: string
+  /** diagnosis.action.memory, diagnosis.action.logs */
+  memory: string
+  logs: string
 }
 
 export const desktopUi: Record<SiteLocale, DesktopUi> = {
@@ -151,10 +157,14 @@ export const desktopUi: Record<SiteLocale, DesktopUi> = {
     other: "其他 Namespace",
     adopt: "使用這個 Namespace",
     running: "執行中",
-    review: "檢查變更",
-    diff: "YAML 差異",
-    cancel: "取消",
-    apply: "套用",
+    home: "首頁",
+    nodes: (ready, total) => `${ready}/${total} 個節點就緒`,
+    attention: "需要處理",
+    oom: "記憶體不足",
+    crashing: "反覆崩潰",
+    oomHint: "上次因 OOMKilled 結束：記憶體用量超過上限，所以容器重新啟動了。",
+    memory: "調整記憶體",
+    logs: "開啟日誌",
   },
   "zh-CN": {
     choose: "选择集群",
@@ -166,10 +176,14 @@ export const desktopUi: Record<SiteLocale, DesktopUi> = {
     other: "其他 Namespace",
     adopt: "使用这个 Namespace",
     running: "运行中",
-    review: "检查变更",
-    diff: "YAML 差异",
-    cancel: "取消",
-    apply: "应用",
+    home: "首页",
+    nodes: (ready, total) => `${ready}/${total} 个节点就绪`,
+    attention: "需要处理",
+    oom: "内存不足",
+    crashing: "反复崩溃",
+    oomHint: "上次因 OOMKilled 结束：内存用量超过上限，所以容器重启了。",
+    memory: "调整内存",
+    logs: "打开日志",
   },
   en: {
     choose: "Choose a cluster",
@@ -181,9 +195,13 @@ export const desktopUi: Record<SiteLocale, DesktopUi> = {
     other: "Other namespaces",
     adopt: "Use this namespace",
     running: "Running",
-    review: "Review changes",
-    diff: "YAML diff",
-    cancel: "Cancel",
-    apply: "Apply",
+    home: "Home",
+    nodes: (ready, total) => `${ready}/${total} nodes ready`,
+    attention: "Needs attention",
+    oom: "Out of memory",
+    crashing: "Keeps crashing",
+    oomHint: "Last stopped with OOMKilled: it went over its memory limit and was restarted.",
+    memory: "Change memory",
+    logs: "Open logs",
   },
 }

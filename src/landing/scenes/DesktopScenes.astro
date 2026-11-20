@@ -1,6 +1,6 @@
 ---
 // Zeabur Desktop's three steps, drawn after its chooser and the Zeabur screens it opens: pick a
-// context, add a namespace that already runs as a project, and review the one label it writes.
+// context, see the namespaces that already run as projects, and see what needs attention.
 import Icon from "../../components/Icon.astro"
 import type { SiteLocale } from "../../lib/urls.ts"
 import { desktopUi } from "./ui.ts"
@@ -24,14 +24,9 @@ const others = [
   { name: "blog", pods: 3, menu: true },
   { name: "monitoring", pods: 4 },
 ]
-const diff = [
-  { text: "apiVersion: v1" },
-  { text: "kind: Namespace" },
-  { text: "metadata:" },
-  { text: "  name: blog" },
-  { text: "  labels:" },
-  { text: "    kubernetes.io/metadata.name: blog" },
-  { text: '    zeabur.com/project: "true"', add: true },
+const issues = [
+  { name: "api", project: "shop", reason: u.oom, hint: u.oomHint },
+  { name: "worker", project: "blog", reason: u.crashing },
 ]
 ---
 
@@ -115,19 +110,31 @@ const diff = [
   <span class="ppanel-title">Zeabur · personal</span>
   <div class="dscene-body">
     <p class="dscene-head">
-      <b>{u.review}</b>
-      <span class="dscene-muted">namespace/blog</span>
+      <b>{u.home}</b>
+      <span class="dstate">
+        <span class="dot"></span>
+        {u.nodes(3, 3)}
+      </span>
     </p>
-    <div class="ddiff">
-      <span class="ddiff-title">{u.diff}</span>
-      <pre><code>{diff.map((line) => (
-        <span class:list={["line", line.add && "add"]}>{line.add ? "+ " : "  "}{line.text}</span>
-      ))}</code></pre>
+    <p class="dscene-head dscene-sub">
+      <span class="dscene-muted">{u.attention}</span>
+    </p>
+    <div class="dtable">
+      {issues.map((i) => (
+        <span class:list={["dissue", i.hint && "on"]}>
+          <span class="dname">
+            <Icon name="warning-circle" />
+            {i.name}
+            <span class="dscene-muted">{i.project}</span>
+            <span class="dchip dbad">{i.reason}</span>
+          </span>
+          {i.hint && <span class="dhint">{i.hint}</span>}
+          <span class="dactions">
+            {i.hint && <span class="dbutton">{u.memory}</span>}
+            <span class="dbutton ghost">{u.logs}</span>
+          </span>
+        </span>
+      ))}
     </div>
-    <p class="dactions">
-      <span class="dmono dscene-muted">context: personal</span>
-      <span class="dbutton ghost">{u.cancel}</span>
-      <span class="dbutton">{u.apply}</span>
-    </p>
   </div>
 </div>
