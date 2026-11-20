@@ -3,6 +3,7 @@ import { cn } from "cn"
 import Icon from "./Icon.astro"
 import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
+import { browseUrl } from "../catalog/data.ts"
 import { chrome } from "../lib/chrome.ts"
 import { starCount, starredRepo } from "../lib/github.ts"
 import { siteNav } from "../lib/nav.ts"
@@ -11,7 +12,7 @@ import { homeUrl, locales, pathInLocale, type SiteLocale } from "../lib/urls.ts"
 interface Props {
   locale: SiteLocale
   /** Which part of the site the page belongs to. */
-  section?: "home" | "products" | "docs" | "blog"
+  section?: "home" | "products" | "templates" | "docs" | "blog"
   /** The page in each locale, when it is not the same path. */
   alternates?: Partial<Record<SiteLocale, string>>
   /** Inside Starlight's own header bar, which supplies the outer element and padding. */
@@ -27,8 +28,9 @@ const langHref = (l: SiteLocale) => alternates[l] ?? pathInLocale(here, l)
 const current = (on: boolean) => (on ? "true" : undefined)
 const isHere = (href: string) => (href === here ? "page" : undefined)
 const navLink = "nav-item aria-[current]:underline aria-[current]:underline-offset-[0.4em]"
-const show = docs ? "docs-wide:flex" : "nav:flex"
+const show = docs ? "docs-nav:flex" : "nav:flex"
 const links = [
+  { href: browseUrl(locale), text: t.nav.templates, on: section === "templates" },
   { href: nav.docs, text: t.nav.docs, on: section === "docs" },
   { href: nav.security, text: t.nav.security, on: false },
   { href: nav.blog, text: t.nav.blog, on: section === "blog" },

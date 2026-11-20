@@ -24,10 +24,11 @@
 }
 
 @theme {
-  /* The header's switch to the full navigation, and Starlight's sidebar and wide layouts. */
-  --breakpoint-nav: 68rem;
+  /* The header's switch to the full navigation (beside the search in the docs), and Starlight's
+     sidebar layout. The English labels are the widest. */
+  --breakpoint-nav: 72rem;
   --breakpoint-docs: 50rem;
-  --breakpoint-docs-wide: 72rem;
+  --breakpoint-docs-nav: 75rem;
 }
 
 /* The site's one token table: colours, strokes, type and motion. The design system's greys and
