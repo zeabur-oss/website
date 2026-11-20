@@ -28,10 +28,33 @@ const requirement = z.union([
   z.object({ capability: z.string() }),
 ])
 
+const quantities = z.object({ cpu: z.string(), memory: z.string() })
+
+const input = z.union([
+  z.object({ generate: z.object({}), secret: z.object({ name: z.string(), key: z.string() }) }),
+  localized({ label: z.string(), description: z.string() }).extend({
+    required: z.boolean(),
+    default: z.string().optional(),
+  }),
+])
+
 const templateFile = z.object({
-  metadata: metadata.extend({ version: z.string() }),
+  metadata: localized({ summary: z.string(), firstUse: z.string() }).extend({
+    name: z.string(),
+    license: z.string(),
+    homepage: z.string().url(),
+    docs: z.string().url(),
+    version: z.string(),
+  }),
   requires: z.array(z.object({ component: z.string() })).default([]),
-  services: z.array(z.object({ name: z.string() })),
+  services: z.array(
+    z.object({
+      name: z.string(),
+      ports: z.array(z.object({ name: z.string(), port: z.number() })).default([]),
+      resources: z.object({ requests: quantities, limits: quantities }),
+    }),
+  ),
+  inputs: z.array(input).default([]),
   security: localized({ summary: z.string() }).extend({
     risks: z.array(localized({ risk: z.string(), mitigation: z.string() })).default([]),
   }),
@@ -91,11 +114,36 @@ type Entry = {
   tests: TestRun[]
 }
 
+/** A value the person deploying gives. */
+export type ProvidedInput = {
+  label: Localized
+  description: Localized
+  required: boolean
+  default?: string
+}
+
+/** A Kubernetes quantity, such as `250m` CPU or `512Mi` memory. */
+type Quantities = { cpu: string; memory: string }
+
+export type TemplateService = {
+  name: string
+  ports: { name: string; port: number }[]
+  requests: Quantities
+  limits: Quantities
+}
+
 export type CatalogTemplate = Entry & {
   version: string
+  /** The upstream usage docs. */
+  docs: string
+  /** What you get, where to open it, how to sign in and where generated values are. */
+  firstUse: Localized
   /** Component IDs the cluster needs first. */
   requires: string[]
-  services: string[]
+  services: TemplateService[]
+  provided: ProvidedInput[]
+  /** Values generated at deploy, as `<Secret>/<key>`. */
+  generated: string[]
   security: { summary: Localized; risks: { risk: Localized; mitigation: Localized }[] }
 }
 
@@ -203,7 +251,7 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
     })
     .sort((a, b) => (a.source < b.source ? -1 : 1))
   return sources.map(({ source, id }) => {
-    const { metadata, requires, services, security } = parse(templateFile, snap, source)
+    const { metadata, requires, services, inputs, security } = parse(templateFile, snap, source)
     const dir = `templates/${id}/`
     const files = [...snap.files]
       .filter((f) => f.startsWith(dir))
@@ -217,8 +265,28 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
       source,
       tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
       version: metadata.version,
+      docs: metadata.docs,
+      firstUse: pick(metadata, "firstUse"),
       requires: requires.map((r) => r.component),
-      services: services.map((s) => s.name),
+      services: services.map((s) => ({
+        name: s.name,
+        ports: s.ports,
+        requests: s.resources.requests,
+        limits: s.resources.limits,
+      })),
+      provided: inputs.flatMap((i) =>
+        "secret" in i
+          ? []
+          : [
+              {
+                label: pick(i, "label"),
+                description: pick(i, "description"),
+                required: i.required,
+                ...(i.default !== undefined && { default: i.default }),
+              },
+            ],
+      ),
+      generated: inputs.flatMap((i) => ("secret" in i ? [`${i.secret.name}/${i.secret.key}`] : [])),
       security: {
         summary: pick(security, "summary"),
         risks: security.risks.map((r) => ({

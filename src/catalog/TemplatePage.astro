@@ -3,7 +3,7 @@ import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
-import { catalog, entryUrl } from "./data.ts"
+import { catalog, entryUrl, formatBytes, formatCpu } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
 import Pills from "./Pills.astro"
 import Section from "./Section.astro"
@@ -16,6 +16,7 @@ const { locale, template: x } = Astro.props
 const t = catalogCopy[locale]
 const w = t.template
 const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
+const cores = (q: string) => w.resources.cores(formatCpu(q))
 ---
 
 <EntryPage
@@ -29,6 +30,77 @@ const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
+  <Section id="start" title={w.start.title}>
+    <p class="body">{x.firstUse[locale]}</p>
+    <div class="flex flex-wrap gap-x-8 gap-y-4">
+      <a href={docsUrl(locale, "zeabur", "deploy/templates")} class="more">
+        <Icon name="arrow-right" />
+        {w.start.deploy}
+      </a>
+      <a href={x.docs} class="more">
+        <Icon name="arrow-up-right" />
+        {w.start.docs(x.name)}
+      </a>
+    </div>
+  </Section>
+
+  <Section id="values" title={w.values.title}>
+    {x.provided.length === 0 && <p class="body">{w.values.none}</p>}
+    {x.provided.length > 0 && (
+      <ul class="grid list-none p-0">
+        {x.provided.map((v) => (
+          <li class="grid gap-2 border-t border-site-line py-5">
+            <p class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span class="font-semibold">{v.label[locale]}</span>
+              <span class="label text-site-faint">
+                {v.required ? w.values.required : w.values.optional}
+              </span>
+            </p>
+            <p class="body">{v.description[locale]}</p>
+            {v.default !== undefined && (
+              <p class="text-sm text-site-muted">
+                {w.values.default}: <code class="font-mono break-all">{v.default}</code>
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    )}
+    {x.generated.length > 0 && (
+      <div class="grid gap-3">
+        <h3 class="label text-site-faint">{w.values.generated}</h3>
+        <p class="body">{w.values.generatedBody}</p>
+        <Pills items={x.generated.map((text) => ({ text, mono: true }))} />
+      </div>
+    )}
+  </Section>
+
+  <Section id="resources" title={w.resources.title} body={w.resources.body}>
+    <ul class="grid list-none p-0">
+      {x.services.map((s) => (
+        <li class="grid gap-4 border-t border-site-line py-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          <p class="font-mono font-semibold break-all">{s.name}</p>
+          <div class="grid content-start gap-1.5">
+            <p class="label text-site-faint">{w.resources.ports}</p>
+            <p class="font-mono text-sm">
+              {s.ports.length ? s.ports.map((p) => p.port).join(", ") : "–"}
+            </p>
+          </div>
+          <div class="grid content-start gap-1.5">
+            <p class="label text-site-faint">{w.resources.cpu}</p>
+            <p class="text-sm">{w.resources.range(cores(s.requests.cpu), cores(s.limits.cpu))}</p>
+          </div>
+          <div class="grid content-start gap-1.5">
+            <p class="label text-site-faint">{w.resources.memory}</p>
+            <p class="text-sm">
+              {w.resources.range(formatBytes(s.requests.memory), formatBytes(s.limits.memory))}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
   <Section slot="details" id="security" title={t.security}>
     <p class="body">{x.security.summary[locale]}</p>
     {x.security.risks.length > 0 && (
@@ -61,10 +133,6 @@ const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
         }))}
       />
     )}
-    <div class="grid gap-3">
-      <h3 class="label text-site-faint">{w.runs}</h3>
-      <Pills items={x.services.map((text) => ({ text, mono: true }))} />
-    </div>
     <a href={docsUrl(locale, "catalog", "get-started/deploy-a-template")} class="more">
       <Icon name="terminal" />
       {w.deployCli}
