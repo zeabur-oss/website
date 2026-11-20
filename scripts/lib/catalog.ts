@@ -1,4 +1,4 @@
-// Reads the components (components/<id>.yaml) and application templates
+// Reads the components (components/<id>/component.yaml) and application templates
 // (templates/<id>/template.yaml) of a catalog snapshot, with the CI runs that tested them
 // (measurements/). The formats are in zeabur-oss/catalog: docs/reference/component-format.mdx,
 // docs/reference/template-format.mdx and docs/reference/releases.mdx.
@@ -124,9 +124,15 @@ function parse<T extends z.ZodType>(schema: T, snap: Snapshot, path: string): z.
   return parsed.data
 }
 
-/** Go's dirhash.Hash1 over `name → repository path`: the `sourceDigest` measurements name. */
-function digest(snap: Snapshot, files: [name: string, path: string][]) {
-  const lines = files
+/**
+ * Go's dirhash.Hash1 over the files in dir, a component or template directory, without
+ * `e2e.yaml` and the READMEs: the `sourceDigest` measurements name.
+ */
+function digest(snap: Snapshot, dir: string) {
+  const lines = [...snap.files]
+    .filter((path) => path.startsWith(dir))
+    .map((path): [name: string, path: string] => [path.slice(dir.length), path])
+    .filter(([name]) => name !== "e2e.yaml" && !/^README.*\.md$/.test(name))
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([name, path]) => {
       const sum = createHash("sha256")
@@ -204,10 +210,6 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
     .sort((a, b) => (a.source < b.source ? -1 : 1))
   return sources.map(({ source, id }) => {
     const { metadata, requires, services, security } = parse(templateFile, snap, source)
-    const dir = `templates/${id}/`
-    const files = [...snap.files]
-      .filter((f) => f.startsWith(dir))
-      .map((f): [string, string] => [f.slice(dir.length), f])
     return {
       id,
       name: metadata.name,
@@ -215,7 +217,7 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
       license: metadata.license,
       homepage: metadata.homepage,
       source,
-      tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
+      tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, `templates/${id}/`)),
       version: metadata.version,
       requires: requires.map((r) => r.component),
       services: services.map((s) => s.name),
@@ -231,9 +233,13 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
 }
 
 export function readComponents(snap: Snapshot): CatalogComponent[] {
-  const sources = [...snap.files].filter((f) => /^components\/[^/]+\.yaml$/.test(f)).sort()
-  return sources.map((source) => {
-    const id = source.slice("components/".length, -".yaml".length)
+  const sources = [...snap.files]
+    .flatMap((source) => {
+      const match = /^components\/([^/]+)\/component\.yaml$/.exec(source)
+      return match ? [{ source, id: group(match) }] : []
+    })
+    .sort((a, b) => (a.source < b.source ? -1 : 1))
+  return sources.map(({ source, id }) => {
     const c = parse(componentFile, snap, source)
     return {
       id,
@@ -242,11 +248,7 @@ export function readComponents(snap: Snapshot): CatalogComponent[] {
       license: c.metadata.license,
       homepage: c.metadata.homepage,
       source,
-      tests: testsOf(
-        snap,
-        `measurements/components/${id}.json`,
-        digest(snap, [[`${id}.yaml`, source]]),
-      ),
+      tests: testsOf(snap, `measurements/components/${id}.json`, digest(snap, `components/${id}/`)),
       capability: c.provides.capability,
       defaults: { singleNode: c.defaults["single-node"], multiNode: c.defaults["multi-node"] },
       requires: c.requires,
