@@ -45,6 +45,8 @@ const pages = defineCollection({
     title: text,
     sub: text,
     docs: text,
+    /** The download button of an app, before the docs button. */
+    download: text.optional(),
     source: text,
     highlights: z.object({
       titleDim: text,

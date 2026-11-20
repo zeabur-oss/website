@@ -1,0 +1,67 @@
+---
+status: released
+lines:
+  nav: Open Zeabur from your own computer
+  landing: Pick a cluster from your kubeconfig and open Zeabur on your own computer.
+meta:
+  title: "Zeabur Desktop: open your clusters from your computer"
+  description: Zeabur Desktop lists the clusters in your kubeconfig and opens Zeabur for the one you pick, in a window of its own. It runs on macOS, Windows, and Linux, and you don't need to install Zeabur in the cluster first.
+titleDim: The clusters in your kubeconfig,
+title: one click away.
+sub: Zeabur Desktop lists the contexts in the kubeconfig files on your computer. Pick one, and it opens Zeabur for that cluster in a new window. It does what zeaburctl ui does, without a terminal.
+download: Download Zeabur Desktop
+docs: Read the install guide
+source: Source on GitHub
+highlights:
+  titleDim: Nothing to install in the cluster,
+  title: and your own permissions.
+  items:
+    - tag: kubeconfig
+      title: Uses the kubeconfig you have
+      body: Every context in your kubeconfig files shows up in Zeabur Desktop. Reads, reviewing changes, and the changes you confirm all use that context's permissions.
+    - tag: zeabur-local
+      title: Runs Zeabur on your computer
+      body: Each cluster window starts its own local service, the same one zeaburctl ui runs, so the cluster needs no Zeabur server.
+    - tag: update
+      title: Checks for updates at start
+      body: When a new version is out, the sidebar shows its number. You read what changed, and it installs only after you choose Update and restart. Pre-releases are never offered as updates.
+how:
+  titleDim: From download to Zeabur,
+  title: in three steps.
+  steps:
+    - title: Download and install
+      body: Get the file for your computer from the release page. Use the .dmg on a Mac with Apple silicon, the -setup.exe on Windows, and a .deb, .rpm, or AppImage on Linux.
+    - title: Pick a cluster
+      body: Zeabur Desktop lists the contexts in your kubeconfig files. Pick the cluster to open.
+    - title: Use Zeabur in its own window
+      body: You get the Zeabur you know, with your projects, services, domains, and logs. Each context you open gets a window of its own.
+details:
+  title: Which file to download
+  cols:
+    - Computer
+    - File
+    - New versions
+  rows:
+    - - Mac with Apple silicon
+      - .dmg; open it and drag Zeabur to Applications
+      - Updates itself
+    - - Windows on x64
+      - -setup.exe; installs for your account only, no administrator needed
+      - Updates itself
+    - - Windows on x64, without installing
+      - -portable.exe
+      - Shows the new version; you download it from the release page
+    - - Debian or Ubuntu
+      - .deb, amd64 or arm64
+      - Shows the new version; you download it from the release page
+    - - Fedora, RHEL or openSUSE
+      - .rpm, amd64 or arm64
+      - Shows the new version; you download it from the release page
+    - - Other Linux
+      - .AppImage, amd64 or arm64
+      - Updates itself
+start:
+  title: Download from the release page
+  sub: Each release comes with SHA256SUMS to check your download against. There are no builds for Intel Macs or Windows on Arm.
+  cta: Download Zeabur Desktop
+---

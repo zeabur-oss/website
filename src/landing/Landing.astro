@@ -28,7 +28,7 @@ const entrances = [
 const members = (await sitePages(locale)).map((p) => ({
   name: p.name,
   line: p.landingLine,
-  href: p.href ?? p.landingHref,
+  href: p.href,
   status: p.tag,
   soon: !p.released,
 }))

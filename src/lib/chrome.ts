@@ -27,8 +27,6 @@ type Chrome = {
     stars: (count: string) => string
   }
   groups: { manage: string; install: string; components: string; allInstalls: string }
-  /** Members without a product page of their own yet. */
-  members: Record<"desktop", string>
   useCases: Record<"team" | "machine", { name: string; line: string }>
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { short: string }>
@@ -56,9 +54,6 @@ const zhTW: Chrome = {
     stars: (count) => `GitHub 上有 ${count} 個星號`,
   },
   groups: { manage: "管理", install: "安裝", components: "元件", allInstalls: "所有安裝方式" },
-  members: {
-    desktop: "在自己的電腦開啟 Zeabur",
-  },
   useCases: {
     team: { name: "團隊的叢集", line: "已經有 Kubernetes，成員各用自己的帳號和權限" },
     machine: { name: "一台機器", line: "從一台 Linux 伺服器裝好整套" },
@@ -110,9 +105,6 @@ const zhCN: Chrome = {
     stars: (count) => `GitHub 上有 ${count} 个星标`,
   },
   groups: { manage: "管理", install: "安装", components: "组件", allInstalls: "所有安装方式" },
-  members: {
-    desktop: "在自己的电脑上打开 Zeabur",
-  },
   useCases: {
     team: { name: "团队的集群", line: "已经有 Kubernetes，成员各用自己的账号和权限" },
     machine: { name: "一台机器", line: "从一台 Linux 服务器装好整套" },
@@ -168,9 +160,6 @@ const en: Chrome = {
     install: "Install",
     components: "Components",
     allInstalls: "All ways to install",
-  },
-  members: {
-    desktop: "Zeabur on your own computer",
   },
   useCases: {
     team: {

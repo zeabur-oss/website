@@ -31,3 +31,82 @@ export async function starCount(locale: string): Promise<string | undefined> {
     count,
   )
 }
+
+/** A release as the GitHub API returns it, with the fields the Desktop page reads. */
+type Release = {
+  tag_name: string
+  html_url: string
+  draft: boolean
+  prerelease: boolean
+  assets: { name: string }[]
+}
+
+function isRelease(value: unknown): value is Release {
+  if (typeof value !== "object" || value === null) return false
+  const r: Partial<Record<keyof Release, unknown>> = value
+  return (
+    typeof r.tag_name === "string" &&
+    typeof r.html_url === "string" &&
+    typeof r.draft === "boolean" &&
+    typeof r.prerelease === "boolean" &&
+    Array.isArray(r.assets) &&
+    r.assets.every(
+      (a: unknown) =>
+        typeof a === "object" && a !== null && "name" in a && typeof a.name === "string",
+    )
+  )
+}
+
+export type DesktopRelease = {
+  /** The release page, or the list of releases when no release has Desktop's files. */
+  page: string
+  tag?: string
+  prerelease: boolean
+}
+
+const desktopPrefix = "zeabur-desktop-"
+
+const noDesktop: DesktopRelease = { page: `${starredRepo}/releases`, prerelease: false }
+
+/**
+ * The newest release with Desktop's files in a reply of GitHub's list of releases, which comes
+ * newest first. Pre-releases count: GitHub never marks one as latest.
+ */
+export function pickDesktop(body: unknown): DesktopRelease {
+  if (!Array.isArray(body)) return noDesktop
+  const release = body
+    .filter(isRelease)
+    .find((r) => !r.draft && r.assets.some((a) => a.name.startsWith(desktopPrefix)))
+  if (!release) return noDesktop
+  return {
+    page: release.html_url,
+    tag: release.tag_name,
+    prerelease: release.prerelease,
+  }
+}
+
+async function readDesktop(): Promise<DesktopRelease> {
+  const headers: Record<string, string> = { accept: "application/vnd.github+json" }
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos${new URL(starredRepo).pathname}/releases?per_page=30`,
+      { headers, signal: AbortSignal.timeout(5000) },
+    )
+    if (!response.ok) return noDesktop
+    return pickDesktop(await response.json())
+  } catch {
+    return noDesktop
+  }
+}
+
+let desktop: Promise<DesktopRelease> | undefined
+
+/**
+ * The newest release of Zeabur with Zeabur Desktop's files, read once at build time. A build
+ * without network links the list of releases.
+ */
+export function desktopRelease(): Promise<DesktopRelease> {
+  desktop ??= readDesktop()
+  return desktop
+}

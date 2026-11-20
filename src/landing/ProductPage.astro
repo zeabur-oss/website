@@ -3,7 +3,7 @@ import HeadingText from "../components/HeadingText.astro"
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import { productIcon, productName, releaseTag } from "../lib/products.ts"
+import { desktopRelease } from "../lib/github.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
@@ -29,7 +29,7 @@ interface Props {
   slug: string
 }
 const { locale, slug } = Astro.props
-const spec = pageRow(slug)
+const spec = await pageRow(slug)
 const id = spec.repo
 const page = await pageEntry(locale, slug)
 if (!page) throw new Error(`no page ${locale}/${slug}`)
@@ -37,15 +37,21 @@ const t = page.data
 const released = t.status === "released"
 const chaptered = spec.story === "chapters"
 const home = landingCopy[locale]
-const name = productName[id]
+const name = spec.name
 const repo = `${githubOrg}/${id}`
-const docs = {
-  zeabur: docsUrl(locale, "zeabur"),
-  identity: docsUrl(locale, "identity", "get-started"),
-  builder: docsUrl(locale, "builder"),
-  catalog: docsUrl(locale, "catalog"),
-  zeatend: docsUrl(locale, "zeatend"),
-}[id]
+const desktop = slug === "desktop"
+const app = await desktopRelease()
+// Zeabur's docs can pin a release without Desktop, so its install page is read at Desktop's release.
+const docs = desktop
+  ? `${githubOrg}/zeabur/blob/${app.tag ?? "main"}/docs/${locale === "en" ? "" : `${locale}/`}install/desktop.mdx`
+  : {
+      zeabur: docsUrl(locale, "zeabur"),
+      identity: docsUrl(locale, "identity", "get-started"),
+      builder: docsUrl(locale, "builder"),
+      catalog: docsUrl(locale, "catalog"),
+      zeatend: docsUrl(locale, "zeatend"),
+    }[id]
+const download = desktop && t.download ? { href: app.page, text: t.download } : undefined
 
 const file = spec.example
   ? {
@@ -103,10 +109,11 @@ const story = chaptered
 const stage = chaptered
   ? { panels: story.flatMap((c) => (c.panel ? [c.panel] : [])) }
   : stageOf(
-      id,
+      slug,
       locale,
       story.map((c) => c.alt),
       productShots["sign-in"] ?? "",
+      app,
     )
 const sections = [
   "highlights",
@@ -123,13 +130,13 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
   title={t.meta.title}
   description={t.meta.description}
   section="products"
-  image={`/og/${id}.png`}
+  image={desktop ? `/og/desktop/${locale}.png` : `/og/${id}.png`}
   schema={{
     "@type": "SoftwareApplication",
     name,
     description: t.meta.description,
     applicationCategory: "DeveloperApplication",
-    operatingSystem: "Linux, Kubernetes",
+    operatingSystem: desktop ? "macOS, Windows, Linux" : "Linux, Kubernetes",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     codeRepository: repo,
@@ -138,9 +145,14 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
 >
   <section class="wrap hero frame">
     <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
-      <Icon name={productIcon[id]} class="size-4" />
+      <Icon name={spec.icon} class="size-4" />
       <span translate="no">{name}</span>
-      <span class="pill">{released ? releaseTag(id) : chrome[locale].nav.soon}</span>
+      {released ? (
+        spec.tag && <span class="pill">{spec.tag}</span>
+      ) : (
+        <span class="pill">{chrome[locale].nav.soon}</span>
+      )}
+      {released && spec.beta && <span class="pill">Beta</span>}
     </p>
     <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
       <span class="text-site-faint zh:inline-block">
@@ -160,7 +172,13 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
         <HeadingText text={t.sub} />
       </p>
       <div class="flex flex-wrap gap-3">
-        <a href={docs} class="button primary">
+        {download && (
+          <a href={download.href} class="button primary">
+            <Icon name="download-simple" />
+            {download.text}
+          </a>
+        )}
+        <a href={docs} class={download ? "button" : "button primary"}>
           {t.docs}
           <Icon name="arrow-right" class="go" />
         </a>
@@ -382,7 +400,20 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           title={t.start.title}
           lead={t.start.sub}
         />
-        <StartWays locale={locale} />
+        {download ? (
+          <div class="flex flex-wrap gap-3" data-reveal>
+            <a href={download.href} class="button primary">
+              <Icon name="download-simple" />
+              {t.start.cta}
+            </a>
+            <a href={docs} class="button">
+              {t.docs}
+              <Icon name="arrow-right" class="go" />
+            </a>
+          </div>
+        ) : (
+          <StartWays locale={locale} />
+        )}
       </>
     )}
   </section>

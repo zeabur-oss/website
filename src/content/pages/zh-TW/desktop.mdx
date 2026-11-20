@@ -1,0 +1,67 @@
+---
+status: released
+lines:
+  nav: 在自己的電腦開啟 Zeabur
+  landing: 選一個 kubeconfig 裡的叢集，在自己的電腦開啟 Zeabur。
+meta:
+  title: Zeabur Desktop：在自己的電腦開啟叢集
+  description: Zeabur Desktop 列出 kubeconfig 裡的叢集，你選哪一個，就在新視窗替那個叢集開啟 Zeabur。可以在 macOS、Windows 和 Linux 使用，叢集裡不用先安裝 Zeabur。
+titleDim: kubeconfig 裡的叢集，
+title: 選一個就能開啟
+sub: Zeabur Desktop 列出你電腦上 kubeconfig 檔案裡的 context。選一個，它就在新視窗替那個叢集開啟 Zeabur。做的事和 zeaburctl ui 一樣，只是不用開終端機。
+download: 下載 Zeabur Desktop
+docs: 閱讀安裝說明
+source: GitHub 上的原始碼
+highlights:
+  titleDim: 叢集裡不用安裝，
+  title: 用你自己的權限操作
+  items:
+    - tag: kubeconfig
+      title: 直接用現有的 kubeconfig
+      body: kubeconfig 檔案裡的每個 context，Zeabur Desktop 都會列出來。讀取叢集、檢查變更和套用變更，都使用那個 context 的權限。
+    - tag: zeabur-local
+      title: 在你的電腦上執行 Zeabur
+      body: 每個叢集視窗都會啟動自己的本機服務，和 zeaburctl ui 用的是同一個，所以叢集裡不用先安裝 Zeabur 伺服器。
+    - tag: update
+      title: 啟動時檢查更新
+      body: 有新版本時，側邊欄會顯示版本號。先看過更新內容，按下「更新並重新啟動」才會安裝。預先發行版本不會出現在更新裡。
+how:
+  titleDim: 從下載到開啟，
+  title: 只要三步
+  steps:
+    - title: 下載並安裝
+      body: 到發行頁面下載符合電腦的檔案。Apple 晶片的 Mac 用 .dmg，Windows 用 -setup.exe，Linux 有 .deb、.rpm 和 AppImage。
+    - title: 選一個叢集
+      body: Zeabur Desktop 列出 kubeconfig 檔案裡的 context，從中選出要開啟的叢集。
+    - title: 在新視窗使用 Zeabur
+      body: 視窗裡就是你熟悉的 Zeabur，專案、服務、網域和日誌都在。每個開啟的 context 都有自己的視窗。
+details:
+  title: 下載哪個檔案
+  cols:
+    - 電腦
+    - 檔案
+    - 新版本
+  rows:
+    - - Apple 晶片的 Mac
+      - .dmg，開啟後把 Zeabur 拖進「應用程式」
+      - 自動更新
+    - - x64 的 Windows
+      - -setup.exe，只替你的帳號安裝，不需要系統管理員權限
+      - 自動更新
+    - - x64 的 Windows，不安裝
+      - -portable.exe
+      - 提示新版本，到發行頁面下載
+    - - Debian 或 Ubuntu
+      - .deb，amd64 或 arm64
+      - 提示新版本，到發行頁面下載
+    - - Fedora、RHEL 或 openSUSE
+      - .rpm，amd64 或 arm64
+      - 提示新版本，到發行頁面下載
+    - - 其他 Linux
+      - .AppImage，amd64 或 arm64
+      - 自動更新
+start:
+  title: 到發行頁面下載
+  sub: 每個版本都附上 SHA256SUMS，可以核對下載的檔案。目前沒有給 Intel Mac 和 Arm 架構 Windows 的檔案。
+  cta: 下載 Zeabur Desktop
+---
