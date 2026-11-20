@@ -5,7 +5,6 @@ import { getEntry } from "astro:content"
 import { landingCopy } from "../landing/copy.ts"
 import { chrome } from "./chrome.ts"
 import { productIcon, productName, releaseTag, type ProductId } from "./products.ts"
-import { githubOrg } from "./site.ts"
 import { productUrl, type SiteLocale } from "./urls.ts"
 
 export type NavGroup = "manage" | "install" | "components"
@@ -43,10 +42,11 @@ const siteRows: Row[] = [
   { slug: "desktop", name: "Zeabur Desktop", icon: "desktop", group: "manage" },
   {
     slug: "zeatend",
-    name: "Zeabur Zeatend",
-    icon: "terminal-window",
+    repo: "zeatend",
     group: "install",
-    landingHref: `${githubOrg}/zeatend`,
+    story: "steps",
+    example: true,
+    monoNames: true,
   },
   { slug: "identity", repo: "identity", group: "components", story: "steps", example: true },
   { slug: "builder", repo: "builder", group: "components", story: "steps", example: true },
@@ -98,7 +98,7 @@ export async function sitePages(locale: SiteLocale): Promise<SitePage[]> {
         image: `/og/${row.repo ?? row.slug}.png`,
       }
       if (!entry) {
-        const slug = row.slug as "desktop" | "zeatend"
+        const slug = row.slug as "desktop"
         return {
           ...base,
           released: false,

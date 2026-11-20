@@ -101,7 +101,13 @@ export function readRepoDocs(snap: Snapshot): RepoDocs {
   const missing: RepoDocs["missing"] = []
   const readme = snap.files.has("README.md") ? "README.md" : undefined
   const index = filesOf("index")
-  if (!index.en && readme && !Object.keys(index).length) index.en = readme
+  // A README home page is translated as README.<locale>.md.
+  if (!index.en && readme && !Object.keys(index).length) {
+    index.en = readme
+    for (const locale of locales) {
+      if (snap.files.has(`README.${locale}.md`)) index[locale] = `README.${locale}.md`
+    }
+  }
   if (Object.keys(index).length) pages.push({ slug: "index", files: index })
   if (nav) {
     for (const group of groups) {

@@ -1,3 +1,5 @@
+import { releaseTag } from "../lib/products.ts"
+
 export const builderExample = `apiVersion: builder.zeabur.com/v1alpha1
 kind: Build
 metadata: {name: whoami, namespace: team-a}
@@ -38,3 +40,11 @@ zeabur-identityctl manifests --image "$ZEABUR_IDENTITY_IMAGE" \\
 zeabur-identityctl kube-config --distro k3s > authn.yaml
 # A one-time link: open it and create your passkey.
 zeabur-identityctl setup-link --username admin`
+
+const zeatendTag = releaseTag("zeatend")
+const zeatendArchive = `zeatend-${zeatendTag}-linux-amd64.tar.gz`
+export const zeatendExample = `# On the Linux server; arm64 has its own archive.
+curl -fLO https://github.com/zeabur-oss/zeatend/releases/download/${zeatendTag}/${zeatendArchive}
+tar -xzf ${zeatendArchive}
+sudo install zeatend /usr/local/bin/
+sudo zeatend`

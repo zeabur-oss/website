@@ -1,6 +1,8 @@
 import { localeInfo } from "../lib/urls.ts"
 
 const segmenters = new Map<string, Intl.Segmenter>()
+/** Text without spaces, Han characters or Chinese punctuation. */
+const latin = /^[^\s\p{Script=Han}、。，：；？！（）「」『』]+$/u
 
 /**
  * Keeps Chinese words and their closing punctuation together without changing copied text.
@@ -27,7 +29,13 @@ export function chineseTextSegments(text: string, locale: string): string[] {
       words.push(singleHan)
       singleHan = ""
     }
-    words.push(segment)
+    // A file name or version (.dmg, -setup.exe, v0.1.0) stays one word.
+    const last = words.at(-1)
+    if (last !== undefined && latin.test(last) && latin.test(segment)) {
+      words[words.length - 1] = last + segment
+    } else {
+      words.push(segment)
+    }
   }
   if (singleHan) words.push(singleHan)
 

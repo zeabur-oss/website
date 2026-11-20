@@ -28,7 +28,7 @@ type Chrome = {
   }
   groups: { manage: string; install: string; components: string; allInstalls: string }
   /** Members without a product page of their own yet. */
-  members: Record<"desktop" | "zeatend", string>
+  members: Record<"desktop", string>
   useCases: Record<"team" | "machine", { name: string; line: string }>
   /** `short` fits the docs sidebar's product menu in two lines. */
   products: Record<ProductId, { short: string }>
@@ -58,7 +58,6 @@ const zhTW: Chrome = {
   groups: { manage: "管理", install: "安裝", components: "元件", allInstalls: "所有安裝方式" },
   members: {
     desktop: "在自己的電腦開啟 Zeabur",
-    zeatend: "把一台 Linux 伺服器變成 Kubernetes 叢集",
   },
   useCases: {
     team: { name: "團隊的叢集", line: "已經有 Kubernetes，成員各用自己的帳號和權限" },
@@ -76,6 +75,9 @@ const zhTW: Chrome = {
     },
     catalog: {
       short: "測試過的元件和範本",
+    },
+    zeatend: {
+      short: "把 Linux 伺服器裝成叢集",
     },
   },
   footer: {
@@ -110,7 +112,6 @@ const zhCN: Chrome = {
   groups: { manage: "管理", install: "安装", components: "组件", allInstalls: "所有安装方式" },
   members: {
     desktop: "在自己的电脑上打开 Zeabur",
-    zeatend: "把一台 Linux 服务器变成 Kubernetes 集群",
   },
   useCases: {
     team: { name: "团队的集群", line: "已经有 Kubernetes，成员各用自己的账号和权限" },
@@ -128,6 +129,9 @@ const zhCN: Chrome = {
     },
     catalog: {
       short: "测试过的组件和模板",
+    },
+    zeatend: {
+      short: "把 Linux 服务器装成集群",
     },
   },
   footer: {
@@ -167,7 +171,6 @@ const en: Chrome = {
   },
   members: {
     desktop: "Zeabur on your own computer",
-    zeatend: "Turn one Linux server into a Kubernetes cluster",
   },
   useCases: {
     team: {
@@ -188,6 +191,9 @@ const en: Chrome = {
     },
     catalog: {
       short: "Tested components and templates",
+    },
+    zeatend: {
+      short: "Turn a Linux server into a cluster",
     },
   },
   footer: {
