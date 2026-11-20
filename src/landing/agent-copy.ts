@@ -2,7 +2,7 @@ import { agentGuideMarkdown } from "../lib/agent-guide.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 
 // The words of the agent page. zh-TW is written first, then zh-CN and English; all three say the
-// same things. The prompt matches the one on the guide's docs page.
+// same things. The prompt matches the one on the guide's docs page in the same language.
 
 export type AgentCopy = {
   meta: { title: string; description: string }
@@ -30,7 +30,7 @@ const zhTW: AgentCopy = {
   lead: "zeabur.com 會在 2026 年 12 月 31 日停止運作。Claude Code 或 Codex 這類 Coding Agent 可以準備伺服器、裝好 Zeabur，再把你在 zeabur.com 的服務搬過來。要花錢或改動的地方，都會先問你。",
   prompt: {
     label: "在 Claude Code 或 Codex 貼上",
-    text: `讀 ${agentGuideMarkdown}，把我在 zeabur.com 的服務搬到我自己的伺服器上，用 Zeabur 管理。`,
+    text: `讀 ${agentGuideMarkdown("zh-TW")}，把我在 zeabur.com 的服務搬到我自己的伺服器上，用 Zeabur 管理。`,
     where:
       "在你自己的電腦上執行 Agent。電腦要能用 SSH 連到新伺服器，也要能登入 zeabur.com 的 CLI。",
   },
@@ -74,7 +74,7 @@ const zhCN: AgentCopy = {
   lead: "zeabur.com 会在 2026 年 12 月 31 日停止运行。Claude Code 或 Codex 这类 Coding Agent 可以准备服务器、装好 Zeabur，再把你在 zeabur.com 的服务迁过来。要花钱或改动的地方，都会先问你。",
   prompt: {
     label: "在 Claude Code 或 Codex 粘贴",
-    text: `读 ${agentGuideMarkdown}，把我在 zeabur.com 的服务迁到我自己的服务器上，用 Zeabur 管理。`,
+    text: `读 ${agentGuideMarkdown("zh-CN")}，把我在 zeabur.com 的服务迁到我自己的服务器上，用 Zeabur 管理。`,
     where:
       "在你自己的电脑上运行 Agent。电脑要能用 SSH 连到新服务器，也要能登录 zeabur.com 的 CLI。",
   },
@@ -118,7 +118,7 @@ const en: AgentCopy = {
   lead: "zeabur.com stops running on December 31, 2026. A coding agent such as Claude Code or Codex can get a server, install Zeabur, and move your services over from zeabur.com. It asks you before anything that costs money or changes something.",
   prompt: {
     label: "Paste this into Claude Code or Codex",
-    text: `Read ${agentGuideMarkdown} and move my services off zeabur.com onto my own server, managed by Zeabur.`,
+    text: `Read ${agentGuideMarkdown("en")} and move my services off zeabur.com onto my own server, managed by Zeabur.`,
     where:
       "Run the agent on your own computer. The computer needs to reach the new server over SSH and to sign in to the zeabur.com CLI.",
   },

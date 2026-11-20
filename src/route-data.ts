@@ -4,7 +4,7 @@ import { defineRouteMiddleware } from "@astrojs/starlight/route-data"
 import { getCollection } from "astro:content"
 import type { StarlightRouteData } from "@astrojs/starlight/route-data"
 import type { SiteData, SiteNav } from "../scripts/sync-docs.ts"
-import { localePrefix, locales, siteOrigin } from "./lib/urls.ts"
+import { localePrefix, locales, markdownPath, siteOrigin } from "./lib/urls.ts"
 import { jsonLd, OG_HEIGHT, OG_WIDTH, ogLocale, organization, summary } from "./lib/seo.ts"
 
 type SidebarEntry = StarlightRouteData["sidebar"][number]
@@ -24,6 +24,14 @@ export const onRequest = defineRouteMiddleware(async (context) => {
   await searchHead(route, context.url.pathname)
   const data = route.entry.data as { repo?: string; sourcePath?: string }
   if (!data.repo) return
+  route.head.push({
+    tag: "link",
+    attrs: {
+      rel: "alternate",
+      type: "text/markdown",
+      href: siteOrigin + markdownPath(context.url.pathname.replace(/(.)\/$/, "$1")),
+    },
+  })
   const repo = site.repos.find((r) => r.name === data.repo)
   if (!repo) return
   const here = context.url.pathname.replace(/\/$/, "")

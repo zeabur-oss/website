@@ -1,13 +1,14 @@
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import type { RepoLinks } from "../../scripts/sync-docs.ts"
-import { docsUrl, siteOrigin } from "./urls.ts"
+import { docsUrl, markdownPath, siteOrigin } from "./urls.ts"
 
-const guide = "install/move-from-zeabur"
+const guide = "get-started/from-zeabur-com"
 const install = "install/agent"
 
-/** The Markdown copy of the guide that scripts/sync-docs.ts writes for agents. */
-export const agentGuideMarkdown = `${siteOrigin}/docs/move-from-zeabur.md`
+/** The Markdown copy of the guide (scripts/sync-docs.ts), which the prompt asks the agent to read. */
+export const agentGuideMarkdown = (locale: string) =>
+  siteOrigin + markdownPath(docsUrl(locale, "zeabur", guide))
 
 const published = (): string[] => {
   const links: Record<string, RepoLinks> = JSON.parse(
@@ -16,14 +17,27 @@ const published = (): string[] => {
   return links.zeabur?.published ?? []
 }
 
+/** The guide in the Zeabur release that docs.lock.json pins gives the same prompt. */
+const guideReady = (locale: string) => {
+  const file = join(
+    process.cwd(),
+    "src/content/docs",
+    locale === "en" ? "" : locale,
+    "docs/zeabur",
+    `${guide}.mdx`,
+  )
+  return existsSync(file) && readFileSync(file, "utf8").includes(agentGuideMarkdown(locale))
+}
+
 /**
- * The docs pages behind the agent page, in `locale`, once the Zeabur release that docs.lock.json
- * pins has them. Until then the page shows "Stay tuned" and no prompt.
+ * The docs pages behind the agent page, in `locale`. Until the pinned release's guide has the
+ * prompt, the page shows "Stay tuned" and no prompt.
  */
 export function agentDocs(locale: string) {
   const pages = published()
   return {
-    guide: pages.includes(guide) ? docsUrl(locale, "zeabur", guide) : undefined,
+    guide:
+      pages.includes(guide) && guideReady(locale) ? docsUrl(locale, "zeabur", guide) : undefined,
     install: pages.includes(install) ? docsUrl(locale, "zeabur", install) : undefined,
   }
 }

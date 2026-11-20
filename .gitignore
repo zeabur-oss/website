@@ -7,6 +7,9 @@ node_modules
 /content
 /src/content/docs
 /public/docs
+/public/zh-TW
+/public/zh-CN
+/public/llms.txt
 /public/docs-assets
 /public/og
 /dist
