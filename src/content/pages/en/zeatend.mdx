@@ -53,7 +53,23 @@ details:
     - - zeatend uninstall
       - Removes the cluster and the files Zeatend wrote; volumes go only with --delete-volumes
 start:
-  title: Download it on the server and run it
-  sub: Run Zeatend as root on the Linux server that becomes the cluster. It has builds for amd64 and arm64. To skip the screens, write the settings to /etc/zeatend/config.yaml and run zeatend apply.
-  cta: Read the Zeatend docs
+  title: Download it on the server and install
+  sub: Run these commands on the Linux server that becomes the cluster. It boots with systemd and runs on amd64 or arm64; K3s needs at least 2 GiB of memory, and the disk with the cluster's data at least 10 GiB free.
+  cta: Read the full install guide
+  anchor: install
+  hero: Run these lines on a Linux server to open the install screens.
+  steps:
+    - title: Download and check zeatend
+      body: Download zeatend and check it against SHA256SUMS. When sha256sum prints OK, the file is the one on the GitHub release.
+      code: download
+    - title: Install the cluster
+      body: In the screens, choose K3s, RKE2 or KubeSolo, fill in the address your computer uses to reach the API server, and confirm the install plan to start. Without the screens, run sudo zeatend plan to review it, then sudo zeatend apply; this installs K3s with the defaults. For RKE2 or KubeSolo, write /etc/zeatend/config.yaml first.
+      code: install
+    - title: Check that the cluster is ready
+      body: When the install is done, the screen says the cluster is ready and lists the commands that show the nodes and copy the kubeconfig to your computer. Later, sudo zeatend doctor checks the host and the cluster at any time.
+      code: check
+  copy:
+    label: Copy the commands
+    done: Copied
+    failed: Copy failed
 ---

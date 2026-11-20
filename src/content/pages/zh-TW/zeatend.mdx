@@ -53,7 +53,23 @@ details:
     - - zeatend uninstall
       - 移除叢集和 Zeatend 寫入的檔案；加上 --delete-volumes 才會刪除磁碟區
 start:
-  title: 在伺服器上下載並執行
-  sub: 在要裝成叢集的那台 Linux 伺服器上，以 root 身分執行 Zeatend，有 amd64 和 arm64 兩種版本。不想開畫面時，把設定寫進 /etc/zeatend/config.yaml，再執行 zeatend apply。
-  cta: 閱讀 Zeatend 文件
+  title: 在伺服器上下載並安裝
+  sub: 在要安裝叢集的 Linux 伺服器上執行下面的指令。主機要以 systemd 啟動，處理器是 amd64 或 arm64；K3s 至少要 2 GiB 記憶體，資料所在的磁碟至少要有 10 GiB 可用空間。
+  cta: 閱讀完整的安裝說明
+  anchor: 安裝
+  hero: 在 Linux 伺服器上執行這幾行，就會開啟安裝畫面：
+  steps:
+    - title: 下載並核對 zeatend
+      body: 下載 zeatend，再用 SHA256SUMS 核對檔案。sha256sum 印出 OK，代表下載的檔案和 GitHub release 上的檔案一致。
+      code: download
+    - title: 安裝叢集
+      body: 在畫面上選擇 K3s、RKE2 或 KubeSolo，填好你的電腦連到 API 伺服器的位址，確認安裝計畫後開始安裝。不想開畫面時，先執行 sudo zeatend plan 檢視，再執行 sudo zeatend apply，會用預設值安裝 K3s；要裝 RKE2 或 KubeSolo，先把設定寫進 /etc/zeatend/config.yaml。
+      code: install
+    - title: 確認叢集可以使用
+      body: 安裝完成時，畫面會顯示「叢集已經可以使用」，並列出查看節點和把 kubeconfig 複製到你電腦上的指令。之後隨時可以用 sudo zeatend doctor 檢查主機和叢集。
+      code: check
+  copy:
+    label: 複製指令
+    done: 已複製
+    failed: 無法複製
 ---

@@ -53,7 +53,23 @@ details:
     - - zeatend uninstall
       - 移除集群和 Zeatend 写入的文件；加上 --delete-volumes 才会删除卷
 start:
-  title: 在服务器上下载并运行
-  sub: 在要装成集群的那台 Linux 服务器上，以 root 身份运行 Zeatend，有 amd64 和 arm64 两种版本。不想打开界面时，把配置写进 /etc/zeatend/config.yaml，再运行 zeatend apply。
-  cta: 阅读 Zeatend 文档
+  title: 在服务器上下载并安装
+  sub: 在要安装集群的 Linux 服务器上运行下面的命令。主机要用 systemd 启动，处理器为 amd64 或 arm64；K3s 至少要 2 GiB 内存，数据所在的磁盘至少要有 10 GiB 可用空间。
+  cta: 阅读完整的安装说明
+  anchor: 安装
+  hero: 在 Linux 服务器上运行这几行，就会打开安装界面：
+  steps:
+    - title: 下载并校验 zeatend
+      body: 下载 zeatend，再用 SHA256SUMS 校验文件。sha256sum 输出 OK，说明下载的文件和 GitHub release 上的文件一致。
+      code: download
+    - title: 安装集群
+      body: 在界面上选择 K3s、RKE2 或 KubeSolo，填好你的电脑连接 API 服务器的地址，确认安装计划后开始安装。不想打开界面时，先运行 sudo zeatend plan 查看，再运行 sudo zeatend apply，会用默认值安装 K3s；要装 RKE2 或 KubeSolo，先把配置写进 /etc/zeatend/config.yaml。
+      code: install
+    - title: 确认集群可以使用
+      body: 安装完成时，界面会显示“集群已经可以使用”，并列出查看节点和把 kubeconfig 复制到你电脑上的命令。之后随时可以用 sudo zeatend doctor 检查主机和集群。
+      code: check
+  copy:
+    label: 复制命令
+    done: 已复制
+    failed: 无法复制
 ---

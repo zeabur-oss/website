@@ -42,9 +42,25 @@ zeabur-identityctl kube-config --distro k3s > authn.yaml
 zeabur-identityctl setup-link --username admin`
 
 const zeatendTag = releaseTag("zeatend")
-const zeatendArchive = `zeatend-${zeatendTag}-linux-amd64.tar.gz`
-export const zeatendExample = `# On the Linux server; arm64 has its own archive.
-curl -fLO https://github.com/zeabur-oss/zeatend/releases/download/${zeatendTag}/${zeatendArchive}
-tar -xzf ${zeatendArchive}
-sudo install zeatend /usr/local/bin/
-sudo zeatend`
+const zeatendArch = `arch=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')`
+const zeatendInstall = "sudo install -m 0755 zeatend /usr/local/bin/zeatend"
+export const zeatendExample = `version=${zeatendTag}
+${zeatendArch}
+base=https://github.com/zeabur-oss/zeatend/releases/download/$version
+curl -fsSLO "$base/zeatend-$version-linux-$arch.tar.gz" &&
+  curl -fsSLO "$base/SHA256SUMS" &&
+  sha256sum --ignore-missing -c SHA256SUMS &&
+  tar -xzf "zeatend-$version-linux-$arch.tar.gz" zeatend &&
+  ${zeatendInstall}`
+
+/** The commands of the Zeatend page: the hero's short path and one block for each start step. */
+export const zeatendCommands: Record<string, string> = {
+  quick: `${zeatendArch}
+url=https://github.com/zeabur-oss/zeatend/releases/download/${zeatendTag}
+curl -fsSL "$url/zeatend-${zeatendTag}-linux-$arch.tar.gz" | tar -xzf - zeatend &&
+  ${zeatendInstall} &&
+  sudo zeatend`,
+  download: zeatendExample,
+  install: "sudo zeatend",
+  check: "sudo zeatend doctor",
+}

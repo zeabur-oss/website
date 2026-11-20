@@ -1,0 +1,151 @@
+---
+// Shell commands to copy, with a copy button that says whether the copy worked.
+import Icon from "../components/Icon.astro"
+
+interface Props {
+  id: string
+  code: string
+  copy: { label: string; done: string; failed: string }
+  class?: string
+}
+const { id, code, copy, class: className } = Astro.props
+---
+
+<div class:list={["command", className]} data-copy-done={copy.done} data-copy-failed={copy.failed}>
+  <pre
+    class="overflow-x-auto rounded-lg border border-site-line bg-site-bg-soft py-4 pr-14 pl-5 type-mono leading-[1.65]"
+    tabindex="0"
+  ><code id={id}>{code}</code></pre>
+  <span class="copy">
+    <button
+      type="button"
+      class="copy-button"
+      command="--copy"
+      commandfor={id}
+      aria-label={copy.label}
+      title={copy.label}
+    >
+      <Icon name="copy" class="when-idle size-4" />
+      <Icon name="check" class="when-copied size-4" />
+    </button>
+    <span class="tip" role="status"></span>
+  </span>
+</div>
+
+<style>
+  .command {
+    position: relative;
+    min-width: 0;
+  }
+  .copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+  .copy-button {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: 2.25rem;
+    min-block-size: 2.25rem;
+    border: var(--stroke) solid var(--site-line);
+    border-radius: var(--radius-md);
+    background: var(--site-card);
+    color: var(--site-muted);
+    cursor: pointer;
+    transition: color var(--transition-duration-quick) var(--ease-site);
+  }
+  .copy-button:hover {
+    color: var(--site-text);
+  }
+  .when-copied,
+  .copy-button[data-copied] .when-idle {
+    display: none;
+  }
+  .copy-button[data-copied] .when-copied {
+    display: block;
+    color: var(--site-accent);
+  }
+  .tip {
+    position: absolute;
+    top: 50%;
+    right: calc(100% + 0.5rem);
+    translate: 0 -50%;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-md);
+    background: var(--site-text);
+    color: var(--site-bg);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-duration-quick) var(--ease-site);
+  }
+  .tip:not(:empty) {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  const timers = new WeakMap<HTMLElement, number>()
+  let lastMessage = ""
+
+  function report(button: HTMLElement, ok: boolean) {
+    const tip = button.nextElementSibling
+    const block = button.closest<HTMLElement>(".command")
+    if (!tip || !block) return
+    clearTimeout(timers.get(button))
+    button.removeAttribute("data-copied")
+    let message = (ok ? block.dataset.copyDone : block.dataset.copyFailed) ?? ""
+    // VoiceOver skips a message equal to the one before it.
+    if (message === lastMessage) message += " "
+    lastMessage = message
+    tip.textContent = ""
+    if (ok) button.setAttribute("data-copied", "")
+    requestAnimationFrame(() => (tip.textContent = message))
+    timers.set(
+      button,
+      window.setTimeout(() => {
+        button.removeAttribute("data-copied")
+        tip.textContent = ""
+      }, 2000),
+    )
+  }
+
+  async function copy(button: HTMLElement, target: HTMLElement) {
+    const text = target.innerText.trim()
+    if (!text) return
+    try {
+      await navigator.clipboard.writeText(text)
+      report(button, true)
+    } catch {
+      report(button, false)
+    }
+  }
+
+  if ("CommandEvent" in window) {
+    document.addEventListener(
+      "command",
+      (event) => {
+        const source: unknown = Reflect.get(event, "source")
+        const { target } = event
+        if (
+          Reflect.get(event, "command") === "--copy" &&
+          source instanceof HTMLElement &&
+          target instanceof HTMLElement
+        ) {
+          void copy(source, target)
+        }
+      },
+      true,
+    )
+  } else {
+    document.addEventListener("click", (event) => {
+      const button =
+        event.target instanceof Element
+          ? event.target.closest<HTMLElement>('button[command="--copy"]')
+          : null
+      const target = document.getElementById(button?.getAttribute("commandfor") ?? "")
+      if (button && target) void copy(button, target)
+    })
+  }
+</script>
