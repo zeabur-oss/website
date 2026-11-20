@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { join, relative } from "node:path"
-import { parse } from "acorn"
+import type { Program } from "estree"
 import type { Image, Link, Root } from "mdast"
 import type { MdxjsEsm } from "mdast-util-mdxjs-esm"
 import { visit } from "unist-util-visit"
@@ -107,13 +107,27 @@ export function rewriteSrc(src: string, { page, repo, files }: Context): string 
 }
 
 function importNode(names: string[]): MdxjsEsm {
-  const value = `import { ${names.join(", ")} } from ${JSON.stringify(components)}`
+  const source = JSON.stringify(components)
+  const estree = {
+    type: "Program",
+    sourceType: "module",
+    body: [
+      {
+        type: "ImportDeclaration",
+        attributes: [],
+        specifiers: names.map((name) => ({
+          type: "ImportSpecifier",
+          imported: { type: "Identifier", name },
+          local: { type: "Identifier", name },
+        })),
+        source: { type: "Literal", value: components, raw: source },
+      },
+    ],
+  } satisfies Program
   return {
     type: "mdxjsEsm",
-    value,
-    data: {
-      estree: parse(value, { ecmaVersion: "latest", sourceType: "module" }) as never,
-    },
+    value: `import { ${names.join(", ")} } from ${source}`,
+    data: { estree },
   }
 }
 
