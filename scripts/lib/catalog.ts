@@ -39,7 +39,7 @@ const input = z.union([
 ])
 
 const templateFile = z.object({
-  metadata: localized({ summary: z.string(), firstUse: z.string() }).extend({
+  metadata: localized({ summary: z.string(), readme: z.string() }).extend({
     name: z.string(),
     license: z.string(),
     homepage: z.string().url(),
@@ -137,7 +137,7 @@ export type CatalogTemplate = Entry & {
   /** The upstream usage docs. */
   docs: string
   /** What you get, where to open it, how to sign in and where generated values are. */
-  firstUse: Localized
+  readme: Localized
   /** Component IDs the cluster needs first. */
   requires: string[]
   services: TemplateService[]
@@ -266,7 +266,7 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
       tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
       version: metadata.version,
       docs: metadata.docs,
-      firstUse: pick(metadata, "firstUse"),
+      readme: pick(metadata, "readme"),
       requires: requires.map((r) => r.component),
       services: services.map((s) => ({
         name: s.name,

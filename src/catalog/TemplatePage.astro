@@ -31,7 +31,7 @@ const cores = (q: string) => w.resources.cores(formatCpu(q))
   ]}
 >
   <Section id="start" title={w.start.title}>
-    <p class="body">{x.firstUse[locale]}</p>
+    <p class="body">{x.readme[locale]}</p>
     <div class="flex flex-wrap gap-x-8 gap-y-4">
       <a href={docsUrl(locale, "zeabur", "deploy/templates")} class="more">
         <Icon name="arrow-right" />
