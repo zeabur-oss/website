@@ -135,6 +135,27 @@ function flattenAll(nodes: Node[], depth: number): Node[] {
   return out
 }
 
+/** Rewrites `href`, `src` and `srcset` in raw HTML, as the HTML pages do (src/mdx/rehype-docs-html.ts). */
+function rewriteHtml(html: string, url: MarkdownPage["url"]) {
+  return html.replace(
+    /\b(href|src|srcset)=(["'])(.*?)\2/gi,
+    (_, name: string, quote: string, value: string) => {
+      const attr = name.toLowerCase()
+      const rewritten =
+        attr === "srcset"
+          ? value
+              .split(",")
+              .map((part) => {
+                const [first = "", ...rest] = part.trim().split(/\s+/)
+                return [url(first, true), ...rest].join(" ")
+              })
+              .join(", ")
+          : url(value, attr === "src")
+      return `${name}=${quote}${rewritten}${quote}`
+    },
+  )
+}
+
 /** A docs page as Markdown: the title as `#`, the description as a quote, then the body. */
 export function toMarkdown(page: MarkdownPage): string {
   const parser = unified().use(remarkParse).use(remarkGfm)
@@ -145,6 +166,7 @@ export function toMarkdown(page: MarkdownPage): string {
     if (node.type === "link" || node.type === "image" || node.type === "definition") {
       node.url = page.url(node.url, node.type === "image")
     }
+    if (node.type === "html") node.value = rewriteHtml(node.value, page.url)
   })
   const head = `# ${page.title}\n\n` + (page.description ? `> ${page.description}\n\n` : "")
   const body = unified()

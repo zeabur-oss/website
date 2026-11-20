@@ -73,6 +73,18 @@ test("every link and image is an absolute URL", () => {
   ])
 })
 
+test("links in raw HTML of a Markdown page become absolute", () => {
+  const html = toMarkdown({
+    title: "Readme",
+    body: '<picture><source srcset="docs/dark.avif 2x" /><img src="docs/light.avif" /></picture>\n\n<a href="docs/start.md">Start</a>\n',
+    mdx: false,
+    url: (href, image) => `https://oss.zeabur.com/${image ? "img" : "page"}/${href}`,
+  })
+  expect(html).toContain('srcset="https://oss.zeabur.com/img/docs/dark.avif 2x"')
+  expect(html).toContain('src="https://oss.zeabur.com/img/docs/light.avif"')
+  expect(html).toContain('href="https://oss.zeabur.com/page/docs/start.md"')
+})
+
 test("components keep their words", () => {
   expect(markdown).toStartWith("# Install\n\n> Install it.\n")
   expect(markdown).toContain("> **Back up first**\n>\n> Keep a copy.")
