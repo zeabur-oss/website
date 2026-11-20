@@ -120,3 +120,29 @@ export function desktopRelease(): Promise<DesktopRelease> {
   desktop ??= readDesktop()
   return desktop
 }
+
+/** The command that installs Desktop from Zeabur's Homebrew tap. */
+export const desktopBrew = "brew install --cask zeabur-oss/tap/zeabur-desktop"
+
+async function readCask(): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `https://raw.githubusercontent.com/${new URL(githubOrg).pathname.slice(1)}/homebrew-tap/main/Casks/zeabur-desktop.rb`,
+      { method: "HEAD", signal: AbortSignal.timeout(5000) },
+    )
+    return response.ok
+  } catch {
+    return false
+  }
+}
+
+let cask: Promise<boolean> | undefined
+
+/**
+ * Whether the Homebrew tap has Desktop's cask, read once at build time. The tap gets it with the
+ * first release that is not a pre-release.
+ */
+export function desktopCask(): Promise<boolean> {
+  cask ??= readCask()
+  return cask
+}

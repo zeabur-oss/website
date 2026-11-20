@@ -3,7 +3,7 @@ import HeadingText from "../components/HeadingText.astro"
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import { desktopRelease } from "../lib/github.ts"
+import { desktopBrew, desktopCask, desktopRelease } from "../lib/github.ts"
 import { downloadTable, fileFor, oses, type Arch, type Os } from "../lib/desktop-download.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
@@ -79,6 +79,7 @@ const download = dl && {
   href: app.files.length > 0 ? "#downloads" : app.page,
   page: app.page,
   table: downloadTable(app.files),
+  brew: desktop && (await desktopCask()) ? desktopBrew : undefined,
 }
 
 const file = spec.example
@@ -477,6 +478,14 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
                             </span>
                           </li>
                         ))}
+                        {group.os === "macos" && download.brew && (
+                          <li class="grid gap-1.5 border-b border-site-line py-3">
+                            Homebrew
+                            <code class="type-mono text-xs break-all text-site-muted select-all">
+                              {download.brew}
+                            </code>
+                          </li>
+                        )}
                       </ul>
                     </div>
                   ))}
