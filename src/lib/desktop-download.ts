@@ -15,7 +15,13 @@ const variants: Variant[] = [
   { os: "windows", kind: "portable", ext: ".exe", tail: "-portable.exe", arches: ["amd64"] },
   { os: "linux", kind: "deb", ext: ".deb", tail: ".deb", arches: ["amd64", "arm64"] },
   { os: "linux", kind: "rpm", ext: ".rpm", tail: ".rpm", arches: ["amd64", "arm64"] },
-  { os: "linux", kind: "appimage", ext: ".AppImage", tail: ".AppImage", arches: ["amd64", "arm64"] },
+  {
+    os: "linux",
+    kind: "appimage",
+    ext: ".AppImage",
+    tail: ".AppImage",
+    arches: ["amd64", "arm64"],
+  },
 ]
 
 /** The file the main button offers: one that installs and updates itself. */
@@ -51,16 +57,14 @@ export function downloadTable<T extends { name: string }>(files: T[]) {
       os,
       rows: variants
         .filter((v) => v.os === os)
-        .map(
-          (v): Row<T> => ({
-            kind: v.kind,
-            ext: v.ext,
-            builds: v.arches.flatMap((arch) => {
-              const file = find(v, arch, files)
-              return file ? [{ arch, file }] : []
-            }),
+        .map((v): Row<T> => ({
+          kind: v.kind,
+          ext: v.ext,
+          builds: v.arches.flatMap((arch) => {
+            const file = find(v, arch, files)
+            return file ? [{ arch, file }] : []
           }),
-        )
+        }))
         .filter((r) => r.builds.length > 0),
     }))
     .filter((g) => g.rows.length > 0)

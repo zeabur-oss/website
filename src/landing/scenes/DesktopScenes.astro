@@ -1,0 +1,133 @@
+---
+// Zeabur Desktop's three steps, drawn after its chooser and the Zeabur screens it opens: pick a
+// context, add a namespace that already runs as a project, and review the one label it writes.
+import Icon from "../../components/Icon.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import { desktopUi } from "./ui.ts"
+import "./desktop-scenes.css"
+
+interface Props {
+  locale: SiteLocale
+}
+const u = desktopUi[Astro.props.locale]
+
+const contexts = [
+  { name: "personal", server: "https://203.0.113.10:6443", user: "admin", current: true },
+  { name: "prod-eks", server: "https://…eks.amazonaws.com", user: "aws" },
+  { name: "team-staging", server: "https://k8s.example.com", user: "alice" },
+]
+const projects = [
+  { name: "shop", services: 5 },
+  { name: "api", services: 2 },
+]
+const others = [
+  { name: "blog", pods: 3, menu: true },
+  { name: "monitoring", pods: 4 },
+]
+const diff = [
+  { text: "apiVersion: v1" },
+  { text: "kind: Namespace" },
+  { text: "metadata:" },
+  { text: "  name: blog" },
+  { text: "  labels:" },
+  { text: "    kubernetes.io/metadata.name: blog" },
+  { text: '    zeabur.com/project: "true"', add: true },
+]
+---
+
+<div class="ppanel dscene" data-n="0">
+  <span class="ppanel-title">Zeabur Desktop</span>
+  <div class="dscene-body">
+    <p class="dscene-head">
+      <b>{u.choose}</b>
+      <span class="dscene-muted">{u.count(contexts.length)}</span>
+    </p>
+    <div class="dtable">
+      <span class="dtable-row dtable-cols">
+        {u.cols.map((c) => (
+          <span>{c}</span>
+        ))}
+        <span></span>
+      </span>
+      {contexts.map((c) => (
+        <span class:list={["dtable-row", c.current && "on"]}>
+          <span class="dname">
+            <Icon name="cube" />
+            {c.name}
+            {c.current && <span class="dchip">{u.current}</span>}
+          </span>
+          <span class="dmono">{c.server}</span>
+          <span class="dmono">{c.user}</span>
+          <span>{c.current && <span class="dbutton">{u.open}</span>}</span>
+        </span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<div class="ppanel dscene" data-n="1">
+  <span class="ppanel-title">Zeabur · personal</span>
+  <div class="dscene-body">
+    <p class="dscene-head">
+      <b>{u.projects}</b>
+    </p>
+    <div class="dtable">
+      {projects.map((p) => (
+        <span class="dtable-row dlist">
+          <span class="dname">
+            <Icon name="folder" />
+            {p.name}
+          </span>
+          <span class="dstate">
+            <span class="dot"></span>
+            {p.services}/{p.services}
+          </span>
+        </span>
+      ))}
+    </div>
+    <p class="dscene-head dscene-sub">
+      <span class="dscene-muted">{u.other}</span>
+    </p>
+    <div class="dtable">
+      {others.map((o) => (
+        <span class:list={["dtable-row dlist", o.menu && "on"]}>
+          <span class="dname">
+            <Icon name="folder-dashed" />
+            {o.name}
+          </span>
+          <span class="dstate">
+            <span class="dot"></span>
+            {u.running} · {o.pods}
+          </span>
+          {o.menu && (
+            <span class="dmenu">
+              <Icon name="plus" />
+              {u.adopt}
+            </span>
+          )}
+        </span>
+      ))}
+    </div>
+  </div>
+</div>
+
+<div class="ppanel dscene" data-n="2">
+  <span class="ppanel-title">Zeabur · personal</span>
+  <div class="dscene-body">
+    <p class="dscene-head">
+      <b>{u.review}</b>
+      <span class="dscene-muted">namespace/blog</span>
+    </p>
+    <div class="ddiff">
+      <span class="ddiff-title">{u.diff}</span>
+      <pre><code>{diff.map((line) => (
+        <span class:list={["line", line.add && "add"]}>{line.add ? "+ " : "  "}{line.text}</span>
+      ))}</code></pre>
+    </div>
+    <p class="dactions">
+      <span class="dmono dscene-muted">context: personal</span>
+      <span class="dbutton ghost">{u.cancel}</span>
+      <span class="dbutton">{u.apply}</span>
+    </p>
+  </div>
+</div>

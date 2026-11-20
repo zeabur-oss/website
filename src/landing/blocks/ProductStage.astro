@@ -1,5 +1,6 @@
 ---
-// A product page's stage: one panel per step, and the pipeline with the step's place lit.
+// A product page's stage: one panel per step, and the pipeline with the step's place lit. A page
+// with drawn scenes passes them in the panels slot instead.
 import Icon from "../../components/Icon.astro"
 import type { Node, Panel } from "../stages.ts"
 import "../stages.css"
@@ -13,6 +14,7 @@ const { panels, nodes } = Astro.props
 
 <div class="app pstage" aria-hidden="true">
   <div class="app-view">
+    <slot name="panels" />
     {panels.map((p, i) => (
       <div class="ppanel" data-n={i}>
         <span class="ppanel-title">{p.title}</span>

@@ -18,6 +18,7 @@ import { sectionLabels } from "./products.ts"
 import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
 import ProductStage from "./blocks/ProductStage.astro"
+import DesktopScenes from "./scenes/DesktopScenes.astro"
 import StoryLayout from "./blocks/StoryLayout.astro"
 import FeatureIndex from "./blocks/FeatureIndex.astro"
 import SectionHead from "./blocks/SectionHead.astro"
@@ -233,7 +234,9 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
       dim={chaptered ? undefined : t.how.titleDim}
       title={chaptered ? f.chapters : t.how.title}
     />
-    <ProductStage slot="stage" {...stage} />
+    <ProductStage slot="stage" {...stage}>
+      {desktop && <DesktopScenes slot="panels" locale={locale} />}
+    </ProductStage>
     {story.map((c, i) => (
       <li data-chapter={i} id={chaptered ? `chapter-${chapters[i]!.group}` : undefined}>
         <p class="index label">

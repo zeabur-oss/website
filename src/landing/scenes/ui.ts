@@ -112,3 +112,78 @@ export const alts: Record<SiteLocale, Record<"deploy" | "trace" | "access" | "le
       "After Zeabur is removed, the Deployment, Service, Ingress and PVC stay in the cluster and keep running.",
   },
 }
+
+// Labels of Zeabur Desktop's chooser (zeabur desktop/web/src/i18n/*.ts) and of the Zeabur screens
+// it opens (zeabur web/src/i18n/*.ts), for the Desktop page's scenes. Keep them in step.
+type DesktopUi = {
+  /** desktop.title */
+  choose: string
+  /** desktop.count */
+  count: (n: number) => string
+  /** desktop.colContext, desktop.colServer, desktop.colUser */
+  cols: [string, string, string]
+  /** desktop.current */
+  current: string
+  /** desktop.open */
+  open: string
+  /** projects.title, projects.other */
+  projects: string
+  other: string
+  /** action.adopt */
+  adopt: string
+  /** phase.Running */
+  running: string
+  /** create.review, plan.diff, plan.cancel, plan.apply */
+  review: string
+  diff: string
+  cancel: string
+  apply: string
+}
+
+export const desktopUi: Record<SiteLocale, DesktopUi> = {
+  "zh-TW": {
+    choose: "選擇叢集",
+    count: (n) => `${n} 個 context`,
+    cols: ["Context", "伺服器", "使用者"],
+    current: "目前使用中",
+    open: "開啟",
+    projects: "專案",
+    other: "其他 Namespace",
+    adopt: "使用這個 Namespace",
+    running: "執行中",
+    review: "檢查變更",
+    diff: "YAML 差異",
+    cancel: "取消",
+    apply: "套用",
+  },
+  "zh-CN": {
+    choose: "选择集群",
+    count: (n) => `${n} 个 context`,
+    cols: ["Context", "服务器", "用户"],
+    current: "当前使用",
+    open: "打开",
+    projects: "项目",
+    other: "其他 Namespace",
+    adopt: "使用这个 Namespace",
+    running: "运行中",
+    review: "检查变更",
+    diff: "YAML 差异",
+    cancel: "取消",
+    apply: "应用",
+  },
+  en: {
+    choose: "Choose a cluster",
+    count: (n) => `${n} contexts`,
+    cols: ["Context", "Server", "User"],
+    current: "Current",
+    open: "Open",
+    projects: "Projects",
+    other: "Other namespaces",
+    adopt: "Use this namespace",
+    running: "Running",
+    review: "Review changes",
+    diff: "YAML diff",
+    cancel: "Cancel",
+    apply: "Apply",
+  },
+}

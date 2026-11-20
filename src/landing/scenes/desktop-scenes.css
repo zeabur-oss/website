@@ -1,0 +1,195 @@
+@layer components {
+  .dscene-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.9em;
+    min-height: 0;
+    padding: 1.3em 1.4em;
+    overflow: hidden;
+  }
+  .dscene-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75em;
+    margin: 0;
+    font-size: 1.25em;
+  }
+  .dscene-sub {
+    margin-top: 0.4em;
+    font-size: 1em;
+  }
+  .dscene-muted {
+    color: var(--a-muted);
+    font-size: 0.85em;
+  }
+  .dmono {
+    overflow: hidden;
+    color: var(--a-muted);
+    font-family: var(--font-stack-mono);
+    font-size: 0.9em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dtable {
+    display: grid;
+    overflow: hidden;
+    border: 1px solid var(--a-line);
+    border-radius: var(--radius-md);
+    background: var(--a-card);
+  }
+  .dtable:has(.dmenu) {
+    overflow: visible;
+  }
+  .dtable-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr) minmax(0, 0.6fr) 4.5em;
+    align-items: center;
+    gap: 1em;
+    min-height: 3.1em;
+    padding: 0.55em 1em;
+  }
+  .dtable-row + .dtable-row {
+    border-top: 1px solid var(--a-line);
+  }
+  .dtable-cols {
+    min-height: 2.4em;
+    color: var(--a-muted);
+    font-size: 0.85em;
+  }
+  .dtable-row.on {
+    background: linear-gradient(90deg, rgb(167 123 255 / 0.2), rgb(167 123 255 / 0.04));
+    box-shadow: inset 2px 0 var(--a-violet);
+  }
+  .dlist {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .dname {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    min-width: 0;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .dname .icon {
+    color: var(--a-muted);
+  }
+  .dstate {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    color: var(--a-muted);
+    font-size: 0.9em;
+  }
+  .dchip {
+    padding: 0.15em 0.5em;
+    border: 1px solid var(--a-line);
+    border-radius: 999px;
+    color: var(--a-muted);
+    font-size: 0.75em;
+    font-weight: 400;
+  }
+  .dbutton {
+    display: inline-flex;
+    justify-content: center;
+    padding: 0.4em 0.9em;
+    border-radius: var(--radius-sm);
+    background: var(--a-violet);
+    color: rgb(var(--zGray-950));
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .dbutton.ghost {
+    border: 1px solid var(--a-line);
+    background: none;
+    color: var(--a-text);
+    font-weight: 400;
+  }
+  .dmenu {
+    position: absolute;
+    right: 1em;
+    top: 78%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.6em 0.9em;
+    border: 1px solid var(--a-violet);
+    border-radius: var(--radius-md);
+    background: var(--a-bg);
+    box-shadow:
+      0 0 0 3px rgb(167 123 255 / 0.18),
+      0 1em 2em -0.5em rgb(0 0 0 / 0.6);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ddiff {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--a-line);
+    border-radius: var(--radius-md);
+    background: var(--a-card);
+  }
+  .ddiff-title {
+    padding: 0.6em 1em;
+    border-bottom: 1px solid var(--a-line);
+    color: var(--a-muted);
+    font-size: 0.85em;
+  }
+  .ddiff pre {
+    margin: 0;
+    padding: 0.7em 0;
+    background: none;
+    font-size: 1.05em;
+    line-height: 1.75;
+  }
+  .ddiff .line {
+    display: block;
+    padding-inline: 1em;
+    color: var(--a-muted);
+    white-space: pre;
+  }
+  .ddiff .add {
+    background: rgb(62 207 142 / 0.14);
+    box-shadow: inset 2px 0 var(--a-ok);
+    color: var(--a-ok);
+  }
+  .dactions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75em;
+    margin: 0;
+  }
+  .dactions .dmono {
+    margin-right: auto;
+  }
+
+  @media (max-width: 63.99rem) {
+    .dscene-body {
+      gap: 0.6em;
+      padding: 0.8em 1em;
+    }
+    .dtable-row {
+      grid-template-columns: minmax(0, 1fr) 4.5em;
+      min-height: 2.6em;
+    }
+    .dtable-row > :nth-child(2),
+    .dtable-row > :nth-child(3) {
+      display: none;
+    }
+    .dlist {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+    .dlist > :nth-child(2) {
+      display: flex;
+    }
+  }
+}
