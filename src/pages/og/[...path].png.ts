@@ -1,5 +1,5 @@
 import type { APIRoute, GetStaticPaths } from "astro"
-import { getCollection } from "astro:content"
+import { getCollection, getEntry } from "astro:content"
 import { dateFormat, postSlug, postsFor } from "../../blog/blog.ts"
 import { blogCopy } from "../../blog/copy.ts"
 import { catalogCopy } from "../../catalog/copy.ts"
@@ -26,7 +26,8 @@ const notFound: Record<SiteLocale, { title: string; sub: string }> = {
 // /og/home/<locale>.png, /og/blog/<locale>/index.png, /og/blog/<locale>/<slug>.png,
 // /og/catalog/<locale>/index.png, /og/catalog/<locale>/<templates|components>/<id>.png,
 // /og/<docs page path>.png for each page in the language it is written in, /og/404/<locale>.png.
-// The product pages use their README covers, which scripts/sync-docs.ts copies to /og/<id>.png.
+// The product pages use their README covers, which scripts/sync-docs.ts copies to /og/<id>.png;
+// Zeabur Desktop has no README of its own and gets /og/desktop/<locale>.png.
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths: { params: { path: string }; props: { card: OgCard } }[] = []
   const add = (path: string, card: OgCard) => paths.push({ params: { path }, props: { card } })
@@ -41,6 +42,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
       han: han(locale),
     })
     add(`404/${locale}`, { kicker: "404", ...notFound[locale], han: han(locale) })
+    const desktop = await getEntry("pages", `${locale}/desktop`)
+    if (desktop) {
+      add(`desktop/${locale}`, {
+        kicker: "Zeabur Desktop",
+        title: `${desktop.data.titleDim}${localeInfo(locale).titleGap}${desktop.data.title}`,
+        sub: desktop.data.meta.description,
+        han: han(locale),
+      })
+    }
     add(`blog/${locale}/index`, {
       kicker: "Zeabur Open Source",
       title: t.title,

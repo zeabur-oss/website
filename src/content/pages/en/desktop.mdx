@@ -1,0 +1,82 @@
+---
+status: released
+lines:
+  nav: Zeabur on the clusters you already have
+  landing: The Zeabur you know, opened on the Kubernetes cluster you already have, with nothing to change in it first.
+meta:
+  title: "Zeabur Desktop: Zeabur on the clusters you already have"
+  description: Zeabur Desktop opens Zeabur with the kubeconfig on your computer, and it works like the Zeabur you know. There's nothing to install in the cluster and no app to redeploy. It runs on macOS, Windows, and Linux.
+titleDim: The Zeabur you know,
+title: on the cluster you already have.
+sub: Zeabur Desktop connects to your cluster with the kubeconfig on your computer, and the window holds the same Zeabur. There's nothing to install in the cluster, and nothing in it changes until you apply a change.
+download:
+  button: Download Zeabur Desktop
+  for:
+    macos: Download for macOS
+    windows: Download for Windows
+    linux: Download for Linux
+  all: All downloads
+  apple: Apple silicon
+  kinds:
+    dmg: Disk image
+    setup: Installer
+    portable: Portable, no install
+    deb: Debian, Ubuntu
+    rpm: Fedora, RHEL, openSUSE
+    appimage: Other Linux
+  releasePage: SHA256SUMS and notes on the release page
+docs: Read the install guide
+source: Source on GitHub
+highlights:
+  titleDim: Your cluster stays
+  title: the way it was.
+  items:
+    - tag: zeabur-local
+      title: Nothing to install in the cluster
+      body: Zeabur runs on your computer, on the same local service as zeaburctl ui. It installs no components in the cluster, and you need no domain or sign-in service.
+    - tag: Namespace
+      title: Your apps keep running
+      body: When you add an existing namespace as a project, Zeabur only adds a project label. The services, data, and security settings inside stay as they were. To stop, remove the label.
+    - tag: RBAC
+      title: Your own permissions
+      body: Reading, reviewing changes, and applying them all use that context's permissions, so the cluster's RBAC still applies. If your team granted only some permissions, Zeabur Desktop can do only those.
+how:
+  titleDim: No changes to your cluster,
+  title: and you're in.
+  steps:
+    - title: Pick a cluster
+      body: Zeabur Desktop lists every context in your kubeconfig. A personal server from Zeatend, Kubernetes from a cloud provider, and a kubeconfig from your team all work.
+    - title: The Zeabur you know
+      body: The new window opens the same Zeabur interface. With admin rights, you can add the apps already running in the cluster as projects without redeploying them.
+    - title: See what needs attention
+      body: Home lists the services across the cluster that need attention, says why in plain words, and what you can do next, such as raising a memory limit.
+details:
+  title: How each download installs and updates
+  cols:
+    - Computer
+    - File
+    - New versions
+  rows:
+    - - Mac with Apple silicon
+      - .dmg; open it and drag Zeabur to Applications
+      - Updates itself
+    - - Windows on x64
+      - -setup.exe; installs for your account only, no administrator needed
+      - Updates itself
+    - - Windows on x64, without installing
+      - -portable.exe
+      - Shows the new version; you download it from the release page
+    - - Debian or Ubuntu
+      - .deb, amd64 or arm64
+      - Shows the new version; you download it from the release page
+    - - Fedora, RHEL or openSUSE
+      - .rpm, amd64 or arm64
+      - Shows the new version; you download it from the release page
+    - - Other Linux
+      - .AppImage, amd64 or arm64
+      - Updates itself
+start:
+  title: Download Zeabur Desktop
+  sub: The button picks the file for your computer, and every other file is listed below. There are no builds for Intel Macs or Windows on Arm.
+  cta: Download Zeabur Desktop
+---

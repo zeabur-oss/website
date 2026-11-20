@@ -112,3 +112,96 @@ export const alts: Record<SiteLocale, Record<"deploy" | "trace" | "access" | "le
       "After Zeabur is removed, the Deployment, Service, Ingress and PVC stay in the cluster and keep running.",
   },
 }
+
+// Labels of Zeabur Desktop's chooser (zeabur desktop/web/src/i18n/*.ts) and of the Zeabur screens
+// it opens (zeabur web/src/i18n/*.ts), for the Desktop page's scenes. Keep them in step.
+type DesktopUi = {
+  /** desktop.title */
+  choose: string
+  /** desktop.count */
+  count: (n: number) => string
+  /** desktop.colContext, desktop.colServer, desktop.colUser */
+  cols: [string, string, string]
+  /** desktop.current */
+  current: string
+  /** desktop.open */
+  open: string
+  /** projects.title, projects.other */
+  projects: string
+  other: string
+  /** action.adopt */
+  adopt: string
+  /** phase.Running */
+  running: string
+  /** home.title, home.nodesReady, attention.title */
+  home: string
+  nodes: (ready: number, total: number) => string
+  attention: string
+  /** reason.outOfMemory, reason.crashing, usage.note.oomHint */
+  oom: string
+  crashing: string
+  oomHint: string
+  /** diagnosis.action.memory, diagnosis.action.logs */
+  memory: string
+  logs: string
+}
+
+export const desktopUi: Record<SiteLocale, DesktopUi> = {
+  "zh-TW": {
+    choose: "選擇叢集",
+    count: (n) => `${n} 個 context`,
+    cols: ["Context", "伺服器", "使用者"],
+    current: "目前使用中",
+    open: "開啟",
+    projects: "專案",
+    other: "其他 Namespace",
+    adopt: "使用這個 Namespace",
+    running: "執行中",
+    home: "首頁",
+    nodes: (ready, total) => `${ready}/${total} 個節點就緒`,
+    attention: "需要處理",
+    oom: "記憶體不足",
+    crashing: "反覆崩潰",
+    oomHint: "上次因 OOMKilled 結束：記憶體用量超過上限，所以容器重新啟動了。",
+    memory: "調整記憶體",
+    logs: "開啟日誌",
+  },
+  "zh-CN": {
+    choose: "选择集群",
+    count: (n) => `${n} 个 context`,
+    cols: ["Context", "服务器", "用户"],
+    current: "当前使用",
+    open: "打开",
+    projects: "项目",
+    other: "其他 Namespace",
+    adopt: "使用这个 Namespace",
+    running: "运行中",
+    home: "首页",
+    nodes: (ready, total) => `${ready}/${total} 个节点就绪`,
+    attention: "需要处理",
+    oom: "内存不足",
+    crashing: "反复崩溃",
+    oomHint: "上次因 OOMKilled 结束：内存用量超过上限，所以容器重启了。",
+    memory: "调整内存",
+    logs: "打开日志",
+  },
+  en: {
+    choose: "Choose a cluster",
+    count: (n) => `${n} contexts`,
+    cols: ["Context", "Server", "User"],
+    current: "Current",
+    open: "Open",
+    projects: "Projects",
+    other: "Other namespaces",
+    adopt: "Use this namespace",
+    running: "Running",
+    home: "Home",
+    nodes: (ready, total) => `${ready}/${total} nodes ready`,
+    attention: "Needs attention",
+    oom: "Out of memory",
+    crashing: "Keeps crashing",
+    oomHint: "Last stopped with OOMKilled: it went over its memory limit and was restarted.",
+    memory: "Change memory",
+    logs: "Open logs",
+  },
+}

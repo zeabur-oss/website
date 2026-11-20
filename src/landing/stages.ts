@@ -146,6 +146,16 @@ const zeatend = (locale: string, alts: string[]): Stage => ({
   ],
 })
 
+// Desktop's panels are drawn scenes (scenes/DesktopScenes.astro); the stage keeps the pipeline.
+const desktop: Stage = {
+  panels: [],
+  nodes: [
+    { icon: "file-text", name: "kubeconfig", sub: "context" },
+    { icon: "app-window", name: "Zeabur", sub: "zeabur-local" },
+    { icon: "heartbeat", name: "Home", sub: "attention" },
+  ],
+}
+
 /** The stage of a page whose story walks through steps; `alts` describe the steps. */
 export const stageOf = (slug: string, locale: string, alts: string[], signInAlt: string): Stage => {
   switch (slug) {
@@ -157,6 +167,8 @@ export const stageOf = (slug: string, locale: string, alts: string[], signInAlt:
       return identity(signInAlt)
     case "zeatend":
       return zeatend(locale, alts)
+    case "desktop":
+      return desktop
     default:
       throw new Error(`no stage for ${slug}`)
   }

@@ -45,6 +45,29 @@ const pages = defineCollection({
     title: text,
     sub: text,
     docs: text,
+    /** An app's downloads: the main button, then every file by system and way to install. */
+    download: z
+      .object({
+        /** The main button when the page cannot tell the visitor's computer. */
+        button: text,
+        /** The main button for each system, such as "Download for macOS". */
+        for: z.object({ macos: text, windows: text, linux: text }),
+        /** The heading over the list of every file. */
+        all: text,
+        /** What the page calls a Mac's Arm chip. */
+        apple: text,
+        kinds: z.object({
+          dmg: text,
+          setup: text,
+          portable: text,
+          deb: text,
+          rpm: text,
+          appimage: text,
+        }),
+        /** The link to the release page, below the list. */
+        releasePage: text,
+      })
+      .optional(),
     source: text,
     highlights: z.object({
       titleDim: text,

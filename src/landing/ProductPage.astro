@@ -3,7 +3,8 @@ import HeadingText from "../components/HeadingText.astro"
 import { cn } from "cn"
 import Icon from "../components/Icon.astro"
 import Site from "../layouts/Site.astro"
-import { productIcon, productName, releaseTag } from "../lib/products.ts"
+import { desktopBrew, desktopCask, desktopRelease } from "../lib/github.ts"
+import { downloadTable, fileFor, oses, type Arch, type Os } from "../lib/desktop-download.ts"
 import { githubOrg } from "../lib/site.ts"
 import { organization } from "../lib/seo.ts"
 import { docsUrl, localeInfo, type SiteLocale } from "../lib/urls.ts"
@@ -17,6 +18,7 @@ import { sectionLabels } from "./products.ts"
 import Shot from "./Shot.astro"
 import StartWays from "./StartWays.astro"
 import ProductStage from "./blocks/ProductStage.astro"
+import DesktopScenes from "./scenes/DesktopScenes.astro"
 import StoryLayout from "./blocks/StoryLayout.astro"
 import FeatureIndex from "./blocks/FeatureIndex.astro"
 import SectionHead from "./blocks/SectionHead.astro"
@@ -29,7 +31,7 @@ interface Props {
   slug: string
 }
 const { locale, slug } = Astro.props
-const spec = pageRow(slug)
+const spec = await pageRow(slug)
 const id = spec.repo
 const page = await pageEntry(locale, slug)
 if (!page) throw new Error(`no page ${locale}/${slug}`)
@@ -37,15 +39,48 @@ const t = page.data
 const released = t.status === "released"
 const chaptered = spec.story === "chapters"
 const home = landingCopy[locale]
-const name = productName[id]
+const name = spec.name
 const repo = `${githubOrg}/${id}`
-const docs = {
-  zeabur: docsUrl(locale, "zeabur"),
-  identity: docsUrl(locale, "identity", "get-started"),
-  builder: docsUrl(locale, "builder"),
-  catalog: docsUrl(locale, "catalog"),
-  zeatend: docsUrl(locale, "zeatend"),
-}[id]
+const desktop = slug === "desktop"
+const app = await desktopRelease()
+// Zeabur's docs can pin a release without Desktop, so its install page is read at Desktop's release.
+const docs = desktop
+  ? `${githubOrg}/zeabur/blob/${app.tag ?? "main"}/docs/${locale === "en" ? "" : `${locale}/`}install/desktop.mdx`
+  : {
+      zeabur: docsUrl(locale, "zeabur"),
+      identity: docsUrl(locale, "identity", "get-started"),
+      builder: docsUrl(locale, "builder"),
+      catalog: docsUrl(locale, "catalog"),
+      zeatend: docsUrl(locale, "zeatend"),
+    }[id]
+const dl = desktop ? t.download : undefined
+const archName = (os: Os, arch: Arch) =>
+  dl && os === "macos" && arch === "arm64" ? dl.apple : arch === "arm64" ? "Arm64" : "x64"
+const osNames: Record<Os, { name: string; icon: string }> = {
+  macos: { name: "macOS", icon: "apple-logo" },
+  windows: { name: "Windows", icon: "windows-logo" },
+  linux: { name: "Linux", icon: "linux-logo" },
+}
+// The main button's file for each computer, which the page's script picks from.
+const choices = dl
+  ? Object.fromEntries(
+      oses.flatMap((os) =>
+        (["arm64", "amd64"] as const).flatMap((arch) => {
+          const c = fileFor({ os, arch }, app.files)
+          if (!c) return []
+          const caption = [archName(os, arch), c.ext, app.tag].filter(Boolean).join(" · ")
+          return [[`${os}-${arch}`, { url: c.file.url, label: dl.for[os], caption }]]
+        }),
+      ),
+    )
+  : {}
+const download = dl && {
+  ...dl,
+  href: app.files.length > 0 ? "#downloads" : app.page,
+  page: app.page,
+  table: downloadTable(app.files),
+  brew: desktop && (await desktopCask()) ? desktopBrew : undefined,
+}
 
 const file = spec.example
   ? {
@@ -103,7 +138,7 @@ const story = chaptered
 const stage = chaptered
   ? { panels: story.flatMap((c) => (c.panel ? [c.panel] : [])) }
   : stageOf(
-      id,
+      slug,
       locale,
       story.map((c) => c.alt),
       productShots["sign-in"] ?? "",
@@ -123,13 +158,13 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
   title={t.meta.title}
   description={t.meta.description}
   section="products"
-  image={`/og/${id}.png`}
+  image={desktop ? `/og/desktop/${locale}.png` : `/og/${id}.png`}
   schema={{
     "@type": "SoftwareApplication",
     name,
     description: t.meta.description,
     applicationCategory: "DeveloperApplication",
-    operatingSystem: "Linux, Kubernetes",
+    operatingSystem: desktop ? "macOS, Windows, Linux" : "Linux, Kubernetes",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
     codeRepository: repo,
@@ -138,9 +173,14 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
 >
   <section class="wrap hero frame">
     <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
-      <Icon name={productIcon[id]} class="size-4" />
+      <Icon name={spec.icon} class="size-4" />
       <span translate="no">{name}</span>
-      <span class="pill">{released ? releaseTag(id) : chrome[locale].nav.soon}</span>
+      {released ? (
+        spec.tag && <span class="pill">{spec.tag}</span>
+      ) : (
+        <span class="pill">{chrome[locale].nav.soon}</span>
+      )}
+      {released && spec.beta && <span class="pill">Beta</span>}
     </p>
     <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
       <span class="text-site-faint zh:inline-block">
@@ -160,7 +200,13 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
         <HeadingText text={t.sub} />
       </p>
       <div class="flex flex-wrap gap-3">
-        <a href={docs} class="button primary">
+        {download && (
+          <a href={download.href} class="button primary" data-desktop-download>
+            <Icon name="download-simple" />
+            <span data-desktop-label>{download.button}</span>
+          </a>
+        )}
+        <a href={docs} class={download ? "button" : "button primary"}>
           {t.docs}
           <Icon name="arrow-right" class="go" />
         </a>
@@ -189,7 +235,9 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
       dim={chaptered ? undefined : t.how.titleDim}
       title={chaptered ? f.chapters : t.how.title}
     />
-    <ProductStage slot="stage" {...stage} />
+    <ProductStage slot="stage" {...stage}>
+      {desktop && <DesktopScenes slot="panels" locale={locale} />}
+    </ProductStage>
     {story.map((c, i) => (
       <li data-chapter={i} id={chaptered ? `chapter-${chapters[i]!.group}` : undefined}>
         <p class="index label">
@@ -382,8 +430,130 @@ const sectionNumber = (name: string) => number(story.length + sections.indexOf(n
           title={t.start.title}
           lead={t.start.sub}
         />
-        <StartWays locale={locale} />
+        {download ? (
+          <div class="grid gap-12" data-reveal>
+            <div class="grid justify-items-start gap-3">
+              <div class="flex flex-wrap gap-3">
+                <a href={download.href} class="button primary" data-desktop-download>
+                  <Icon name="download-simple" />
+                  <span data-desktop-label>{download.button}</span>
+                </a>
+                <a href={docs} class="button">
+                  {t.docs}
+                  <Icon name="arrow-right" class="go" />
+                </a>
+              </div>
+              <p class="text-sm text-site-muted" data-desktop-caption hidden />
+            </div>
+            {download.table.length > 0 && (
+              <div id="downloads" class="grid scroll-mt-24 gap-6">
+                <h3 class="text-lg font-semibold">{download.all}</h3>
+                <div class="grid gap-8 md:grid-cols-3">
+                  {download.table.map((group) => (
+                    <div class="grid content-start gap-2">
+                      <h4 class="flex items-center gap-2 font-semibold">
+                        <Icon name={osNames[group.os].icon} class="size-5" />
+                        {osNames[group.os].name}
+                      </h4>
+                      <ul class="grid border-t border-site-line">
+                        {group.rows.map((row) => (
+                          <li class="flex min-h-14 items-center justify-between gap-3 border-b border-site-line py-2">
+                            <span class="min-w-0">
+                              {download.kinds[row.kind]}
+                              <span class="ms-1.5 type-mono text-xs text-site-muted">
+                                {row.ext}
+                              </span>
+                            </span>
+                            <span class="flex shrink-0 gap-2">
+                              {row.builds.map((build) => (
+                                <a
+                                  href={build.file.url}
+                                  title={build.file.name}
+                                  class="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-site-line px-2.5 text-sm text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
+                                >
+                                  <Icon name="download-simple" class="size-4" />
+                                  {archName(group.os, build.arch)}
+                                </a>
+                              ))}
+                            </span>
+                          </li>
+                        ))}
+                        {group.os === "macos" && download.brew && (
+                          <li class="grid gap-1.5 border-b border-site-line py-3">
+                            Homebrew
+                            <code class="type-mono text-xs break-all text-site-muted select-all">
+                              {download.brew}
+                            </code>
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+                <a
+                  href={download.page}
+                  class="inline-flex items-center gap-1.5 justify-self-start text-sm text-site-muted hover:text-site-text"
+                >
+                  {download.releasePage}
+                  <Icon name="arrow-up-right" class="size-4" />
+                </a>
+              </div>
+            )}
+            <script
+              type="application/json"
+              id="desktop-choices"
+              set:html={JSON.stringify(choices)}
+            />
+          </div>
+        ) : (
+          <StartWays locale={locale} />
+        )}
       </>
     )}
   </section>
 </Site>
+
+<script>
+  import { detectPlatform } from "../lib/desktop-download.ts"
+
+  // Points the download buttons at the file for this computer; without one they go to the list.
+  type Hints = { platform?: string; mobile?: boolean; architecture?: string }
+  type UserAgentData = {
+    platform: string
+    mobile: boolean
+    getHighEntropyValues(keys: string[]): Promise<Hints>
+  }
+  const isUserAgentData = (value: unknown): value is UserAgentData =>
+    typeof value === "object" && value !== null && "getHighEntropyValues" in value
+  async function hints(): Promise<Hints | undefined> {
+    const data: unknown = Reflect.get(navigator, "userAgentData")
+    if (!isUserAgentData(data)) return undefined
+    const named = { platform: data.platform, mobile: data.mobile }
+    try {
+      return { ...(await data.getHighEntropyValues(["architecture"])), ...named }
+    } catch {
+      return named
+    }
+  }
+  async function pointDownloads() {
+    const data = document.getElementById("desktop-choices")
+    if (!data) return
+    const choices: Record<string, { url: string; label: string; caption: string }> = JSON.parse(
+      data.textContent ?? "{}",
+    )
+    const platform = detectPlatform(navigator.userAgent, await hints())
+    const choice = platform && choices[`${platform.os}-${platform.arch}`]
+    if (!choice) return
+    for (const link of document.querySelectorAll<HTMLAnchorElement>("[data-desktop-download]")) {
+      link.href = choice.url
+    }
+    for (const label of document.querySelectorAll("[data-desktop-label]")) {
+      label.textContent = choice.label
+    }
+    for (const caption of document.querySelectorAll<HTMLElement>("[data-desktop-caption]")) {
+      caption.textContent = choice.caption
+      caption.hidden = false
+    }
+  }
+  document.addEventListener("astro:page-load", pointDownloads)
+</script>

@@ -9,7 +9,6 @@ const zeaburVersion = releaseTag("zeabur")
 type Entrance = { title: string; body: string; link: string }
 type Point = { title: string; body: string; link: string }
 type Step = { title: string; body: string }
-type MemberId = "desktop"
 
 export type LandingCopy = {
   title: string
@@ -43,7 +42,6 @@ export type LandingCopy = {
     label: string
     title: string
     lead: string
-    lines: Record<MemberId, string>
     community: string
   }
   discord: { label: string; title: string; body: string; link: string }
@@ -156,9 +154,6 @@ const zhTW: LandingCopy = {
     label: "專案",
     title: "Zeabur 開源的所有專案",
     lead: "可以整套一起用，也可以只拿其中一個，放進你現有的叢集。",
-    lines: {
-      desktop: "在自己的電腦開啟 Zeabur。",
-    },
     community: "在 GitHub 上追蹤進度、回報問題，或讀部落格上的設計說明。",
   },
   discord: {
@@ -274,9 +269,6 @@ const zhCN: LandingCopy = {
     label: "项目",
     title: "Zeabur 开源的全部项目",
     lead: "可以整套一起用，也可以只拿其中一个，放进你现有的集群。",
-    lines: {
-      desktop: "在自己的电脑上打开 Zeabur。",
-    },
     community: "在 GitHub 上跟进进度、反馈问题，或者读博客上的设计说明。",
   },
   discord: {
@@ -398,9 +390,6 @@ const en: LandingCopy = {
     label: "Projects",
     title: "Every Zeabur open-source project",
     lead: "Use them together, or pick one and add it to the cluster you already have.",
-    lines: {
-      desktop: "Zeabur on your own computer.",
-    },
     community: "Follow the work and report issues on GitHub, or read the design notes on the blog.",
   },
   discord: {
