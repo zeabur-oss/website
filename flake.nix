@@ -50,6 +50,14 @@
               PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
             };
           };
+
+          # .github/actions/docs-check, in the CI of the repositories whose docs the site publishes.
+          docs-check = pkgs.mkShellNoCC {
+            packages = with pkgs; [
+              bun
+              git
+            ];
+          };
         }
       );
 
