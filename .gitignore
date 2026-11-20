@@ -6,6 +6,7 @@ node_modules
 /.local
 /content
 /src/content/docs
+/public/docs
 /public/docs-assets
 /public/og
 /dist

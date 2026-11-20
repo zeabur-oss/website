@@ -1,0 +1,100 @@
+---
+import HeadingText from "../../components/HeadingText.astro"
+import Icon from "../../components/Icon.astro"
+import CommandBlock from "../../landing/CommandBlock.astro"
+import { agentCopy } from "../../landing/agent-copy.ts"
+import Site from "../../layouts/Site.astro"
+import { agentDocs } from "../../lib/agent-guide.ts"
+import { chrome } from "../../lib/chrome.ts"
+import { docsUrl, localePaths, type SiteLocale } from "../../lib/urls.ts"
+
+export const getStaticPaths = localePaths
+const { locale } = Astro.props as { locale: SiteLocale }
+const t = agentCopy[locale]
+const docs = agentDocs(locale)
+const links = [
+  ...(docs.guide ? [{ href: docs.guide, text: t.guide }] : []),
+  ...(docs.install ? [{ href: docs.install, text: t.install }] : []),
+  { href: docsUrl(locale, "zeabur", "get-started/quickstart"), text: t.manual },
+]
+const number = (i: number) => String(i + 1).padStart(2, "0")
+---
+
+<Site
+  locale={locale}
+  title={t.meta.title}
+  description={t.meta.description}
+  section="home"
+  image={`/og/home/${locale}.png`}
+>
+  <section class="wrap hero frame">
+    <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
+      <span>{t.label}</span>
+      {!docs.guide && <span class="pill">{chrome[locale].nav.soon}</span>}
+    </p>
+    <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
+      <HeadingText text={t.title} />
+    </h1>
+    <div
+      class="mt-10 flex flex-col items-start gap-8 md:mt-14 lg:w-[calc((100%-3rem)/2)]"
+      data-reveal
+      style="--i:1"
+    >
+      <p class="lead">
+        <HeadingText text={t.lead} />
+      </p>
+      {docs.guide ? (
+        <div class="grid w-full gap-3">
+          <p class="body text-site-muted">{t.prompt.label}</p>
+          <CommandBlock id="agent-prompt" code={t.prompt.text} copy={t.copy} wrap />
+          <p class="body text-site-muted">{t.prompt.where}</p>
+        </div>
+      ) : (
+        <p class="body">{t.soon}</p>
+      )}
+      <ul class="grid w-full border-t border-site-line">
+        {links.map(({ href, text }) => (
+          <li class="border-b border-site-line">
+            <a
+              href={href}
+              class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 font-semibold text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
+            >
+              {text}
+              <Icon name="arrow-right" class="size-4" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="wrap section frame" aria-labelledby="agent-does">
+    <div class="grid gap-x-12 gap-y-14 lg:grid-cols-2">
+      <div>
+        <h2 id="agent-does" class="mb-6">
+          {t.does.title}
+        </h2>
+        <ol class="grid border-b border-site-line">
+          {t.does.steps.map((step, i) => (
+            <li class="flex gap-4 border-t border-site-line py-4" data-reveal style={`--i:${i}`}>
+              <span class="label text-site-accent">{number(i)}</span>
+              <span class="body">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <div>
+        <h2 class="mb-6">{t.you.title}</h2>
+        <ul class="grid border-b border-site-line">
+          {t.you.items.map((item, i) => (
+            <li class="flex gap-4 border-t border-site-line py-4" data-reveal style={`--i:${i}`}>
+              <Icon name="check" class="mt-1 size-4 flex-none text-site-accent" />
+              <span class="body">{item}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="body mt-6 text-site-muted">{t.you.after}</p>
+      </div>
+    </div>
+  </section>
+</Site>

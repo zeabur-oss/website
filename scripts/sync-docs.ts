@@ -63,6 +63,10 @@ const pagesDir = join(root, "src/content/docs")
 const publicDir = join(root, "public")
 /** Manifests under docs/ that are not files a page links to. */
 const manifests = /^docs\/([^/]+\/)?(nav|redirects|([a-z]+-)?shots)\.ya?ml$/
+/** Pages a coding agent reads as Markdown, served as the repository has them at /docs/<name>. */
+const agentPages = [
+  { name: "move-from-zeabur.md", repo: "zeabur", path: "docs/install/move-from-zeabur.md" },
+]
 
 function pagePath(locale: string, repo: string, slug: string, ext: string) {
   return join(pagesDir, locale === "en" ? "" : locale, "docs", repo, slug + ext)
@@ -165,6 +169,7 @@ export async function sync() {
   const lock = readLock()
   rmSync(content, { recursive: true, force: true })
   rmSync(pagesDir, { recursive: true, force: true })
+  rmSync(join(publicDir, "docs"), { recursive: true, force: true })
   const nav: SiteNav = {}
   const site: SiteData = { repos: [], pages: {}, redirects: [] }
   const links: Record<string, RepoLinks> = {}
@@ -219,6 +224,11 @@ export async function sync() {
         ref: repo.ref,
         components: readComponents(snap),
         templates: readTemplates(snap),
+      }
+    }
+    for (const page of agentPages) {
+      if (page.repo === repo.name && snap.files.has(page.path)) {
+        writeFile(join(publicDir, "docs", page.name), readText(snap, page.path))
       }
     }
     copyAssets(snap)

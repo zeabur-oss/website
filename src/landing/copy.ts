@@ -34,7 +34,7 @@ export type LandingCopy = {
     label: string
     title: string
     lead: string
-    agent: { title: string; body: string }
+    agent: { title: string; body: string; link: string }
     zeatend: { title: string; body: string; steps: string; cluster: string }
     manual: { title: string; body: string; server: string; cluster: string; laptop: string }
   }
@@ -135,6 +135,7 @@ const zhTW: LandingCopy = {
     agent: {
       title: "交給 AI 代理",
       body: "之後只要把一段提示貼給 Claude 或 Codex，它就會幫你安裝 Zeabur，或把 zeabur.com 上的專案搬過來。",
+      link: "看看怎麼交給 AI 代理",
     },
     zeatend: {
       title: "用 Zeatend 一步步安裝",
@@ -250,6 +251,7 @@ const zhCN: LandingCopy = {
     agent: {
       title: "交给 AI 智能体",
       body: "之后只要把一段提示词贴给 Claude 或 Codex，它就会帮你安装 Zeabur，或者把 zeabur.com 上的项目迁移过来。",
+      link: "看看怎么交给 AI 智能体",
     },
     zeatend: {
       title: "用 Zeatend 一步步安装",
@@ -371,6 +373,7 @@ const en: LandingCopy = {
     agent: {
       title: "Hand it to an AI agent",
       body: "You'll paste a prompt into Claude or Codex, and it will install Zeabur for you or move your projects over from zeabur.com.",
+      link: "See how it works",
     },
     zeatend: {
       title: "Step through it with Zeatend",

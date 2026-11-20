@@ -3,7 +3,8 @@
 // the Zeabur page. Each way names the other two in one line.
 import Icon from "../components/Icon.astro"
 import { chrome } from "../lib/chrome.ts"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { agentDocs } from "../lib/agent-guide.ts"
+import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
 
 interface Props {
@@ -14,9 +15,15 @@ const t = landingCopy[locale].start
 const soon = chrome[locale].nav.soon
 const zeaburDocs = (slug: string) => docsUrl(locale, "zeabur", slug)
 const ways = [
-  { id: "start-agent", ...t.agent, links: [] },
+  {
+    id: "start-agent",
+    ...t.agent,
+    soon: !agentDocs(locale).guide,
+    links: [{ href: productUrl(locale, "agent"), text: t.agent.link }],
+  },
   {
     id: "start-zeatend",
+    soon: false,
     ...t.zeatend,
     links: [
       { href: docsUrl(locale, "zeatend"), text: t.zeatend.steps },
@@ -25,6 +32,7 @@ const ways = [
   },
   {
     id: "start-manual",
+    soon: false,
     ...t.manual,
     links: [
       { href: zeaburDocs("get-started/quickstart"), text: t.manual.server },
@@ -45,25 +53,23 @@ const ways = [
     >
       <p class="flex min-h-5 flex-wrap items-center gap-3">
         <span class="label text-site-accent">{String(i + 1).padStart(2, "0")}</span>
-        {!way.links.length && <span class="soon">{soon}</span>}
+        {way.soon && <span class="soon">{soon}</span>}
       </p>
       <h3>{way.title}</h3>
       <p class="body">{way.body}</p>
-      {way.links.length > 0 && (
-        <ul class="mt-auto grid border-t border-site-line">
-          {way.links.map(({ href, text }) => (
-            <li class="border-b border-site-line">
-              <a
-                href={href}
-                class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 font-semibold text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
-              >
-                {text}
-                <Icon name="arrow-right" class="size-4" />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul class="mt-auto grid border-t border-site-line">
+        {way.links.map(({ href, text }) => (
+          <li class="border-b border-site-line">
+            <a
+              href={href}
+              class="-mx-2 flex min-h-12 items-center justify-between gap-3 px-2 py-2 font-semibold text-site-text no-underline transition-colors duration-quick hover:bg-site-hover"
+            >
+              {text}
+              <Icon name="arrow-right" class="size-4" />
+            </a>
+          </li>
+        ))}
+      </ul>
     </li>
   ))}
 </ol>
