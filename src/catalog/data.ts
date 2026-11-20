@@ -45,5 +45,5 @@ export const formatBytes = (quantity: string) => {
   return value === undefined ? quantity : `${value} ${unit}B`
 }
 
-/** Renders the Markdown of a template README; code blocks stay plain so they follow the theme. */
+/** Renders the Markdown of a README; code blocks stay plain so they follow the theme. */
 export const markdown = createMarkdownProcessor({ syntaxHighlight: false })

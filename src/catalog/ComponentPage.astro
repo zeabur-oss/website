@@ -3,10 +3,11 @@ import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
-import { catalog, entryUrl } from "./data.ts"
+import { catalog, entryUrl, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
 import Pills from "./Pills.astro"
 import Section from "./Section.astro"
+import "../blog/prose.css"
 
 interface Props {
   locale: SiteLocale
@@ -25,6 +26,13 @@ const needs = x.requires.map((r) =>
       }
     : { text: w.capability(r.capability) },
 )
+const render = await markdown
+const readme = await Promise.all(
+  x.readme[locale].map(async (s) => ({ ...s, html: (await render.render(s.markdown)).code })),
+)
+// Used by follows Use it: setup and use first, then what depends on it, then removal.
+const split = readme.findIndex((s) => s.id === "remove-it" || s.id === "troubleshooting")
+const [before, after] = split < 0 ? [readme, []] : [readme.slice(0, split), readme.slice(split)]
 ---
 
 <EntryPage
@@ -44,6 +52,12 @@ const needs = x.requires.map((r) =>
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
+  {before.map((r) => (
+    <Section id={r.id} title={r.title}>
+      <div class="prose min-w-0" set:html={r.html} />
+    </Section>
+  ))}
+
   {usedBy.length > 0 && (
     <Section id="used-by" title={w.usedBy}>
       <Pills
@@ -54,6 +68,12 @@ const needs = x.requires.map((r) =>
       />
     </Section>
   )}
+
+  {after.map((r) => (
+    <Section id={r.id} title={r.title}>
+      <div class="prose min-w-0" set:html={r.html} />
+    </Section>
+  ))}
 
   <Section slot="details" id="security" title={t.security}>
     <p class="body" lang="en">

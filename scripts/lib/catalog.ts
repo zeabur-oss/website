@@ -94,15 +94,28 @@ export type Localized = Record<SiteLocale, string>
  * in their order, with their heading in each locale, as `readmeSections` in the catalog's
  * tools/internal/templates/readme.go.
  */
-const readmeHeadings = {
+const templateReadme = {
   introduction: { en: "Introduction", "zh-TW": "簡介", "zh-CN": "简介" },
   "getting-started": { en: "Getting started", "zh-TW": "開始使用", "zh-CN": "开始使用" },
   configuration: { en: "Configuration", "zh-TW": "設定", "zh-CN": "配置" },
   troubleshooting: { en: "Troubleshooting", "zh-TW": "疑難排解", "zh-CN": "故障排除" },
 } as const satisfies Record<string, Localized>
 
-/** A level-2 section of a template README: its Markdown without the heading. */
-export type ReadmeSection = { id: keyof typeof readmeHeadings; title: string; markdown: string }
+/**
+ * The level-2 sections of a component README (`components/<id>.README.md`,
+ * `<id>.README.<locale>.md`), as `componentSections` in the catalog's
+ * tools/internal/catalog/readme.go.
+ */
+const componentReadme = {
+  introduction: { en: "Introduction", "zh-TW": "簡介", "zh-CN": "简介" },
+  "before-you-install": { en: "Before you install", "zh-TW": "安裝前準備", "zh-CN": "安装前准备" },
+  "use-it": { en: "Use it", "zh-TW": "使用方式", "zh-CN": "使用方法" },
+  "remove-it": { en: "Remove it", "zh-TW": "移除", "zh-CN": "移除" },
+  troubleshooting: { en: "Troubleshooting", "zh-TW": "疑難排解", "zh-CN": "故障排除" },
+} as const satisfies Record<string, Localized>
+
+/** A level-2 section of a README: its Markdown without the heading. */
+export type ReadmeSection<Id extends string = string> = { id: Id; title: string; markdown: string }
 
 /** The newest CI run on one distribution and platform that installed these very files and passed. */
 export type TestRun = {
@@ -152,7 +165,7 @@ export type CatalogTemplate = Entry & {
   /** The upstream usage docs. */
   docs: string
   /** The README of each locale, by section. */
-  readme: Record<SiteLocale, ReadmeSection[]>
+  readme: Record<SiteLocale, ReadmeSection<keyof typeof templateReadme>[]>
   /** Component IDs the cluster needs first. */
   requires: string[]
   services: TemplateService[]
@@ -170,6 +183,8 @@ export type CatalogComponent = Entry & {
   releases: { name: string; version?: string }[]
   /** English only in the catalog. */
   security: string
+  /** The README of each locale, by section. */
+  readme: Record<SiteLocale, ReadmeSection<keyof typeof componentReadme>[]>
 }
 
 function pick<K extends string>(
@@ -187,26 +202,38 @@ function parse<T extends z.ZodType>(schema: T, snap: Snapshot, path: string): z.
   return parsed.data
 }
 
-function readmeOf(snap: Snapshot, dir: string, locale: SiteLocale): ReadmeSection[] {
-  const path = `${dir}README${locale === "en" ? "" : `.${locale}`}.md`
-  const sections: ReadmeSection[] = []
-  let fenced = false
-  for (const line of readFileSync(join(snap.dir, path), "utf8").split("\n")) {
-    if (line.startsWith("```")) fenced = !fenced
-    const title = !fenced && line.startsWith("## ") ? line.slice(3).trim() : undefined
-    if (title !== undefined) {
-      const id = (Object.keys(readmeHeadings) as ReadmeSection["id"][]).find(
-        (k) => readmeHeadings[k][locale] === title,
-      )
-      if (!id) throw new Error(`${path}: unknown heading "${line}"`)
-      sections.push({ id, title, markdown: "" })
-    } else {
-      const last = sections.at(-1)
-      if (last) last.markdown += `${line}\n`
+/** The README at path(locale) in each locale, split at its level-2 headings. */
+function readmes<Id extends string>(
+  snap: Snapshot,
+  path: (locale: SiteLocale) => string,
+  headings: Record<Id, Localized>,
+): Record<SiteLocale, ReadmeSection<Id>[]> {
+  const ids = Object.keys(headings) as Id[]
+  const one = (locale: SiteLocale) => {
+    const sections: ReadmeSection<Id>[] = []
+    let fenced = false
+    for (const line of readFileSync(join(snap.dir, path(locale)), "utf8").split("\n")) {
+      if (line.startsWith("```")) fenced = !fenced
+      const title = !fenced && line.startsWith("## ") ? line.slice(3).trim() : undefined
+      if (title !== undefined) {
+        const id = ids.find((k) => headings[k][locale] === title)
+        if (!id) throw new Error(`${path(locale)}: unknown heading "${line}"`)
+        sections.push({ id, title, markdown: "" })
+      } else {
+        const last = sections.at(-1)
+        if (last) last.markdown += `${line}\n`
+      }
     }
+    return sections
   }
-  return sections
+  return Object.fromEntries(locales.map((l) => [l, one(l)])) as Record<
+    SiteLocale,
+    ReadmeSection<Id>[]
+  >
 }
+
+/** `README.md` in English, else `README.<locale>.md`. */
+const readmeName = (locale: SiteLocale) => `README${locale === "en" ? "" : `.${locale}`}.md`
 
 /** Go's dirhash.Hash1 over `name → repository path`: the `sourceDigest` measurements name. */
 function digest(snap: Snapshot, files: [name: string, path: string][]) {
@@ -305,9 +332,7 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
       tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
       version: metadata.version,
       docs: metadata.docs,
-      readme: Object.fromEntries(
-        locales.map((locale) => [locale, readmeOf(snap, dir, locale)]),
-      ) as CatalogTemplate["readme"],
+      readme: readmes(snap, (l) => dir + readmeName(l), templateReadme),
       requires: requires.map((r) => r.component),
       services: services.map((s) => ({
         name: s.name,
@@ -362,6 +387,7 @@ export function readComponents(snap: Snapshot): CatalogComponent[] {
       distributions: c.distributions,
       releases: c.releases,
       security: c.security.summary,
+      readme: readmes(snap, (l) => `components/${id}.${readmeName(l)}`, componentReadme),
     }
   })
 }
