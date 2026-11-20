@@ -5,27 +5,36 @@
 ---
 
 <script>
-  const repoLink = /^https:\/\/github\.com\/zeabur-oss(?:\/([^/?#]+)(\/releases)?)?(?:[/?#]|$)/
+  import { firstLine, linkEvent, type CodeBlock, type SiteEvent } from "../lib/analytics.ts"
 
   // Which block was copied: the heading above it, the tab it sits in, its place on the page and
-  // its first line. The code is the docs' own, never anything a visitor typed.
-  function codeBlock(button: HTMLElement, block: Element) {
-    const blocks = [...document.querySelectorAll("main .expressive-code")]
+  // its first line. The code is the page's own, never anything a visitor typed.
+  function codeBlock(block: Element, code: string, by: CodeBlock["by"]): CodeBlock {
+    const blocks = [
+      ...document.querySelectorAll("main :is(.expressive-code, pre:not(.expressive-code pre))"),
+    ]
     const heading = [...document.querySelectorAll("main :is(h2, h3)[id]")]
       .filter((h) => h.compareDocumentPosition(block) & Node.DOCUMENT_POSITION_FOLLOWING)
       .at(-1)
     const panel = block.closest("[role=tabpanel]")
     const tab = panel && document.getElementById(panel.getAttribute("aria-labelledby") ?? "")
     return {
+      by,
       language: block.querySelector("pre")?.dataset.language,
       heading: heading?.id,
       tab: tab?.textContent?.trim(),
       index: blocks.indexOf(block),
-      first_line: (button.dataset.code ?? "")
-        .replace(/[\n\u007f][\s\S]*$/, "")
-        .trim()
-        .slice(0, 120),
+      first_line: firstLine(code),
     }
+  }
+
+  function selectedBlock(): { block: Element; code: string } | undefined {
+    const selection = document.getSelection()
+    const node = selection?.anchorNode
+    const element = node instanceof Element ? node : node?.parentElement
+    const pre = element?.closest("main pre")
+    if (!selection || !pre) return undefined
+    return { block: pre.closest(".expressive-code") ?? pre, code: selection.toString() }
   }
 
   async function start(key: string) {
@@ -42,22 +51,45 @@
       disable_conversations: true,
       advanced_disable_flags: true,
     })
+    return (event: SiteEvent) => posthog.capture(event.name, event.props)
+  }
+
+  // Each page view sends start_seen once, when the start section first comes into view.
+  let watching: IntersectionObserver | undefined
+  function watchStart(send: (event: SiteEvent) => void) {
+    watching?.disconnect()
+    const target = document.getElementById("start")
+    if (!target) return
+    watching = new IntersectionObserver((entries, observer) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return
+      observer.disconnect()
+      send({ name: "start_seen", props: {} })
+    })
+    watching.observe(target)
+  }
+
+  const key = import.meta.env.PUBLIC_POSTHOG_KEY
+  if (key) {
+    const sender = start(key)
 
     document.addEventListener("click", (event) => {
       if (!(event.target instanceof Element)) return
       const copy = event.target.closest<HTMLElement>(".expressive-code .copy button")
       const block = copy?.closest(".expressive-code")
-      if (copy && block) {
-        posthog.capture("code_copied", codeBlock(copy, block))
-        return
-      }
-      const href = event.target.closest("a")?.href
-      const repo = href && repoLink.exec(href)
-      if (!repo) return
-      posthog.capture(repo[2] ? "releases_clicked" : "github_clicked", { repo: repo[1] })
+      const found: SiteEvent | undefined =
+        copy && block
+          ? { name: "code_copied", props: codeBlock(block, copy.dataset.code ?? "", "button") }
+          : linkEvent(event.target.closest("a")?.href ?? "")
+      if (found) void sender.then((send) => send(found))
     })
-  }
 
-  const key = import.meta.env.PUBLIC_POSTHOG_KEY
-  if (key) void start(key)
+    document.addEventListener("copy", () => {
+      const selected = selectedBlock()
+      if (!selected) return
+      const props = codeBlock(selected.block, selected.code, "selection")
+      void sender.then((send) => send({ name: "code_copied", props }))
+    })
+
+    document.addEventListener("astro:page-load", () => void sender.then(watchStart))
+  }
 </script>
