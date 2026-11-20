@@ -39,7 +39,7 @@ const input = z.union([
 ])
 
 const templateFile = z.object({
-  metadata: localized({ summary: z.string(), readme: z.string() }).extend({
+  metadata: localized({ summary: z.string() }).extend({
     name: z.string(),
     license: z.string(),
     homepage: z.string().url(),
@@ -89,6 +89,21 @@ const measurementFile = z.object({
 /** A text in each site locale; a locale the catalog does not translate gets the English text. */
 export type Localized = Record<SiteLocale, string>
 
+/**
+ * The level-2 sections of a template README (`templates/<id>/README.md`, `README.<locale>.md`)
+ * in their order, with their heading in each locale, as `readmeSections` in the catalog's
+ * tools/internal/templates/readme.go.
+ */
+const readmeHeadings = {
+  introduction: { en: "Introduction", "zh-TW": "簡介", "zh-CN": "简介" },
+  "getting-started": { en: "Getting started", "zh-TW": "開始使用", "zh-CN": "开始使用" },
+  configuration: { en: "Configuration", "zh-TW": "設定", "zh-CN": "配置" },
+  troubleshooting: { en: "Troubleshooting", "zh-TW": "疑難排解", "zh-CN": "故障排除" },
+} as const satisfies Record<string, Localized>
+
+/** A level-2 section of a template README: its Markdown without the heading. */
+export type ReadmeSection = { id: keyof typeof readmeHeadings; title: string; markdown: string }
+
 /** The newest CI run on one distribution and platform that installed these very files and passed. */
 export type TestRun = {
   distribution: string
@@ -136,8 +151,8 @@ export type CatalogTemplate = Entry & {
   version: string
   /** The upstream usage docs. */
   docs: string
-  /** What you get, where to open it, how to sign in and where generated values are. */
-  readme: Localized
+  /** The README of each locale, by section. */
+  readme: Record<SiteLocale, ReadmeSection[]>
   /** Component IDs the cluster needs first. */
   requires: string[]
   services: TemplateService[]
@@ -170,6 +185,27 @@ function parse<T extends z.ZodType>(schema: T, snap: Snapshot, path: string): z.
   const parsed = schema.safeParse(parseYaml(readFileSync(join(snap.dir, path), "utf8")))
   if (!parsed.success) throw new Error(`${path}: ${z.prettifyError(parsed.error)}`)
   return parsed.data
+}
+
+function readmeOf(snap: Snapshot, dir: string, locale: SiteLocale): ReadmeSection[] {
+  const path = `${dir}README${locale === "en" ? "" : `.${locale}`}.md`
+  const sections: ReadmeSection[] = []
+  let fenced = false
+  for (const line of readFileSync(join(snap.dir, path), "utf8").split("\n")) {
+    if (line.startsWith("```")) fenced = !fenced
+    const title = !fenced && line.startsWith("## ") ? line.slice(3).trim() : undefined
+    if (title !== undefined) {
+      const id = (Object.keys(readmeHeadings) as ReadmeSection["id"][]).find(
+        (k) => readmeHeadings[k][locale] === title,
+      )
+      if (!id) throw new Error(`${path}: unknown heading "${line}"`)
+      sections.push({ id, title, markdown: "" })
+    } else {
+      const last = sections.at(-1)
+      if (last) last.markdown += `${line}\n`
+    }
+  }
+  return sections
 }
 
 /** Go's dirhash.Hash1 over `name → repository path`: the `sourceDigest` measurements name. */
@@ -254,7 +290,10 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
     const { metadata, requires, services, inputs, security } = parse(templateFile, snap, source)
     const dir = `templates/${id}/`
     const files = [...snap.files]
-      .filter((f) => f.startsWith(dir))
+      // As the catalog's sourceDigest: e2e.yaml and the READMEs change no measurement.
+      .filter(
+        (f) => f.startsWith(dir) && !/^(e2e\.yaml|README[^/]*\.md)$/.test(f.slice(dir.length)),
+      )
       .map((f): [string, string] => [f.slice(dir.length), f])
     return {
       id,
@@ -266,7 +305,9 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
       tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
       version: metadata.version,
       docs: metadata.docs,
-      readme: pick(metadata, "readme"),
+      readme: Object.fromEntries(
+        locales.map((locale) => [locale, readmeOf(snap, dir, locale)]),
+      ) as CatalogTemplate["readme"],
       requires: requires.map((r) => r.component),
       services: services.map((s) => ({
         name: s.name,

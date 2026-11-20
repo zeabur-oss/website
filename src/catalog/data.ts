@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
+import { createMarkdownProcessor } from "@astrojs/markdown-remark"
 import type { CatalogData } from "../../scripts/sync-docs.ts"
 import { localePrefix } from "../lib/urls.ts"
 
@@ -43,3 +44,6 @@ export const formatBytes = (quantity: string) => {
   const [, value, unit = ""] = /^(\d+)([KMGT]i?)?$/.exec(quantity) ?? []
   return value === undefined ? quantity : `${value} ${unit}B`
 }
+
+/** Renders the Markdown of a template README; code blocks stay plain so they follow the theme. */
+export const markdown = createMarkdownProcessor({ syntaxHighlight: false })

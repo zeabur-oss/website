@@ -50,7 +50,7 @@ type CatalogCopy = {
     deploy: string
     deployCli: string
     needs: { title: string; body: string }
-    start: { title: string; deploy: string; docs: (name: string) => string }
+    start: { deploy: string; docs: (name: string) => string }
     values: {
       title: string
       none: string
@@ -134,7 +134,6 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         body: "Zeabur suggests the components a cluster is missing. Without Zeabur, install them first.",
       },
       start: {
-        title: "Start here",
         deploy: "How to deploy a template",
         docs: (name) => `${name} docs`,
       },
@@ -225,7 +224,6 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         body: "Zeabur 會提示叢集缺哪些元件。沒有用 Zeabur 的話，請先自己裝好。",
       },
       start: {
-        title: "從這裡開始",
         deploy: "怎麼部署範本",
         docs: (name) => `${name} 說明文件`,
       },
@@ -315,7 +313,6 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         body: "Zeabur 会提示集群缺哪些组件。没有用 Zeabur 的话，请先自己装好。",
       },
       start: {
-        title: "从这里开始",
         deploy: "怎么部署模板",
         docs: (name) => `${name} 文档`,
       },

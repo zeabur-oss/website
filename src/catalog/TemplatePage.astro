@@ -3,10 +3,11 @@ import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
-import { catalog, entryUrl, formatBytes, formatCpu } from "./data.ts"
+import { catalog, entryUrl, formatBytes, formatCpu, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
 import Pills from "./Pills.astro"
 import Section from "./Section.astro"
+import "../blog/prose.css"
 
 interface Props {
   locale: SiteLocale
@@ -17,6 +18,11 @@ const t = catalogCopy[locale]
 const w = t.template
 const componentName = new Map(catalog.components.map((c) => [c.id, c.name]))
 const cores = (q: string) => w.resources.cores(formatCpu(q))
+const render = await markdown
+const readme = await Promise.all(
+  x.readme[locale].map(async (s) => ({ ...s, html: (await render.render(s.markdown)).code })),
+)
+const [intro, ...rest] = readme
 ---
 
 <EntryPage
@@ -30,19 +36,11 @@ const cores = (q: string) => w.resources.cores(formatCpu(q))
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
-  <Section id="start" title={w.start.title}>
-    <p class="body">{x.readme[locale]}</p>
-    <div class="flex flex-wrap gap-x-8 gap-y-4">
-      <a href={docsUrl(locale, "zeabur", "deploy/templates")} class="more">
-        <Icon name="arrow-right" />
-        {w.start.deploy}
-      </a>
-      <a href={x.docs} class="more">
-        <Icon name="arrow-up-right" />
-        {w.start.docs(x.name)}
-      </a>
-    </div>
-  </Section>
+  {intro && (
+    <Section id={intro.id} title={intro.title}>
+      <div class="prose min-w-0" set:html={intro.html} />
+    </Section>
+  )}
 
   <Section id="values" title={w.values.title}>
     {x.provided.length === 0 && <p class="body">{w.values.none}</p>}
@@ -74,6 +72,24 @@ const cores = (q: string) => w.resources.cores(formatCpu(q))
       </div>
     )}
   </Section>
+
+  {rest.map((r) => (
+    <Section id={r.id} title={r.title}>
+      <div class="prose min-w-0" set:html={r.html} />
+      {r.id === "getting-started" && (
+        <div class="flex flex-wrap gap-x-8 gap-y-4">
+          <a href={docsUrl(locale, "zeabur", "deploy/templates")} class="more">
+            <Icon name="arrow-right" />
+            {w.start.deploy}
+          </a>
+          <a href={x.docs} class="more">
+            <Icon name="arrow-up-right" />
+            {w.start.docs(x.name)}
+          </a>
+        </div>
+      )}
+    </Section>
+  ))}
 
   <Section id="resources" title={w.resources.title} body={w.resources.body}>
     <ul class="grid list-none p-0">
