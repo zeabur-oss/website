@@ -64,6 +64,6 @@ export function rehypeDocsHtml() {
 /** A paragraph that is only a link, such as "[Install Zeabur on one server](…)": shown as a link
  * with an arrow rather than as prose. */
 function isLoneLink(node: Element) {
-  const kids = node.children.filter((c) => !(c.type === "text" && !c.value.trim()))
-  return kids.length === 1 && kids[0]!.type === "element" && kids[0]!.tagName === "a"
+  const [only, ...others] = node.children.filter((c) => !(c.type === "text" && !c.value.trim()))
+  return !others.length && only?.type === "element" && only.tagName === "a"
 }

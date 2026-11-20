@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { parse as parseYaml } from "yaml"
 import { locales } from "../../src/lib/urls.ts"
 import type { Snapshot } from "./repos.ts"
+import { group } from "../../src/lib/capture.ts"
 
 export type NavGroup = { group: string; label: string; pages: string[] }
 export type NavLabels = { groups: Record<string, string>; pages: Record<string, string> }
@@ -49,7 +50,7 @@ export function splitFrontmatter(text: string): { data: Record<string, unknown>;
   const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(text)
   if (!match) return { data: {}, body: text }
   return {
-    data: (parseYaml(match[1]!) as Record<string, unknown>) ?? {},
+    data: (parseYaml(group(match)) as Record<string, unknown>) ?? {},
     body: text.slice(match[0].length),
   }
 }
@@ -117,7 +118,7 @@ export function readRepoDocs(snap: Snapshot): RepoDocs {
     const linked = readme
       ? [...readText(snap, readme).matchAll(/\]\(docs\/([^)#]+)\.mdx?[)#]/g)]
       : []
-    const order = linked.map((m) => m[1]!)
+    const order = linked.map((m) => group(m))
     const top = [...snap.files]
       .filter((f) => /^docs\/[^/]+\.mdx?$/.test(f) && !/^docs\/index\.mdx?$/.test(f))
       .map((f) => f.slice(5).replace(/\.mdx?$/, ""))

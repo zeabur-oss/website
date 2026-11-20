@@ -1,5 +1,6 @@
 // Social images: satori lays out the card with its text as outlines, resvg makes the PNG. The card
 // follows the repository covers in public/og.
+import { group } from "./capture.ts"
 import { renderAsync } from "@resvg/resvg-js"
 import { readFile } from "node:fs/promises"
 import { createRequire } from "node:module"
@@ -28,32 +29,49 @@ const sliceCache = new Map<string, Promise<Slice[]>>()
 /** The unicode-range slices of a fontsource package at one weight. */
 function slices(pkg: string, weight: Weight): Promise<Slice[]> {
   const key = `${pkg}:${weight}`
-  if (!sliceCache.has(key)) {
-    const css = require.resolve(`${pkg}/${weight}.css`)
-    sliceCache.set(
-      key,
-      readFile(css, "utf8").then((text) =>
-        [
-          ...text.matchAll(
-            /url\(\.\/(files\/[^)]+\.woff)\) format\('woff'\);\s*unicode-range: ([^;]+);/g,
-          ),
-        ].map((m) => ({
-          name: m[1]!.replace("files/", "").replace(/-\d+-normal\.woff$/, ""),
-          file: join(dirname(css), m[1]!),
-          ranges: m[2]!.split(",").map((r) => {
-            const [a, b] = r.trim().replace("U+", "").split("-")
-            return [parseInt(a!, 16), parseInt(b ?? a!, 16)] as [number, number]
-          }),
-        })),
+  const cached = sliceCache.get(key)
+  if (cached) return cached
+  const css = require.resolve(`${pkg}/${weight}.css`)
+  const read = readFile(css, "utf8").then((text) =>
+    [
+      ...text.matchAll(
+        /url\(\.\/(files\/[^)]+\.woff)\) format\('woff'\);\s*unicode-range: ([^;]+);/g,
       ),
-    )
+    ].map((m) => ({
+      name: group(m)
+        .replace("files/", "")
+        .replace(/-\d+-normal\.woff$/, ""),
+      file: join(dirname(css), group(m)),
+      ranges: group(m, 2).split(",").map(unicodeRange),
+    })),
+  )
+  sliceCache.set(key, read)
+  return read
+}
+
+/** `U+0131` or `U+0000-00FF`. */
+function unicodeRange(range: string): [number, number] {
+  const match = /^U\+([0-9a-f]+)(?:-([0-9a-f]+))?$/i.exec(range.trim())
+  if (!match) throw new Error(`unicode-range ${range}`)
+  const from = parseInt(group(match), 16)
+  return [from, match[2] === undefined ? from : parseInt(match[2], 16)]
+}
+
+/** The code points of `text`. */
+function codePoints(text: string): number[] {
+  const codes: number[] = []
+  for (let at = 0; at < text.length;) {
+    const code = text.codePointAt(at)
+    if (code === undefined) break
+    codes.push(code)
+    at += code > 0xffff ? 2 : 1
   }
-  return sliceCache.get(key)!
+  return codes
 }
 
 /** Only the Noto slices the Chinese characters in `text` need; Geist covers the rest. */
 async function noto(text: string, han: "tc" | "sc", weight: Weight) {
-  const codes = [...new Set([...text].map((c) => c.codePointAt(0)!).filter((c) => c > 0x2e7f))]
+  const codes = [...new Set(codePoints(text).filter((c) => c > 0x2e7f))]
   if (codes.length === 0) return []
   const pkg = han === "tc" ? "@fontsource/noto-sans-tc" : "@fontsource/noto-sans-sc"
   const needed = (await slices(pkg, weight)).filter((s) =>
@@ -127,7 +145,7 @@ export async function renderOg(card: OgCard): Promise<Buffer> {
   const family = ["Geist", ...han].join(", ")
 
   // Long titles step down so they stay within three lines.
-  const length = [...card.title].reduce((n, c) => n + (c.codePointAt(0)! > 0x2e7f ? 2 : 1), 0)
+  const length = codePoints(card.title).reduce((n, c) => n + (c > 0x2e7f ? 2 : 1), 0)
   const hasHan = /\p{Script=Han}/u.test(card.title)
   const titleSize = length > 60 ? 50 : length > 36 ? 58 : 66
 

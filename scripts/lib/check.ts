@@ -1,5 +1,5 @@
 import { z } from "zod"
-import type { RepoFiles } from "../../src/mdx/links.ts"
+import { slugOfPath, type RepoFiles } from "../../src/mdx/links.ts"
 import { checkPage } from "./check-page.ts"
 import { isLocaleName, readRepoDocs, readYaml, reservedNames } from "./docs.ts"
 import type { Add, Finding } from "./findings.ts"
@@ -119,12 +119,8 @@ export function checkRepo(snap: Snapshot, options: CheckOptions = {}): Finding[]
   // Pages that nothing publishes
   for (const path of snap.files) {
     if (!/^docs\/.+\.mdx?$/.test(path) || path.startsWith("docs/internal/")) continue
-    const parts = path
-      .slice(5)
-      .replace(/\.mdx?$/, "")
-      .split("/")
-    if (docs.translations.includes(parts[0]!)) parts.shift()
-    if (!published.has(parts.join("/")))
+    const slug = slugOfPath(path, docs.translations)
+    if (slug === undefined || !published.has(slug))
       add("warning", "unpublished-file", path, "not in nav.yaml, so not published")
   }
   return findings

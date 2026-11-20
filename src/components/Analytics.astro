@@ -9,8 +9,7 @@
 
   // Which block was copied: the heading above it, the tab it sits in, its place on the page and
   // its first line. The code is the docs' own, never anything a visitor typed.
-  function codeBlock(button: HTMLElement) {
-    const block = button.closest(".expressive-code")!
+  function codeBlock(button: HTMLElement, block: Element) {
     const blocks = [...document.querySelectorAll("main .expressive-code")]
     const heading = [...document.querySelectorAll("main :is(h2, h3)[id]")]
       .filter((h) => h.compareDocumentPosition(block) & Node.DOCUMENT_POSITION_FOLLOWING)
@@ -23,7 +22,7 @@
       tab: tab?.textContent?.trim(),
       index: blocks.indexOf(block),
       first_line: (button.dataset.code ?? "")
-        .split(/[\n\u007f]/)[0]!
+        .replace(/[\n\u007f][\s\S]*$/, "")
         .trim()
         .slice(0, 120),
     }
@@ -47,8 +46,9 @@
     document.addEventListener("click", (event) => {
       if (!(event.target instanceof Element)) return
       const copy = event.target.closest<HTMLElement>(".expressive-code .copy button")
-      if (copy) {
-        posthog.capture("code_copied", codeBlock(copy))
+      const block = copy?.closest(".expressive-code")
+      if (copy && block) {
+        posthog.capture("code_copied", codeBlock(copy, block))
         return
       }
       const href = event.target.closest("a")?.href

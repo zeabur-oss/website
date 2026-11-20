@@ -23,11 +23,9 @@ const components = join(root, "src/docs-components/index.ts")
 
 export type Context = { page: SitePage; repo: RepoLinks; files: RepoFiles }
 
-let cache: {
-  site: SiteData
-  links: Record<string, RepoLinks>
-  files: Record<string, RepoFiles>
-}
+let cache:
+  | { site: SiteData; repos: Map<string, { links: RepoLinks; files: RepoFiles }> }
+  | undefined
 
 function load() {
   if (cache) return cache
@@ -35,42 +33,47 @@ function load() {
   const links: Record<string, RepoLinks> = JSON.parse(
     readFileSync(join(root, "content/links.json"), "utf8"),
   )
-  const files: Record<string, RepoFiles> = {}
+  const repos = new Map<string, { links: RepoLinks; files: RepoFiles }>()
   for (const [name, repo] of Object.entries(links)) {
-    files[name] = {
-      files: new Set(repo.files),
-      translations: repo.translations,
-      published: new Set(repo.published),
-    }
+    repos.set(name, {
+      links: repo,
+      files: {
+        files: new Set(repo.files),
+        translations: repo.translations,
+        published: new Set(repo.published),
+      },
+    })
   }
-  cache = { site, links, files }
+  cache = { site, repos }
   return cache
 }
 
 /** The synced page a file is: src/content/docs/[<locale>/]docs/<repo>/<slug>.mdx. */
 export function contextOf(file: VFile): Context | undefined {
   if (!file.path) return undefined
-  const parts = relative(join(root, "src/content/docs"), file.path)
+  const [first = "", ...rest] = relative(join(root, "src/content/docs"), file.path)
     .replace(/\.mdx?$/, "")
     .split("/")
-  const locale = (locales as readonly string[]).includes(parts[0]!) ? parts.shift()! : "en"
-  if (parts.shift() !== "docs") return undefined
-  const { site, links, files } = load()
-  const page = site.pages[`${locale}/${parts.join("/")}`]
-  if (!page) return undefined
-  return { page, repo: links[page.repo]!, files: files[page.repo]! }
+  const written = (locales as readonly string[]).includes(first)
+  const locale = written ? first : "en"
+  const [docs, ...slug] = written ? rest : [first, ...rest]
+  if (docs !== "docs") return undefined
+  const { site, repos } = load()
+  const page = site.pages[`${locale}/${slug.join("/")}`]
+  const repo = page && repos.get(page.repo)
+  if (!page || !repo) return undefined
+  return { page, repo: repo.links, files: repo.files }
 }
 
 /** A GitHub URL of a published docs page, of any locked repository, as its site URL. */
 function siteUrlOfGithub(href: string, locale: string) {
   const link = githubDocsLink(href)
   if (!link) return undefined
-  const { links, files } = load()
-  const repo = Object.values(links).find((r) => r.github === link.github)
+  const repo = [...load().repos.values()].find((r) => r.links.github === link.github)
   if (!repo) return undefined
-  const slug = slugOfPath(link.path, repo.translations)
-  if (slug === undefined || !files[repo.name]!.published.has(slug)) return undefined
-  return docsUrl(locale, repo.name, slug) + link.hash
+  const slug = slugOfPath(link.path, repo.links.translations)
+  if (slug === undefined || !repo.files.published.has(slug)) return undefined
+  return docsUrl(locale, repo.links.name, slug) + link.hash
 }
 
 /**

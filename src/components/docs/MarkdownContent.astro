@@ -36,22 +36,21 @@ const icons: Record<string, string> = {
   "deploy-a-template": "rocket-launch",
   "template-standards": "ruler",
 }
-const iconFor = (slug: string) => icons[slug] ?? icons[slug.split("/")[0]!] ?? "file-text"
+const iconFor = (slug: string) => icons[slug] ?? icons[slug.split("/").at(0) ?? slug] ?? "file-text"
 
 let cards: Card[] = []
 let after = false
 if (isStart) {
   const nav: SiteNav = JSON.parse(readFileSync(join(process.cwd(), "content/nav.json"), "utf8"))
   const groups = nav[route.lang]?.[repo] ?? []
-  const labelled = groups.filter((g) => g.label)
-  if (labelled.length > 0) {
+  cards = groups.flatMap((g) => {
+    const [first] = g.items
+    if (!g.label || !first) return []
+    const links = g.items.slice(0, 4).map(({ label, href }) => ({ label, href }))
+    return [{ icon: iconFor(first.slug), title: g.label, href: first.href, links }]
+  })
+  if (cards.length > 0) {
     after = true
-    cards = labelled.map((g) => ({
-      icon: iconFor(g.items[0]!.slug),
-      title: g.label!,
-      href: g.items[0]!.href,
-      links: g.items.slice(0, 4).map(({ label, href }) => ({ label, href })),
-    }))
   } else {
     const items = groups.flatMap((g) => g.items).filter((i) => i.slug !== "index")
     if (items.length > 0) {

@@ -16,8 +16,9 @@ const { values, positionals } = parseArgs({
 })
 
 const targets: { snap: Snapshot; base?: Snapshot }[] = []
-if (positionals.length) {
-  const dir = resolve(positionals[0]!)
+const [target] = positionals
+if (target !== undefined) {
+  const dir = resolve(target)
   const name = values.name ?? basename(dir)
   const snap = await fromDirectory(dir, name)
   const base = values.base ? await fromRevision(dir, values.base, name) : undefined
