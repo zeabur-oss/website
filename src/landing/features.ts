@@ -45,7 +45,7 @@ export const groupNames: Record<SiteLocale, Record<GroupId, string>> = {
     team: "People and permissions",
     cluster: "Cluster and nodes",
     install: "Install",
-    leave: "Leave Zeabur",
+    leave: "Leave Zeabur OSS",
   },
 }
 
@@ -792,7 +792,7 @@ export const features: Feature[] = [
     "zh-CN": ["用你自己的权限", "Zeabur 本身没有集群权限，每个请求都由 Kubernetes RBAC 决定。"],
     en: [
       "Your own permissions",
-      "Zeabur has no cluster rights. Kubernetes RBAC decides each request.",
+      "Zeabur OSS has no cluster rights. Kubernetes RBAC decides each request.",
     ],
   },
   {
@@ -827,7 +827,7 @@ export const features: Feature[] = [
     ],
     en: [
       "Cluster components",
-      "See what is installed. Install from Zeabur, or get Helm, HelmChart, Flux or Argo CD output.",
+      "See what is installed. Install from Zeabur OSS, or get Helm, HelmChart, Flux or Argo CD output.",
     ],
   },
   {
@@ -861,39 +861,33 @@ export const features: Feature[] = [
     doc: "zeabur/cluster/nodes",
     "zh-TW": [
       "加入節點",
-      "產生有時效的權杖和指令，在新機器執行就加入。",
-      "只限 Zeabur Installer 裝的叢集",
+      "zeatend node add 產生有時效的權杖，印出新伺服器要執行的指令。",
+      "要用 Zeatend 架設的叢集",
     ],
     "zh-CN": [
       "加入节点",
-      "生成有时效的令牌和命令，在新机器执行就加入。",
-      "只限 Zeabur Installer 装的集群",
+      "zeatend node add 生成有时效的令牌，打印新服务器要运行的命令。",
+      "需要用 Zeatend 搭建的集群",
     ],
     en: [
       "Add nodes",
-      "A short-lived token and one command on the new machine.",
-      "Installer clusters only",
+      "zeatend node add prints a short-lived token and the commands for the new server.",
+      "Clusters set up with Zeatend",
     ],
   },
   {
     group: "cluster",
     doc: "zeabur/cluster/nodes",
-    "zh-TW": ["節點維護模式", "停機前把副本移走，遵守 PodDisruptionBudget，列出移不走的。"],
-    "zh-CN": ["节点维护模式", "停机前把副本移走，遵守 PodDisruptionBudget，列出移不走的。"],
-    en: [
-      "Node maintenance",
-      "Moves replicas off first, honours PodDisruptionBudgets, lists what cannot move.",
-    ],
+    "zh-TW": ["節點維護", "停止排程，再在 kubectl 終端機用 drain 移走副本。"],
+    "zh-CN": ["节点维护", "停止调度，再在 kubectl 终端里用 drain 移走副本。"],
+    en: ["Node maintenance", "Stop scheduling, then drain the node in the kubectl terminal."],
   },
   {
     group: "cluster",
     doc: "zeabur/cluster/nodes",
-    "zh-TW": ["移除節點", "移走副本、刪掉 Node，再給你在那台機器要跑的清除指令。"],
-    "zh-CN": ["移除节点", "移走副本、删掉 Node，再给你在那台机器要运行的清理命令。"],
-    en: [
-      "Remove nodes",
-      "Drains, deletes the Node and gives you the cleanup command for the machine.",
-    ],
+    "zh-TW": ["移除節點", "移走副本、刪除 Node，再在那台伺服器執行 zeatend uninstall。"],
+    "zh-CN": ["移除节点", "移走副本、删除 Node，再在那台服务器运行 zeatend uninstall。"],
+    en: ["Remove nodes", "Drain and delete the Node, then run zeatend uninstall on that server."],
   },
   {
     group: "cluster",
@@ -917,72 +911,66 @@ export const features: Feature[] = [
   // Install and upgrade
   {
     group: "install",
-    doc: "zeabur/get-started/quickstart",
+    doc: "zeabur/install/agent",
     "zh-TW": [
-      "網頁安裝精靈",
-      "五個步驟裝好 RKE2、Zeabur Identity 和 Zeabur，最後註冊管理員的通行密鑰。",
+      "交給 Agent 安裝",
+      "在 Claude Code 或 Codex 貼上一句話，它照文件安裝，花錢或改動前先問你。",
     ],
     "zh-CN": [
-      "网页安装向导",
-      "五个步骤装好 RKE2、Zeabur Identity 和 Zeabur，最后注册管理员的通行密钥。",
+      "交给 Agent 安装",
+      "在 Claude Code 或 Codex 粘贴一句话，它按文档安装，花钱或改动前先问你。",
     ],
     en: [
-      "Install in the browser",
-      "Five steps to RKE2, Zeabur Identity and Zeabur, ending with the admin's passkey.",
+      "Hand it to an agent",
+      "Paste one prompt into Claude Code or Codex. It follows the docs and asks before it pays or changes anything.",
     ],
   },
   {
     group: "install",
-    doc: "zeabur/get-started/quickstart",
+    doc: "zeabur/install/one-command",
     "zh-TW": [
-      "主機檢查",
-      "安裝前檢查 root、時鐘、Swap、連接埠、磁碟空間和磁碟加密。",
-      "磁碟沒加密預設只警告",
+      "新伺服器兩步裝好",
+      "Zeatend 裝好 Kubernetes，再一次 helm install 裝好 Zeabur 和 Zeabur Identity。",
     ],
     "zh-CN": [
-      "主机检查",
-      "安装前检查 root、时钟、Swap、端口、磁盘空间和磁盘加密。",
-      "磁盘没加密默认只警告",
+      "新服务器两步装好",
+      "Zeatend 装好 Kubernetes，再运行一次 helm install 装好 Zeabur 和 Zeabur Identity。",
     ],
     en: [
-      "Host checks",
-      "Root, clock, swap, ports, disk space and disk encryption before installing.",
-      "Unencrypted disks only warn by default",
+      "Two steps on a new server",
+      "Zeatend sets up Kubernetes, then one helm install adds Zeabur OSS and Zeabur Identity.",
     ],
   },
   {
     group: "install",
-    doc: "zeabur/get-started/quickstart",
-    "zh-TW": ["記憶體估算", "選精簡、標準或強化組合，記憶體不夠就不讓你裝。"],
-    "zh-CN": ["内存估算", "选精简、标准或强化组合，内存不够就不让你装。"],
+    doc: "zeatend",
+    "zh-TW": ["主機檢查", "安裝前檢查記憶體、磁碟空間、時鐘、Swap 和連接埠。"],
+    "zh-CN": ["主机检查", "安装前检查内存、磁盘空间、时钟、Swap 和端口。"],
+    en: ["Host checks", "Memory, disk space, clock, swap and ports, before installing."],
+  },
+  {
+    group: "install",
+    doc: "zeatend",
+    "zh-TW": ["先看計畫再安裝", "zeatend plan 先列出要做的事，apply 才安裝，SSH 斷線也會繼續。"],
+    "zh-CN": ["先看计划再安装", "zeatend plan 先列出要做的事，apply 才安装，SSH 断开也会继续。"],
     en: [
-      "Memory estimate",
-      "Pick lean, standard or hardened. Too little memory and Install stays off.",
+      "Plan, then apply",
+      "zeatend plan shows what happens, apply does it, and it goes on if SSH drops.",
     ],
   },
   {
     group: "install",
-    doc: "zeabur/install/config-file",
-    "zh-TW": ["設定檔安裝", "plan 先看會做什麼，apply 安裝，中斷後從斷掉的地方繼續。"],
-    "zh-CN": ["配置文件安装", "plan 先看会做什么，apply 安装，中断后从断掉的地方继续。"],
-    en: ["Install from a file", "plan shows what happens, apply does it, and a rerun resumes."],
+    doc: "zeatend",
+    "zh-TW": ["預設就強化安全性", "K3s、RKE2 和 KubeSolo 都依 CIS 基準強化安全設定。"],
+    "zh-CN": ["加固的默认值", "K3s、RKE2 和 KubeSolo 都按 CIS 基准加固。"],
+    en: ["Hardened defaults", "K3s, RKE2 and KubeSolo, hardened to the CIS benchmark."],
   },
   {
     group: "install",
-    doc: "zeabur/get-started/quickstart",
-    "zh-TW": ["測試機模式", "不用設 DNS，用 sslip.io 網域先試裝。"],
-    "zh-CN": ["测试机模式", "不用配置 DNS，用 sslip.io 域名先试装。"],
-    en: ["Try without DNS", "Uses sslip.io names and a local CA."],
-  },
-  {
-    group: "install",
-    doc: "zeabur/reference/installer",
-    "zh-TW": ["加固的預設值", "CIS profile、etcd 加密、稽核政策和基準網路政策。"],
-    "zh-CN": ["加固的默认值", "CIS profile、etcd 加密、审计策略和基准网络策略。"],
-    en: [
-      "Hardened defaults",
-      "CIS profile, encrypted etcd, an audit policy and baseline network policies.",
-    ],
+    doc: "zeabur/install/one-command",
+    "zh-TW": ["不設 DNS 也能裝", "用 sslip.io 網址，HTTPS 憑證向 Let's Encrypt 申請。"],
+    "zh-CN": ["不配置 DNS 也能装", "用 sslip.io 地址，HTTPS 证书向 Let's Encrypt 申请。"],
+    en: ["Try without DNS", "An sslip.io address, with an HTTPS certificate from Let's Encrypt."],
   },
   {
     group: "install",
@@ -993,12 +981,12 @@ export const features: Feature[] = [
   },
   {
     group: "install",
-    doc: "zeabur/reference/zeaburctl",
-    "zh-TW": ["在自己的電腦開", "zeaburctl ui 用你的 kubeconfig，叢集裡什麼都不用裝。"],
-    "zh-CN": ["在自己的电脑打开", "zeaburctl ui 用你的 kubeconfig，集群里什么都不用装。"],
+    doc: "zeabur/install/desktop",
+    "zh-TW": ["在自己的電腦開", "Zeabur Desktop 用你的 kubeconfig，叢集裡什麼都不用裝。"],
+    "zh-CN": ["在自己的电脑打开", "Zeabur Desktop 用你的 kubeconfig，集群里什么都不用装。"],
     en: [
       "Run it on your laptop",
-      "zeaburctl ui with your kubeconfig. Nothing goes into the cluster.",
+      "Zeabur Desktop uses your kubeconfig. Nothing goes into the cluster.",
     ],
   },
   {
@@ -1013,33 +1001,13 @@ export const features: Feature[] = [
   },
   {
     group: "install",
-    doc: "zeabur/reference/installer",
-    "zh-TW": ["安裝後健康檢查", "zeabur-installer doctor 檢查 RKE2、元件、儲存和登入設定。"],
-    "zh-CN": ["安装后健康检查", "zeabur-installer doctor 检查 RKE2、组件、存储和登录配置。"],
-    en: [
-      "zeabur-installer doctor",
-      "Checks RKE2, components, storage and sign-in after installing.",
-    ],
-  },
-  {
-    group: "install",
-    doc: "zeabur/reference/installer-configuration",
-    "zh-TW": ["自備映像檔與 chart", "改用自己準備的 Catalog、映像檔封存檔和 chart。"],
-    "zh-CN": ["自备镜像与 chart", "改用自己准备的 Catalog、镜像归档和 chart。"],
-    en: [
-      "Your own artifacts",
-      "Point the installer at your own catalog, image archives and charts.",
-    ],
-  },
-  {
-    group: "install",
     doc: "zeabur/install/existing-cluster",
     "zh-TW": ["用 GitOps 管 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
     "zh-CN": ["用 GitOps 管理 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
-    en: ["Zeabur by GitOps", "Deploy Zeabur's chart with Argo CD or Flux."],
+    en: ["Zeabur OSS by GitOps", "Deploy the Zeabur OSS chart with Argo CD or Flux."],
   },
 
-  // Leave Zeabur
+  // Leave Zeabur OSS
   {
     group: "leave",
     doc: "zeabur/leave/uninstall",
@@ -1050,7 +1018,7 @@ export const features: Feature[] = [
     ],
     en: [
       "Services keep running",
-      "Projects and domains are plain Kubernetes objects. Remove Zeabur and sites still answer.",
+      "Projects and domains are plain Kubernetes objects. Remove Zeabur OSS and sites still answer.",
     ],
   },
   {
@@ -1058,7 +1026,7 @@ export const features: Feature[] = [
     doc: "zeabur/leave/uninstall",
     "zh-TW": ["選擇移除多少", "只移除 Zeabur、連 Zeabur Identity 一起，或整台機器清掉。"],
     "zh-CN": ["选择移除多少", "只移除 Zeabur、连 Zeabur Identity 一起，或整台机器清掉。"],
-    en: ["Choose how much goes", "Zeabur alone, with Zeabur Identity, or the whole machine."],
+    en: ["Choose how much goes", "Zeabur OSS alone, with Zeabur Identity, or the whole machine."],
   },
   {
     group: "leave",
@@ -1072,7 +1040,7 @@ export const features: Feature[] = [
     doc: "zeabur/leave/uninstall",
     "zh-TW": ["移除後備份照跑", "備份由 operator、K8up、Velero 自己執行，不靠 Zeabur。"],
     "zh-CN": ["移除后备份照常运行", "备份由 operator、K8up、Velero 自己执行，不靠 Zeabur。"],
-    en: ["Backups keep running", "Operators, K8up and Velero run them without Zeabur."],
+    en: ["Backups keep running", "Operators, K8up and Velero run them without Zeabur OSS."],
   },
 ]
 
@@ -1248,7 +1216,7 @@ export const featureCopy: Record<
     group: (n) => `${n} features in this group`,
     index: {
       title: "Every feature",
-      lead: "What Zeabur's main branch has today, one line each. Unfinished ones say what is missing.",
+      lead: "What the main branch of Zeabur OSS has today, one line each. Unfinished ones say what is missing.",
     },
     partial: "Not finished",
   },

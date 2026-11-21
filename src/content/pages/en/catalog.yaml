@@ -7,7 +7,7 @@ meta:
   description: Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. Every template is installed and tested before it ships, with pinned versions and generated passwords.
 titleDim: One-click templates,
 title: tested before they ship.
-sub: "Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. The catalog comes with Zeabur: in a project, choose Add → App template and pick an app."
+sub: "Deploy n8n, WordPress, Dify, OpenClaw and more on your own server in one click. The catalog comes with Zeabur OSS: in a project, choose Add → App template and pick an app."
 docs: About Catalog
 source: Source on GitHub
 highlights:
@@ -19,7 +19,7 @@ highlights:
       body: Before any change to a template merges, CI installs it on a Kubernetes cluster and checks that the app responds.
     - tag: version
       title: Pinned versions
-      body: Every template pins its image, so it installs the same app version every time. New template versions come with Zeabur upgrades.
+      body: Every template pins its image, so it installs the same app version every time. New template versions come with Zeabur OSS upgrades.
     - tag: secrets
       title: Passwords generated for you
       body: Passwords and keys are generated at deploy time and stored as Kubernetes Secrets, never in the template. Each template also states the CPU and memory it needs.
@@ -32,7 +32,7 @@ how:
     - title: Test in CI
       body: CI installs and tests every component and template, and records idle memory and CPU.
     - title: Release
-      body: One signed bundle. Zeabur reads it to suggest what a cluster is missing, and never installs anything itself.
+      body: One signed bundle. Zeabur OSS reads it to suggest what a cluster is missing, and never installs anything itself.
 details:
   title: Some of the cluster components
   cols:
@@ -75,5 +75,5 @@ details:
       - Optional
 start:
   title: Read one component file
-  sub: "Without Zeabur, a cluster admin installs the components first. Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install."
+  sub: "Without Zeabur OSS, a cluster admin installs the components first. Every component looks like this: why it is recommended, its licence, the capabilities it needs, and the chart and version to install."
   cta: About Catalog

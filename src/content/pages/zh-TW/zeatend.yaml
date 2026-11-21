@@ -3,7 +3,7 @@ lines:
   nav: 把 Linux 伺服器裝成 Kubernetes 叢集
   landing: 在 Linux 伺服器上安裝並管理 K3s、RKE2 或 KubeSolo 叢集。
 meta:
-  title: Zeabur Zeatend：在終端機把 Linux 伺服器裝成叢集
+  title: Zeatend：在終端機把 Linux 伺服器裝成叢集
   description: Zeatend 在 Linux 伺服器上安裝依 CIS 基準強化的 K3s、RKE2 或 KubeSolo。照著終端機畫面選好設定，看過安裝計畫才套用，之後也能加入節點、檢查和升級叢集。
 titleDim: 一台 Linux 伺服器，
 title: 裝成可以直接用的叢集

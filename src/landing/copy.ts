@@ -22,10 +22,7 @@ export type LandingCopy = {
     team: Entrance
     machine: Entrance
   }
-  shots: Record<
-    "project" | "diagnosis" | "change-review" | "database" | "cluster" | "installer",
-    string
-  >
+  shots: Record<"project" | "diagnosis" | "change-review" | "database" | "cluster", string>
   deploy: { label: string; title: string; body: string }
   trace: { label: string; title: string; steps: [Step, Step, Step] }
   roles: { label: string; title: string; points: [Point, Point, Point] }
@@ -64,7 +61,7 @@ const zhTW: LandingCopy = {
     },
     machine: {
       title: "只有一臺 Linux 伺服器",
-      body: "Zeabur Installer 檢查伺服器，一次裝好叢集和整套服務。",
+      body: "Zeatend 先裝好 Kubernetes，再一次 helm install 裝好 Zeabur 開源版。",
       link: "在一臺伺服器安裝",
     },
   },
@@ -74,14 +71,13 @@ const zhTW: LandingCopy = {
       "worker 重新啟動了 14 次。錯誤在重新啟動前那一次執行的日誌裡，旁邊就是開啟日誌的按鈕。",
     "change-review": "儲存 web 的變更前，先看 YAML 差異：NODE_ENV 從 production 改成 staging。",
     database:
-      "只有一個執行個體的 PostgreSQL。它故障時沒有其他執行個體接手，所以 Zeabur 提醒你設定備份。",
+      "只有一個執行個體的 PostgreSQL。它故障時沒有其他執行個體接手，所以 Zeabur 開源版提醒你設定備份。",
     cluster: "叢集頁：Kubernetes 1.34 即將停止支援、節點記憶體用到 91%、磁碟用到 88%。",
-    installer: "Zeabur Installer 安裝前的確認頁：記憶體夠不夠、要裝哪些元件、大約要多久。",
   },
   deploy: {
     label: "部署",
     title: "按下部署，服務就上線",
-    body: "選一個 Git 儲存庫、Docker Compose 檔或範本。Zeabur 建置好就啟動，把服務放上架構圖，連線也一起畫出來。",
+    body: "選一個 Git 儲存庫、Docker Compose 檔或範本。Zeabur 開源版建置好就啟動，把服務放上架構圖，連線也一起畫出來。",
   },
   trace: {
     label: "出問題時",
@@ -108,7 +104,7 @@ const zhTW: LandingCopy = {
       {
         title: "用登入者自己的憑證",
         body: "每個請求都帶著你自己的憑證，能做什麼由 Kubernetes RBAC 決定。",
-        link: "Zeabur 需要的權限",
+        link: "Zeabur 開源版需要的權限",
       },
       {
         title: "用通行密鑰登入",
@@ -124,22 +120,22 @@ const zhTW: LandingCopy = {
   },
   leave: {
     label: "移除",
-    title: "移除 Zeabur，服務照常執行",
-    body: "Zeabur 自己不存資料。移除 chart 後，Deployment、Service、Ingress 和資料都留在叢集裡，可以繼續用 kubectl、Helm、Argo CD 或 Flux 管理。",
-    link: "移除 Zeabur 的步驟",
+    title: "移除 Zeabur 開源版，服務照常執行",
+    body: "Zeabur 開源版自己不存資料。移除 chart 後，Deployment、Service、Ingress 和資料都留在叢集裡，可以繼續用 kubectl、Helm、Argo CD 或 Flux 管理。",
+    link: "移除 Zeabur 開源版的步驟",
   },
   start: {
     label: "開始",
     title: "選一種方式開始",
-    lead: "依你想自己動手的程度選擇。三種方式裝好的是同一套 Zeabur。",
+    lead: "依你想自己動手的程度選擇。三種方式裝好的是同一套 Zeabur 開源版。",
     agent: {
-      title: "交給 AI 代理",
-      body: "之後只要把一段提示貼給 Claude 或 Codex，它就會幫你安裝 Zeabur，或把 zeabur.com 上的專案搬過來。",
-      link: "看看怎麼交給 AI 代理",
+      title: "交給 Agent",
+      body: "把一句話貼給 Claude Code 或 Codex 這類 Coding Agent，它會照著文件安裝 Zeabur 開源版，或把 Zeabur 上的專案搬過來。",
+      link: "看看怎麼交給 Agent",
     },
     zeatend: {
       title: "用 Zeatend 一步步安裝",
-      body: "在伺服器上執行 Zeatend，照著終端機畫面選好發行版和設定，就能把這台伺服器裝成 Kubernetes 叢集。叢集裝好後，再用 Helm chart 裝上 Zeabur。",
+      body: "在伺服器上執行 Zeatend，照著終端機畫面選好發行版和設定，就能把這台伺服器裝成 Kubernetes 叢集。叢集裝好後，再用 Helm chart 裝上 Zeabur 開源版。",
       steps: "Zeatend 的安裝步驟",
       cluster: "用 Helm chart 裝上 Zeabur",
     },
@@ -153,7 +149,7 @@ const zhTW: LandingCopy = {
   },
   members: {
     label: "專案",
-    title: "Zeabur 開源的所有專案",
+    title: "Zeabur 開源版的所有專案",
     lead: "可以整套一起用，也可以只拿其中一個，放進你現有的叢集。",
     community: "在 GitHub 上追蹤進度、回報問題，或讀部落格上的設計說明。",
   },
@@ -182,7 +178,7 @@ const zhCN: LandingCopy = {
     },
     machine: {
       title: "只有一台 Linux 服务器",
-      body: "Zeabur Installer 检查服务器，一次装好集群和整套服务。",
+      body: "Zeatend 先装好 Kubernetes，再运行一次 helm install 装好 Zeabur 开源版。",
       link: "在一台服务器上安装",
     },
   },
@@ -190,14 +186,13 @@ const zhCN: LandingCopy = {
     project: "shop 项目的地图。worker 反复崩溃，所以排在“需要处理”的第一行。",
     diagnosis: "worker 重启了 14 次。错误在重启前那一次运行的日志里，旁边就是打开日志的按钮。",
     "change-review": "保存 web 的变更前，先看 YAML 差异：NODE_ENV 从 production 改成 staging。",
-    database: "只有一个实例的 PostgreSQL。它出故障时没有其他实例接手，所以 Zeabur 提醒你设置备份。",
+    database: "只有一个实例的 PostgreSQL。它出故障时没有其他实例接手，所以 Zeabur 开源版提醒你设置备份。",
     cluster: "集群页：Kubernetes 1.34 即将停止支持，节点内存用到 91%，磁盘用到 88%。",
-    installer: "Zeabur Installer 安装前的确认页：内存够不够、要装哪些组件、大约要多久。",
   },
   deploy: {
     label: "部署",
     title: "按下部署，服务就上线",
-    body: "选一个 Git 仓库、Docker Compose 文件或模板。Zeabur 构建好就启动，把服务放上架构图，连接也一起画出来。",
+    body: "选一个 Git 仓库、Docker Compose 文件或模板。Zeabur 开源版构建好就启动，把服务放上架构图，连接也一起画出来。",
   },
   trace: {
     label: "出问题时",
@@ -224,7 +219,7 @@ const zhCN: LandingCopy = {
       {
         title: "用登录者自己的凭据",
         body: "每个请求都带着你自己的凭据，能做什么由 Kubernetes RBAC 决定。",
-        link: "Zeabur 需要的权限",
+        link: "Zeabur 开源版需要的权限",
       },
       {
         title: "用通行密钥登录",
@@ -240,22 +235,22 @@ const zhCN: LandingCopy = {
   },
   leave: {
     label: "移除",
-    title: "移除 Zeabur，服务照常运行",
-    body: "Zeabur 自己不存数据。卸载 chart 后，Deployment、Service、Ingress 和数据都留在集群里，可以继续用 kubectl、Helm、Argo CD 或 Flux 管理。",
-    link: "移除 Zeabur 的步骤",
+    title: "移除 Zeabur 开源版，服务照常运行",
+    body: "Zeabur 开源版自己不存数据。卸载 chart 后，Deployment、Service、Ingress 和数据都留在集群里，可以继续用 kubectl、Helm、Argo CD 或 Flux 管理。",
+    link: "移除 Zeabur 开源版的步骤",
   },
   start: {
     label: "开始",
     title: "选一种方式开始",
-    lead: "按你想自己动手的程度来选。三种方式装好的是同一套 Zeabur。",
+    lead: "按你想自己动手的程度来选。三种方式装好的是同一套 Zeabur 开源版。",
     agent: {
-      title: "交给 AI 智能体",
-      body: "之后只要把一段提示词贴给 Claude 或 Codex，它就会帮你安装 Zeabur，或者把 zeabur.com 上的项目迁移过来。",
-      link: "看看怎么交给 AI 智能体",
+      title: "交给 Agent",
+      body: "把一句话粘贴给 Claude Code 或 Codex 这类 Coding Agent，它会按照文档安装 Zeabur 开源版，或者把 Zeabur 上的项目迁移过来。",
+      link: "看看怎么交给 Agent",
     },
     zeatend: {
       title: "用 Zeatend 一步步安装",
-      body: "在服务器上运行 Zeatend，在终端界面里选好发行版和配置，就能把这台服务器装成 Kubernetes 集群。集群装好后，再用 Helm chart 装上 Zeabur。",
+      body: "在服务器上运行 Zeatend，在终端界面里选好发行版和配置，就能把这台服务器装成 Kubernetes 集群。集群装好后，再用 Helm chart 装上 Zeabur 开源版。",
       steps: "Zeatend 的安装步骤",
       cluster: "用 Helm chart 装上 Zeabur",
     },
@@ -269,7 +264,7 @@ const zhCN: LandingCopy = {
   },
   members: {
     label: "项目",
-    title: "Zeabur 开源的全部项目",
+    title: "Zeabur 开源版的全部项目",
     lead: "可以整套一起用，也可以只拿其中一个，放进你现有的集群。",
     community: "在 GitHub 上跟进进度、反馈问题，或者读博客上的设计说明。",
   },
@@ -286,7 +281,7 @@ const en: LandingCopy = {
   description:
     "Deploy and run services on your own Kubernetes. Every Zeabur open-source project is Apache-2.0 licensed, including the new Zeatend.",
   hero: {
-    meta: `Apache-2.0 · Zeabur ${zeaburVersion}`,
+    meta: `Apache-2.0 · Zeabur OSS ${zeaburVersion}`,
     title: "The Zeabur you know, on your own server",
     lead: "Deploy from Git, Docker Compose or a template, with the same projects and services. The difference is that the server is yours: you pay only for the machine, your data stays on it, and all the code is public.",
     start: "Get started",
@@ -298,7 +293,7 @@ const en: LandingCopy = {
     },
     machine: {
       title: "You have one Linux server",
-      body: "Zeabur Installer checks the server and sets up the cluster and everything on it in one go.",
+      body: "Zeatend sets up Kubernetes, then one helm install adds Zeabur OSS.",
       link: "Install on one server",
     },
   },
@@ -310,16 +305,14 @@ const en: LandingCopy = {
     "change-review":
       "Before the change to web is saved, the YAML diff shows NODE_ENV going from production to staging.",
     database:
-      "A PostgreSQL database with one instance. Nothing takes over if it fails, so Zeabur asks you to set up backups.",
+      "A PostgreSQL database with one instance. Nothing takes over if it fails, so Zeabur OSS asks you to set up backups.",
     cluster:
       "The cluster page: Kubernetes 1.34 reaches end of life, a node is at 91% memory and its disk at 88%.",
-    installer:
-      "Zeabur Installer's review step before installing: whether memory is enough, which components go in, and how long it takes.",
   },
   deploy: {
     label: "Deploy",
     title: "Press deploy and the service is up",
-    body: "Pick a Git repository, a Docker Compose file or a template. Zeabur builds it, starts it and puts the service on the map with its connections.",
+    body: "Pick a Git repository, a Docker Compose file or a template. Zeabur OSS builds it, starts it and puts the service on the map with its connections.",
   },
   trace: {
     label: "When it breaks",
@@ -346,7 +339,7 @@ const en: LandingCopy = {
       {
         title: "Your own credential",
         body: "Every request carries the signed-in person's credential, and Kubernetes RBAC decides what they can do.",
-        link: "What Zeabur needs",
+        link: "What Zeabur OSS needs",
       },
       {
         title: "Passkey sign-in",
@@ -362,24 +355,24 @@ const en: LandingCopy = {
   },
   leave: {
     label: "Leaving",
-    title: "Remove Zeabur, and your services keep running",
-    body: "Zeabur keeps no data of its own. Uninstall the chart and your Deployments, Services, Ingresses and data stay in the cluster, ready for kubectl, Helm, Argo CD or Flux.",
-    link: "How to remove Zeabur",
+    title: "Remove Zeabur OSS, and your services keep running",
+    body: "It keeps no data of its own. Uninstall the chart and your Deployments, Services, Ingresses and data stay in the cluster, ready for kubectl, Helm, Argo CD or Flux.",
+    link: "How to remove Zeabur OSS",
   },
   start: {
     label: "Start",
     title: "Pick a way to start",
-    lead: "Choose by how hands-on you want to be. All three end with the same Zeabur.",
+    lead: "Choose by how hands-on you want to be. All three end with the same Zeabur OSS.",
     agent: {
-      title: "Hand it to an AI agent",
-      body: "You'll paste a prompt into Claude or Codex, and it will install Zeabur for you or move your projects over from zeabur.com.",
+      title: "Hand it to an agent",
+      body: "Paste one prompt into a coding agent such as Claude Code or Codex. It follows the docs to install Zeabur OSS, or to move your projects over from Zeabur.",
       link: "See how it works",
     },
     zeatend: {
       title: "Step through it with Zeatend",
-      body: "Run Zeatend on the server and pick a distribution and settings on its terminal screens. It turns the server into a Kubernetes cluster, and then you install Zeabur with the Helm chart.",
+      body: "Run Zeatend on the server and pick a distribution and settings on its terminal screens. It turns the server into a Kubernetes cluster, and then you install Zeabur OSS with the Helm chart.",
       steps: "Zeatend's install steps",
-      cluster: "Install Zeabur with the Helm chart",
+      cluster: "Install Zeabur OSS with the Helm chart",
     },
     manual: {
       title: "Install it yourself",

@@ -151,7 +151,7 @@ const desktop: Stage = {
   panels: [],
   nodes: [
     { icon: "file-text", name: "kubeconfig", sub: "context" },
-    { icon: "app-window", name: "Zeabur", sub: "zeabur-local" },
+    { icon: "app-window", name: "Zeabur OSS", sub: "zeabur-local" },
     { icon: "heartbeat", name: "Home", sub: "attention" },
   ],
 }

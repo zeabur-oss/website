@@ -1,0 +1,74 @@
+---
+title: 总览
+description: Zeabur 各个开源项目的名称、用途，以及它们如何配合。所有文档和本站都使用这些名称。
+---
+
+本站的每个项目都有一个名称，负责一件事。所有文档页、README 和本站页面都使用下面的名称；讲到某个项目做什么，也和这里的说法一致。
+
+## 各项目如何配合
+
+1. **准备集群**：在新的 Linux 服务器上，用 Zeatend 装好 Kubernetes。已经有 Kubernetes 集群就跳过这一步。
+2. **安装 Zeabur 开源版**：运行一次 `helm install`，把 Zeabur 开源版和 Zeabur Identity 装进集群。
+3. **加上服务需要的东西**：在 Zeabur 开源版里，从 Zeabur Catalog 安装组件、部署模板。Zeabur Builder 就是其中一个组件，负责从 Git 构建服务。
+
+Zeabur Desktop 在你的电脑上打开同一套 Zeabur 开源版，直接连接现有的集群，集群里不用安装任何东西。
+
+这些步骤也可以交给 Claude Code 或 Codex 这类 Coding Agent。Agent 读的就是你会读的那些文档页。
+
+## 项目
+
+### Zeabur 开源版
+
+在自己的 Kubernetes 集群上部署和管理服务的网页界面。它和 Zeabur 一样，把集群整理成项目和服务。集群组件的安装、升级和移除也由 Zeabur 开源版负责。它只通过 Kubernetes API 操作，不负责搭建服务器或安装 Kubernetes。
+
+文档：[Zeabur 开源版](https://oss.zeabur.com/zh-CN/docs/zeabur/)
+
+### Zeabur Identity
+
+Zeabur 开源版的登录系统。它显示登录页，检查每个人的通行密钥、密码、GitHub、Google 或公司账号，再签发 Kubernetes 只接受几分钟的令牌。用 Zeabur 开源版的 chart 安装时，会一起装好 Zeabur Identity。也可以单独使用，不必共用管理员 kubeconfig 就能登录 `kubectl`。
+
+文档：[Zeabur Identity](https://oss.zeabur.com/zh-CN/docs/identity/)
+
+### Zeabur Catalog
+
+Zeabur 开源版会安装的组件和模板清单，每一项发布前都由 CI 安装并测试过。**组件**是集群需要的软件，例如 ingress controller、cert-manager 或 Zeabur Builder。**模板**是部署到项目里的应用，例如 n8n 或 WordPress。Zeabur 开源版通过 API 读取 Catalog，其他工具也能读同一个 API。
+
+文档：[Zeabur Catalog](https://oss.zeabur.com/zh-CN/docs/catalog/)
+
+### Zeabur Builder
+
+从 Git 构建服务。它会判断代码用的语言，或直接用你的 Dockerfile，构建出镜像，分支有新提交时再重新构建。Zeabur 开源版从 Zeabur Catalog 把它作为组件安装。也可以单独作为 Kubernetes operator 使用。
+
+文档：[Zeabur Builder](https://oss.zeabur.com/zh-CN/docs/builder/)
+
+### Zeatend
+
+在 Linux 服务器上搭建和管理 Kubernetes 集群（K3s、RKE2 或 KubeSolo），在服务器上运行。它负责安装 Kubernetes、让更多服务器加入集群、应用配置变更，以及卸载。Zeatend 不会安装 Zeabur 开源版，装好集群后的下一步是 Zeabur 开源版的 `helm install`。
+
+文档：[Zeatend](https://oss.zeabur.com/zh-CN/docs/zeatend/)
+
+### Zeabur Desktop
+
+Zeabur 开源版的桌面应用，支持 macOS、Windows 和 Linux。它用你电脑上的 kubeconfig 连接集群，显示同一套 Zeabur 开源版，集群里不用安装任何东西。
+
+文档：[使用 Zeabur Desktop](https://oss.zeabur.com/zh-CN/docs/zeabur/install/desktop/)
+
+### Zeabur Design System
+
+Zeabur 开源版界面使用的组件、样式和字体，供 React 和 Tailwind CSS 使用。Zeabur 开源版、Zeabur Identity 的登录页和本站都用它。适合想做出 Zeabur 风格界面的开发者。
+
+源代码：[zeabur-oss/design-system](https://github.com/zeabur-oss/design-system)
+
+## 其他术语
+
+### Agent
+
+照着文档页替你操作的 Coding Agent，例如 Claude Code 或 Codex。它会运行命令；遇到要花钱的步骤，或只有你能做的步骤（例如创建通行密钥），会先问你。给 Agent 照做的页面也有一份 Markdown 文件，地址是页面地址去掉末尾的 `/` 再加上 `.md`，例如本页是 `https://oss.zeabur.com/zh-CN/docs/overview.md`。你粘贴的提示词会指向这个文件。
+
+### Zeabur 和 Zeabur 开源版
+
+**Zeabur** 是网址为 zeabur.com 的托管服务，它的账号、项目和账单都和本站的开源项目分开。**Zeabur 开源版**是装在你自己集群上的版本。中文页面只写「Zeabur」时，指的是托管服务。
+
+### 服务器、节点和集群
+
+**服务器**是你租用或自有的机器。**节点**是 Kubernetes 集群里的一台服务器。**集群**是由 Kubernetes 统一管理的一组节点，可以只有一台。

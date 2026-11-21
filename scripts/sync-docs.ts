@@ -1,4 +1,5 @@
-// Reads each repository's docs/ at the tag in docs.lock.json and writes what Starlight reads:
+// Reads the site's own docs/ and each repository's docs/ at the tag in docs.lock.json, and writes
+// what Starlight reads:
 // src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and content/nav.json (the sidebar),
 // content/catalog.json (the catalog's components and templates), the images and social images
 // under public/, and for agents a Markdown copy of each page at its URL plus `.md` and /llms.txt.
@@ -13,7 +14,14 @@ import { group } from "../src/lib/capture.ts"
 import { readRepoDocs, readText, splitFrontmatter, type RepoDocs } from "./lib/docs.ts"
 import { llmsTxt } from "./lib/llms.ts"
 import { toMarkdown } from "./lib/markdown.ts"
-import { readLock, root, snapshot, type LockRepo, type Snapshot } from "./lib/repos.ts"
+import {
+  fromDirectory,
+  readLock,
+  root,
+  snapshot,
+  type LockRepo,
+  type Snapshot,
+} from "./lib/repos.ts"
 import {
   readComponents,
   readTemplates,
@@ -165,6 +173,18 @@ async function writeSocialImage(snap: Snapshot) {
     .toFile(join(publicDir, "og", `${snap.repo.name}.png`))
 }
 
+/** The site's own docs/: the overview, at /docs/overview, read from the working tree. */
+export const siteRepo: LockRepo = {
+  name: "overview",
+  label: "Overview",
+  github: "zeabur-oss/website",
+  ref: "main",
+}
+
+async function siteDocs(): Promise<Snapshot> {
+  return { ...(await fromDirectory(root, siteRepo.name)), repo: siteRepo }
+}
+
 export async function sync() {
   const lock = readLock()
   rmSync(content, { recursive: true, force: true })
@@ -176,8 +196,9 @@ export async function sync() {
   const site: SiteData = { repos: [], pages: {}, redirects: [] }
   const links: Record<string, RepoLinks> = {}
   let catalog: CatalogData | undefined
-  for (const repo of lock) {
-    const snap = await snapshot(repo)
+  for (const next of [siteDocs, ...lock.map((repo) => () => snapshot(repo))]) {
+    const snap = await next()
+    const { repo } = snap
     const docs = readRepoDocs(snap)
     site.repos.push({ name: repo.name, label: repo.label, github: repo.github, ref: repo.ref })
     const titles: Record<string, Record<string, string>> = {}

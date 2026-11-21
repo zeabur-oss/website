@@ -1,13 +1,13 @@
 status: released
 lines:
-  nav: Zeabur on the clusters you already have
+  nav: Zeabur OSS on the clusters you already have
   landing: The Zeabur you know, opened on the Kubernetes cluster you already have, with nothing to change in it first.
 meta:
-  title: "Zeabur Desktop: Zeabur on the clusters you already have"
-  description: Zeabur Desktop opens Zeabur with the kubeconfig on your computer, and it works like the Zeabur you know. There's nothing to install in the cluster and no app to redeploy. It runs on macOS, Windows, and Linux.
+  title: "Zeabur Desktop: Zeabur OSS on the clusters you already have"
+  description: Zeabur Desktop opens Zeabur OSS with the kubeconfig on your computer, and it works like the Zeabur you know. There's nothing to install in the cluster and no app to redeploy. It runs on macOS, Windows, and Linux.
 titleDim: The Zeabur you know,
 title: on the cluster you already have.
-sub: Zeabur Desktop connects to your cluster with the kubeconfig on your computer, and the window holds the same Zeabur. There's nothing to install in the cluster, and nothing in it changes until you apply a change.
+sub: Zeabur Desktop connects to your cluster with the kubeconfig on your computer, and the window holds the same Zeabur OSS. There's nothing to install in the cluster, and nothing in it changes until you apply a change.
 download:
   button: Download Zeabur Desktop
   for:
@@ -32,10 +32,10 @@ highlights:
   items:
     - tag: zeabur-local
       title: Nothing to install in the cluster
-      body: Zeabur runs on your computer, on the same local service as zeaburctl ui. It installs no components in the cluster, and you need no domain or sign-in service.
+      body: Zeabur OSS runs on your computer, on the same local service as zeaburctl ui. It installs no components in the cluster, and you need no domain or sign-in service.
     - tag: Namespace
       title: Your apps keep running
-      body: When you add an existing namespace as a project, Zeabur only adds a project label. The services, data, and security settings inside stay as they were. To stop, remove the label.
+      body: When you add an existing namespace as a project, Zeabur OSS only adds a project label. The services, data, and security settings inside stay as they were. To stop, remove the label.
     - tag: RBAC
       title: Your own permissions
       body: Reading, reviewing changes, and applying them all use that context's permissions, so the cluster's RBAC still applies. If your team granted only some permissions, Zeabur Desktop can do only those.
@@ -46,7 +46,7 @@ how:
     - title: Pick a cluster
       body: Zeabur Desktop lists every context in your kubeconfig. A personal server from Zeatend, Kubernetes from a cloud provider, and a kubeconfig from your team all work.
     - title: The Zeabur you know
-      body: The new window opens the same Zeabur interface. With admin rights, you can add the apps already running in the cluster as projects without redeploying them.
+      body: The new window opens the same Zeabur OSS interface. With admin rights, you can add the apps already running in the cluster as projects without redeploying them.
     - title: See what needs attention
       body: Home lists the services across the cluster that need attention, says why in plain words, and what you can do next, such as raising a memory limit.
 details:
@@ -57,7 +57,7 @@ details:
     - New versions
   rows:
     - - Mac with Apple silicon
-      - .dmg; open it and drag Zeabur to Applications
+      - .dmg; open it and drag Zeabur Desktop to Applications
       - Updates itself
     - - Windows on x64
       - -setup.exe; installs for your account only, no administrator needed

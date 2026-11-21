@@ -1,6 +1,6 @@
 ---
 title: Building a zero-trust PaaS
-description: When you delete a Deployment through a platform, whose permissions does it use? Start with that operation to see how Zeabur Open Source connects OIDC sign-in to Kubernetes RBAC.
+description: When you delete a Deployment through a platform, whose permissions does it use? Start with that operation to see how Zeabur OSS connects OIDC sign-in to Kubernetes RBAC.
 pubDate: 2026-11-07
 author: pan93412
 ---
@@ -12,7 +12,7 @@ When you click “Delete service” on a platform, how does it delete the Deploy
 
 The most straightforward approach is to give the platform a <Term word="ServiceAccount">A Kubernetes account for software. A program uses the account's token to call the Kubernetes API. The cluster's RBAC configuration determines what it can do.</Term> with access to the cluster. The platform checks whether you're allowed to delete the service, then calls the Kubernetes API with its own ServiceAccount. If that account has access to every <Term word="Namespace">A space that separates resources in Kubernetes, such as `dev` or `production`. Permissions can be limited to a single Namespace.</Term>, the platform's own permission checks are the only thing limiting what each user can do.
 
-Zeabur Open Source leaves that decision to Kubernetes. Once a user signs in, it calls the same API with that user's token. Suppose the user can only delete Deployments in the `dev` Namespace. If they try to delete a Deployment in `production` through Zeabur Open Source, <Term word="kube-apiserver">The Kubernetes API server. Requests to read or write cluster resources go through it, whether they come from `kubectl` or another program. It verifies identity and checks permissions.</Term> rejects the request under <Term word="RBAC">Role-Based Access Control. Kubernetes uses Role and ClusterRole objects to define which operations are allowed on which resources, then assigns those roles to users or groups through RoleBinding and ClusterRoleBinding objects.</Term>[^user-client].
+Zeabur OSS leaves that decision to Kubernetes. Once a user signs in, it calls the same API with that user's token. Suppose the user can only delete Deployments in the `dev` Namespace. If they try to delete a Deployment in `production` through Zeabur OSS, <Term word="kube-apiserver">The Kubernetes API server. Requests to read or write cluster resources go through it, whether they come from `kubectl` or another program. It verifies identity and checks permissions.</Term> rejects the request under <Term word="RBAC">Role-Based Access Control. Kubernetes uses Role and ClusterRole objects to define which operations are allowed on which resources, then assigns those roles to users or groups through RoleBinding and ClusterRoleBinding objects.</Term>[^user-client].
 
 ## Why does a platform breach affect its customers?
 
@@ -34,7 +34,7 @@ Apply that principle to the platform itself: **users shouldn't have to trust the
 
 That way, **even an attacker who breaches the platform has no master key**. The only tokens available belong to people currently using the platform. Each token expires, and none grants more access than its user already has. CircleCI's advice after its incident follows the same idea: use <Term word="OIDC">OpenID Connect, a sign-in standard built on OAuth 2.0. The party that verifies identities and issues tokens is called the issuer. It publishes public keys for signature verification, so a service receiving a token can check who issued it and whom it was issued to. OIDC tokens for CI are issued by the CI platform and expire quickly. Cloud services verify the signature before granting access, so the CI environment doesn't need to store long-lived keys.</Term> tokens and store fewer long-lived credentials[^circleci].
 
-Back to deleting a Deployment: Zeabur Open Source uses the user's token directly, so it doesn't need to keep a shared credential with access to every Namespace. The same RBAC rules apply whether you use Zeabur Open Source or run kubectl yourself.
+Back to deleting a Deployment: Zeabur OSS uses the user's token directly, so it doesn't need to keep a shared credential with access to every Namespace. The same RBAC rules apply whether you use Zeabur OSS or run kubectl yourself.
 
 That's the theory. How does it work in Kubernetes?
 
@@ -46,18 +46,18 @@ Kubernetes already supports OIDC authentication[^authentication]. A cluster admi
 
 RBAC comes next. If Alice belongs to the `dev` group and an administrator grants that group access to the `dev` Namespace, Alice can work with resources there. RBAC permissions are additive, with no deny rules. If another binding grants Alice broader permissions, she gets those too[^rbac].
 
-Zeabur Open Source only needs to include Alice's token in the request. It doesn't need its own list of the Namespaces she can access.
+Zeabur OSS only needs to include Alice's token in the request. It doesn't need its own list of the Namespaces she can access.
 
 <PostFigure
   name="trust-structure"
-  label="On the left, the platform calls kube-apiserver with its own ServiceAccount and can access every Namespace. On the right, Zeabur Open Source forwards Alice's token. kube-apiserver verifies it and checks RBAC: dev is allowed, production is denied"
+  label="On the left, the platform calls kube-apiserver with its own ServiceAccount and can access every Namespace. On the right, Zeabur OSS forwards Alice's token. kube-apiserver verifies it and checks RBAC: dev is allowed, production is denied"
 />
 
-The right side of the diagram shows this flow. Zeabur Identity handles sign-in and issues tokens. Zeabur Open Source forwards the token, and kube-apiserver verifies the signature and checks RBAC. On the left, the platform holds shared, highly privileged credentials and checks users' permissions itself.
+The right side of the diagram shows this flow. Zeabur Identity handles sign-in and issues tokens. Zeabur OSS forwards the token, and kube-apiserver verifies the signature and checks RBAC. On the left, the platform holds shared, highly privileged credentials and checks users' permissions itself.
 
 ### Connecting Zeabur Identity users to RBAC
 
-Zeabur Identity is the OIDC issuer for Zeabur Open Source and primarily uses <Term word="passkeys">Sign in with a fingerprint, face recognition, or the screen lock on your phone or computer, without a password. The private key stays on the device; the website stores only the public key. A passkey is also bound to the website's domain, so a fake site can't obtain a usable sign-in credential.</Term> for sign-in. It keeps track of users and groups. The cluster administrator configures which Kubernetes resources each group can access[^users].
+Zeabur Identity is the OIDC issuer for Zeabur OSS and primarily uses <Term word="passkeys">Sign in with a fingerprint, face recognition, or the screen lock on your phone or computer, without a password. The private key stays on the device; the website stores only the public key. A passkey is also bound to the website's domain, so a fake site can't obtain a usable sign-in credential.</Term> for sign-in. It keeps track of users and groups. The cluster administrator configures which Kubernetes resources each group can access[^users].
 
 `zeabur-identityctl kube-config` generates an `AuthenticationConfiguration` for kube-apiserver. For example, `alice` in Zeabur Identity maps to `zeabur:alice` in Kubernetes, and the `dev` group becomes `zeabur:dev`. The `zeabur:` prefix keeps these mapped identities separate from built-in identities that start with `system:`[^identity-config].
 
@@ -73,7 +73,7 @@ When Alice signs in with `dev` in her token's groups, kube-apiserver grants her 
 
 If issuers, signature verification, and RBAC still feel abstract, think of a hotel key card.
 
-Zeabur Identity is the front desk. Signing in with a passkey is like showing your ID at check-in. The front desk gives you a key card marked “Alice, dev team.” kube-apiserver is the door lock: it checks that the front desk issued the card, then looks up which rooms the dev team can enter (RBAC). Zeabur Open Source is a runner who carries your card and uses it to open doors for you. The runner has no separate key that opens every room.
+Zeabur Identity is the front desk. Signing in with a passkey is like showing your ID at check-in. The front desk gives you a key card marked “Alice, dev team.” kube-apiserver is the door lock: it checks that the front desk issued the card, then looks up which rooms the dev team can enter (RBAC). Zeabur OSS is a runner who carries your card and uses it to open doors for you. The runner has no separate key that opens every room.
 
 How long does that card last? If it never expires, the platform can keep acting on your behalf once it has it. Zeabur Identity's regular access tokens expire after 10 minutes by default; admin tokens expire after 5 minutes. Within a session, a refresh token can get you a new card, so you don't have to use your passkey every 10 minutes. By default, though, a session ends after 1 hour of inactivity. Even with refreshes, it lasts no more than 12 hours from sign-in by default[^admin-sessions].
 
@@ -81,7 +81,7 @@ Structured Authentication Configuration, stable since Kubernetes v1.34, can use 
 
 <PostFigure
   name="hotel-keycard"
-  label="The front desk is Zeabur Identity, which verifies the passkey and issues a key card. The runner is Zeabur Open Source, with no master key. The door lock is kube-apiserver: the dev room opens, production stays locked"
+  label="The front desk is Zeabur Identity, which verifies the passkey and issues a key card. The runner is Zeabur OSS, with no master key. The door lock is kube-apiserver: the dev room opens, production stays locked"
 />
 
 > Access tokens use the JWT format defined in RFC 9068 and must contain a `client_id` claim[^rfc9068]. The kube-apiserver configuration generated by Zeabur Identity checks this claim to reject ID tokens[^identity-config].
@@ -94,7 +94,7 @@ Incidentally, Zeabur Identity runs as a small Pod, uses less than 30 MiB of memo
 
 ## How does the platform become an OAuth client?
 
-Zeabur Open Source is an OAuth client of Zeabur Identity[^rfc6749]. It signs users in with the authorization code flow and <Term word="PKCE">Proof Key for Code Exchange. At the start of sign-in, the client sends a hash of a random value. Later, when exchanging the authorization code for a token, it must present the original value. Even if someone intercepts the code, they can't exchange it for a token without that value.</Term>[^rfc7636], with security settings based on RFC 9700[^rfc9700][^auth-client]. First, register it as a <Term word="confidential client">An OAuth client that can securely store a client secret, usually a server-side program. It must present the secret when exchanging a code for tokens. A public client, such as a browser-based single-page app or a mobile app, runs code in the user's hands and can't keep a secret.</Term>[^installation]:
+Zeabur OSS is an OAuth client of Zeabur Identity[^rfc6749]. It signs users in with the authorization code flow and <Term word="PKCE">Proof Key for Code Exchange. At the start of sign-in, the client sends a hash of a random value. Later, when exchanging the authorization code for a token, it must present the original value. Even if someone intercepts the code, they can't exchange it for a token without that value.</Term>[^rfc7636], with security settings based on RFC 9700[^rfc9700][^auth-client]. First, register it as a <Term word="confidential client">An OAuth client that can securely store a client secret, usually a server-side program. It must present the secret when exchanging a code for tokens. A public client, such as a browser-based single-page app or a mobile app, runs code in the user's hands and can't keep a secret.</Term>[^installation]:
 
 ```sh
 zeabur-identityctl client create zeabur \
@@ -110,14 +110,14 @@ The sign-in flow looks roughly like this:
 
 <PostFigure
   name="login-flow"
-  label="Four lanes (the browser, Zeabur Open Source, Zeabur Identity and kube-apiserver): passkey sign-in, a code exchange with PKCE for tokens, then the user's token on every request, with a refresh as it nears expiration"
+  label="Four lanes (the browser, Zeabur OSS, Zeabur Identity and kube-apiserver): passkey sign-in, a code exchange with PKCE for tokens, then the user's token on every request, with a refresh as it nears expiration"
 />
 
-The dashed lines are round trips that happen only during sign-in. After that, only the bottom two solid lines remain: Zeabur Open Source sends your token directly to kube-apiserver with every request.
+The dashed lines are round trips that happen only during sign-in. After that, only the bottom two solid lines remain: Zeabur OSS sends your token directly to kube-apiserver with every request.
 
-When Zeabur Open Source needs to know who you are, for example to read account details, it uses `SelfSubjectReview` to ask kube-apiserver “who does this token belong to?” It doesn't determine the user's identity by interpreting an ID token itself[^auth-client][^adapter].
+When Zeabur OSS needs to know who you are, for example to read account details, it uses `SelfSubjectReview` to ask kube-apiserver “who does this token belong to?” It doesn't determine the user's identity by interpreting an ID token itself[^auth-client][^adapter].
 
-The `zeabur-kube` crate makes the Kubernetes API calls. It creates clients with the user's token. The sole exception is the terminal, which uses Zeabur Open Source's own ServiceAccount[^user-client]. That ServiceAccount is bound to a single Role that lets it create Pods in a dedicated terminal Namespace and connect to them to run commands[^terminal-rbac]. For example, this command checks whether it has permission to impersonate other users:
+The `zeabur-kube` crate makes the Kubernetes API calls. It creates clients with the user's token. The sole exception is the terminal, which uses Zeabur OSS's own ServiceAccount[^user-client]. That ServiceAccount is bound to a single Role that lets it create Pods in a dedicated terminal Namespace and connect to them to run commands[^terminal-rbac]. For example, this command checks whether it has permission to impersonate other users:
 
 ```sh
 kubectl auth can-i impersonate users --as=system:serviceaccount:zeabur:zeabur
@@ -127,7 +127,7 @@ This command checks `impersonate users`. To check permissions on other resources
 
 Secrets are read with the user's token too. The list shows only names, types, and key counts; values are fetched from Kubernetes only when you ask to reveal them[^ui-copy]. Whether you can see a Secret's contents therefore depends on your permission to read it[^adapter][^objects].
 
-What happens when you don't have enough permission? Zeabur Open Source doesn't retry with its own identity. When kube-apiserver rejects a request, the interface lists the missing permissions and the original Kubernetes response, and asks you to contact an administrator[^refused]. On the cluster page, you can also copy the required ClusterRole to send to the administrator[^forbidden].
+What happens when you don't have enough permission? Zeabur OSS doesn't retry with its own identity. When kube-apiserver rejects a request, the interface lists the missing permissions and the original Kubernetes response, and asks you to contact an administrator[^refused]. On the cluster page, you can also copy the required ClusterRole to send to the administrator[^forbidden].
 
 ![A regular account lacks permission to view nodes. Expanded details show the missing list nodes permission, HTTP status 403, and the Kubernetes response, with an option to copy a ClusterRole below](/blog/zero-trust-platform/en/refused.avif)
 
@@ -135,9 +135,9 @@ If you need to administer the cluster yourself, sign out and sign back in with y
 
 ![The Zeabur Identity sign-in page for continuing to Zeabur, with Sign in with a passkey as the primary button](/blog/zero-trust-platform/en/sign-in.avif)
 
-Zeabur Open Source keeps no separate copy of project data. A project is a Kubernetes Namespace. If you remove Zeabur Open Source, your workloads stay in place, and you can keep managing them with kubectl, Helm, or your existing GitOps tools[^uninstall]. To revoke a user's access, change the corresponding RBAC bindings.
+Zeabur OSS keeps no separate copy of project data. A project is a Kubernetes Namespace. If you remove Zeabur OSS, your workloads stay in place, and you can keep managing them with kubectl, Helm, or your existing GitOps tools[^uninstall]. To revoke a user's access, change the corresponding RBAC bindings.
 
-[Zeabur Open Source](https://github.com/zeabur-oss/zeabur) and [Zeabur Identity](https://github.com/zeabur-oss/identity) are both public on GitHub. If you're interested, try installing them on a single server.
+[Zeabur OSS](https://github.com/zeabur-oss/zeabur) and [Zeabur Identity](https://github.com/zeabur-oss/identity) are both public on GitHub. If you're interested, try installing them on a single server.
 
 [^zeabur-october]: Zeabur, “Zeabur 2026 年十月資安事件（初步報告）,” Zeabur Blog, Oct. 19, 2026. [Online]. Available: https://zeabur.com/zh-TW/blogs/october-2026-security-incident (accessed Nov. 7, 2026).
 

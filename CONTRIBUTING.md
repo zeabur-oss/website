@@ -106,11 +106,22 @@ text of their own.
 | A product page                                                            | `src/content/pages/<locale>/<slug>.yaml`, one file per locale |
 | The home page                                                             | `src/landing/copy.ts`                                         |
 | The agent page                                                            | `src/landing/agent-copy.ts`                                   |
-| Zeabur's features on its page, beside their ids and screenshots           | `src/landing/features.ts`                                     |
+| The features of Zeabur OSS on its page, beside their ids and screenshots           | `src/landing/features.ts`                                     |
 | The catalog pages                                                         | `src/catalog/copy.ts`                                         |
 | The blog's own words                                                      | `src/blog/copy.ts`                                            |
 | Words on more than one page: header, footer, product list, section labels | `src/lib/chrome.ts`                                           |
 | Labels quoted from a product's screens, in the drawn scenes               | `src/landing/scenes/ui.ts`                                    |
+
+### Names
+
+The [overview](docs/index.mdx) lists each project's name and job. Every page, README and string uses those names:
+
+- Write each name as the overview does, with the same capital letters. In Chinese, names stay in Latin letters.
+- In Chinese, 「Zeabur」 alone is the hosted service at zeabur.com. Write 「Zeabur 開源版」 (zh-TW) or 「Zeabur 开源版」 (zh-CN) at every mention of the open-source product, not only the first. Write zeabur.com only as an address.
+- In English, "Zeabur" alone is the hosted service at zeabur.com. Write "Zeabur OSS" at every mention of the open-source product. Write zeabur.com only as an address.
+- In Chinese, write 「Agent」 for the agent. Its first mention on a page says which ones: 「Claude Code 或 Codex 這類 Coding Agent」.
+- Write commands and packages as code: `zeatend`, `zeaburctl`, `zeabur-identityctl`, `@zeabur-oss/design-system`.
+- Do not write "Zeabur Installer" or `zeabur-installer`. Version 0.2 installed Zeabur OSS with it. From version 0.3.0, Zeatend and `helm install` do that work. Name it only where a page explains how to upgrade a cluster it set up.
 
 `src/lib/site-pages.ts` is the list of product pages. A page's row holds what is not text: its
 group, repository, docs page, sections and the way to start. A row needs a text file for every

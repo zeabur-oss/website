@@ -88,7 +88,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
   en: {
     title: "Templates and components",
     description: (t, c) =>
-      `${t} app templates and ${c} cluster components you can install with Zeabur on your own server. CI installs them on Kubernetes, and each one shows the day it last passed.`,
+      `${t} app templates and ${c} cluster components you can install with Zeabur OSS on your own server. CI installs them on Kubernetes, and each one shows the day it last passed.`,
     browse: "Browse the catalog",
     search: "Search the catalog",
     placeholder: "n8n, PostgreSQL, backup…",
@@ -127,11 +127,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     template: {
       kind: "App template",
       pageTitle: (name) => `Deploy ${name} on your own server · Zeabur Catalog`,
-      deploy: "Deploy with Zeabur",
+      deploy: "Deploy with Zeabur OSS",
       deployCli: "Deploy with the catalog command",
       needs: {
         title: "What the cluster needs",
-        body: "Zeabur suggests the components a cluster is missing. Without Zeabur, install them first.",
+        body: "Zeabur OSS suggests the components a cluster is missing. Without it, install them first.",
       },
       start: {
         deploy: "How to deploy a template",
@@ -161,7 +161,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     component: {
       kind: "Cluster component",
       pageTitle: (name) => `${name} for your own Kubernetes cluster · Zeabur Catalog`,
-      install: "Install with Zeabur",
+      install: "Install with Zeabur OSS",
       list: "Every component",
       defaults: {
         title: "Installed by default",
@@ -179,7 +179,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
   "zh-TW": {
     title: "範本和元件",
     description: (t, c) =>
-      `${t} 個應用程式範本和 ${c} 個叢集元件，都可以用 Zeabur 裝到自己的伺服器。CI 會在 Kubernetes 上實際安裝，每一個都標出最近一次通過測試的日期。`,
+      `${t} 個應用程式範本和 ${c} 個叢集元件，都可以用 Zeabur 開源版裝到自己的伺服器。CI 會在 Kubernetes 上實際安裝，每一個都標出最近一次通過測試的日期。`,
     browse: "瀏覽範本和元件",
     search: "搜尋 Catalog",
     placeholder: "n8n、PostgreSQL、備份……",
@@ -217,11 +217,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     template: {
       kind: "應用程式範本",
       pageTitle: (name) => `在自己的伺服器部署 ${name} · Zeabur Catalog`,
-      deploy: "用 Zeabur 部署",
+      deploy: "用 Zeabur 開源版部署",
       deployCli: "用 catalog 指令部署",
       needs: {
         title: "叢集需要的元件",
-        body: "Zeabur 會提示叢集缺哪些元件。沒有用 Zeabur 的話，請先自己裝好。",
+        body: "Zeabur 開源版會提示叢集缺哪些元件。沒有用 Zeabur 開源版的話，請先自己裝好。",
       },
       start: {
         deploy: "怎麼部署範本",
@@ -250,7 +250,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     component: {
       kind: "叢集元件",
       pageTitle: (name) => `在自己的 Kubernetes 叢集安裝 ${name} · Zeabur Catalog`,
-      install: "用 Zeabur 安裝",
+      install: "用 Zeabur 開源版安裝",
       list: "所有元件",
       defaults: {
         title: "預設是否安裝",
@@ -268,7 +268,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
   "zh-CN": {
     title: "模板和组件",
     description: (t, c) =>
-      `${t} 个应用模板和 ${c} 个集群组件，都可以用 Zeabur 装到自己的服务器。CI 会在 Kubernetes 上实际安装，每一个都标出最近一次通过测试的日期。`,
+      `${t} 个应用模板和 ${c} 个集群组件，都可以用 Zeabur 开源版装到自己的服务器。CI 会在 Kubernetes 上实际安装，每一个都标出最近一次通过测试的日期。`,
     browse: "浏览模板和组件",
     search: "搜索 Catalog",
     placeholder: "n8n、PostgreSQL、备份……",
@@ -306,11 +306,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     template: {
       kind: "应用模板",
       pageTitle: (name) => `在自己的服务器部署 ${name} · Zeabur Catalog`,
-      deploy: "用 Zeabur 部署",
+      deploy: "用 Zeabur 开源版部署",
       deployCli: "用 catalog 命令部署",
       needs: {
         title: "集群需要的组件",
-        body: "Zeabur 会提示集群缺哪些组件。没有用 Zeabur 的话，请先自己装好。",
+        body: "Zeabur 开源版会提示集群缺哪些组件。没有用 Zeabur 开源版的话，请先自己装好。",
       },
       start: {
         deploy: "怎么部署模板",
@@ -339,7 +339,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     component: {
       kind: "集群组件",
       pageTitle: (name) => `在自己的 Kubernetes 集群安装 ${name} · Zeabur Catalog`,
-      install: "用 Zeabur 安装",
+      install: "用 Zeabur 开源版安装",
       list: "所有组件",
       defaults: {
         title: "默认是否安装",

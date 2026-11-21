@@ -3,12 +3,12 @@ lines:
   nav: A web interface to deploy and run services on your cluster
   landing: Shows the cluster as projects and services, what is wrong and what to do.
 meta:
-  title: "Zeabur: deploy on your own server in a few clicks"
-  description: Zeabur is open source. Projects, services, domains, variables and templates work as they do on the deployment platforms you know. You choose the hosting provider and the plan.
+  title: "Zeabur OSS: deploy on your own server in a few clicks"
+  description: Zeabur OSS is open source. Projects, services, domains, variables and templates work as they do on the deployment platforms you know. You choose the hosting provider and the plan.
 titleDim: On your own server,
 title: deploy in a few clicks.
 sub: Deploy from Git, Docker Compose or a template, add a domain and change variables, the way you know from other deployment platforms. Your services run on your own server, and you pay the cloud or data center you chose.
-docs: Read the Zeabur docs
+docs: Read the Zeabur OSS docs
 source: Source on GitHub
 highlights:
   titleDim: Used a deployment platform?
@@ -22,13 +22,13 @@ highlights:
       body: Add a domain to a service, change its variables and read its logs on the service page. If a new version has a problem, roll back.
     - tag: server
       title: Your server, your upkeep
-      body: You pay for the server you chose. You or your team upgrade Zeabur, back up data and look after the server.
+      body: You pay for the server you chose. You or your team upgrade Zeabur OSS, back up data and look after the server.
 how:
   titleDim: Before your change applies,
   title: you see it first.
   steps:
     - title: Grouped into projects
-      body: Zeabur reads the cluster directly and puts each service's app, database, domains and storage together. It has no database of its own to back up, and every read and write uses your own rights.
+      body: Zeabur OSS reads the cluster directly and puts each service's app, database, domains and storage together. It has no database of its own to back up, and every read and write uses your own rights.
     - title: Problems in plain words
       body: Services that need attention come first, with the cause, what to do next and the logs beside them.
     - title: Applied when you confirm
@@ -60,5 +60,5 @@ details:
       - Admin rights
 start:
   title: Start with what you have
-  sub: All three open the same interface. They differ in where Zeabur runs and whose credential it uses.
+  sub: All three open the same interface. They differ in where Zeabur OSS runs and whose credential it uses.
   cta: Install on one server
