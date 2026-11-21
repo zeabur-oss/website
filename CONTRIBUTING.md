@@ -117,7 +117,8 @@ text of their own.
 The [overview](docs/index.mdx) lists each project's name and job. Every page, README and string uses those names:
 
 - Write each name as the overview does, with the same capital letters. In Chinese, names stay in Latin letters.
-- In Chinese, write 「Zeabur 開源版」 (zh-TW) or 「Zeabur 开源版」 (zh-CN) for Zeabur in titles, in comparisons with zeabur.com and at its first mention on a page. After that, 「Zeabur」 alone is fine. The hosted service is always zeabur.com.
+- In Chinese, 「Zeabur」 alone is the hosted service at zeabur.com. Write 「Zeabur 開源版」 (zh-TW) or 「Zeabur 开源版」 (zh-CN) at every mention of the open-source product, not only the first. Write zeabur.com only as an address.
+- In English, the hosted service is zeabur.com and the open-source product is Zeabur.
 - In Chinese, write 「Agent」 for the agent. Its first mention on a page says which ones: 「Claude Code 或 Codex 這類 Coding Agent」.
 - Write commands and packages as code: `zeatend`, `zeaburctl`, `zeabur-identityctl`, `@zeabur-oss/design-system`.
 - Do not write "Zeabur Installer" or `zeabur-installer`. Version 0.2 installed Zeabur with it. From version 0.3.0, Zeatend and `helm install` do that work. Name it only where a page explains how to upgrade a cluster it set up.
