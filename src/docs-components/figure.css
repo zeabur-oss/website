@@ -22,6 +22,7 @@
   display: grid;
   gap: 2px;
   min-width: 0;
+  overflow-wrap: anywhere;
 }
 .docs-fig-card-head {
   display: flex;
@@ -36,8 +37,11 @@
     align-items: center;
   }
   .docs-fig-flow > :not(.fig-arrow) {
-    flex: 1 1 0;
+    flex: 1 1 auto;
     min-width: 0;
+  }
+  .docs-fig-flow > .fig-arrow {
+    flex: none;
   }
   .docs-fig-row {
     grid-auto-columns: minmax(0, 1fr);
