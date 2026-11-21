@@ -164,6 +164,22 @@ export function checkPage(
           line,
         )
         break
+      case "text": {
+        // CommonMark keeps "**相同的區域。**所有" as asterisks: ** between punctuation and a letter
+        // can neither open nor close bold. Escaped \*\* is intended text.
+        const { start: from, end: to } = node.position ?? {}
+        if (from?.offset === undefined || to?.offset === undefined) break
+        if (/(?<!\\)\*\*/.test(body.slice(from.offset, to.offset)))
+          add(
+            "error",
+            "bold-literal",
+            path,
+            "** shows as text: CommonMark cannot end or start bold between punctuation " +
+              "(。，：「」（）) and a letter; move the punctuation outside the **",
+            line,
+          )
+        break
+      }
       case "link":
       case "definition":
         checkRef(node.url, line, false)

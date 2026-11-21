@@ -183,4 +183,18 @@ describe("docs-check", () => {
     })
     expect(found).toEqual(["stale translation-stale docs/zh-TW/start/install.mdx"])
   })
+
+  test("bold that CommonMark leaves as asterisks", async () => {
+    const body = [
+      "- **相同的區域。**所有節點都在同一區。",
+      "- **相同的區域**。所有節點都在同一區。",
+      "- 打開**「設定」**頁。",
+      "- `**` and \\*\\* stay text on purpose.",
+    ].join("\n")
+    const found = await check({ ...repo, "docs/start/install.mdx": page(body) })
+    expect(found).toEqual([
+      "error bold-literal docs/start/install.mdx:5",
+      "error bold-literal docs/start/install.mdx:7",
+    ])
+  })
 })
