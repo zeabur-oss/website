@@ -3,7 +3,6 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { checkRepo } from "./check.ts"
-import { sourceHash } from "./docs.ts"
 import { fromDirectory } from "./repos.ts"
 
 const nav = `- group: start\n  label: Start\n  pages: [quickstart, install]\n`
@@ -127,10 +126,7 @@ describe("docs-check", () => {
     const found = await check({
       ...repo,
       "docs/images/x.png": "png",
-      "docs/zh-TW/start/install.mdx": page(
-        "![x](../images/x.png)",
-        `title: 安裝\nsource: ${sourceHash(repo["docs/start/install.mdx"])}`,
-      ),
+      "docs/zh-TW/start/install.mdx": page("![x](../images/x.png)", "title: 安裝"),
     })
     expect(found).toEqual([])
   })
@@ -173,15 +169,12 @@ describe("docs-check", () => {
     ])
   })
 
-  test("stale translations are listed", async () => {
-    const original = repo["docs/start/install.mdx"]
-    const fresh = page("安裝。", `title: 安裝\nsource: ${sourceHash(original)}`)
-    expect(await check({ ...repo, "docs/zh-TW/start/install.mdx": fresh })).toEqual([])
+  test("a translation takes the same frontmatter fields", async () => {
     const found = await check({
       ...repo,
       "docs/zh-TW/start/install.mdx": page("安裝。", "title: 安裝\nsource: 000000000000"),
     })
-    expect(found).toEqual(["stale translation-stale docs/zh-TW/start/install.mdx"])
+    expect(found).toEqual(["error frontmatter-field docs/zh-TW/start/install.mdx"])
   })
 
   test("bold that CommonMark leaves as asterisks", async () => {

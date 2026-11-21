@@ -67,9 +67,6 @@ English has no prefix; zh-TW is under `/zh-TW` and zh-CN under `/zh-CN`. A trans
 English page; when there is no English page either (only zh-TW, for example), it shows the one that
 exists. A notice at the top says which language the page is in.
 
-A translation names the English file it was made from with `source:` in its frontmatter: the first
-12 hex digits of the file's SHA-256. `docs-check` lists translations whose source has changed.
-
 ## Components
 
 A docs page may use `Callout`, `Tabs`/`Tab` and `Steps`/`Step`, with the props in
@@ -92,11 +89,10 @@ bun scripts/docs-check.ts ../zeabur --base main   # a working tree, against a ba
 It fails on: pages that `nav.yaml` lists without a file, reserved names (`internal`, `images`,
 locale names) in page paths, relative links and images to files that do not exist or pages that
 are not published, published pages that are gone without a `redirects.yaml` entry, redirects to
-unpublished pages, frontmatter fields other than `title`, `description` (and `source` in
-translations), `import`/`export`, unknown components, props that are not literals or do not match
-the registry, GitHub URLs of docs pages, and GitHub URLs of files in the page's own
-repository, and images outside `docs/` or written by reference, which the site does not serve. It lists stale translations and
-pages that are not published.
+unpublished pages, frontmatter fields other than `title` and `description`, `import`/`export`,
+unknown components, props that are not literals or do not match the registry, GitHub URLs of docs
+pages, GitHub URLs of files in the page's own repository, and images outside `docs/` or written
+by reference, which the site does not serve. It lists pages that are not published.
 
 Each repository in `docs.lock.json` runs it on every pull request and in the merge queue, through
 the composite action `.github/actions/docs-check`, so a broken link fails before a release. The

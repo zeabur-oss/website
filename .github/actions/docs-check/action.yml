@@ -1,9 +1,8 @@
 name: Docs check
 description: >-
   Checks out the calling repository and runs scripts/docs-check.ts of this website, at the commit
-  the caller pins, on its docs/: the check fails on errors and lists stale translations. On a pull
-  request or in the merge queue, a page that the base has and the head removed without a redirect
-  is an error too. Call it from a job of the repository's ci.yml.
+  the caller pins, on its docs/: the check fails on errors. On a pull request or in the merge queue, a page that
+  the base has and the head removed without a redirect is an error too. Call it from a job of the repository's ci.yml.
 runs:
   using: composite
   steps:

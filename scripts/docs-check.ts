@@ -1,5 +1,5 @@
-// Checks a repository's docs/ (nav.yaml, links, redirects, frontmatter, MDX components)
-// and lists stale translations. Exits 1 on errors only.
+// Checks a repository's docs/ (nav.yaml, links, redirects, frontmatter, MDX components).
+// Exits 1 on errors only.
 //   bun scripts/docs-check.ts                            every repository in docs.lock.json
 //   bun scripts/docs-check.ts <dir> [--base <rev>]       a working tree, as each repository's CI does
 import { basename, resolve } from "node:path"
@@ -25,7 +25,7 @@ if (target !== undefined) {
   for (const repo of readLock()) targets.push({ snap: await snapshot(repo) })
 }
 
-const order: Finding["level"][] = ["error", "stale", "warning"]
+const order: Finding["level"][] = ["error", "warning"]
 let errors = 0
 for (const { snap, base } of targets) {
   const findings = checkRepo(snap, { base }).sort(
@@ -35,7 +35,7 @@ for (const { snap, base } of targets) {
   errors += count("error")
   console.log(
     `${snap.repo.name}@${snap.repo.ref}: ${count("error")} errors, ` +
-      `${count("stale")} stale translations, ${count("warning")} warnings`,
+      `${count("warning")} warnings`,
   )
   for (const f of findings) {
     const line = f.line === undefined ? "" : `line ${f.line}: `

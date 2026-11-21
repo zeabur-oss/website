@@ -1,7 +1,7 @@
 // What docs-check reports, and the callback the checks report through.
 export type Finding = {
-  /** `error` fails the check; `stale` and `warning` are reported only. */
-  level: "error" | "warning" | "stale"
+  /** `error` fails the check; `warning` is reported only. */
+  level: "error" | "warning"
   code: FindingCode
   file: string
   line?: number
@@ -23,8 +23,6 @@ export type FindingCode =
   | "markdown-page"
   | "frontmatter-title"
   | "frontmatter-field"
-  | "translation-no-source"
-  | "translation-stale"
   | "parse-error"
   | "link-github-docs"
   | "link-github-docs-other"

@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto"
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { parse as parseYaml } from "yaml"
@@ -53,11 +52,6 @@ export function splitFrontmatter(text: string): { data: Record<string, unknown>;
     data: (parseYaml(group(match)) as Record<string, unknown>) ?? {},
     body: text.slice(match[0].length),
   }
-}
-
-/** The `source` a translation records: the first 12 hex digits of the original's SHA-256. */
-export function sourceHash(text: string) {
-  return createHash("sha256").update(text).digest("hex").slice(0, 12)
 }
 
 export function pageFile(snap: Snapshot, base: string): string | undefined {
