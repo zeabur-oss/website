@@ -173,10 +173,10 @@ async function writeSocialImage(snap: Snapshot) {
     .toFile(join(publicDir, "og", `${snap.repo.name}.png`))
 }
 
-/** The site's own docs/: the glossary, at /docs/glossary, read from the working tree. */
+/** The site's own docs/: the overview, at /docs/overview, read from the working tree. */
 export const siteRepo: LockRepo = {
-  name: "glossary",
-  label: "Glossary",
+  name: "overview",
+  label: "Overview",
   github: "zeabur-oss/website",
   ref: "main",
 }

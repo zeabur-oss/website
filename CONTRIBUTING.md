@@ -112,6 +112,16 @@ text of their own.
 | Words on more than one page: header, footer, product list, section labels | `src/lib/chrome.ts`                                           |
 | Labels quoted from a product's screens, in the drawn scenes               | `src/landing/scenes/ui.ts`                                    |
 
+### Names
+
+The [overview](docs/index.mdx) lists each project's name and job. Every page, README and string uses those names:
+
+- Write each name as the overview does, with the same capital letters. In Chinese, names stay in Latin letters.
+- In Chinese, write 「Zeabur 開源版」 (zh-TW) or 「Zeabur 开源版」 (zh-CN) for Zeabur in titles, in comparisons with zeabur.com and at its first mention on a page. After that, 「Zeabur」 alone is fine. The hosted service is always zeabur.com.
+- In Chinese, write 「Agent」 for the agent. Its first mention on a page says which ones: 「Claude Code 或 Codex 這類 Coding Agent」.
+- Write commands and packages as code: `zeatend`, `zeaburctl`, `zeabur-identityctl`, `@zeabur-oss/design-system`.
+- Do not write "Zeabur Installer" or `zeabur-installer`. Version 0.2 installed Zeabur with it. From version 0.3.0, Zeatend and `helm install` do that work. Name it only where a page explains how to upgrade a cluster it set up.
+
 `src/lib/site-pages.ts` is the list of product pages. A page's row holds what is not text: its
 group, repository, docs page, sections and the way to start. A row needs a text file for every
 locale, and a text file needs a row; the build stops otherwise.

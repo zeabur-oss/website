@@ -11,7 +11,7 @@ const { lang, entry } = Astro.locals.starlightRoute
 const locale = isSiteLocale(lang) ? lang : "en"
 const t = chrome[locale]
 const repo = (entry.data as { repo?: string }).repo
-// The glossary is a docs page of the site itself, not of a product.
+// The overview is a docs page of the site itself, not of a product.
 const current = productIds.find((id) => id === repo)
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: 术语说明
+title: 总览
 description: Zeabur 各个开源项目的名称、用途，以及它们如何配合。所有文档和本站都使用这些名称。
 ---
 
@@ -63,7 +63,7 @@ Zeabur 开源版界面使用的组件、样式和字体，供 React 和 Tailwind
 
 ### Agent
 
-照着文档页替你操作的 Coding Agent，例如 Claude Code 或 Codex。它会运行命令；遇到要花钱的步骤，或只有你能做的步骤（例如创建通行密钥），会先问你。给 Agent 照做的页面也有一份 Markdown 文件，地址是页面地址去掉末尾的 `/` 再加上 `.md`，例如本页是 `https://oss.zeabur.com/zh-CN/docs/glossary.md`。你粘贴的提示词会指向这个文件。
+照着文档页替你操作的 Coding Agent，例如 Claude Code 或 Codex。它会运行命令；遇到要花钱的步骤，或只有你能做的步骤（例如创建通行密钥），会先问你。给 Agent 照做的页面也有一份 Markdown 文件，地址是页面地址去掉末尾的 `/` 再加上 `.md`，例如本页是 `https://oss.zeabur.com/zh-CN/docs/overview.md`。你粘贴的提示词会指向这个文件。
 
 ### zeabur.com
 
@@ -72,11 +72,3 @@ Zeabur 的托管服务。它的账号、项目和账单都和本站的开源项�
 ### 服务器、节点和集群
 
 **服务器**是你租用或自有的机器。**节点**是 Kubernetes 集群里的一台服务器。**集群**是由 Kubernetes 统一管理的一组节点，可以只有一台。
-
-## 名称的写法
-
-- 每个名称照上面的写法和大小写，中文里也保留英文字母。
-- 中文里，开源的 Zeabur 在标题、和 zeabur.com 比较的地方，以及页面上第一次出现时，写成“Zeabur 开源版”，之后可以只写“Zeabur”。托管服务一律写成 zeabur.com。
-- 中文里，agent 写成“Agent”。在页面上第一次出现时说明是哪些工具，例如“Claude Code 或 Codex 这类 Coding Agent”。
-- 命令和软件包用代码格式：`zeatend`、`zeaburctl`、`zeabur-identityctl`、`@zeabur-oss/design-system`。
-- 不写“Zeabur Installer”或 `zeabur-installer`。0.2 版用它安装 Zeabur 开源版；从 0.3.0 版起，这件事由 Zeatend 和 `helm install` 负责。只有说明如何升级它搭建的集群时，才会提到它。

@@ -1,5 +1,5 @@
 ---
-title: Glossary
+title: Overview
 description: The name of each Zeabur open-source project, what it does, and how the projects work together. Every docs page and this site use these names.
 ---
 
@@ -63,7 +63,7 @@ Source: [zeabur-oss/design-system](https://github.com/zeabur-oss/design-system)
 
 ### The agent
 
-A coding agent, such as Claude Code or Codex, that follows a docs page for you. It runs the commands and asks you before anything that costs money, and before a step only you can do, such as creating your passkey. A page that an agent follows is also a Markdown file: its address without the final `/`, plus `.md`, such as `https://oss.zeabur.com/docs/glossary.md` for this page. The prompt you paste names that file.
+A coding agent, such as Claude Code or Codex, that follows a docs page for you. It runs the commands and asks you before anything that costs money, and before a step only you can do, such as creating your passkey. A page that an agent follows is also a Markdown file: its address without the final `/`, plus `.md`, such as `https://oss.zeabur.com/docs/overview.md` for this page. The prompt you paste names that file.
 
 ### zeabur.com
 
@@ -72,11 +72,3 @@ The hosted service. Its account, projects and bills are separate from the open-s
 ### Server, node and cluster
 
 A _server_ is a machine you rent or own. A _node_ is a server in a Kubernetes cluster. A _cluster_ is one or more nodes that Kubernetes runs as one.
-
-## How to write the names
-
-- Write each name as it is above, with the same capital letters. In Chinese, names stay in Latin letters.
-- In Chinese, write 「Zeabur 開源版」 (zh-TW) or 「Zeabur 开源版」 (zh-CN) for Zeabur in titles, in comparisons with zeabur.com and at its first mention on a page. After that, 「Zeabur」 alone is fine. The hosted service is always zeabur.com.
-- In Chinese, write 「Agent」 for the agent. Its first mention on a page says which ones: 「Claude Code 或 Codex 這類 Coding Agent」.
-- Write commands and packages as code: `zeatend`, `zeaburctl`, `zeabur-identityctl`, `@zeabur-oss/design-system`.
-- Do not write "Zeabur Installer" or `zeabur-installer`. Version 0.2 installed Zeabur with it. From version 0.3.0, Zeatend and `helm install` do that work. Name it only where a page explains how to upgrade a cluster it set up.
