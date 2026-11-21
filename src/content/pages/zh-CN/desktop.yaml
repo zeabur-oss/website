@@ -1,13 +1,13 @@
 status: released
 lines:
-  nav: 用 Zeabur 管理现有的集群
+  nav: 用 Zeabur 开源版管理现有的集群
   landing: 你熟悉的 Zeabur，直接打开在现有的 Kubernetes 集群上，集群不用先改。
 meta:
-  title: Zeabur Desktop：用 Zeabur 管理现有的集群
-  description: Zeabur Desktop 用你电脑上的 kubeconfig 打开 Zeabur，操作和你熟悉的 Zeabur 一样。集群不用先安装任何东西，现有的应用也不用重新部署。可以在 macOS、Windows 和 Linux 使用。
+  title: Zeabur Desktop：用 Zeabur 开源版管理现有的集群
+  description: Zeabur Desktop 用你电脑上的 kubeconfig 打开 Zeabur 开源版，操作和你熟悉的 Zeabur 一样。集群不用先安装任何东西，现有的应用也不用重新部署。可以在 macOS、Windows 和 Linux 使用。
 titleDim: 你熟悉的 Zeabur，
 title: 直接用在现有的集群上
-sub: Zeabur Desktop 用你电脑上的 kubeconfig 连上集群，窗口里就是同一套 Zeabur。集群不用先安装任何东西，你应用变更之前，集群也不会有任何改动。
+sub: Zeabur Desktop 用你电脑上的 kubeconfig 连上集群，窗口里就是同一套 Zeabur 开源版。集群不用先安装任何东西，你应用变更之前，集群也不会有任何改动。
 download:
   button: 下载 Zeabur Desktop
   for:
@@ -31,11 +31,11 @@ highlights:
   title: 都会保留
   items:
     - tag: zeabur-local
-      title: 集群里不用安装 Zeabur
-      body: Zeabur 在你的电脑上运行，和 zeaburctl ui 用的是同一个本地服务。它不会在集群安装组件，也不用准备域名和登录服务。
+      title: 集群里不用安装 Zeabur 开源版
+      body: Zeabur 开源版在你的电脑上运行，和 zeaburctl ui 用的是同一个本地服务。它不会在集群安装组件，也不用准备域名和登录服务。
     - tag: Namespace
       title: 现有的应用照常运行
-      body: 把已有的 Namespace 添加为项目时，Zeabur 只加上项目标签，里面的服务、数据和安全设置都保持原样。不想用了，去掉标签就行。
+      body: 把已有的 Namespace 添加为项目时，Zeabur 开源版只加上项目标签，里面的服务、数据和安全设置都保持原样。不想用了，去掉标签就行。
     - tag: RBAC
       title: 用你自己的权限
       body: 读取、检查变更和应用，都用那个 context 的权限，集群的 RBAC 照常生效。团队只开放了部分权限，Zeabur Desktop 就只能做那些。
@@ -46,7 +46,7 @@ how:
     - title: 选一个集群
       body: Zeabur Desktop 列出 kubeconfig 里的每个 context。Zeatend 装的个人服务器、云厂商的 Kubernetes、团队给你的 kubeconfig 都能用。
     - title: 就是你熟悉的 Zeabur
-      body: 新窗口打开的是同一套 Zeabur 界面。有管理权限的话，集群里已经在运行的应用可以直接添加为项目，不用重新部署。
+      body: 新窗口打开的是同一套 Zeabur 开源版界面。有管理权限的话，集群里已经在运行的应用可以直接添加为项目，不用重新部署。
     - title: 哪里要处理，一眼就能看到
       body: 首页列出整个集群里需要处理的服务，用直白的话说明原因和接下来能做什么，比如内存不够时直接调整。
 details:
@@ -57,7 +57,7 @@ details:
     - 新版本
   rows:
     - - Apple 芯片的 Mac
-      - .dmg，打开后把 Zeabur 拖进“应用程序”
+      - .dmg，打开后把 Zeabur Desktop 拖进“应用程序”
       - 自动更新
     - - x64 的 Windows
       - -setup.exe，只为你的账号安装，不需要管理员权限

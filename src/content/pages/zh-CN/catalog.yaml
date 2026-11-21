@@ -7,7 +7,7 @@ meta:
   description: 在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。每个模板上架前都先装过、测过，版本固定，密码自动生成。
 titleDim: 一键部署的模板，
 title: 上架前先测过
-sub: 在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。Zeabur 已经内置这份目录：在项目里选择“新建”→“应用模板”，挑一个就能部署。
+sub: 在自己的服务器上一键部署 n8n、WordPress、Dify、OpenClaw 等应用。Zeabur 开源版已经内置这份目录：在项目里选择“新建”→“应用模板”，挑一个就能部署。
 docs: 阅读 Catalog 说明
 source: GitHub 上的源代码
 highlights:
@@ -19,7 +19,7 @@ highlights:
       body: 模板的每次修改合并前，CI 都会把模板装到 Kubernetes 集群上，确认应用有响应。
     - tag: version
       title: 版本固定
-      body: 每个模板都固定镜像版本，同一个模板每次装出来都是同一个应用版本。新版模板随 Zeabur 升级提供。
+      body: 每个模板都固定镜像版本，同一个模板每次装出来都是同一个应用版本。新版模板随 Zeabur 开源版升级提供。
     - tag: secrets
       title: 密码自动生成
       body: 部署时自动生成密码和密钥，存成 Kubernetes Secret，不会写在模板里。每个模板也写明需要多少 CPU 和内存。
@@ -32,7 +32,7 @@ how:
     - title: CI 测试
       body: CI 安装并测试每个组件和模板，也记录空闲时的内存和 CPU。
     - title: 发版
-      body: 生成一份带签名的 bundle。Zeabur 读取它来建议集群缺什么，自己不会安装任何东西。
+      body: 生成一份带签名的 bundle。Zeabur 开源版读取它来建议集群缺什么，自己不会安装任何东西。
 details:
   title: 部分集群组件
   cols:

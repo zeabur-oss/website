@@ -7,7 +7,7 @@ meta:
   description: 在自己的伺服器上一鍵部署 n8n、WordPress、Dify、OpenClaw 等應用程式。每個範本上架前都先裝過、測過，版本固定，密碼自動產生。
 titleDim: 一鍵部署的範本，
 title: 上架前先測過
-sub: 在自己的伺服器上一鍵部署 n8n、WordPress、Dify、OpenClaw 等應用程式。Zeabur 已經內建這份目錄：在專案選擇「新增」→「應用程式範本」，挑一個就能部署。
+sub: 在自己的伺服器上一鍵部署 n8n、WordPress、Dify、OpenClaw 等應用程式。Zeabur 開源版已經內建這份目錄：在專案選擇「新增」→「應用程式範本」，挑一個就能部署。
 docs: 閱讀 Catalog 說明
 source: GitHub 上的原始碼
 highlights:
@@ -19,7 +19,7 @@ highlights:
       body: 範本的每次修改合併前，CI 都會把範本裝到 Kubernetes 叢集上，確認應用程式有回應。
     - tag: version
       title: 版本固定
-      body: 每個範本都固定映像檔版本，同一個範本每次裝出來都是同一個應用程式版本。新版範本會隨 Zeabur 升級提供。
+      body: 每個範本都固定映像檔版本，同一個範本每次裝出來都是同一個應用程式版本。新版範本會隨 Zeabur 開源版升級提供。
     - tag: secrets
       title: 密碼自動產生
       body: 部署時自動產生密碼和金鑰，存成 Kubernetes Secret，不會寫在範本裡。每個範本也寫明需要多少 CPU 和記憶體。
@@ -32,7 +32,7 @@ how:
     - title: CI 測試
       body: CI 安裝並測試每個元件和範本，也記錄閒置時的記憶體和 CPU。
     - title: 發版
-      body: 產生一份有簽章的 bundle。Zeabur 讀它來建議叢集缺什麼，自己不會安裝任何東西。
+      body: 產生一份有簽章的 bundle。Zeabur 開源版讀它來建議叢集缺什麼，自己不會安裝任何東西。
 details:
   title: 部分叢集元件
   cols:

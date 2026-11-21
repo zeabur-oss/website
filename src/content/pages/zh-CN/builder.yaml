@@ -4,9 +4,9 @@ lines:
   landing: 用 BuildKit 从 Git 构建镜像的 Kubernetes operator。
 meta:
   title: Zeabur Builder：代码推到 GitHub，就自动部署
-  description: Zeabur 里负责把 Git 仓库变成镜像的部分。自动识别代码用的语言，构建不了时可以让 AI 写 Dockerfile，分支一更新就重新构建，构建变量以 BuildKit secret 传递。
+  description: Zeabur 开源版里负责把 Git 仓库变成镜像的部分。自动识别代码用的语言，构建不了时可以让 AI 写 Dockerfile，分支一更新就重新构建，构建变量以 BuildKit secret 传递。
 titleDim: 代码推到 GitHub，
-title: Zeabur 就会部署
+title: Zeabur 开源版就会部署
 sub: 跟其他部署平台一样：在项目里选择“新建”→“从 Git 部署”。Zeabur Builder 会识别代码用的语言、构建镜像，之后分支一有更新就重新构建。
 docs: 阅读 Builder 文档
 source: GitHub 上的源代码
