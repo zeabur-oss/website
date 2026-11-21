@@ -103,13 +103,13 @@ export const alts: Record<SiteLocale, Record<"deploy" | "trace" | "access" | "le
   },
   en: {
     deploy:
-      "Zeabur's map: web is deployed from Git, goes from Building to Ready, and its connections are drawn in.",
+      "The Zeabur OSS map: web is deployed from Git, goes from Building to Ready, and its connections are drawn in.",
     trace:
       "worker keeps crashing and shows under Needs attention. Open its logs to see the line with the error.",
     access:
-      "After you sign in with a passkey, Zeabur and kubectl carry your own credentials and Kubernetes RBAC decides what you can do.",
+      "After you sign in with a passkey, Zeabur OSS and kubectl carry your own credentials and Kubernetes RBAC decides what you can do.",
     leave:
-      "After Zeabur is removed, the Deployment, Service, Ingress and PVC stay in the cluster and keep running.",
+      "After Zeabur OSS is removed, the Deployment, Service, Ingress and PVC stay in the cluster and keep running.",
   },
 }
 

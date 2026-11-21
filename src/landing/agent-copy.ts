@@ -109,33 +109,33 @@ const zhCN: AgentCopy = {
 
 const en: AgentCopy = {
   meta: {
-    title: "Hand it to an agent: move from zeabur.com to your own server",
+    title: "Hand it to an agent: move from Zeabur to your own server",
     description:
-      "Paste one sentence into Claude Code or Codex. The agent gets a server, installs Zeabur, and moves your services over from zeabur.com.",
+      "Paste one sentence into Claude Code or Codex. The agent gets a server, installs Zeabur OSS, and moves your services over from Zeabur.",
   },
   label: "Hand it to an agent",
   title: "Paste one sentence, and an agent does the move",
-  lead: "zeabur.com stops running on December 31, 2026. A coding agent such as Claude Code or Codex can get a server, install Zeabur, and move your services over from zeabur.com. It asks you before anything that costs money or changes something.",
+  lead: "Zeabur stops running on December 31, 2026. A coding agent such as Claude Code or Codex can get a server, install Zeabur OSS, and move your services over from Zeabur. It asks you before anything that costs money or changes something.",
   prompt: {
     label: "Paste this into Claude Code or Codex",
-    text: `Read ${agentGuideMarkdown("en")} and move my services off zeabur.com onto my own server, managed by Zeabur.`,
+    text: `Read ${agentGuideMarkdown("en")} and move my services off Zeabur onto my own server, managed by Zeabur OSS.`,
     where:
-      "Run the agent on your own computer. The computer needs to reach the new server over SSH and to sign in to the zeabur.com CLI.",
+      "Run the agent on your own computer. The computer needs to reach the new server over SSH and to sign in to the Zeabur CLI.",
   },
   copy: { label: "Copy the sentence", done: "Copied", failed: "Copy failed" },
-  soon: "The guide comes with the next Zeabur release, and the sentence to paste will appear here then. Until then, you can install it yourself.",
+  soon: "The guide comes with the next Zeabur OSS release, and the sentence to paste will appear here then. Until then, you can install it yourself.",
   guide: "The full guide the agent follows",
-  install: "Install Zeabur only, without moving",
+  install: "Install Zeabur OSS only, without moving",
   manual: "Install it yourself",
   does: {
     title: "What the agent does",
     steps: [
-      "Lists the projects, services, variables, databases and domains on zeabur.com, and exports the data.",
+      "Lists the projects, services, variables, databases and domains on Zeabur, and exports the data.",
       "Suggests a server, with the plan, region and monthly price.",
-      "Sets up Kubernetes on the new server with Zeatend, then installs Zeabur with one helm install.",
-      "Creates each service again in Zeabur, restores the data, and tests each service at an sslip.io address.",
-      "When you agree, switches over: stops the services on zeabur.com and syncs the data one last time.",
-      "Gives you Zeabur's address, and how to deploy and back up from then on.",
+      "Sets up Kubernetes on the new server with Zeatend, then installs Zeabur OSS with one helm install.",
+      "Creates each service again in Zeabur OSS, restores the data, and tests each service at an sslip.io address.",
+      "When you agree, switches over: stops the services on Zeabur and syncs the data one last time.",
+      "Gives you the address of Zeabur OSS, and how to deploy and back up from then on.",
     ],
   },
   you: {
@@ -145,9 +145,9 @@ const en: AgentCopy = {
       "Before each write to the new cluster, look at what changes and agree.",
       "Open the admin link and create a passkey on your own device.",
       "Agree on when to switch over, and change your domain's DNS records.",
-      "Delete the services on zeabur.com, once you're sure you no longer need them.",
+      "Delete the services on Zeabur, once you're sure you no longer need them.",
     ],
-    after: "Until you delete the old services, you can switch back to zeabur.com.",
+    after: "Until you delete the old services, you can switch back to Zeabur.",
   },
 }
 

@@ -8,54 +8,54 @@ Each project on this site has one name and one job. Every docs page, README and 
 ## How the projects work together
 
 1. **Get a cluster.** On a new Linux server, Zeatend sets up Kubernetes. If you already have a Kubernetes cluster, skip this step.
-2. **Install Zeabur.** One `helm install` installs Zeabur and Zeabur Identity in the cluster.
-3. **Add what your services need.** From Zeabur, install components and deploy templates from the Zeabur Catalog. Zeabur Builder is one of these components. It builds your services from Git.
+2. **Install Zeabur OSS.** One `helm install` installs Zeabur OSS and Zeabur Identity in the cluster.
+3. **Add what your services need.** From Zeabur OSS, install components and deploy templates from the Zeabur Catalog. Zeabur Builder is one of these components. It builds your services from Git.
 
-Zeabur Desktop opens the same Zeabur on your computer, on a cluster you already have, with nothing to install in the cluster.
+Zeabur Desktop opens the same Zeabur OSS on your computer, on a cluster you already have, with nothing to install in the cluster.
 
 An agent, such as Claude Code or Codex, can do these steps for you. It follows the same docs pages you would read.
 
 ## Projects
 
-### Zeabur
+### Zeabur OSS
 
-The web interface that deploys and runs your services on your own Kubernetes cluster. It shows the cluster as projects and services, as zeabur.com does. Zeabur installs, upgrades and removes the cluster's components, and it uses only the Kubernetes API. It does not set up servers or Kubernetes itself.
+The web interface that deploys and runs your services on your own Kubernetes cluster. It shows the cluster as projects and services, as Zeabur does. It installs, upgrades and removes the cluster's components, and it uses only the Kubernetes API. It does not set up servers or Kubernetes itself.
 
-Docs: [Zeabur](https://oss.zeabur.com/docs/zeabur/)
+Docs: [Zeabur OSS](https://oss.zeabur.com/docs/zeabur/)
 
 ### Zeabur Identity
 
-Sign-in for Zeabur. It shows the sign-in page, checks each person's passkey, password, GitHub, Google or company account, and issues a token that Kubernetes accepts for a few minutes. The Zeabur chart installs it together with Zeabur. You can also use it on its own, to sign in to `kubectl` without a shared admin kubeconfig.
+Sign-in for Zeabur OSS. It shows the sign-in page, checks each person's passkey, password, GitHub, Google or company account, and issues a token that Kubernetes accepts for a few minutes. The Zeabur OSS chart installs it too. You can also use it on its own, to sign in to `kubectl` without a shared admin kubeconfig.
 
 Docs: [Zeabur Identity](https://oss.zeabur.com/docs/identity/)
 
 ### Zeabur Catalog
 
-The list of components and templates that Zeabur installs, each one installed and tested in CI before it ships. A _component_ is software the cluster needs, such as an ingress controller, cert-manager or Zeabur Builder. A _template_ is an app you deploy in a project, such as n8n or WordPress. Zeabur reads the catalog from its API. Other tools can read the same API.
+The list of components and templates that Zeabur OSS installs, each one installed and tested in CI before it ships. A _component_ is software the cluster needs, such as an ingress controller, cert-manager or Zeabur Builder. A _template_ is an app you deploy in a project, such as n8n or WordPress. Zeabur OSS reads the catalog from its API. Other tools can read the same API.
 
 Docs: [Zeabur Catalog](https://oss.zeabur.com/docs/catalog/)
 
 ### Zeabur Builder
 
-Builds a service from Git. It finds the language your code uses, or uses your Dockerfile, builds an image, and builds again when the branch changes. Zeabur installs it as a component from the Zeabur Catalog. You can also use it on its own, as a Kubernetes operator.
+Builds a service from Git. It finds the language your code uses, or uses your Dockerfile, builds an image, and builds again when the branch changes. Zeabur OSS installs it as a component from the Zeabur Catalog. You can also use it on its own, as a Kubernetes operator.
 
 Docs: [Zeabur Builder](https://oss.zeabur.com/docs/builder/)
 
 ### Zeatend
 
-Sets up and manages a Kubernetes cluster (K3s, RKE2 or KubeSolo) on Linux servers. You run it on the server. It installs Kubernetes, joins more servers to the cluster, applies changes to its configuration and uninstalls it. It does not install Zeabur: after Zeatend, the next step is the `helm install` of Zeabur.
+Sets up and manages a Kubernetes cluster (K3s, RKE2 or KubeSolo) on Linux servers. You run it on the server. It installs Kubernetes, joins more servers to the cluster, applies changes to its configuration and uninstalls it. It does not install Zeabur OSS: after Zeatend, the next step is the `helm install` of Zeabur OSS.
 
 Docs: [Zeatend](https://oss.zeabur.com/docs/zeatend/)
 
 ### Zeabur Desktop
 
-Zeabur as an app for macOS, Windows and Linux. It connects to a cluster with the kubeconfig on your computer and shows the same Zeabur, with nothing to install in the cluster.
+Zeabur OSS as an app for macOS, Windows and Linux. It connects to a cluster with the kubeconfig on your computer and shows the same Zeabur OSS, with nothing to install in the cluster.
 
 Docs: [Use Zeabur Desktop](https://oss.zeabur.com/docs/zeabur/install/desktop/)
 
 ### Zeabur Design System
 
-The components, styles and fonts of Zeabur's screens, for React and Tailwind CSS. Zeabur, Zeabur Identity's sign-in pages and this site use it. It is for developers who build screens that look like Zeabur.
+The components, styles and fonts of the screens of Zeabur OSS, for React and Tailwind CSS. Zeabur OSS, the sign-in pages of Zeabur Identity and this site use it. It is for developers who build screens that look like Zeabur OSS.
 
 Source: [zeabur-oss/design-system](https://github.com/zeabur-oss/design-system)
 
@@ -65,9 +65,9 @@ Source: [zeabur-oss/design-system](https://github.com/zeabur-oss/design-system)
 
 A coding agent, such as Claude Code or Codex, that follows a docs page for you. It runs the commands and asks you before anything that costs money, and before a step only you can do, such as creating your passkey. A page that an agent follows is also a Markdown file: its address without the final `/`, plus `.md`, such as `https://oss.zeabur.com/docs/overview.md` for this page. The prompt you paste names that file.
 
-### zeabur.com
+### Zeabur and Zeabur OSS
 
-The hosted service. Its account, projects and bills are separate from the open-source projects on this site. A page that compares the two always writes zeabur.com, not Zeabur, for the hosted service.
+Zeabur is the hosted service at zeabur.com. It has its own accounts, projects and bills, separate from the open-source projects on this site. Zeabur OSS is the version you install on your own cluster. On English pages, "Zeabur" alone means the hosted service.
 
 ### Server, node and cluster
 

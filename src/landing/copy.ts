@@ -281,7 +281,7 @@ const en: LandingCopy = {
   description:
     "Deploy and run services on your own Kubernetes. Every Zeabur open-source project is Apache-2.0 licensed, including the new Zeatend.",
   hero: {
-    meta: `Apache-2.0 · Zeabur ${zeaburVersion}`,
+    meta: `Apache-2.0 · Zeabur OSS ${zeaburVersion}`,
     title: "The Zeabur you know, on your own server",
     lead: "Deploy from Git, Docker Compose or a template, with the same projects and services. The difference is that the server is yours: you pay only for the machine, your data stays on it, and all the code is public.",
     start: "Get started",
@@ -293,7 +293,7 @@ const en: LandingCopy = {
     },
     machine: {
       title: "You have one Linux server",
-      body: "Zeatend sets up Kubernetes, then one helm install adds Zeabur.",
+      body: "Zeatend sets up Kubernetes, then one helm install adds Zeabur OSS.",
       link: "Install on one server",
     },
   },
@@ -305,14 +305,14 @@ const en: LandingCopy = {
     "change-review":
       "Before the change to web is saved, the YAML diff shows NODE_ENV going from production to staging.",
     database:
-      "A PostgreSQL database with one instance. Nothing takes over if it fails, so Zeabur asks you to set up backups.",
+      "A PostgreSQL database with one instance. Nothing takes over if it fails, so Zeabur OSS asks you to set up backups.",
     cluster:
       "The cluster page: Kubernetes 1.34 reaches end of life, a node is at 91% memory and its disk at 88%.",
   },
   deploy: {
     label: "Deploy",
     title: "Press deploy and the service is up",
-    body: "Pick a Git repository, a Docker Compose file or a template. Zeabur builds it, starts it and puts the service on the map with its connections.",
+    body: "Pick a Git repository, a Docker Compose file or a template. Zeabur OSS builds it, starts it and puts the service on the map with its connections.",
   },
   trace: {
     label: "When it breaks",
@@ -339,7 +339,7 @@ const en: LandingCopy = {
       {
         title: "Your own credential",
         body: "Every request carries the signed-in person's credential, and Kubernetes RBAC decides what they can do.",
-        link: "What Zeabur needs",
+        link: "What Zeabur OSS needs",
       },
       {
         title: "Passkey sign-in",
@@ -355,24 +355,24 @@ const en: LandingCopy = {
   },
   leave: {
     label: "Leaving",
-    title: "Remove Zeabur, and your services keep running",
-    body: "Zeabur keeps no data of its own. Uninstall the chart and your Deployments, Services, Ingresses and data stay in the cluster, ready for kubectl, Helm, Argo CD or Flux.",
-    link: "How to remove Zeabur",
+    title: "Remove Zeabur OSS, and your services keep running",
+    body: "It keeps no data of its own. Uninstall the chart and your Deployments, Services, Ingresses and data stay in the cluster, ready for kubectl, Helm, Argo CD or Flux.",
+    link: "How to remove Zeabur OSS",
   },
   start: {
     label: "Start",
     title: "Pick a way to start",
-    lead: "Choose by how hands-on you want to be. All three end with the same Zeabur.",
+    lead: "Choose by how hands-on you want to be. All three end with the same Zeabur OSS.",
     agent: {
       title: "Hand it to an agent",
-      body: "Paste one prompt into a coding agent such as Claude Code or Codex. It follows the docs to install Zeabur, or to move your projects over from zeabur.com.",
+      body: "Paste one prompt into a coding agent such as Claude Code or Codex. It follows the docs to install Zeabur OSS, or to move your projects over from Zeabur.",
       link: "See how it works",
     },
     zeatend: {
       title: "Step through it with Zeatend",
-      body: "Run Zeatend on the server and pick a distribution and settings on its terminal screens. It turns the server into a Kubernetes cluster, and then you install Zeabur with the Helm chart.",
+      body: "Run Zeatend on the server and pick a distribution and settings on its terminal screens. It turns the server into a Kubernetes cluster, and then you install Zeabur OSS with the Helm chart.",
       steps: "Zeatend's install steps",
-      cluster: "Install Zeabur with the Helm chart",
+      cluster: "Install Zeabur OSS with the Helm chart",
     },
     manual: {
       title: "Install it yourself",

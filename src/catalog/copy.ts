@@ -88,7 +88,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
   en: {
     title: "Templates and components",
     description: (t, c) =>
-      `${t} app templates and ${c} cluster components you can install with Zeabur on your own server. CI installs them on Kubernetes, and each one shows the day it last passed.`,
+      `${t} app templates and ${c} cluster components you can install with Zeabur OSS on your own server. CI installs them on Kubernetes, and each one shows the day it last passed.`,
     browse: "Browse the catalog",
     search: "Search the catalog",
     placeholder: "n8n, PostgreSQL, backup…",
@@ -127,11 +127,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     template: {
       kind: "App template",
       pageTitle: (name) => `Deploy ${name} on your own server · Zeabur Catalog`,
-      deploy: "Deploy with Zeabur",
+      deploy: "Deploy with Zeabur OSS",
       deployCli: "Deploy with the catalog command",
       needs: {
         title: "What the cluster needs",
-        body: "Zeabur suggests the components a cluster is missing. Without Zeabur, install them first.",
+        body: "Zeabur OSS suggests the components a cluster is missing. Without it, install them first.",
       },
       start: {
         deploy: "How to deploy a template",
@@ -161,7 +161,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     component: {
       kind: "Cluster component",
       pageTitle: (name) => `${name} for your own Kubernetes cluster · Zeabur Catalog`,
-      install: "Install with Zeabur",
+      install: "Install with Zeabur OSS",
       list: "Every component",
       defaults: {
         title: "Installed by default",

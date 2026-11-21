@@ -15,7 +15,7 @@ export const productIcon: Record<ProductId, string> = {
 
 /** Names are not translated. */
 export const productName: Record<ProductId, string> = {
-  zeabur: "Zeabur",
+  zeabur: "Zeabur OSS",
   identity: "Zeabur Identity",
   builder: "Zeabur Builder",
   catalog: "Zeabur Catalog",

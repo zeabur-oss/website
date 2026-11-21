@@ -45,7 +45,7 @@ export const groupNames: Record<SiteLocale, Record<GroupId, string>> = {
     team: "People and permissions",
     cluster: "Cluster and nodes",
     install: "Install",
-    leave: "Leave Zeabur",
+    leave: "Leave Zeabur OSS",
   },
 }
 
@@ -792,7 +792,7 @@ export const features: Feature[] = [
     "zh-CN": ["用你自己的权限", "Zeabur 本身没有集群权限，每个请求都由 Kubernetes RBAC 决定。"],
     en: [
       "Your own permissions",
-      "Zeabur has no cluster rights. Kubernetes RBAC decides each request.",
+      "Zeabur OSS has no cluster rights. Kubernetes RBAC decides each request.",
     ],
   },
   {
@@ -827,7 +827,7 @@ export const features: Feature[] = [
     ],
     en: [
       "Cluster components",
-      "See what is installed. Install from Zeabur, or get Helm, HelmChart, Flux or Argo CD output.",
+      "See what is installed. Install from Zeabur OSS, or get Helm, HelmChart, Flux or Argo CD output.",
     ],
   },
   {
@@ -938,7 +938,7 @@ export const features: Feature[] = [
     ],
     en: [
       "Two steps on a new server",
-      "Zeatend sets up Kubernetes, then one helm install adds Zeabur and Zeabur Identity.",
+      "Zeatend sets up Kubernetes, then one helm install adds Zeabur OSS and Zeabur Identity.",
     ],
   },
   {
@@ -1004,10 +1004,10 @@ export const features: Feature[] = [
     doc: "zeabur/install/existing-cluster",
     "zh-TW": ["用 GitOps 管 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
     "zh-CN": ["用 GitOps 管理 Zeabur", "用 Argo CD 或 Flux 部署 Zeabur 的 chart。"],
-    en: ["Zeabur by GitOps", "Deploy Zeabur's chart with Argo CD or Flux."],
+    en: ["Zeabur OSS by GitOps", "Deploy the Zeabur OSS chart with Argo CD or Flux."],
   },
 
-  // Leave Zeabur
+  // Leave Zeabur OSS
   {
     group: "leave",
     doc: "zeabur/leave/uninstall",
@@ -1018,7 +1018,7 @@ export const features: Feature[] = [
     ],
     en: [
       "Services keep running",
-      "Projects and domains are plain Kubernetes objects. Remove Zeabur and sites still answer.",
+      "Projects and domains are plain Kubernetes objects. Remove Zeabur OSS and sites still answer.",
     ],
   },
   {
@@ -1026,7 +1026,7 @@ export const features: Feature[] = [
     doc: "zeabur/leave/uninstall",
     "zh-TW": ["選擇移除多少", "只移除 Zeabur、連 Zeabur Identity 一起，或整台機器清掉。"],
     "zh-CN": ["选择移除多少", "只移除 Zeabur、连 Zeabur Identity 一起，或整台机器清掉。"],
-    en: ["Choose how much goes", "Zeabur alone, with Zeabur Identity, or the whole machine."],
+    en: ["Choose how much goes", "Zeabur OSS alone, with Zeabur Identity, or the whole machine."],
   },
   {
     group: "leave",
@@ -1040,7 +1040,7 @@ export const features: Feature[] = [
     doc: "zeabur/leave/uninstall",
     "zh-TW": ["移除後備份照跑", "備份由 operator、K8up、Velero 自己執行，不靠 Zeabur。"],
     "zh-CN": ["移除后备份照常运行", "备份由 operator、K8up、Velero 自己执行，不靠 Zeabur。"],
-    en: ["Backups keep running", "Operators, K8up and Velero run them without Zeabur."],
+    en: ["Backups keep running", "Operators, K8up and Velero run them without Zeabur OSS."],
   },
 ]
 
@@ -1216,7 +1216,7 @@ export const featureCopy: Record<
     group: (n) => `${n} features in this group`,
     index: {
       title: "Every feature",
-      lead: "What Zeabur's main branch has today, one line each. Unfinished ones say what is missing.",
+      lead: "What the main branch of Zeabur OSS has today, one line each. Unfinished ones say what is missing.",
     },
     partial: "Not finished",
   },

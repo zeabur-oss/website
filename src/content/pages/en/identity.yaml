@@ -4,10 +4,10 @@ lines:
   landing: kubectl signs in through your browser with a passkey and gets a token that expires in minutes.
 meta:
   title: "Zeabur Identity: an account for each person"
-  description: Zeabur's sign-in page. Each person signs in to their own account with a passkey, GitHub, Google or a password, and admins use two factors. On its own, it signs kubectl in the same way.
+  description: The sign-in page of Zeabur OSS. Each person signs in to their own account with a passkey, GitHub, Google or a password, and admins use two factors. On its own, it signs kubectl in the same way.
 titleDim: No shared admin password.
 title: An account for each person.
-sub: Zeabur's sign-in page is Zeabur Identity, so it comes with Zeabur. Invite people and choose their projects on the Members page. When someone leaves, remove them and end their sessions, and they lose access within 10 minutes.
+sub: The sign-in page of Zeabur OSS is Zeabur Identity, so it comes with it. Invite people and choose their projects on the Members page. When someone leaves, remove them and end their sessions, and they lose access within 10 minutes.
 docs: Read the getting-started guide
 source: Source on GitHub
 highlights:
@@ -65,5 +65,5 @@ details:
       - A kubeconfig set up as in the guide
 start:
   title: Start from one Ubuntu server
-  sub: With Zeabur there is nothing to install. For standalone use, the guide installs k3s on an Ubuntu server, downloads and verifies Zeabur Identity, and signs you in with a passkey from your computer. On a cluster you already have, run these lines with your cluster-admin kubeconfig.
+  sub: With Zeabur OSS there is nothing to install. For standalone use, the guide installs k3s on an Ubuntu server, downloads and verifies Zeabur Identity, and signs you in with a passkey from your computer. On a cluster you already have, run these lines with your cluster-admin kubeconfig.
   cta: Read the getting-started guide

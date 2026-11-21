@@ -1,5 +1,5 @@
 ---
-title: "Zeabur 0.2.0: the first stable release of open-source Zeabur"
+title: "Zeabur OSS 0.2.0: the first stable release"
 description: See what will change before you install or upgrade. If something goes wrong, the interface tells you what to do next.
 pubDate: 2026-11-08
 author: pan93412
@@ -8,7 +8,7 @@ cover: release-0-2-0
 
 import PostFigure from "../../../blog/PostFigure.astro";
 
-Following [0.1.1 Beta](/blog/rebuilding-zeabur), Zeabur 0.2.0 is out: the first stable release of open-source Zeabur!
+Following [0.1.1 Beta](/blog/rebuilding-zeabur), Zeabur OSS 0.2.0 is out: the first stable release!
 
 This release focuses on reliability and transparency. You know what will change before you install or upgrade, and what to do next if something goes wrong. See the [v0.2.0 release notes](https://github.com/zeabur-oss/zeabur/releases/tag/v0.2.0) for the full list of changes.
 
@@ -23,7 +23,7 @@ This release focuses on reliability and transparency. You know what will change 
 
 ### See what will change before installing
 
-`plan` now shows what has changed since the last `apply`, including system files, services that need to restart, component changes, and the Zeabur version. You no longer have to search the full installation list to work out what this run will change.
+`plan` now shows what has changed since the last `apply`, including system files, services that need to restart, component changes, and the Zeabur OSS version. You no longer have to search the full installation list to work out what this run will change.
 
 The installer's new "Options" step lets you configure the experience program and update notifications. It also shows how much memory is reserved for the system.
 
@@ -47,7 +47,7 @@ Services built with Railpack from Git or a folder default to port 8080. If the c
 
 ### Update notifications
 
-When a new version is available, the Cluster page shows a notification with release notes and upgrade steps for the method you originally used to install Zeabur. Zeabur doesn't upgrade itself. You can read the changes first and decide when to upgrade.
+When a new version is available, the Cluster page shows a notification with release notes and upgrade steps for the method you originally used to install Zeabur OSS. It doesn't upgrade itself. You can read the changes first and decide when to upgrade.
 
 ![The Cluster page's "Needs attention" section says "Zeabur 0.2.0 is out", with "Release notes" and "How to upgrade" links](/blog/zeabur-0-2-0/en/update-available.avif)
 
@@ -59,7 +59,7 @@ AppArmor rules in Ubuntu 26.04's newer kernel prevented containers from sending 
 
 Previously, a worker node that joined before Longhorn was installed would remain without the packages needed to mount volumes. Now, running `plan` on that node lists the preparation it needs, and `apply` installs the missing packages. `doctor` also provides [a command to refresh the Longhorn checks](https://github.com/zeabur-oss/zeabur/issues/285).
 
-On multi-node clusters configured according to the K3s CIS hardening guide, `kube-system` allowed connections only from its own pods. That prevented kube-apiserver from reaching metrics-server on another node. Half of the usage queries took about a minute to fail, leaving the Nodes page and `kubectl top` empty until then. Now metrics-server accepts requests from every node. Even if it still can't be reached, Zeabur waits only five seconds, then shows the nodes and resource requests with a note that usage is temporarily unavailable.
+On multi-node clusters configured according to the K3s CIS hardening guide, `kube-system` allowed connections only from its own pods. That prevented kube-apiserver from reaching metrics-server on another node. Half of the usage queries took about a minute to fail, leaving the Nodes page and `kubectl top` empty until then. Now metrics-server accepts requests from every node. Even if it still can't be reached, Zeabur OSS waits only five seconds, then shows the nodes and resource requests with a note that usage is temporarily unavailable.
 
 ## Better guidance when component upgrades fail
 
@@ -76,7 +76,7 @@ Run the `helm` commands on a computer with Helm installed and access to the clus
 
 ## Builder, Identity, and Catalog
 
-Zeabur 0.2.0 ships alongside Zeabur Builder 0.2.1, Zeabur Identity 0.1.2, and Zeabur Catalog 0.4.2.
+Zeabur OSS 0.2.0 ships alongside Zeabur Builder 0.2.1, Zeabur Identity 0.1.2, and Zeabur Catalog 0.4.2.
 
 ### Zeabur Builder 0.2.1
 
@@ -89,7 +89,7 @@ Builds now have limits by default. Each build gets 1 CPU and 1 GiB of memory, wi
 
 These defaults came from a failure on a [4 GB test server](https://github.com/zeabur-oss/zeabur/issues/164): a build exhausted its memory and took other services down too. If you need more resources, raise the limits in project settings. A team install on K3s needs at least 2700 MiB, or 3900 MiB with Builder, so Builder isn't installed by default on a 4 GiB server.
 
-When a build runs out of memory, Builder records `OutOfMemory` as the failure reason. Zeabur uses that reason to show "The build ran out of memory." on the build card. After a successful build, Builder also reads and records the ports declared by the image. That's where the "Networking" tab gets its port suggestions.
+When a build runs out of memory, Builder records `OutOfMemory` as the failure reason. Zeabur OSS uses that reason to show "The build ran out of memory." on the build card. After a successful build, Builder also reads and records the ports declared by the image. That's where the "Networking" tab gets its port suggestions.
 
 Builder now deletes only images it has pushed itself. Images you manually push to `<namespace>/<name>` stay when you delete a Build with the same name.
 
@@ -124,7 +124,7 @@ This release includes breaking changes. Read the [v0.2.0 release notes](https://
 
 We tested K3s, RKE2, and KubeSolo on Ubuntu 26.04 virtual machines, including single-node clusters, multi-node clusters, and worker nodes added after installation. Along with upgrades from older versions, we deliberately filled disks and rebooted machines while applying configuration to check whether the work could resume afterward.
 
-Every week, Catalog fully tests each distribution's supported components. Before release, Zeabur, Builder, and Identity also reran their tests with release candidates. For Catalog, we checked that the components and templates matched the versions that passed the full tests. The results are recorded in [#248](https://github.com/zeabur-oss/zeabur/issues/248).
+Every week, Catalog fully tests each distribution's supported components. Before release, Zeabur OSS, Builder, and Identity also reran their tests with release candidates. For Catalog, we checked that the components and templates matched the versions that passed the full tests. The results are recorded in [#248](https://github.com/zeabur-oss/zeabur/issues/248).
 
 ## A look at the next release
 
@@ -150,10 +150,10 @@ If a resource's controller never finishes cleaning up during project deletion, t
 
 ![The banner of a project being deleted: which objects are still waiting for their controllers to clean up, with a "Force delete" button below](/blog/zeabur-0-2-0/en/next-force-delete.avif)
 
-Other work includes getting the latest templates without upgrading Zeabur, browsing and uploading files directly in object storage, grouping services in the interface, restarting databases, and showing how much memory a node has left before it starts evicting pods. Cluster administrators will be able to use `kubectl` as themselves. There will also be a project manager role between Developer and Admin, sign-in through any OpenID Connect provider, and network access through `HTTPS_PROXY`. [#335](https://github.com/zeabur-oss/zeabur/issues/335) groups all the work by area and is a good place to start if you'd like to contribute.
+Other work includes getting the latest templates without upgrading Zeabur OSS, browsing and uploading files directly in object storage, grouping services in the interface, restarting databases, and showing how much memory a node has left before it starts evicting pods. Cluster administrators will be able to use `kubectl` as themselves. There will also be a project manager role between Developer and Admin, sign-in through any OpenID Connect provider, and network access through `HTTPS_PROXY`. [#335](https://github.com/zeabur-oss/zeabur/issues/335) groups all the work by area and is a good place to start if you'd like to contribute.
 
 ## Get involved
 
 - Share ideas and suggestions on [Discord](https://zeabur.com/dc).
-- Report problems in [Zeabur issues](https://github.com/zeabur-oss/zeabur/issues), with your Kubernetes distribution, the commands you ran, and their output.
+- Report problems in [Zeabur OSS issues](https://github.com/zeabur-oss/zeabur/issues), with your Kubernetes distribution, the commands you ran, and their output.
 - To contribute code, pick an issue from [#335](https://github.com/zeabur-oss/zeabur/issues/335). It also marks issues suitable for first-time contributors. The sooner these issues are finished, the sooner the next release ships.

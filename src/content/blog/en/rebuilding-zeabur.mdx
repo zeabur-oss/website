@@ -1,6 +1,6 @@
 ---
-title: "Zeabur is open source: a safer foundation for the deploy flow you know"
-description: We took four years of building and running a deployment platform, added our research into security and usability, and rebuilt Zeabur as open-source software you can host yourself.
+title: "Zeabur OSS: a safer foundation for the deploy flow you know"
+description: We took four years of building and running a deployment platform, added our research into security and usability, and rebuilt it as open-source software you can host yourself.
 pubDate: 2026-10-28
 author: pan93412
 cover: open-source
@@ -8,7 +8,7 @@ cover: open-source
 
 import PostFigure from "../../../blog/PostFigure.astro"
 
-Zeabur is now open source. We took what four years of building and running a deployment platform taught us, combined it with our research into security and usability, and rebuilt Zeabur as something you can host yourself. Put it on your own server or Kubernetes cluster, keep deploying and managing services the way you're used to, and read or change the code.
+Zeabur is now open source as Zeabur OSS. We took what four years of building and running a deployment platform taught us, combined it with our research into security and usability, and rebuilt Zeabur as something you can host yourself. Put it on your own server or Kubernetes cluster, keep deploying and managing services the way you're used to, and read or change the code.
 
 Work on Zeabur 2.0 started a long time ago. Zeabur 1.0 stored every service's configuration in its own database and generated Kubernetes resources from it. If a user needed a setting that format didn't have, they had to wait for us to add it. If an engineer changed the cluster directly with kubectl, the platform's records no longer matched the cluster. The more requests came in, the more time this took, so we wanted to remove that layer and read configuration straight from the cluster. User requests also kept sending us back to the original design. As the number of services grows, how does the interface help people keep track of them? When an engineer needs finer control, does the platform leave them room to work? When something breaks, do users know where to start?
 
@@ -18,9 +18,9 @@ Removing that layer touches the architecture, the deploy pipeline and the interf
 
 We started by taking another look at what the Kubernetes ecosystem already offers. Domains, certificates, storage, monitoring and databases each have mature solutions. We noted where each one fits, installed and combined them, and watched for what needed adjusting. Some things the platform used to maintain itself could be handed directly to existing components. The remaining work was connecting them into actions that are easy for users to understand.
 
-One experiment dropped the duplicate records in our database. Zeabur reads the configuration the cluster is actually using and works out services, domains, environment variables and volumes from how the resources relate to each other.
+One experiment dropped the duplicate records in our database. Zeabur OSS reads the configuration the cluster is actually using and works out services, domains, environment variables and volumes from how the resources relate to each other.
 
-Once those relationships become a project view, services deployed with other tools show up in the interface, and changes made with kubectl appear the next time Zeabur reads the cluster. Users manage their environment through projects and services, and go back to their usual Kubernetes tools when they need to dig deeper. Teams that already have infrastructure don't need to redeploy anything to use the interface.
+Once those relationships become a project view, services deployed with other tools show up in the interface, and changes made with kubectl appear the next time Zeabur OSS reads the cluster. Users manage their environment through projects and services, and go back to their usual Kubernetes tools when they need to dig deeper. Teams that already have infrastructure don't need to redeploy anything to use the interface.
 
 Next came permissions. When a user clicks Restart or opens a configuration, whose identity should the platform act as? We looked into having Kubernetes verify the signed-in user directly and apply the same permission rules to decide whether they can do it. The sign-in work grew complete enough to become a project you can use on its own: [Zeabur Identity](https://github.com/zeabur-oss/identity).
 
@@ -48,9 +48,9 @@ We also wrote the methods we kept reusing into development skills. Before writin
 
 ## A tool you use every day
 
-As we used it more, we spent more time on what happens after a service goes live. When a service keeps restarting, Zeabur brings the cause, the logs and the resource usage together. When a domain can't be reached, it follows the path the traffic takes to find what to check. We turned Kubernetes events and status into diagnoses, so the service page explains the problem and also suggests what to do next.
+As we used it more, we spent more time on what happens after a service goes live. When a service keeps restarting, Zeabur OSS brings the cause, the logs and the resource usage together. When a domain can't be reached, it follows the path the traffic takes to find what to check. We turned Kubernetes events and status into diagnoses, so the service page explains the problem and also suggests what to do next.
 
-When a new version hasn't deployed yet, the old one may still be serving traffic, and the interface has to make both facts clear. Messages with the same cause should be grouped, so people find the problem to fix first. With several people working at once, you might be changing the replica count while a colleague updates the image. So we built Review changes: you see what's about to change and apply it once you confirm. If the object changed in the meantime, Zeabur reads the current state again. Settings managed by Helm, Argo CD or Flux show where they come from, so you can go back to that tool to change them.
+When a new version hasn't deployed yet, the old one may still be serving traffic, and the interface has to make both facts clear. Messages with the same cause should be grouped, so people find the problem to fix first. With several people working at once, you might be changing the replica count while a colleague updates the image. So we built Review changes: you see what's about to change and apply it once you confirm. If the object changed in the meantime, Zeabur OSS reads the current state again. Settings managed by Helm, Argo CD or Flux show where they come from, so you can go back to that tool to change them.
 
 ![Diagnosis for a worker service that keeps crashing](/blog/rebuilding-zeabur/en/diagnosis.avif)
 
@@ -70,7 +70,7 @@ AI agents helped with much of the research, implementation and testing, and let 
 
 With service management mostly in place, the questions spread to what comes before and after. How does someone with a single server get started? After deploying, how is data kept, and how do you restore it when something goes wrong? Hosting it yourself means dealing with all of this, so we added an installer, component choices and backup workflows.
 
-Zeabur Installer turns what we learned about preparing environments into a web-based flow. It checks the host, disks and ports, then you set the URL and pick components, and it runs only after you've confirmed the resource requirements and what will be installed. Kubernetes security settings, encryption of Secrets at rest, and the choice of monitoring and security components are all part of that flow. When it finishes, you register the first admin's passkey, open Zeabur and create your first project.
+Zeabur Installer turns what we learned about preparing environments into a web-based flow. It checks the host, disks and ports, then you set the URL and pick components, and it runs only after you've confirmed the resource requirements and what will be installed. Kubernetes security settings, encryption of Secrets at rest, and the choice of monitoring and security components are all part of that flow. When it finishes, you register the first admin's passkey, open Zeabur OSS and create your first project.
 
 ![Installer step one: host check results](/blog/rebuilding-zeabur/en/installer-host.avif)
 
@@ -80,7 +80,7 @@ Zeabur Installer turns what we learned about preparing environments into a web-b
 
 App templates sent us back into the details of data and maintenance. Familiar apps like n8n, Dify and WordPress each have data that must not be lost, things a backup has to include, upgrade steps, and conditions for adding instances. We put that research and the deployment configuration into [Zeabur Catalog](https://github.com/zeabur-oss/catalog), with shared cluster components managed separately, so a deployment that starts from a template has something to look up and change later.
 
-Database work runs from creation and connection through to backup and restore. Zeabur creates the database through the matching operator and passes its connection details to your app. Once you set a backup destination, you can see each run's result, and when you need to, restore into a new database, check its contents, and then plan the switchover. Volume and cluster backups each connect to a suitable tool. By the time someone actually needs to restore, they usually have plenty else to deal with. Having the source, destination, status and steps laid out ahead of time saves them from hunting for them in the moment.
+Database work runs from creation and connection through to backup and restore. Zeabur OSS creates the database through the matching operator and passes its connection details to your app. Once you set a backup destination, you can see each run's result, and when you need to, restore into a new database, check its contents, and then plan the switchover. Volume and cluster backups each connect to a suitable tool. By the time someone actually needs to restore, they usually have plenty else to deal with. Having the source, destination, status and steps laid out ahead of time saves them from hunting for them in the moment.
 
 At this point you can start from an empty server and go all the way through installing, signing in, deploying and backing up. Problems we had discussed over and over were now things we could use ourselves, and that was the most rewarding part of the whole project.
 
@@ -88,9 +88,9 @@ At this point you can start from an empty server and go all the way through inst
 
 <PostFigure
   name="oss-map"
-  label="The Zeabur interface, kubectl and AI assistants sign in through Zeabur Identity, GitOps tools run in the cluster, and every request goes through kube-apiserver to act on services, builds, components and databases in the same cluster, each with its own permissions"
+  label="The Zeabur OSS interface, kubectl and AI assistants sign in through Zeabur Identity, GitOps tools run in the cluster, and every request goes through kube-apiserver to act on services, builds, components and databases in the same cluster, each with its own permissions"
 />
 
 Today all of this is public. Zeabur Identity, Zeabur Builder, Zeabur Catalog and the management interface can each evolve on their own and work alongside other Kubernetes tools. The skills we used during development are in the repositories too, so anyone curious can see how we check specs, review the interface, reproduce bugs and hand work to agents. Teams with an existing setup can adopt the parts that fit. If you're starting from one server, there's an install and deploy flow to follow.
 
-Four years of tickets and feedback told us what was worth doing properly, and removing that abstraction layer finally made it possible. Open-source Zeabur will keep changing, but the deploy workflow you learned and the operations your team knows carry over to the new architecture. If you used Zeabur before, come back and see how the things that once got you stuck work now.
+Four years of tickets and feedback told us what was worth doing properly, and removing that abstraction layer finally made it possible. Zeabur OSS will keep changing, but the deploy workflow you learned and the operations your team knows carry over to the new architecture. If you used Zeabur before, come back and see how the things that once got you stuck work now.

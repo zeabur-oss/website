@@ -3,10 +3,10 @@ lines:
   nav: Push a commit, get an image digest
   landing: A Kubernetes operator that builds container images from Git with BuildKit.
 meta:
-  title: "Zeabur Builder: push your code to GitHub, and Zeabur deploys it"
-  description: The part of Zeabur that turns a Git repository into an image. It finds your language, lets AI write a Dockerfile when that fails, rebuilds when the branch changes, and passes build variables as BuildKit secrets.
+  title: "Zeabur Builder: push your code to GitHub, and Zeabur OSS deploys it"
+  description: The part of Zeabur OSS that turns a Git repository into an image. It finds your language, lets AI write a Dockerfile when that fails, rebuilds when the branch changes, and passes build variables as BuildKit secrets.
 titleDim: Push your code to GitHub,
-title: and Zeabur deploys it.
+title: and Zeabur OSS deploys it.
 sub: "Just as on other deployment platforms: in a project, choose Add → Deploy from Git. Zeabur Builder finds the language your code uses, builds an image, and builds again whenever the branch changes."
 docs: Read the Builder docs
 source: Source on GitHub
@@ -54,5 +54,5 @@ details:
       - spec.suspend stops automatic builds
 start:
   title: One Build per repository
-  sub: Without Zeabur, a Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.
+  sub: Without Zeabur OSS, a Build names a Git repository and a builder. Leave out ref to follow the default branch; status.resolvedRef says which branch that was.
   cta: Read the Builder docs
