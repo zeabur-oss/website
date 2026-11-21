@@ -4,10 +4,10 @@ lines:
   landing: kubectl 透過瀏覽器用通行密鑰登入，拿到幾分鐘就到期的 token。
 meta:
   title: Zeabur Identity：每個人用自己的帳號登入
-  description: Zeabur 的登入頁。每個人用通行密鑰、GitHub、Google 或密碼登入自己的帳號，管理員要雙重驗證。單獨使用時，也能讓 kubectl 用同樣的方式登入。
+  description: Zeabur 開源版的登入頁。每個人用通行密鑰、GitHub、Google 或密碼登入自己的帳號，管理員要雙重驗證。單獨使用時，也能讓 kubectl 用同樣的方式登入。
 titleDim: 不共用管理員密碼，
 title: 每個人有自己的帳號
-sub: Zeabur 的登入頁就是 Zeabur Identity，裝好 Zeabur 就有了。在成員頁邀請成員、選擇他們能用的專案。有人離開時，移除他並結束他的工作階段，10 分鐘內他就無法再存取。
+sub: Zeabur 開源版的登入頁就是 Zeabur Identity，裝好 Zeabur 開源版就有了。在成員頁邀請成員、選擇他們能用的專案。有人離開時，移除他並結束他的工作階段，10 分鐘內他就無法再存取。
 docs: 閱讀入門指南
 source: GitHub 上的原始碼
 highlights:
@@ -65,5 +65,5 @@ details:
       - 依入門指南設定 kubeconfig
 start:
   title: 從一台 Ubuntu 伺服器開始
-  sub: 用 Zeabur 的話不用另外安裝。單獨使用時，入門指南會在 Ubuntu 伺服器裝好 k3s，下載並驗證 Zeabur Identity，再從你的電腦用通行密鑰登入。既有叢集用叢集管理員的 kubeconfig 執行下面幾行。
+  sub: 用 Zeabur 開源版的話不用另外安裝。單獨使用時，入門指南會在 Ubuntu 伺服器裝好 k3s，下載並驗證 Zeabur Identity，再從你的電腦用通行密鑰登入。既有叢集用叢集管理員的 kubeconfig 執行下面幾行。
   cta: 閱讀入門指南

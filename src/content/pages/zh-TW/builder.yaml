@@ -4,9 +4,9 @@ lines:
   landing: 用 BuildKit 從 Git 建置映像檔的 Kubernetes operator。
 meta:
   title: Zeabur Builder：程式碼推上 GitHub，就自動部署
-  description: Zeabur 裡負責把 Git 儲存庫變成映像檔的部分。自動判斷程式碼用的語言，建置不了時可以讓 AI 寫 Dockerfile，分支一更新就重新建置，建置變數以 BuildKit secret 傳遞。
+  description: Zeabur 開源版裡負責把 Git 儲存庫變成映像檔的部分。自動判斷程式碼用的語言，建置不了時可以讓 AI 寫 Dockerfile，分支一更新就重新建置，建置變數以 BuildKit secret 傳遞。
 titleDim: 程式碼推上 GitHub，
-title: Zeabur 就會部署
+title: Zeabur 開源版就會部署
 sub: 跟其他部署平台一樣：在專案選擇「新增」→「從 Git 部署」。Zeabur Builder 會判斷程式碼用的語言、建置映像檔，之後分支一有更新就重新建置。
 docs: 閱讀 Builder 文件
 source: GitHub 上的原始碼

@@ -4,7 +4,7 @@ import { markdownPath, siteOrigin } from "../../src/lib/urls.ts"
 import type { SiteData, SiteNav } from "../sync-docs.ts"
 
 const summary =
-  "Zeabur is an open-source web interface that deploys and runs services on your own Kubernetes cluster. Zeatend sets up Kubernetes on a Linux server, one `helm install` installs Zeabur with Zeabur Identity for sign-in, and Zeabur installs components and templates from the Zeabur Catalog, such as Zeabur Builder, which builds services from Git."
+  "Zeabur OSS is an open-source web interface that deploys and runs services on your own Kubernetes cluster. Zeatend sets up Kubernetes on a Linux server, one `helm install` installs Zeabur OSS with Zeabur Identity for sign-in, and Zeabur OSS installs components and templates from the Zeabur Catalog, such as Zeabur Builder, which builds services from Git."
 
 const about = [
   "The overview names each project and its role; read it first. Each link below is the Markdown copy of a docs page. The same page as HTML is at the URL without `.md`. Each page is also in Traditional Chinese under `/zh-TW` and in Simplified Chinese under `/zh-CN`, as HTML and as Markdown.",
