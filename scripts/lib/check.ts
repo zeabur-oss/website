@@ -112,7 +112,7 @@ export function checkRepo(snap: Snapshot, options: CheckOptions = {}): Finding[]
   // Pages
   for (const page of docs.pages) {
     for (const [locale, path] of Object.entries(page.files)) {
-      if (path) checkPage(snap, repoFiles, page.files.en, locale, path, add)
+      if (path) checkPage(snap, repoFiles, locale, path, add)
     }
   }
 

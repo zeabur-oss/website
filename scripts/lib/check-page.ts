@@ -1,4 +1,4 @@
-// One page in one locale: frontmatter, translation freshness, links, images and components.
+// One page in one locale: frontmatter, links, images and components.
 import { createProcessor } from "@mdx-js/mdx"
 import type { Root } from "mdast"
 import remarkGfm from "remark-gfm"
@@ -13,7 +13,7 @@ import {
   resolveImage,
   type RepoFiles,
 } from "../../src/mdx/links.ts"
-import { readText, sourceHash, splitFrontmatter } from "./docs.ts"
+import { readText, splitFrontmatter } from "./docs.ts"
 import type { Add } from "./findings.ts"
 import { props } from "./jsx-props.ts"
 import type { Snapshot } from "./repos.ts"
@@ -27,7 +27,6 @@ const parsers = {
 export function checkPage(
   snap: Snapshot,
   repoFiles: RepoFiles,
-  original: string | undefined,
   locale: string,
   path: string,
   add: Add,
@@ -37,8 +36,6 @@ export function checkPage(
   const mdx = path.endsWith(".mdx")
   const { data, body } = splitFrontmatter(text)
   const offset = text.split("\n").length - body.split("\n").length
-  const translatedFrom = locale !== "en" && original ? original : undefined
-  const translation = translatedFrom !== undefined
 
   if (!isReadme) {
     if (!mdx)
@@ -50,7 +47,7 @@ export function checkPage(
       )
     else if (typeof data.title !== "string")
       add("error", "frontmatter-title", path, "frontmatter needs a title")
-    const allowed = translation ? ["title", "description", "source"] : ["title", "description"]
+    const allowed = ["title", "description"]
     for (const key of Object.keys(data)) {
       if (!allowed.includes(key))
         add(
@@ -61,24 +58,6 @@ export function checkPage(
         )
     }
   }
-  if (translatedFrom !== undefined) {
-    const expected = sourceHash(readText(snap, translatedFrom))
-    if (data.source === undefined)
-      add(
-        "stale",
-        "translation-no-source",
-        path,
-        `no source hash; the original ${original} is ${expected}`,
-      )
-    else if (data.source !== expected)
-      add(
-        "stale",
-        "translation-stale",
-        path,
-        `translated from ${data.source}; ${original} is now ${expected}`,
-      )
-  }
-
   let tree: Root
   try {
     tree = (mdx ? parsers.mdx : parsers.md).parse(body) as Root
