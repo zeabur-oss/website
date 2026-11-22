@@ -30,8 +30,12 @@ const { id, code, copy, wrap, class: className } = Astro.props
       aria-label={copy.label}
       title={copy.label}
     >
-      <span class="when-idle"><Icon name="copy" class="size-4" /></span>
-      <span class="when-copied"><Icon name="check" class="size-4" /></span>
+      <span class="when-idle">
+        <Icon name="copy" class="size-4" />
+      </span>
+      <span class="when-copied">
+        <Icon name="check" class="size-4" />
+      </span>
     </button>
     <span class="tip" role="status"></span>
   </span>
