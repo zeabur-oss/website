@@ -30,8 +30,12 @@ const { id, code, copy, wrap, class: className } = Astro.props
       aria-label={copy.label}
       title={copy.label}
     >
-      <Icon name="copy" class="when-idle size-4" />
-      <Icon name="check" class="when-copied size-4" />
+      <span class="when-idle">
+        <Icon name="copy" class="size-4" />
+      </span>
+      <span class="when-copied">
+        <Icon name="check" class="size-4" />
+      </span>
     </button>
     <span class="tip" role="status"></span>
   </span>
@@ -67,14 +71,13 @@ const { id, code, copy, wrap, class: className } = Astro.props
     display: none;
   }
   .copy-button[data-copied] .when-copied {
-    display: block;
+    display: contents;
     color: var(--site-accent);
   }
   .tip {
     position: absolute;
-    top: 50%;
-    right: calc(100% + 0.5rem);
-    translate: 0 -50%;
+    right: 0;
+    bottom: calc(100% + 0.375rem);
     padding: 0.125rem 0.5rem;
     border-radius: var(--radius-md);
     background: var(--site-text);
