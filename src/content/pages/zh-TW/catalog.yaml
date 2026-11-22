@@ -28,7 +28,7 @@ how:
   title: 元件和範本都是可以讀的資料
   steps:
     - title: 寫下選擇
-      body: 每個 upstream 一個檔案，例如 components/traefik.yaml，寫明 chart、版本、values 和原因。
+      body: 每個 upstream 一個檔案，例如 components/traefik/component.yaml，寫明 chart、版本、values 和原因。
     - title: CI 測試
       body: CI 安裝並測試每個元件和範本，也記錄閒置時的記憶體和 CPU。
     - title: 發版

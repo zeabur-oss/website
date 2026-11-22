@@ -28,7 +28,7 @@ how:
   title: components and templates are data you can read.
   steps:
     - title: Write it down
-      body: One file per upstream, such as components/traefik.yaml, with the chart, version, values and the reason.
+      body: One file per upstream, such as components/traefik/component.yaml, with the chart, version, values and the reason.
     - title: Test in CI
       body: CI installs and tests every component and template, and records idle memory and CPU.
     - title: Release
