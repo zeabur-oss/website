@@ -17,17 +17,14 @@ import { toMarkdown } from "./lib/markdown.ts"
 import {
   fromDirectory,
   readLock,
+  releaseAsset,
   root,
   snapshot,
   type LockRepo,
   type Snapshot,
 } from "./lib/repos.ts"
-import {
-  readComponents,
-  readTemplates,
-  type CatalogComponent,
-  type CatalogTemplate,
-} from "./lib/catalog.ts"
+import { readCatalog, type CatalogComponent, type CatalogTemplate } from "./lib/catalog.ts"
+import { exampleFiles, type ExampleFile } from "../src/catalog/examples.ts"
 
 export type SitePage = {
   repo: string
@@ -63,6 +60,8 @@ export type CatalogData = {
   ref: string
   components: CatalogComponent[]
   templates: CatalogTemplate[]
+  /** The text of each file the pages show. */
+  files: Record<ExampleFile, string>
 }
 
 export type NavItem = { label: string; href: string; slug: string }
@@ -246,8 +245,10 @@ export async function sync() {
       catalog = {
         github: repo.github,
         ref: repo.ref,
-        components: readComponents(snap),
-        templates: readTemplates(snap),
+        ...readCatalog(await releaseAsset(repo, "api-v1.tar.gz"), snap),
+        files: Object.fromEntries(
+          exampleFiles.map((f) => [f, readFileSync(join(snap.dir, f), "utf8")]),
+        ) as Record<ExampleFile, string>,
       }
     }
     copyAssets(snap)

@@ -1,3 +1,5 @@
+import { catalog } from "../catalog/data.ts"
+import { excerpt } from "../catalog/examples.ts"
 import { identityShot, zeatendScreen, type ShotImage } from "./shots.ts"
 
 // What the stage of a product page shows at each of its three steps: a panel with the object
@@ -56,37 +58,44 @@ status:
   ],
 }
 
-const catalog: Stage = {
+const traefikFile = "components/traefik/component.yaml"
+const traefikYaml = excerpt(traefikFile, catalog.files[traefikFile], {
+  keys: ["apiVersion", "kind", "metadata", "provides", "releases"],
+  omitMetadata: ["locales", "license", "homepage"],
+  release: { name: "traefik", keys: ["name", "chart", "version"] },
+  noHeader: true,
+})
+const traefik = catalog.components.find((c) => c.id === "traefik")
+const traefikRun = traefik?.tests.find((t) => t.distribution === "rke2") ?? traefik?.tests[0]
+if (!traefikRun) throw new Error("the catalog stage needs a passing run of traefik")
+const json = JSON.stringify
+const runJson = `{
+  "id": "traefik",
+  "measurements": [{
+    "distribution": ${json(traefikRun.distribution)},
+    "profile": ${json(traefikRun.profile)},
+    "result": "passed",
+    "pods": [
+${traefikRun.pods.map((p) => `      {"workload": ${json(p.workload)}, "memory": ${json(p.memory)}, "cpu": ${json(p.cpu)}}`).join(",\n")}
+    ],
+    "measuredAt": ${json(traefikRun.date)}
+  }]
+}`
+// Lines whose start the panels light.
+const marked = (code: string, starts: RegExp) =>
+  code.split("\n").flatMap((line, i) => (starts.test(line) ? [i] : []))
+
+const catalogStage: Stage = {
   panels: [
     {
-      title: "components/traefik.yaml",
-      code: `apiVersion: catalog.zeabur.com/v1
-kind: Component
-metadata: {name: Traefik Proxy, license: MIT}
-provides: {capability: ingress}
-defaults: {single-node: recommended, multi-node: recommended}
-requires: [{capability: certificates}]
-releases:
-  - name: traefik
-    chart: oci://ghcr.io/traefik/helm/traefik
-    version: 41.7.1`,
-      marks: [3, 4, 9],
+      title: traefikFile,
+      code: traefikYaml,
+      marks: marked(traefikYaml, /^provides:|^ {4}version:/),
     },
     {
-      title: "measurements · traefik",
-      code: `{
-  "component": "traefik",
-  "environments": [{
-    "distribution": "k3s",
-    "profile": "single-node",
-    "result": "passed",
-    "pods": [{
-      "workload": "traefik",
-      "memory": "22Mi", "cpu": "3m"
-    }]
-  }]
-}`,
-      marks: [5, 8],
+      title: "v1/components/traefik.json",
+      code: runJson,
+      marks: marked(runJson, /"(distribution|memory)":/),
     },
     {
       title: "github.com/zeabur-oss/catalog/releases",
@@ -101,8 +110,8 @@ Verified OK`,
     },
   ],
   nodes: [
-    { icon: "file-text", name: "components/", sub: "traefik.yaml" },
-    { icon: "flask", name: "e2e", sub: "k3s · single-node" },
+    { icon: "file-text", name: "components/", sub: "traefik/component.yaml" },
+    { icon: "flask", name: "e2e", sub: `${traefikRun.distribution} · ${traefikRun.profile}` },
     { icon: "seal-check", name: "Release", sub: "Sigstore" },
   ],
 }
@@ -162,7 +171,7 @@ export const stageOf = (slug: string, locale: string, alts: string[], signInAlt:
     case "builder":
       return builder
     case "catalog":
-      return catalog
+      return catalogStage
     case "identity":
       return identity(signInAlt)
     case "zeatend":

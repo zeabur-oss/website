@@ -38,24 +38,39 @@ export function readLock(path = join(root, "docs.lock.json")): LockRepo[] {
 /** Gets `docs/` and `README.md` of a repository at its locked ref, from GitHub's tarball. */
 export async function snapshot(repo: LockRepo): Promise<Snapshot> {
   const dir = join(root, ".cache/repos", `${repo.name}-${repo.ref}`)
-  const listing = join(dir, ".files.json")
-  if (existsSync(listing)) {
-    return { repo, dir, files: new Set(JSON.parse(readFileSync(listing, "utf8"))) }
-  }
-  rmSync(dir, { recursive: true, force: true })
-  mkdirSync(dir, { recursive: true })
   const url = `https://codeload.github.com/${repo.github}/tar.gz/${repo.ref}`
   const headers: Record<string, string> = {}
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  return { repo, dir, files: new Set(await unpack(url, dir, headers, ["--strip-components=1"])) }
+}
+
+/** Unpacks the `.tar.gz` asset `name` of the public release at the locked tag; returns its directory. */
+export async function releaseAsset(repo: LockRepo, name: string): Promise<string> {
+  const dir = join(root, ".cache/assets", `${repo.name}-${repo.ref}-${name}`)
+  await unpack(`https://github.com/${repo.github}/releases/download/${repo.ref}/${name}`, dir, {})
+  return dir
+}
+
+/** Downloads a `.tar.gz` into `dir` once and returns its file paths. */
+async function unpack(
+  url: string,
+  dir: string,
+  headers: Record<string, string>,
+  flags: string[] = [],
+): Promise<string[]> {
+  const listing = join(dir, ".files.json")
+  if (existsSync(listing)) return JSON.parse(readFileSync(listing, "utf8"))
+  rmSync(dir, { recursive: true, force: true })
+  mkdirSync(dir, { recursive: true })
   const response = await fetch(url, { headers })
   if (!response.ok) throw new Error(`${url}: ${response.status}`)
   const tgz = join(dir, ".archive.tgz")
   writeFileSync(tgz, new Uint8Array(await response.arrayBuffer()))
-  await $`tar -xzf ${tgz} -C ${dir} --strip-components=1`.quiet()
+  await $`tar -xzf ${tgz} -C ${dir} ${flags}`.quiet()
   rmSync(tgz)
   const files = walk(dir).map((p) => relative(dir, p))
   writeFileSync(listing, JSON.stringify(files))
-  return { repo, dir, files: new Set(files) }
+  return files
 }
 
 export function walk(dir: string): string[] {

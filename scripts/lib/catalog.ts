@@ -1,15 +1,11 @@
-// Reads the components (components/<id>.yaml) and application templates
-// (templates/<id>/template.yaml) of a catalog snapshot, with the CI runs that tested them
-// (measurements/). The formats are in zeabur-oss/catalog: docs/reference/component-format.mdx,
-// docs/reference/template-format.mdx and docs/reference/releases.mdx.
-import { createHash } from "node:crypto"
+// Reads the catalog from the API of the release that docs.lock.json pins (`api-v1.tar.gz`), as
+// the catalog's docs/reference/releases.mdx describes it. API v1 has no READMEs and no template
+// measurements (zeabur-oss/catalog#458), so these two come from the repository at the same tag.
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import { parse as parseYaml } from "yaml"
 import { z } from "zod"
 import { locales, type SiteLocale } from "../../src/lib/urls.ts"
 import type { Snapshot } from "./repos.ts"
-import { group } from "../../src/lib/capture.ts"
 
 const localized = <T extends z.ZodRawShape>(shape: T) =>
   z.object({
@@ -38,53 +34,64 @@ const input = z.union([
   }),
 ])
 
-const templateFile = z.object({
-  metadata: localized({ summary: z.string() }).extend({
-    name: z.string(),
-    license: z.string(),
-    homepage: z.string().url(),
-    docs: z.string().url(),
-    version: z.string(),
-  }),
-  requires: z.array(z.object({ component: z.string() })).default([]),
-  services: z.array(
-    z.object({
-      name: z.string(),
-      ports: z.array(z.object({ name: z.string(), port: z.number() })).default([]),
-      resources: z.object({ requests: quantities, limits: quantities }),
-    }),
-  ),
-  inputs: z.array(input).default([]),
-  security: localized({ summary: z.string() }).extend({
-    risks: z.array(localized({ risk: z.string(), mitigation: z.string() })).default([]),
-  }),
+const measurement = z.object({
+  distribution: z.string(),
+  profile: z.string(),
+  platform: z.object({ os: z.string(), architecture: z.string() }),
+  kubernetesVersion: z.string(),
+  result: z.string(),
+  pods: z
+    .array(z.object({ workload: z.string(), memory: z.string(), cpu: z.string() }))
+    .default([]),
+  sourceDigest: z.string(),
+  measuredAt: z.string(),
 })
+
+const entry = z.object({ id: z.string(), sourceDigest: z.string() })
+
+const catalogFile = z.object({ components: z.array(entry), templates: z.array(entry) })
 
 const defaultState = z.enum(["recommended", "optional"])
 
-const componentFile = z.object({
-  metadata,
-  provides: z.object({ capability: z.string() }),
-  defaults: z.object({ "single-node": defaultState, "multi-node": defaultState }),
-  requires: z.array(requirement).default([]),
-  distributions: z.array(z.string()),
-  releases: z.array(z.object({ name: z.string(), version: z.string().optional() })),
-  security: z.object({ summary: z.string() }),
+const componentFile = entry.extend({
+  declaration: z.object({
+    metadata,
+    provides: z.object({ capability: z.string() }),
+    defaults: z.object({ "single-node": defaultState, "multi-node": defaultState }),
+    requires: z.array(requirement).default([]),
+    distributions: z.array(z.string()),
+    releases: z.array(z.object({ name: z.string(), version: z.string().optional() })),
+    security: z.object({ summary: z.string() }),
+  }),
+  measurements: z.array(measurement),
 })
 
-const measurementFile = z.object({
-  environments: z.array(
-    z.object({
-      distribution: z.string(),
-      platform: z.object({ os: z.string(), architecture: z.string() }),
-      kubernetesVersion: z.string(),
-      result: z.enum(["passed", "failed"]),
-      pods: z.array(z.object({ memory: z.string() })),
-      sourceDigest: z.string(),
-      measuredAt: z.string(),
+const templateFile = entry.extend({
+  template: z.object({
+    metadata: localized({ summary: z.string() }).extend({
+      name: z.string(),
+      license: z.string(),
+      homepage: z.string().url(),
+      docs: z.string().url(),
+      version: z.string(),
     }),
-  ),
+    requires: z.array(z.object({ component: z.string() })).default([]),
+    services: z.array(
+      z.object({
+        name: z.string(),
+        ports: z.array(z.object({ name: z.string(), port: z.number() })).default([]),
+        resources: z.object({ requests: quantities, limits: quantities }),
+      }),
+    ),
+    inputs: z.array(input).default([]),
+    security: localized({ summary: z.string() }).extend({
+      risks: z.array(localized({ risk: z.string(), mitigation: z.string() })).default([]),
+    }),
+  }),
 })
+
+/** `measurements/templates/<id>.json` in the repository. */
+const templateMeasurements = z.object({ environments: z.array(measurement) })
 
 /** A text in each site locale; a locale the catalog does not translate gets the English text. */
 export type Localized = Record<SiteLocale, string>
@@ -102,9 +109,8 @@ const templateReadme = {
 } as const satisfies Record<string, Localized>
 
 /**
- * The level-2 sections of a component README (`components/<id>.README.md`,
- * `<id>.README.<locale>.md`), as `componentSections` in the catalog's
- * tools/internal/catalog/readme.go.
+ * The level-2 sections of a component README (`components/<id>/README.md`,
+ * `README.<locale>.md`), as `componentSections` in the catalog's tools/internal/catalog/readme.go.
  */
 const componentReadme = {
   introduction: { en: "Introduction", "zh-TW": "簡介", "zh-CN": "简介" },
@@ -120,6 +126,7 @@ export type ReadmeSection<Id extends string = string> = { id: Id; title: string;
 /** The newest CI run on one distribution and platform that installed these very files and passed. */
 export type TestRun = {
   distribution: string
+  profile: string
   /** `linux/amd64`. */
   platform: string
   kubernetesVersion: string
@@ -127,6 +134,8 @@ export type TestRun = {
   date: string
   /** Idle memory of all its pods together, in MiB. */
   memoryMiB: number
+  /** Idle memory and CPU of one pod of each workload, as Kubernetes quantities. */
+  pods: { workload: string; memory: string; cpu: string }[]
 }
 
 type Entry = {
@@ -196,28 +205,29 @@ function pick<K extends string>(
   return out
 }
 
-function parse<T extends z.ZodType>(schema: T, snap: Snapshot, path: string): z.infer<T> {
-  const parsed = schema.safeParse(parseYaml(readFileSync(join(snap.dir, path), "utf8")))
+function readJson<T extends z.ZodType>(schema: T, dir: string, path: string): z.infer<T> {
+  const parsed = schema.safeParse(JSON.parse(readFileSync(join(dir, path), "utf8")))
   if (!parsed.success) throw new Error(`${path}: ${z.prettifyError(parsed.error)}`)
   return parsed.data
 }
 
-/** The README at path(locale) in each locale, split at its level-2 headings. */
+/** The README at `<dir>/README[.<locale>].md` in each locale, split at its level-2 headings. */
 function readmes<Id extends string>(
   snap: Snapshot,
-  path: (locale: SiteLocale) => string,
+  dir: string,
   headings: Record<Id, Localized>,
 ): Record<SiteLocale, ReadmeSection<Id>[]> {
   const ids = Object.keys(headings) as Id[]
   const one = (locale: SiteLocale) => {
+    const path = `${dir}/README${locale === "en" ? "" : `.${locale}`}.md`
     const sections: ReadmeSection<Id>[] = []
     let fenced = false
-    for (const line of readFileSync(join(snap.dir, path(locale)), "utf8").split("\n")) {
+    for (const line of readFileSync(join(snap.dir, path), "utf8").split("\n")) {
       if (line.startsWith("```")) fenced = !fenced
       const title = !fenced && line.startsWith("## ") ? line.slice(3).trim() : undefined
       if (title !== undefined) {
         const id = ids.find((k) => headings[k][locale] === title)
-        if (!id) throw new Error(`${path(locale)}: unknown heading "${line}"`)
+        if (!id) throw new Error(`${path}: unknown heading "${line}"`)
         sections.push({ id, title, markdown: "" })
       } else {
         const last = sections.at(-1)
@@ -230,22 +240,6 @@ function readmes<Id extends string>(
     SiteLocale,
     ReadmeSection<Id>[]
   >
-}
-
-/** `README.md` in English, else `README.<locale>.md`. */
-const readmeName = (locale: SiteLocale) => `README${locale === "en" ? "" : `.${locale}`}.md`
-
-/** Go's dirhash.Hash1 over `name → repository path`: the `sourceDigest` measurements name. */
-function digest(snap: Snapshot, files: [name: string, path: string][]) {
-  const lines = files
-    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
-    .map(([name, path]) => {
-      const sum = createHash("sha256")
-        .update(readFileSync(join(snap.dir, path)))
-        .digest("hex")
-      return `${sum}  ${name}\n`
-    })
-  return `h1:${createHash("sha256").update(lines.join("")).digest("base64")}`
 }
 
 const mebibytes = (quantity: string) => {
@@ -270,16 +264,14 @@ function mebibytesPer(unit: string): number {
 }
 
 /**
- * As `testedOn` in the catalog's docs/reference/installers.mdx: on each distribution and
- * platform, the newest passing run of these files counts when no failed run of them is newer; a
- * pass on the same day wins.
+ * On each distribution and platform, the newest passing run of the released files when no run of
+ * them that did not pass is newer; a pass on the same day wins. This is `testedOn` in the
+ * catalog's docs/reference/installers.mdx without its filter on the pinned distribution versions,
+ * so that runs on kind count: templates run only there.
  */
-function testsOf(snap: Snapshot, measurement: string, sourceDigest: string): TestRun[] {
-  const path = join(snap.dir, measurement)
-  if (!existsSync(path)) return []
-  const runs = measurementFile
-    .parse(JSON.parse(readFileSync(path, "utf8")))
-    .environments.filter((run) => run.sourceDigest === sourceDigest)
+function testsOf(measurements: z.infer<typeof measurement>[], sourceDigest: string): TestRun[] {
+  const runs = measurements
+    .filter((run) => run.sourceDigest === sourceDigest)
     .sort((a, b) => b.measuredAt.localeCompare(a.measuredAt))
   const tests: TestRun[] = []
   const seen = new Set<string>()
@@ -289,7 +281,7 @@ function testsOf(snap: Snapshot, measurement: string, sourceDigest: string): Tes
     if (seen.has(key)) continue
     const failedLater = runs.some(
       (r) =>
-        r.result === "failed" &&
+        r.result !== "passed" &&
         `${r.distribution} ${r.platform.os}/${r.platform.architecture}` === key &&
         r.measuredAt > run.measuredAt,
     )
@@ -297,50 +289,68 @@ function testsOf(snap: Snapshot, measurement: string, sourceDigest: string): Tes
     seen.add(key)
     tests.push({
       distribution: run.distribution,
+      profile: run.profile,
       platform,
       kubernetesVersion: run.kubernetesVersion,
       date: run.measuredAt,
       memoryMiB: Math.round(run.pods.reduce((sum, pod) => sum + mebibytes(pod.memory), 0)),
+      pods: run.pods,
     })
   }
   return tests
 }
 
-export function readTemplates(snap: Snapshot): CatalogTemplate[] {
-  const sources = [...snap.files]
-    .flatMap((source) => {
-      const match = /^templates\/([^/]+)\/template\.yaml$/.exec(source)
-      return match ? [{ source, id: group(match) }] : []
-    })
-    .sort((a, b) => (a.source < b.source ? -1 : 1))
-  return sources.map(({ source, id }) => {
-    const { metadata, requires, services, inputs, security } = parse(templateFile, snap, source)
-    const dir = `templates/${id}/`
-    const files = [...snap.files]
-      // As the catalog's sourceDigest: e2e.yaml and the READMEs change no measurement.
-      .filter(
-        (f) => f.startsWith(dir) && !/^(e2e\.yaml|README[^/]*\.md)$/.test(f.slice(dir.length)),
-      )
-      .map((f): [string, string] => [f.slice(dir.length), f])
+/** The catalog: `api` is the unpacked `api-v1.tar.gz`, `snap` the repository at the same tag. */
+export function readCatalog(api: string, snap: Snapshot) {
+  const index = readJson(catalogFile, api, "v1/catalog.json")
+  const components = index.components.map(({ id }): CatalogComponent => {
+    const {
+      sourceDigest,
+      declaration: c,
+      measurements,
+    } = readJson(componentFile, api, `v1/components/${id}.json`)
     return {
       id,
-      name: metadata.name,
-      summary: pick(metadata, "summary"),
-      license: metadata.license,
-      homepage: metadata.homepage,
-      source,
-      tests: testsOf(snap, `measurements/templates/${id}.json`, digest(snap, files)),
-      version: metadata.version,
-      docs: metadata.docs,
-      readme: readmes(snap, (l) => dir + readmeName(l), templateReadme),
-      requires: requires.map((r) => r.component),
-      services: services.map((s) => ({
+      name: c.metadata.name,
+      summary: pick(c.metadata, "summary"),
+      license: c.metadata.license,
+      homepage: c.metadata.homepage,
+      source: `components/${id}/component.yaml`,
+      tests: testsOf(measurements, sourceDigest),
+      capability: c.provides.capability,
+      defaults: { singleNode: c.defaults["single-node"], multiNode: c.defaults["multi-node"] },
+      requires: c.requires,
+      distributions: c.distributions,
+      releases: c.releases,
+      security: c.security.summary,
+      readme: readmes(snap, `components/${id}`, componentReadme),
+    }
+  })
+  const templates = index.templates.map(({ id }): CatalogTemplate => {
+    const { sourceDigest, template: t } = readJson(templateFile, api, `v1/templates/${id}.json`)
+    const measured = `measurements/templates/${id}.json`
+    const runs = existsSync(join(snap.dir, measured))
+      ? readJson(templateMeasurements, snap.dir, measured).environments
+      : []
+    return {
+      id,
+      name: t.metadata.name,
+      summary: pick(t.metadata, "summary"),
+      license: t.metadata.license,
+      homepage: t.metadata.homepage,
+      source: `templates/${id}/template.yaml`,
+      tests: testsOf(runs, sourceDigest),
+      version: t.metadata.version,
+      docs: t.metadata.docs,
+      readme: readmes(snap, `templates/${id}`, templateReadme),
+      requires: t.requires.map((r) => r.component),
+      services: t.services.map((s) => ({
         name: s.name,
         ports: s.ports,
         requests: s.resources.requests,
         limits: s.resources.limits,
       })),
-      provided: inputs.flatMap((i) =>
+      provided: t.inputs.flatMap((i) =>
         "secret" in i
           ? []
           : [
@@ -352,42 +362,17 @@ export function readTemplates(snap: Snapshot): CatalogTemplate[] {
               },
             ],
       ),
-      generated: inputs.flatMap((i) => ("secret" in i ? [`${i.secret.name}/${i.secret.key}`] : [])),
+      generated: t.inputs.flatMap((i) =>
+        "secret" in i ? [`${i.secret.name}/${i.secret.key}`] : [],
+      ),
       security: {
-        summary: pick(security, "summary"),
-        risks: security.risks.map((r) => ({
+        summary: pick(t.security, "summary"),
+        risks: t.security.risks.map((r) => ({
           risk: pick(r, "risk"),
           mitigation: pick(r, "mitigation"),
         })),
       },
     }
   })
-}
-
-export function readComponents(snap: Snapshot): CatalogComponent[] {
-  const sources = [...snap.files].filter((f) => /^components\/[^/]+\.yaml$/.test(f)).sort()
-  return sources.map((source) => {
-    const id = source.slice("components/".length, -".yaml".length)
-    const c = parse(componentFile, snap, source)
-    return {
-      id,
-      name: c.metadata.name,
-      summary: pick(c.metadata, "summary"),
-      license: c.metadata.license,
-      homepage: c.metadata.homepage,
-      source,
-      tests: testsOf(
-        snap,
-        `measurements/components/${id}.json`,
-        digest(snap, [[`${id}.yaml`, source]]),
-      ),
-      capability: c.provides.capability,
-      defaults: { singleNode: c.defaults["single-node"], multiNode: c.defaults["multi-node"] },
-      requires: c.requires,
-      distributions: c.distributions,
-      releases: c.releases,
-      security: c.security.summary,
-      readme: readmes(snap, (l) => `components/${id}.${readmeName(l)}`, componentReadme),
-    }
-  })
+  return { components, templates }
 }
