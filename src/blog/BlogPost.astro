@@ -12,6 +12,7 @@ import HeadingText from "../components/HeadingText.astro"
 import MorePosts from "./MorePosts.astro"
 import OpenSource from "./covers/OpenSource.astro"
 import Release020 from "./covers/Release020.astro"
+import Release030 from "./covers/Release030.astro"
 import PostToc from "./PostToc.astro"
 import TermNote from "./TermNote.astro"
 
@@ -27,7 +28,7 @@ const others = (await postsFor(locale)).filter((p) => p.id !== post.id).slice(0,
 const date = dateFormat(locale, "long")
 const { title, description, pubDate, updatedDate, draft, cover } = post.data
 const author = authors[post.data.author]
-const Cover = cover && { "open-source": OpenSource, "release-0-2-0": Release020 }[cover]
+const Cover = cover && { "open-source": OpenSource, "release-0-2-0": Release020, "release-0-3-0": Release030 }[cover]
 const slug = postSlug(post.id)
 const same = new Set((await getCollection("blog")).map((p) => p.id))
 const languages = locales.filter((l) => same.has(`${l}/${slug}`))
