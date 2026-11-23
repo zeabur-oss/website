@@ -1,0 +1,130 @@
+---
+title: Zeabur 开源版 0.3.0：把服务迁到自己的服务器
+description: 把一句话贴给 Claude Code 或 Codex，它就能准备服务器、装好 Zeabur 开源版，再把 Zeabur 上的服务迁过去。Zeabur Desktop 也让你不用安装，就能在自己的电脑上打开集群。
+pubDate: 2026-11-23
+author: pan93412
+draft: true
+cover: release-0-3-0
+---
+
+继 [0.2.0](/zh-CN/blog/zeabur-0-2-0) 之后，Zeabur 开源版 0.3.0 发布了！
+
+Zeabur 将在 2026 年 12 月 31 日停止运营。这一版的重点，就是让你把服务迁到自己的服务器上，继续用熟悉的方式部署和管理。从 Coolify、Dokploy 或 Railway 过来的用户，也可以按同样的路线开始。完整变更请看 [v0.3.0 发布说明](https://github.com/zeabur-oss/zeabur/releases/tag/v0.3.0)。
+
+## 这个版本的新功能
+
+- 把一段提示贴给 Claude Code 或 Codex，它就能帮你安装、升级 Zeabur 开源版，或者把 Zeabur 上的服务和数据迁过来。
+- 一台全新的 Linux 服务器，用 Zeatend 装好 Kubernetes，再执行一次 `helm install`，就能用 HTTPS 打开 Zeabur 开源版。
+- Zeabur Desktop 不用装进集群，在自己的电脑上就能打开任意一个集群。
+- 模板列表会自动获取 Zeabur Catalog 最新的模板，不用升级。
+- 数据库备份设置之后也能修改。
+
+## 交给 Agent：安装、迁移、升级
+
+安装、迁移和升级，现在都可以交给 Claude Code 或 Codex 这类 Coding Agent。每件事都有一段写好的提示，贴给 Agent，它就按照文档一步一步做。遇到要付费、要你决定，或者要修改服务器的地方，它会先停下来问你。
+
+### 迁移
+
+迁移最麻烦的，是一个个重新创建服务、搬数据、改 DNS。在自己的电脑上，把这句话贴给 Agent：
+
+```text
+读 https://oss.zeabur.com/zh-CN/docs/zeabur/get-started/from-zeabur-com.md，把我在 Zeabur 的服务迁到我自己的服务器上，用 Zeabur 开源版管理。
+```
+
+Agent 会按照[从 Zeabur 过来](https://oss.zeabur.com/zh-CN/docs/zeabur/get-started/from-zeabur-com/)这一页操作：
+
+1. 列出 Zeabur 上的项目、服务、环境变量、数据库和域名，并导出数据。
+2. 推荐一台服务器，附上套餐、地区和每月价格。
+3. 用 Zeatend 在新服务器上装好 Kubernetes，再用一次 `helm install` 装好 Zeabur 开源版。
+4. 在 Zeabur 开源版里重新创建每个服务，恢复数据库和存储卷，用 `sslip.io` 地址逐个测试。
+5. 等你同意之后才切换，停掉 Zeabur 上的服务，最后再同步一次数据。
+
+付费、创建通行密钥、决定什么时候切换和修改 DNS，这几步 Agent 都会停下来等你。每次写入新集群之前，也会先让你看要改什么。
+
+### 安装
+
+还没有服务要迁，只想先在一台服务器上装好 Zeabur 开源版，就贴这段：
+
+```text
+按照 https://oss.zeabur.com/zh-CN/docs/zeabur/install/one-command.md 把 Zeabur 开源版安装到我的服务器上。
+如果服务器已经在运行 Kubernetes，改为按照 https://oss.zeabur.com/zh-CN/docs/zeabur/install/existing-cluster.md 安装。
+每次修改服务器之前，先告诉我要做什么，等我同意。创建管理员账号的链接交给我，不要自己打开。
+```
+
+Agent 会检查服务器，没有 Kubernetes 时用 Zeatend 装好，再用一次 `helm install` 安装 Zeabur 开源版，最后把地址和创建管理员账号的链接交给你。详细说明请看[交给 Agent 安装或迁移](https://oss.zeabur.com/zh-CN/docs/zeabur/install/agent/)。
+
+### 升级
+
+有新版本时，集群页面会提醒你。要升级，就贴这段提示：
+
+```text
+按照 https://oss.zeabur.com/zh-CN/docs/zeabur/upgrade/steps.md 把我服务器上的 Zeabur 开源版升级到最新版。
+```
+
+Agent 会查出你当初的安装方式，读完中间每个版本的升级须知，先列出要修改的内容。升级前的快照由你创建，升级后也由你用通行密钥登录确认，到了这些步骤 Agent 会停下来等你。
+
+## 从一台空白服务器开始
+
+不想交给 Agent，也可以自己动手。准备一台有公网 IP 的 Linux 服务器，先用 [Zeatend](https://oss.zeabur.com/zh-CN/docs/zeatend/) 装好 Kubernetes。`zeatend plan` 会先检查服务器、列出要安装的内容，确认没问题再安装。接着执行一次 `helm install`，Zeabur 开源版和负责登录的 Zeabur Identity 就一起装好了。
+
+还没有自己的域名也没关系。Zeabur 开源版会先使用 `zeabur.<ip>.sslip.io` 这样的地址，并自动申请 Let's Encrypt 证书，装好就能用 HTTPS 打开。安装完成后会输出创建第一位管理员的链接，用通行密钥登录。
+
+服务器不需要很大。实测 1 vCPU、2 GiB 内存的服务器装好之后，还剩约 850 MiB 内存，可以再运行一个用现成镜像部署的小应用。步骤请看[用 Zeatend 安装](https://oss.zeabur.com/zh-CN/docs/zeabur/install/one-command/)。
+
+## 不用安装的 Zeabur Desktop
+
+已经有 Kubernetes 集群，只想看看里面的服务？Zeabur Desktop 会列出你电脑上 kubeconfig 里的集群，选一个，它就在新窗口打开 Zeabur 开源版，不用先往集群里安装任何东西。
+
+![Zeabur Desktop 的“选择集群”页面，列出 kubeconfig 里的每个集群，旁边是“打开”按钮](/blog/zeabur-0-3-0/zh-CN/desktop.avif)
+
+macOS、Windows 和 Linux 都能用，到 [Zeabur Desktop 页面](/zh-CN/desktop)下载即可。Windows 有“免安装版”，Linux 有 AppImage，下载后直接运行。在 Mac 上也可以用 Homebrew：
+
+```sh
+brew tap zeabur-oss/tap
+brew install --cask zeabur-oss/tap/zeabur-desktop
+```
+
+Zeabur Desktop 每次启动都会检查新版本。有新版本时，侧边栏会出现“更新到 …”按钮，先附上更新内容，你点“更新并重启”才会安装。详细步骤请看 [Zeabur Desktop](https://oss.zeabur.com/zh-CN/docs/zeabur/install/desktop/)。
+
+## 和在 Zeabur 上一样的用法
+
+创建项目、从 Git 部署、上传文件夹、导入 Docker Compose、一键部署模板、添加域名和设置环境变量，用法都和 Zeabur 一样。区别只在于服务运行在你自己的服务器上。
+
+### 模板始终是最新的
+
+打开模板列表时，Zeabur 开源版会从 Zeabur Catalog 获取最新的模板，最多每 6 小时一次。Zeabur Catalog 新增或更新了模板，你不用升级 Zeabur 开源版就能看到。已经部署的服务不会因此改变。
+
+判断一个模板放不放得下时，会逐个节点计算，每个副本都要放进同一个节点。分散在多个节点上的零碎空间不再算进去，部署前就知道是否真的装得下。
+
+### 备份随时可以改
+
+数据库的“备份”标签页多了“编辑”和“关闭备份”，可以修改目标位置、计划、保留天数和访问密钥。关闭备份会停止计划任务，已经存进 bucket 的备份都会保留。
+
+恢复会创建第二个数据库，原来的继续运行，服务也继续连原来的，等你确认新的没问题再切换过去。删除项目时，如果数据库备份存在同一个项目的对象存储里，检查页面会把这些备份列在要删除的内容中，提醒你先复制出来。
+
+### 部署失败时直接说明原因
+
+应用没有监听 Zeabur 开源版检查的端口时，服务的概览会说明原因，告诉你读取 `PORT`，或改为监听 `0.0.0.0`。如果镜像声明了另一个端口，例如 3000，旁边就会有“改用端口 3000”，点一下就改好。
+
+![服务概览说明应用没有监听端口，旁边是“改用端口 3000”按钮](/blog/zeabur-0-3-0/zh-CN/wrong-port.avif)
+
+## 团队和自动化
+
+管理员可以在“成员”页面的“API 令牌”里点“创建令牌”，给 GitHub Actions 这类 CI 或脚本使用。令牌只能用于你选的项目，有过期时间，创建时只显示一次，同时附上可以直接使用的 kubeconfig。
+
+邀请成员时，勾选的项目现在默认是开发者角色，成员一登录就能部署、看日志。
+
+## 升级到 0.3.0
+
+已经在用 0.2.0 的话，可以用上面的[升级提示](#升级)交给 Agent，或者自己先读 [v0.3.0 发布说明](https://github.com/zeabur-oss/zeabur/releases/tag/v0.3.0)，里面列出了不兼容的变更和需要先做的步骤。这一版和 Zeabur Identity 0.3.3、Zeabur Catalog 0.6.1、Zeabur Builder 0.2.5 一起发布。
+
+## 测试方式
+
+正式版之前发了六个 beta 版。最后几轮在 Linode 的真实服务器上测试，系统是 Ubuntu 24.04，配置有 2 vCPU、4 GB 和 1 vCPU、2 GB 两种。测试范围包括全新安装、升级，从 Git、上传文件夹、镜像、模板和数据库部署，以及域名、备份、成员和删除项目。
+
+这几轮发现的问题，都在正式版之前修好了。例如删除项目时，检查页面现在会说明哪些数据库备份会一起删除（[#912](https://github.com/zeabur-oss/zeabur/issues/912)）。
+
+## 一起参与
+
+- 有使用上的想法、建议，或者遇到什么问题，欢迎到 [Discord](https://zeabur.com/dc) 讨论。
+- 迁移或安装时遇到问题，请到 [Zeabur 开源版 issues](https://github.com/zeabur-oss/zeabur/issues) 反馈，附上你执行的命令和输出。

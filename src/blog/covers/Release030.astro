@@ -1,0 +1,202 @@
+---
+// The cover of the 0.3.0 post: a few things the release brought, framed like the repository
+// covers. Specimens quote the product's own strings (web/src/i18n, desktop/web/src/i18n, the
+// install docs) in the way the product shows them.
+import Logo from "../../components/Logo.astro"
+import type { SiteLocale } from "../../lib/urls.ts"
+import "./cover.css"
+
+interface Props {
+  locale: SiteLocale
+}
+type Specimen =
+  | { kind: "port"; note: string; button: string }
+  | { kind: "open"; context: string; button: string }
+  | { kind: "mono"; lines: string[] }
+type Tile = {
+  area: string
+  big: string
+  small: string
+  size?: "hero"
+  specimen?: Specimen
+}
+
+const install: Specimen = {
+  kind: "mono",
+  lines: ["$ zeatend apply", "$ helm install zeabur \\", "  oci://ghcr.io/zeabur-oss/charts/zeabur"],
+}
+const copy: Record<SiteLocale, Tile[]> = {
+  "zh-TW": [
+    {
+      area: "hero",
+      size: "hero",
+      big: "0.3.0",
+      small: "把服務搬到自己的伺服器。Identity 0.3.3、Catalog 0.6.1 和 Builder 0.2.5 一起發布。",
+    },
+    {
+      area: "agent",
+      big: "交給 Agent",
+      small: "貼一段提示，安裝、搬家和升級都照文件一步一步做。",
+      specimen: { kind: "mono", lines: ["> 把我在 Zeabur 的服務搬到", "  我自己的伺服器上"] },
+    },
+    {
+      area: "install",
+      big: "helm install",
+      small: "空白伺服器先用 Zeatend 裝好 Kubernetes，再一個指令裝好。",
+      specimen: install,
+    },
+    {
+      area: "desktop",
+      big: "Zeabur Desktop",
+      small: "不用安裝到叢集，在自己的電腦上打開任何叢集。",
+      specimen: { kind: "open", context: "zeabur-demo", button: "開啟" },
+    },
+    {
+      area: "port",
+      big: "失敗時說原因",
+      small: "照映像檔宣告的連接埠，按一下就改好。",
+      specimen: { kind: "port", note: "應用程式沒有監聽連接埠 8080。", button: "改用連接埠 3000" },
+    },
+  ],
+  "zh-CN": [
+    {
+      area: "hero",
+      size: "hero",
+      big: "0.3.0",
+      small: "把服务搬到自己的服务器。Identity 0.3.3、Catalog 0.6.1 和 Builder 0.2.5 一起发布。",
+    },
+    {
+      area: "agent",
+      big: "交给 Agent",
+      small: "贴一段提示，安装、迁移和升级都按文档一步一步做。",
+      specimen: { kind: "mono", lines: ["> 把我在 Zeabur 的服务迁移到", "  我自己的服务器上"] },
+    },
+    {
+      area: "install",
+      big: "helm install",
+      small: "空白服务器先用 Zeatend 装好 Kubernetes，再一条命令装好。",
+      specimen: install,
+    },
+    {
+      area: "desktop",
+      big: "Zeabur Desktop",
+      small: "不用安装到集群，在自己的电脑上打开任何集群。",
+      specimen: { kind: "open", context: "zeabur-demo", button: "打开" },
+    },
+    {
+      area: "port",
+      big: "失败时说原因",
+      small: "按镜像声明的端口，点一下就改好。",
+      specimen: { kind: "port", note: "应用没有监听端口 8080。", button: "改用端口 3000" },
+    },
+  ],
+  en: [
+    {
+      area: "hero",
+      size: "hero",
+      big: "0.3.0",
+      small:
+        "Move your services to your own server. Identity 0.3.3, Catalog 0.6.1 and Builder 0.2.5 ship with it.",
+    },
+    {
+      area: "agent",
+      big: "Hand it to an agent",
+      small: "Paste one prompt to install, move or upgrade, step by step from the docs.",
+      specimen: { kind: "mono", lines: ["> Move my Zeabur services", "  to my own server"] },
+    },
+    {
+      area: "install",
+      big: "helm install",
+      small: "Zeatend sets up Kubernetes on a blank server, then one command installs it.",
+      specimen: install,
+    },
+    {
+      area: "desktop",
+      big: "Zeabur Desktop",
+      small: "Open any cluster from your own computer, with nothing installed in it.",
+      specimen: { kind: "open", context: "zeabur-demo", button: "Open" },
+    },
+    {
+      area: "port",
+      big: "Failures say why",
+      small: "It offers the port your image declares. One click fixes it.",
+      specimen: { kind: "port", note: "The app isn't listening on port 8080.", button: "Use port 3000" },
+    },
+  ],
+}
+const tiles = copy[Astro.props.locale]
+---
+
+<div class="cover-frame release-cover" data-reveal>
+  <span class="cross cross-tl" aria-hidden="true"></span>
+  <span class="cross cross-tr" aria-hidden="true"></span>
+  <span class="cross cross-bl" aria-hidden="true"></span>
+  <span class="cross cross-br" aria-hidden="true"></span>
+  <ul class="cover-wall">
+    {tiles.map((t, i) => (
+      <li
+        class:list={["tile", t.size && `tile-${t.size}`]}
+        style={`grid-area: ${t.area}; --i: ${i}`}
+        data-area={t.area}
+      >
+        {t.size === "hero" && <Logo class="tile-logo" />}
+        <p class:list={["tile-big", t.area === "install" && "mono"]}>{t.big}</p>
+        <p class="tile-small">{t.small}</p>
+        {t.specimen?.kind === "port" && (
+          <div class="specimen sp-row" aria-hidden="true">
+            <span class="sp-muted">{t.specimen.note}</span>
+            <span class="sp-button">{t.specimen.button}</span>
+          </div>
+        )}
+        {t.specimen?.kind === "open" && (
+          <div class="specimen sp-row sp-split" aria-hidden="true">
+            <span class="sp-mono-inline">{t.specimen.context}</span>
+            <span class="sp-button">{t.specimen.button}</span>
+          </div>
+        )}
+        {t.specimen?.kind === "mono" && (
+          <div class="specimen sp-mono" aria-hidden="true">
+            {t.specimen.lines.map((line) => (
+              <span
+                class:list={[
+                  "sp-line",
+                  line.startsWith("  ") && "sp-indent",
+                  line.startsWith("$") && "sp-muted",
+                ]}
+              >
+                {line.trim()}
+              </span>
+            ))}
+          </div>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .release-cover .cover-wall {
+    grid-template-areas:
+      "hero"
+      "agent"
+      "install";
+  }
+  .tile:is([data-area="desktop"], [data-area="port"]) {
+    display: none;
+  }
+  @media (min-width: 720px) {
+    .release-cover .cover-wall {
+      grid-template-columns: minmax(0, 1.15fr) repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "hero agent install"
+        "hero desktop port";
+    }
+    .tile:is([data-area="desktop"], [data-area="port"]) {
+      display: flex;
+    }
+  }
+
+  .sp-mono-inline {
+    font-family: var(--font-stack-mono);
+  }
+</style>
