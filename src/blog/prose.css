@@ -60,7 +60,7 @@
   font-size: 0.86em;
   overflow-wrap: anywhere;
 }
-.prose :not(.frame) > pre {
+.prose pre:not(.expressive-code pre) {
   padding: 1rem 1.25rem;
   border: 1px solid var(--site-line);
   border-radius: var(--radius-lg);
