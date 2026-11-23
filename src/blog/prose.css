@@ -73,6 +73,9 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
+.prose .expressive-code .copy button::after {
+  background-color: var(--site-muted);
+}
 .prose img {
   height: auto;
   border: 1px solid var(--site-line);
