@@ -60,13 +60,18 @@
   font-size: 0.86em;
   overflow-wrap: anywhere;
 }
-.prose pre {
+.prose :not(.frame) > pre {
   padding: 1rem 1.25rem;
   border: 1px solid var(--site-line);
   border-radius: var(--radius-lg);
   font-size: 0.84375rem;
   line-height: 1.7;
   overflow-x: auto;
+}
+.prose .expressive-code .frame {
+  border: 1px solid var(--site-line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 .prose img {
   height: auto;
