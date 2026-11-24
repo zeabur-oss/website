@@ -43,7 +43,7 @@ export async function siteNav(locale: SiteLocale) {
   ]
   const useCases: NavItem[] = [
     { ...t.useCases.team, href: zeaburDocs("install/existing-cluster"), icon: "users-three" },
-    { ...t.useCases.machine, href: zeaburDocs("get-started/quickstart"), icon: "hard-drives" },
+    { ...t.useCases.machine, href: zeaburDocs("install/one-command"), icon: "hard-drives" },
   ]
   return {
     product,

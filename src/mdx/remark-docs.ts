@@ -24,7 +24,11 @@ const components = join(root, "src/docs-components/index.ts")
 export type Context = { page: SitePage; repo: RepoLinks; files: RepoFiles }
 
 let cache:
-  | { site: SiteData; repos: Map<string, { links: RepoLinks; files: RepoFiles }> }
+  | {
+      site: SiteData
+      repos: Map<string, { links: RepoLinks; files: RepoFiles }>
+      moved: Map<string, string>
+    }
   | undefined
 
 function load() {
@@ -44,7 +48,8 @@ function load() {
       },
     })
   }
-  cache = { site, repos }
+  const moved = new Map(site.redirects.map(({ from, to }) => [from, to]))
+  cache = { site, repos, moved }
   return cache
 }
 
@@ -76,21 +81,33 @@ function siteUrlOfGithub(href: string, locale: string) {
   return docsUrl(locale, repo.links.name, slug) + link.hash
 }
 
+/** A site URL whose page has moved (a redirect in a repository's docs), as the page it moved to. */
+function current(url: string) {
+  const hash = url.indexOf("#")
+  const path = hash < 0 ? url : url.slice(0, hash)
+  const to = load().moved.get(path)
+  return to === undefined ? url : to + (hash < 0 ? "" : url.slice(hash))
+}
+
 /**
- * The site URL for a link in a page. Pages, and files under docs/, stay on the site. Links to the
- * rest of the repository go to GitHub at the locked ref.
+ * The site URL for a link in a page. Pages, and files under docs/, stay on the site, at the page
+ * they moved to. Links to the rest of the repository go to GitHub at the locked ref.
  */
 export function rewriteHref(href: string, { page, repo, files }: Context): string {
   const target = classifyLink(href, page.source, files)
   switch (target.kind) {
     case "anchor":
       return href
-    case "external":
-      return siteUrlOfGithub(href, page.locale) ?? href
+    case "external": {
+      const site = siteUrlOfGithub(href, page.locale)
+      return site ? current(site) : href
+    }
     case "site":
-      return (localePrefix(page.locale) + target.path).replace(/(.)\/$/, "$1") + target.hash
+      return current(
+        (localePrefix(page.locale) + target.path).replace(/(.)\/$/, "$1") + target.hash,
+      )
     case "page":
-      return docsUrl(page.locale, repo.name, target.slug) + target.hash
+      return current(docsUrl(page.locale, repo.name, target.slug) + target.hash)
     case "file":
       if (isDocsAsset(target.path)) return `/docs-assets/${repo.name}/${target.path}${target.hash}`
       return `https://github.com/${repo.github}/blob/${repo.ref}/${target.path}${target.hash}`
