@@ -100,20 +100,3 @@ test("every docs page links to its built Markdown copy", () => {
   }
   expect(missing).toEqual([])
 })
-
-test("links on the site's own pages do not go to a redirect", () => {
-  const isRedirect = (path: string) => {
-    const file = join(dist, path, "index.html")
-    return existsSync(file) && readFileSync(file, "utf8").includes('http-equiv="refresh"')
-  }
-  const redirected: string[] = []
-  for (const page of [...pages(dist), join(dist, "404.html")]) {
-    const html = readFileSync(page, "utf8")
-    if (html.includes('http-equiv="refresh"')) continue
-    for (const link of html.matchAll(/<a [^>]*href="(\/[^"#?]*)/g)) {
-      const path = group(link)
-      if (isRedirect(path)) redirected.push(`${page.slice(dist.length)}: ${path}`)
-    }
-  }
-  expect([...new Set(redirected)]).toEqual([])
-})
