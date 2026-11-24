@@ -50,7 +50,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
     publisher: organization,
   }}
 >
-  <section class="wrap hero frame">
+  <section class="wrap hero rails">
     <p class="label text-site-muted" data-reveal>
       {t.hero.meta}
     </p>
@@ -84,7 +84,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
     <span class="bg-hatch"></span>
   </div>
 
-  <section class="wrap frame" aria-label={t.hero.start}>
+  <section class="wrap rails" aria-label={t.hero.start}>
     <ul class="grid md:grid-cols-2">
       {entrances.map((e, i) => (
         <li
@@ -111,7 +111,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
     </ul>
   </section>
 
-  <section class="wrap section frame" id="start" aria-labelledby="start-title">
+  <section class="wrap section rails" id="start" aria-labelledby="start-title">
     <SectionHead
       id="start-title"
       number="05"
@@ -122,7 +122,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
     <StartWays locale={locale} />
   </section>
 
-  <section class="wrap section frame" id="members" aria-labelledby="members-title">
+  <section class="wrap section rails" id="members" aria-labelledby="members-title">
     <SectionHead
       id="members-title"
       number="06"
@@ -173,7 +173,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
       </a>
     </p>
   </section>
-  <section class="wrap section frame" id="community" aria-labelledby="community-title">
+  <section class="wrap section rails" id="community" aria-labelledby="community-title">
     <a
       href="https://zeabur.com/dc"
       class="on-violet group grid items-center gap-8 rounded-xl bg-(--violet) p-8 text-white no-underline md:grid-cols-[1fr_auto] md:p-12"

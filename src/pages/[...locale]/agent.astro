@@ -27,7 +27,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
   section="home"
   image={`/og/home/${locale}.png`}
 >
-  <section class="wrap hero frame">
+  <section class="wrap hero rails">
     <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
       <span>{t.label}</span>
       {!docs.guide && <span class="pill">{chrome[locale].nav.soon}</span>}
@@ -68,7 +68,7 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
     </div>
   </section>
 
-  <section class="wrap section frame" aria-labelledby="agent-does">
+  <section class="wrap section rails" aria-labelledby="agent-does">
     <div class="grid gap-x-12 gap-y-14 lg:grid-cols-2">
       <div>
         <h2 id="agent-does" class="mb-6">

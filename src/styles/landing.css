@@ -134,9 +134,9 @@ body {
     border-top: var(--stroke) solid var(--site-line);
   }
 
-  /* The page's frame, as on zeabur.com: two rails a little outside the content, a cross where a
+  /* The page rails, as on zeabur.com: two rails a little outside the content, a cross where a
      section's rule meets them, and hatched bands between parts. From 768px. */
-  .frame {
+  .rails {
     --rail-pad: 0px;
     position: relative;
   }
@@ -144,11 +144,11 @@ body {
     --rail-pad: 0px;
   }
   @media (min-width: 768px) {
-    .frame,
+    .rails,
     .band {
       --rail-pad: 1.5rem;
     }
-    .frame::before {
+    .rails::before {
       content: "";
       position: absolute;
       inset-block: 0;
@@ -156,7 +156,7 @@ body {
       border-inline: var(--stroke) solid var(--site-line);
       pointer-events: none;
     }
-    .frame.section::after {
+    .rails.section::after {
       --cross: var(--site-line-strong);
       content: "";
       position: absolute;
