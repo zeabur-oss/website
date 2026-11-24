@@ -94,7 +94,7 @@ const siteRows: Row[] = [
   {
     slug: "identity",
     repo: "identity",
-    docs: "get-started",
+    docs: "get-started/quickstart",
     group: "components",
     sections: ["steps", "highlights", "screens", "details", "start"],
     start: { kind: "file", file: identityExample },

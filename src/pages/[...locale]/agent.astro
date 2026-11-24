@@ -15,7 +15,7 @@ const docs = agentDocs(locale)
 const links = [
   ...(docs.guide ? [{ href: docs.guide, text: t.guide }] : []),
   ...(docs.install ? [{ href: docs.install, text: t.install }] : []),
-  { href: docsUrl(locale, "zeabur", "get-started/quickstart"), text: t.manual },
+  { href: docsUrl(locale, "zeabur", "install/one-command"), text: t.manual },
 ]
 const number = (i: number) => String(i + 1).padStart(2, "0")
 ---

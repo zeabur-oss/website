@@ -23,7 +23,7 @@ const zeaburDocs = (slug?: string) => docsUrl(locale, "zeabur", slug)
 
 const entrances = [
   { ...t.hero.team, href: zeaburDocs("install/existing-cluster") },
-  { ...t.hero.machine, href: zeaburDocs("get-started/quickstart") },
+  { ...t.hero.machine, href: zeaburDocs("install/one-command") },
 ]
 const members = (await sitePages(locale)).map((p) => ({
   name: p.name,
