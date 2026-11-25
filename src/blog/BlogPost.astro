@@ -16,7 +16,8 @@ import Release030 from "./covers/Release030.astro"
 import PostToc from "./PostToc.astro"
 import TermNote from "./TermNote.astro"
 
-// Title, dates, the text in one 44rem column with its contents beside it, then the other posts.
+// Title, dates and text in one centred 44rem column, the contents in the margin beside it, then
+// the other posts.
 interface Props {
   post: Post
 }
@@ -59,39 +60,41 @@ const image = `/og/blog/${locale}/${slug}.png`
     publisher: organization,
   }}
 >
-  <header class="wrap hero grid justify-items-start gap-5 pb-0 print:mb-[8mm] print:max-w-none print:gap-[3mm] print:border-b-[0.5pt] print:border-b-[#ccc] print:p-0 print:pb-[5mm]">
-    <a
-      class="inline-flex items-center gap-1.5 text-sm text-site-muted no-underline hover:text-site-text print:hidden"
-      href={blogUrl(locale)}
-    >
-      <Icon name="arrow-left" />
-      {t.back}
-    </a>
-    <h1 class="display max-w-[18em] text-[clamp(2rem,1.6rem+1.8vw,3.25rem)] print:max-w-none print:text-[20pt] print:leading-[1.35]">
-      <HeadingText text={title} locale={locale} />
-    </h1>
-    <p class="lead max-w-[40rem] print:max-w-none print:text-[11pt] print:leading-[1.7] print:text-[#444]">
-      <HeadingText text={description} locale={locale} />
-    </p>
-    <p class="flex flex-wrap items-center gap-x-6 gap-y-1 type-body text-site-faint print:text-[8.5pt] print:text-[#666]">
+  <header class="wrap hero pb-0 print:mb-[8mm] print:max-w-none print:border-b-[0.5pt] print:border-b-[#ccc] print:p-0 print:pb-[5mm]">
+    <div class="mx-auto grid max-w-[44rem] justify-items-start gap-5 print:max-w-none print:gap-[3mm]">
       <a
-        class="inline-flex items-center gap-2 text-site-muted no-underline hover:text-site-text"
-        href={author.url}
-        rel="author"
+        class="inline-flex items-center gap-1.5 text-sm text-site-muted no-underline hover:text-site-text print:hidden"
+        href={blogUrl(locale)}
       >
-        <img class="size-6 rounded-full" src={author.avatar} alt="" width="24" height="24" />
-        {author.handle}
+        <Icon name="arrow-left" />
+        {t.back}
       </a>
-      <span>
-        {t.published} <time datetime={pubDate.toISOString()}>{date.format(pubDate)}</time>
-      </span>
-      {updatedDate && (
+      <h1 class="display max-w-[18em] text-[clamp(2rem,1.6rem+1.8vw,3.25rem)] print:max-w-none print:text-[20pt] print:leading-[1.35]">
+        <HeadingText text={title} locale={locale} />
+      </h1>
+      <p class="lead max-w-[40rem] print:max-w-none print:text-[11pt] print:leading-[1.7] print:text-[#444]">
+        <HeadingText text={description} locale={locale} />
+      </p>
+      <p class="flex flex-wrap items-center gap-x-6 gap-y-1 type-body text-site-faint print:text-[8.5pt] print:text-[#666]">
+        <a
+          class="inline-flex items-center gap-2 text-site-muted no-underline hover:text-site-text"
+          href={author.url}
+          rel="author"
+        >
+          <img class="size-6 rounded-full" src={author.avatar} alt="" width="24" height="24" />
+          {author.handle}
+        </a>
         <span>
-          {t.updated} <time datetime={updatedDate.toISOString()}>{date.format(updatedDate)}</time>
+          {t.published} <time datetime={pubDate.toISOString()}>{date.format(pubDate)}</time>
         </span>
-      )}
-      {draft && <span class="pill">{t.draft}</span>}
-    </p>
+        {updatedDate && (
+          <span>
+            {t.updated} <time datetime={updatedDate.toISOString()}>{date.format(updatedDate)}</time>
+          </span>
+        )}
+        {draft && <span class="pill">{t.draft}</span>}
+      </p>
+    </div>
   </header>
 
   {Cover && (
@@ -100,8 +103,8 @@ const image = `/og/blog/${locale}/${slug}.png`
     </div>
   )}
 
-  <article class="wrap grid grid-cols-[minmax(0,1fr)] items-start gap-12 pt-12 pb-(--section-space) min-[1100px]:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] print:max-w-none print:p-0">
-    <div class="prose">
+  <article class="wrap grid grid-cols-[minmax(0,1fr)] items-start gap-12 pt-12 pb-(--section-space) xl:grid-cols-[minmax(0,1fr)_44rem_minmax(0,1fr)] print:max-w-none print:p-0">
+    <div class="prose mx-auto w-full xl:col-start-2 print:mx-0">
       <Content components={{ TermNote }} />
     </div>
     <PostToc headings={headings} label={t.toc} />

@@ -1,6 +1,6 @@
 ---
 import { cn } from "cn"
-// A post's contents beside its text on wide screens, marking the section being read.
+// A post's contents in the margin beside its text on wide screens, marking the section being read.
 import type { MarkdownHeading } from "astro"
 
 interface Props {
@@ -13,7 +13,7 @@ const toc = Astro.props.headings.filter((h) => h.depth === 2 || h.depth === 3)
 
 {toc.length > 1 && (
   <nav
-    class="sticky top-[calc(var(--header-height)+2rem)] max-h-[calc(100vh-var(--header-height)-4rem)] w-[min(100%,16rem)] justify-self-end overflow-y-auto max-[1100px]:hidden print:hidden"
+    class="sticky top-[calc(var(--header-height)+2rem)] max-h-[calc(100vh-var(--header-height)-4rem)] w-[min(100%,16rem)] overflow-y-auto max-xl:hidden xl:col-start-3 print:hidden"
     aria-label={label}
     data-toc
   >
