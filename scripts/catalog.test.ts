@@ -8,7 +8,6 @@ const dist = join(root, "dist")
 const catalog = readLock().find((r) => r.name === "catalog")
 if (!catalog) throw new Error("docs.lock.json has no catalog")
 const api = join(root, ".cache/assets", `catalog-${catalog.ref}-api-v1.tar.gz`, "v1")
-const source = join(root, ".cache/repos", `catalog-${catalog.ref}`)
 
 type Entry = { id: string; sourceDigest: string }
 type Run = { result: string; sourceDigest: string }
@@ -17,14 +16,8 @@ const index: { components: Entry[]; templates: Entry[] } = JSON.parse(
 )
 const json = (path: string) => JSON.parse(readFileSync(path, "utf8"))
 
-/** Runs of an entry: the API has those of components, the repository those of templates. */
-const runs = {
-  components: (id: string): Run[] => json(join(api, "components", `${id}.json`)).measurements,
-  templates: (id: string): Run[] => {
-    const path = join(source, "measurements/templates", `${id}.json`)
-    return existsSync(path) ? json(path).environments : []
-  },
-}
+const runs = (kind: "components" | "templates", id: string): Run[] =>
+  json(join(api, kind, `${id}.json`)).measurements
 
 const page = (path: string) => readFileSync(join(dist, path, "index.html"), "utf8")
 
@@ -43,7 +36,7 @@ test("every entry with a passing run of its released files shows a test date", (
   const undated = (["components", "templates"] as const).flatMap((kind) =>
     index[kind]
       .filter((e) =>
-        runs[kind](e.id).some((r) => r.result === "passed" && r.sourceDigest === e.sourceDigest),
+        runs(kind, e.id).some((r) => r.result === "passed" && r.sourceDigest === e.sourceDigest),
       )
       .map((e) => `catalog/${kind}/${e.id}`)
       .filter((path) => !/<time datetime="\d{4}-\d{2}-\d{2}">/.test(page(path))),

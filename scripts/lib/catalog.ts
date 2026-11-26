@@ -1,11 +1,9 @@
 // Reads the catalog from the API of the release that docs.lock.json pins (`api-v1.tar.gz`), as
-// the catalog's docs/reference/releases.mdx describes it. API v1 has no READMEs and no template
-// measurements (zeabur-oss/catalog#458), so these two come from the repository at the same tag.
-import { existsSync, readFileSync } from "node:fs"
+// the catalog's docs/reference/releases.mdx describes it.
+import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { z } from "zod"
 import { locales, type SiteLocale } from "../../src/lib/urls.ts"
-import type { Snapshot } from "./repos.ts"
 
 const localized = <T extends z.ZodRawShape>(shape: T) =>
   z.object({
@@ -49,6 +47,9 @@ const measurement = z.object({
 
 const entry = z.object({ id: z.string(), sourceDigest: z.string() })
 
+/** The locales that have a README next to the entry's file. */
+const readmeLocales = z.array(z.string()).min(1)
+
 const catalogFile = z.object({ components: z.array(entry), templates: z.array(entry) })
 
 const defaultState = z.enum(["recommended", "optional"])
@@ -64,6 +65,7 @@ const componentFile = entry.extend({
     security: z.object({ summary: z.string() }),
   }),
   measurements: z.array(measurement),
+  readmes: readmeLocales,
 })
 
 const templateFile = entry.extend({
@@ -88,16 +90,15 @@ const templateFile = entry.extend({
       risks: z.array(localized({ risk: z.string(), mitigation: z.string() })).default([]),
     }),
   }),
+  measurements: z.array(measurement),
+  readmes: readmeLocales,
 })
-
-/** `measurements/templates/<id>.json` in the repository. */
-const templateMeasurements = z.object({ environments: z.array(measurement) })
 
 /** A text in each site locale; a locale the catalog does not translate gets the English text. */
 export type Localized = Record<SiteLocale, string>
 
 /**
- * The level-2 sections of a template README (`templates/<id>/README.md`, `README.<locale>.md`)
+ * The level-2 sections of a template README (`v1/templates/<id>/README.md`, `README.<locale>.md`)
  * in their order, with their heading in each locale, as `readmeSections` in the catalog's
  * tools/internal/templates/readme.go.
  */
@@ -109,7 +110,7 @@ const templateReadme = {
 } as const satisfies Record<string, Localized>
 
 /**
- * The level-2 sections of a component README (`components/<id>/README.md`,
+ * The level-2 sections of a component README (`v1/components/<id>/README.md`,
  * `README.<locale>.md`), as `componentSections` in the catalog's tools/internal/catalog/readme.go.
  */
 const componentReadme = {
@@ -211,22 +212,28 @@ function readJson<T extends z.ZodType>(schema: T, dir: string, path: string): z.
   return parsed.data
 }
 
-/** The README at `<dir>/README[.<locale>].md` in each locale, split at its level-2 headings. */
+/**
+ * The README at `<dir>/README[.<locale>].md` in each locale, split at its level-2 headings. A
+ * locale not in `available` gets the English README.
+ */
 function readmes<Id extends string>(
-  snap: Snapshot,
+  api: string,
   dir: string,
+  available: string[],
   headings: Record<Id, Localized>,
 ): Record<SiteLocale, ReadmeSection<Id>[]> {
+  if (!available.includes("en")) throw new Error(`${dir}: no English README`)
   const ids = Object.keys(headings) as Id[]
   const one = (locale: SiteLocale) => {
-    const path = `${dir}/README${locale === "en" ? "" : `.${locale}`}.md`
+    const source = available.includes(locale) ? locale : "en"
+    const path = `${dir}/README${source === "en" ? "" : `.${source}`}.md`
     const sections: ReadmeSection<Id>[] = []
     let fenced = false
-    for (const line of readFileSync(join(snap.dir, path), "utf8").split("\n")) {
+    for (const line of readFileSync(join(api, path), "utf8").split("\n")) {
       if (line.startsWith("```")) fenced = !fenced
       const title = !fenced && line.startsWith("## ") ? line.slice(3).trim() : undefined
       if (title !== undefined) {
-        const id = ids.find((k) => headings[k][locale] === title)
+        const id = ids.find((k) => headings[k][source] === title)
         if (!id) throw new Error(`${path}: unknown heading "${line}"`)
         sections.push({ id, title, markdown: "" })
       } else {
@@ -300,14 +307,15 @@ function testsOf(measurements: z.infer<typeof measurement>[], sourceDigest: stri
   return tests
 }
 
-/** The catalog: `api` is the unpacked `api-v1.tar.gz`, `snap` the repository at the same tag. */
-export function readCatalog(api: string, snap: Snapshot) {
+/** The catalog in the unpacked `api-v1.tar.gz` at `api`. */
+export function readCatalog(api: string) {
   const index = readJson(catalogFile, api, "v1/catalog.json")
   const components = index.components.map(({ id }): CatalogComponent => {
     const {
       sourceDigest,
       declaration: c,
       measurements,
+      readmes: available,
     } = readJson(componentFile, api, `v1/components/${id}.json`)
     return {
       id,
@@ -323,15 +331,16 @@ export function readCatalog(api: string, snap: Snapshot) {
       distributions: c.distributions,
       releases: c.releases,
       security: c.security.summary,
-      readme: readmes(snap, `components/${id}`, componentReadme),
+      readme: readmes(api, `v1/components/${id}`, available, componentReadme),
     }
   })
   const templates = index.templates.map(({ id }): CatalogTemplate => {
-    const { sourceDigest, template: t } = readJson(templateFile, api, `v1/templates/${id}.json`)
-    const measured = `measurements/templates/${id}.json`
-    const runs = existsSync(join(snap.dir, measured))
-      ? readJson(templateMeasurements, snap.dir, measured).environments
-      : []
+    const {
+      sourceDigest,
+      template: t,
+      measurements,
+      readmes: available,
+    } = readJson(templateFile, api, `v1/templates/${id}.json`)
     return {
       id,
       name: t.metadata.name,
@@ -339,10 +348,10 @@ export function readCatalog(api: string, snap: Snapshot) {
       license: t.metadata.license,
       homepage: t.metadata.homepage,
       source: `templates/${id}/template.yaml`,
-      tests: testsOf(runs, sourceDigest),
+      tests: testsOf(measurements, sourceDigest),
       version: t.metadata.version,
       docs: t.metadata.docs,
-      readme: readmes(snap, `templates/${id}`, templateReadme),
+      readme: readmes(api, `v1/templates/${id}`, available, templateReadme),
       requires: t.requires.map((r) => r.component),
       services: t.services.map((s) => ({
         name: s.name,
