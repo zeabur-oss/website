@@ -245,7 +245,7 @@ export async function sync() {
       catalog = {
         github: repo.github,
         ref: repo.ref,
-        ...readCatalog(await releaseAsset(repo, "api-v1.tar.gz"), snap),
+        ...readCatalog(await releaseAsset(repo, "api-v1.tar.gz")),
         files: Object.fromEntries(
           exampleFiles.map((f) => [f, readFileSync(join(snap.dir, f), "utf8")]),
         ) as Record<ExampleFile, string>,
