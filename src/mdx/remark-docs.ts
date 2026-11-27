@@ -87,7 +87,9 @@ function sameChannel(path: string, channel: RepoLinks["channel"]) {
   if (channel !== "main" || !match?.[1]) return path
   const main = load().repos.get(mainSection(match[1]))
   const slug = match[2] ?? "index"
-  return main?.files.published.has(slug) ? docsUrl("en", main.links.name, slug) : path
+  return main?.files.published.has(slug)
+    ? path.replace(/^\/docs\/[^/]+/, `/docs/${main.links.name}`)
+    : path
 }
 
 /**

@@ -186,8 +186,7 @@ const zhCN: LandingCopy = {
     project: "shop 项目的地图。worker 反复崩溃，所以排在“需要处理”的第一行。",
     diagnosis: "worker 重启了 14 次。错误在重启前那一次运行的日志里，旁边就是打开日志的按钮。",
     "change-review": "保存 web 的变更前，先看 YAML 差异：NODE_ENV 从 production 改成 staging。",
-    database:
-      "只有一个实例的 PostgreSQL。它出故障时没有其他实例接手，所以 Zeabur 开源版提醒你设置备份。",
+    database: "只有一个实例的 PostgreSQL。它出故障时没有其他实例接手，所以 Zeabur 开源版提醒你设置备份。",
     cluster: "集群页：Kubernetes 1.34 即将停止支持，节点内存用到 91%，磁盘用到 88%。",
   },
   deploy: {
