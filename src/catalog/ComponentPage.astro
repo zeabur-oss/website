@@ -1,7 +1,8 @@
 ---
 import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import CommandBlock from "../landing/CommandBlock.astro"
+import { docsUrl, markdownPath, siteOrigin, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -33,6 +34,7 @@ const readme = await Promise.all(
 // Used by follows Use it: setup and use first, then what depends on it, then removal.
 const split = readme.findIndex((s) => s.id === "remove-it" || s.id === "troubleshooting")
 const [before, after] = split < 0 ? [readme, []] : [readme.slice(0, split), readme.slice(split)]
+const agentDocs = siteOrigin + markdownPath(docsUrl(locale, "zeabur", "cluster/components"))
 ---
 
 <EntryPage
@@ -57,6 +59,15 @@ const [before, after] = split < 0 ? [readme, []] : [readme.slice(0, split), read
       <div class="prose min-w-0" set:html={r.html} />
     </Section>
   ))}
+
+  <Section id="agent" title={t.agent.title} body={t.agent.body}>
+    <CommandBlock
+      id="agent-prompt"
+      code={t.agent.components(x.id, agentDocs)}
+      copy={t.agent.copy}
+      wrap
+    />
+  </Section>
 
   {usedBy.length > 0 && (
     <Section id="used-by" title={w.usedBy}>

@@ -2,8 +2,6 @@
 // The three ways to start, ordered by how hands-on the reader wants to be, on the home page and on
 // the Zeabur page. Each way names the other two in one line.
 import Icon from "../components/Icon.astro"
-import { chrome } from "../lib/chrome.ts"
-import { agentDocs } from "../lib/agent-guide.ts"
 import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { landingCopy } from "./copy.ts"
 
@@ -12,18 +10,15 @@ interface Props {
 }
 const { locale } = Astro.props
 const t = landingCopy[locale].start
-const soon = chrome[locale].nav.soon
 const zeaburDocs = (slug: string) => docsUrl(locale, "zeabur", slug)
 const ways = [
   {
     id: "start-agent",
     ...t.agent,
-    soon: !agentDocs(locale).guide,
     links: [{ href: productUrl(locale, "agent"), text: t.agent.link }],
   },
   {
     id: "start-zeatend",
-    soon: false,
     ...t.zeatend,
     links: [
       { href: docsUrl(locale, "zeatend"), text: t.zeatend.steps },
@@ -32,7 +27,6 @@ const ways = [
   },
   {
     id: "start-manual",
-    soon: false,
     ...t.manual,
     links: [
       { href: zeaburDocs("install/one-command"), text: t.manual.server },
@@ -51,10 +45,7 @@ const ways = [
       data-reveal
       style={`--i:${i}`}
     >
-      <p class="flex min-h-5 flex-wrap items-center gap-3">
-        <span class="label text-site-accent">{String(i + 1).padStart(2, "0")}</span>
-        {way.soon && <span class="soon">{soon}</span>}
-      </p>
+      <p class="label text-site-accent">{String(i + 1).padStart(2, "0")}</p>
       <h3>{way.title}</h3>
       <p class="body">{way.body}</p>
       <ul class="mt-auto grid border-t border-site-line">

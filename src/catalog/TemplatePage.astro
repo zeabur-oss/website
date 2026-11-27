@@ -1,7 +1,8 @@
 ---
 import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import CommandBlock from "../landing/CommandBlock.astro"
+import { docsUrl, markdownPath, siteOrigin, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, formatBytes, formatCpu, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -23,6 +24,7 @@ const readme = await Promise.all(
   x.readme[locale].map(async (s) => ({ ...s, html: (await render.render(s.markdown)).code })),
 )
 const [intro, ...rest] = readme
+const agentDocs = siteOrigin + markdownPath(docsUrl(locale, "zeabur", "deploy/templates"))
 ---
 
 <EntryPage
@@ -71,6 +73,15 @@ const [intro, ...rest] = readme
         <Pills items={x.generated.map((text) => ({ text, mono: true }))} />
       </div>
     )}
+  </Section>
+
+  <Section id="agent" title={t.agent.title} body={t.agent.body}>
+    <CommandBlock
+      id="agent-prompt"
+      code={t.agent.templates(x.id, agentDocs)}
+      copy={t.agent.copy}
+      wrap
+    />
   </Section>
 
   {rest.map((r) => (
