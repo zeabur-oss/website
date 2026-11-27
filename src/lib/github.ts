@@ -1,8 +1,6 @@
-// What the site reads from GitHub at build time: the star count and the files of each latest
-// release. A build without network or over the rate limit leaves out what it could not read.
+// What the site reads from GitHub at build time: the star count and the Homebrew casks. A build
+// without network or over the rate limit leaves out what it could not read.
 import { z } from "astro/zod"
-import type { ProductId } from "./products.ts"
-import { releaseTag } from "./releases.ts"
 import { githubOrg } from "./site.ts"
 
 export const starredRepo = `${githubOrg}/zeabur`
@@ -40,50 +38,6 @@ export async function starCount(locale: string): Promise<string | undefined> {
   return new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(
     count,
   )
-}
-
-/** The fields of a GitHub release that the product pages read. */
-const releaseReply = z.object({
-  html_url: z.string(),
-  assets: z.array(z.object({ name: z.string(), browser_download_url: z.string() })),
-})
-
-export type Release = {
-  tag: string
-  page: string
-  /** The release's files with their download links. */
-  files: { name: string; url: string }[]
-}
-
-async function readRelease(id: ProductId): Promise<Release> {
-  const tag = releaseTag(id)
-  const latest: Release = {
-    tag,
-    page: `${githubOrg}/${id}/releases/tag/${tag}`,
-    files: [],
-  }
-  const reply = await api(`${id}/releases/tags/${tag}`, releaseReply)
-  if (!reply) return latest
-  return {
-    ...latest,
-    page: reply.html_url,
-    files: reply.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
-  }
-}
-
-const releases = new Map<ProductId, Promise<Release>>()
-
-/**
- * The latest full release of a repository, with its files, read once per build. A build without
- * network gets the tag and its release page, without files.
- */
-export function release(id: ProductId): Promise<Release> {
-  let r = releases.get(id)
-  if (!r) {
-    r = readRelease(id)
-    releases.set(id, r)
-  }
-  return r
 }
 
 async function readCask(cask: string): Promise<boolean> {

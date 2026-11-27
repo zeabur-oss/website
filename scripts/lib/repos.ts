@@ -13,6 +13,8 @@ export type Source = {
   /** The release tag, or the commit of main or of a local check. */
   ref: string
   channel: "release" | "main"
+  /** The release's page and files, for the release channel. */
+  release?: { page: string; files: { name: string; url: string }[] }
 }
 
 export type Snapshot = {
@@ -25,15 +27,22 @@ export type Snapshot = {
 
 export const root = resolve(import.meta.dirname, "../..")
 
-/** The fields of a GitHub release that pick the latest one. */
-export type ReleaseInfo = { tag_name: string; draft: boolean; prerelease: boolean }
+/** The fields of a GitHub release the site reads. */
+export type ReleaseInfo = {
+  tag_name: string
+  draft: boolean
+  prerelease: boolean
+  html_url: string
+  assets: { name: string; browser_download_url: string }[]
+}
 
 /** The highest full release: no draft, no pre-release, a tag like v0.2.0. */
-export function latestRelease(releases: ReleaseInfo[]): string | undefined {
+export function latestRelease<T extends Omit<ReleaseInfo, "html_url" | "assets">>(
+  releases: T[],
+): T | undefined {
   return releases
     .filter((r) => !r.draft && !r.prerelease && /^v\d+\.\d+\.\d+$/.test(r.tag_name))
-    .map((r) => r.tag_name)
-    .sort((a, b) => Bun.semver.order(b, a))[0]
+    .sort((a, b) => Bun.semver.order(b.tag_name, a.tag_name))[0]
 }
 
 async function github(path: string, accept = "application/vnd.github+json") {
@@ -56,13 +65,22 @@ export async function latestSources(): Promise<Source[]> {
       const releases: ReleaseInfo[] = await (
         await github(`${repo.github}/releases?per_page=100`)
       ).json()
-      const tag = latestRelease(releases)
-      if (!tag) throw new Error(`${repo.github} has no full release`)
+      const latest = latestRelease(releases)
+      if (!latest) throw new Error(`${repo.github} has no full release`)
       const main = await (
         await github(`${repo.github}/commits/main`, "application/vnd.github.sha")
       ).text()
       return [
-        { ...repo, name: id, ref: tag, channel: "release" },
+        {
+          ...repo,
+          name: id,
+          ref: latest.tag_name,
+          channel: "release",
+          release: {
+            page: latest.html_url,
+            files: latest.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
+          },
+        },
         { ...repo, name: mainSection(id), ref: main, channel: "main" },
       ]
     }),

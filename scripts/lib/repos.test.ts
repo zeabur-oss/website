@@ -16,7 +16,7 @@ test("the latest release is the highest full release", () => {
       release("v0.3.10"),
       release("v0.3.9"),
       release("v0.3.2"),
-    ]),
+    ])?.tag_name,
   ).toBe("v0.3.10")
 })
 

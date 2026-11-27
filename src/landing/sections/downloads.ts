@@ -1,4 +1,5 @@
-import { hasCask, release } from "../../lib/github.ts"
+import { hasCask } from "../../lib/github.ts"
+import { release } from "../../lib/releases.ts"
 import { downloadTable, fileFor, oses, type Arch, type Os } from "../../lib/downloads.ts"
 import type { PageRow, PageText } from "../../lib/site-pages.ts"
 
@@ -8,7 +9,7 @@ export async function pageDownloads(row: PageRow, text: PageText) {
   if (row.start.kind !== "downloads") return undefined
   if (!words) throw new Error(`${row.slug} offers downloads but its text has no download words`)
   const { files: prefix, cask } = row.start
-  const latest = await release(row.repo)
+  const latest = release(row.repo)
   const files = latest.files.filter((f) => f.name.startsWith(prefix))
   const archName = (os: Os, arch: Arch) =>
     os === "macos" && arch === "arm64" ? words.apple : arch === "arm64" ? "Arm64" : "x64"

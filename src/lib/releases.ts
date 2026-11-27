@@ -10,12 +10,14 @@ let site: SiteData | undefined
 const siteData = () =>
   (site ??= JSON.parse(readFileSync(join(process.cwd(), "content/site.json"), "utf8")) as SiteData)
 
-/** The latest full release of a product, which the docs sync read. */
-export function releaseTag(id: ProductId): string {
+/** The latest full release of a product, with its page and files, which the docs sync read. */
+export function release(id: ProductId) {
   const repo = siteData().repos.find((r) => r.name === id)
-  if (!repo) throw new Error(`content/site.json has no ${id}`)
-  return repo.ref
+  if (!repo?.release) throw new Error(`content/site.json has no release of ${id}`)
+  return { tag: repo.ref, ...repo.release }
 }
+
+export const releaseTag = (id: ProductId) => release(id).tag
 
 /**
  * For a page of main's docs, the same page in the latest release, or the release's first page
