@@ -125,7 +125,10 @@ const prompts = (["templates", "components"] as const).flatMap((kind) => {
 
 <script>
   // A catalog page links here with ?id=<entry>#templates or #components: put the entry in that prompt.
-  const id = new URLSearchParams(location.search).get("id")
-  const code = document.getElementById(`agent-${location.hash.slice(1)}`)
-  if (id && /^[a-z0-9-]+$/.test(id) && code) code.textContent = code.textContent.replace("<id>", id)
+  document.addEventListener("astro:page-load", () => {
+    const id = new URLSearchParams(location.search).get("id")
+    const code = document.getElementById(`agent-${location.hash.slice(1)}`)
+    if (id && /^[a-z0-9-]+$/.test(id) && code)
+      code.textContent = code.textContent.replace("<id>", id)
+  })
 </script>
