@@ -72,13 +72,7 @@ type CatalogCopy = {
       cores: (n: string) => string
     }
     risks: { title: string; risk: string; mitigation: string }
-    /** `section` is the title of the section in deploy/templates that the prompt names. */
-    agent: {
-      title: string
-      body: string
-      section: string
-      prompt: (id: string, url: string, section: string) => string
-    }
+    agent: AgentCopy
   }
   component: {
     kind: string
@@ -90,8 +84,16 @@ type CatalogCopy = {
     capability: (name: string) => string
     releases: string
     usedBy: string
-    agent: { title: string; body: string; prompt: (id: string, url: string) => string }
+    agent: AgentCopy
   }
+}
+
+/** `section` is the title of the section in the Zeabur OSS docs that the prompt names. */
+type AgentCopy = {
+  title: string
+  body: string
+  section: string
+  prompt: (id: string, url: string, section: string) => string
 }
 
 export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
@@ -194,9 +196,10 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       usedBy: "Templates that need it",
       agent: {
         title: "Install with an agent",
-        body: "Paste this into Claude Code or Codex. The agent follows the Zeabur Catalog docs and shows you each change before it applies it.",
-        prompt: (id, url) =>
-          `Install the Zeabur Catalog component \`${id}\` on my cluster.\nFollow ${url}.`,
+        body: "Paste this into Claude Code or Codex. The agent follows the Zeabur OSS docs and shows you each change before it applies it.",
+        section: "Install with an agent",
+        prompt: (id, url, section) =>
+          `Install the Zeabur Catalog component \`${id}\` on my cluster.\nFollow ${url}, section "${section}".`,
       },
     },
   },
@@ -297,8 +300,10 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       usedBy: "需要它的範本",
       agent: {
         title: "交給 Agent 安裝",
-        body: "貼到 Claude Code 或 Codex。Agent 會照著 Zeabur Catalog 文件做，每個改動都先給你看，你同意後才套用。",
-        prompt: (id, url) => `在我的叢集安裝 Zeabur Catalog 元件 \`${id}\`。\n照著 ${url} 做。`,
+        body: "貼到 Claude Code 或 Codex。Agent 會照著 Zeabur 開源版文件做，每個改動都先給你看，你同意後才套用。",
+        section: "交給 Agent 安裝",
+        prompt: (id, url, section) =>
+          `在我的叢集安裝 Zeabur Catalog 元件 \`${id}\`。\n照著 ${url} 裡「${section}」那一節做。`,
       },
     },
   },
@@ -399,8 +404,10 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       usedBy: "需要它的模板",
       agent: {
         title: "交给 Agent 安装",
-        body: "粘贴到 Claude Code 或 Codex。Agent 会按照 Zeabur Catalog 文档操作，每个改动都先给你看，你同意后才应用。",
-        prompt: (id, url) => `在我的集群安装 Zeabur Catalog 组件 \`${id}\`。\n按照 ${url} 操作。`,
+        body: "粘贴到 Claude Code 或 Codex。Agent 会按照 Zeabur 开源版文档操作，每个改动都先给你看，你同意后才应用。",
+        section: "交给 Agent 安装",
+        prompt: (id, url, section) =>
+          `在我的集群安装 Zeabur Catalog 组件 \`${id}\`。\n按照 ${url} 中“${section}”一节操作。`,
       },
     },
   },
