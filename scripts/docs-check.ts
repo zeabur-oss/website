@@ -6,7 +6,7 @@ import { basename, resolve } from "node:path"
 import { parseArgs } from "node:util"
 import { checkRepo } from "./lib/check.ts"
 import type { Finding } from "./lib/findings.ts"
-import { fromDirectory, fromRevision, latestSources, snapshot, type Snapshot } from "./lib/repos.ts"
+import { at, fromDirectory, fromRevision, latest, snapshot, type Snapshot } from "./lib/repos.ts"
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -22,7 +22,10 @@ if (target !== undefined) {
   const base = values.base ? await fromRevision(dir, values.base, name) : undefined
   targets.push({ snap, base })
 } else {
-  for (const repo of await latestSources()) targets.push({ snap: await snapshot(repo) })
+  for (const repo of await latest()) {
+    for (const ref of ["release", "main"] as const)
+      targets.push({ snap: await snapshot(at(repo, ref)) })
+  }
 }
 
 const order: Finding["level"][] = ["error", "warning"]

@@ -22,7 +22,8 @@ so Node must find it from the site's root. Move it with Starlight.
 ## Layout
 
 ```
-scripts/sync-docs.ts        docs/ of each repository's latest release and main -> content/ (not committed)
+scripts/build.ts            builds the releases and main, and merges them into dist/
+scripts/sync-docs.ts        docs/ of each repository at its latest release or main -> content/ (not committed)
 scripts/docs-check.ts       checks a repository's docs/ (see below)
 scripts/serve.ts            static server for dist/
 scripts/review.ts           full-page screenshots at 390, 1440 and 1960 px, light and dark
@@ -43,15 +44,17 @@ src/styles/                 site.css (shared), landing.css, imagery.css and docs
 ## How the docs come in
 
 `bun run sync` (part of `dev` and `build`) asks GitHub's API for each repository's latest full
-release (no draft, no pre-release) and the commit `main` is at. It takes `docs/` and `README.md`
-at both from GitHub's tarball (`GITHUB_TOKEN` is used if present) and keeps the snapshots in
-`.cache/repos/`. No older release is kept. The release is served at `/docs/<repo>/`, `main` at
-`/docs/<repo>/main/`, and `/docs/versions.json` names the tags and commits of the build. The site
-builds every 6 hours, on every push to `main` and by hand.
+release (no draft, no pre-release) and the commit `main` is at, and takes `docs/` and `README.md`
+at the release from GitHub's tarball (`GITHUB_TOKEN` is used if present). With `DOCS_CHANNEL=main`
+it takes them at `main`. Snapshots are kept in `.cache/repos/`. No older release is kept.
 
-The pages of `main` say that they describe unreleased work and link to the release. They are
-`noindex`, their canonical link is the release page, and the sitemap, the site's search and
-`llms.txt` leave them out. The product pages and the landing page show the latest release.
+`bun run build` (`scripts/build.ts`) builds the site twice, as Python, Read the Docs and Vite do
+for their development docs: once with `DOCS_CHANNEL=main`, then for the releases into `dist/`, and
+copies the docs of `main` (`/docs/<repo>/main/`) into `dist/`. In the `main` build every docs URL
+gets `/main` after the repository (`docsUrl()` in `src/lib/urls.ts`), and every page has a note
+that it describes unreleased work, `noindex` and a canonical link to the release path; it has no
+sitemap and no search. `/docs/versions.json` names the tags and commits. The site builds every 6
+hours, on every push to `main` and by hand.
 
 From `docs/nav.yaml` it writes the pages to `src/content/docs/[<locale>/]docs/<repo>/`, where
 Starlight reads them, plus `content/nav.json` for the sidebar (one per repository) and
@@ -63,7 +66,7 @@ is the home page in that locale.
 Links between pages become site URLs, and so do GitHub URLs of published docs pages. Files under
 `docs/` are served from `/docs-assets/`. A relative link to any other file of the repository goes
 to GitHub at the tag or commit the page comes from. A link to another repository's page stays in
-the page's channel: a page of `main` links to the other repository's `main`. Write it relative:
+its build: a page of `main` links to the other repository's `main`. Write it relative:
 `docs-check` fails on a GitHub URL into the page's own repository. The edit link of each page is
 the one link to GitHub the site adds itself.
 

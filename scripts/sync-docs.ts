@@ -1,7 +1,7 @@
-// Reads the site's own docs/ and each repository's docs/ at its latest full release and at main,
-// and writes what Starlight reads:
-// src/content/docs/[<locale>/]docs/<repo>/… (main under <repo>/main/), content/site.json (with the
-// tags and commits it read) and content/nav.json (the sidebar),
+// Reads the site's own docs/ and each repository's docs/ at its latest full release, or at main
+// with DOCS_CHANNEL=main, and writes what Starlight reads:
+// src/content/docs/[<locale>/]docs/<repo>/… (<repo>/main/… for main), content/site.json and
+// content/nav.json (the sidebar),
 // content/catalog.json (the catalog's components and templates), the images and social images
 // under public/, and for agents a Markdown copy of each page at its URL plus `.md` and /llms.txt.
 //   bun scripts/sync-docs.ts
@@ -9,18 +9,29 @@ import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSyn
 import { dirname, join } from "node:path"
 import { stringify as toYaml } from "yaml"
 import sharp from "sharp"
-import { docsUrl, localePrefix, locales, markdownPath, siteOrigin } from "../src/lib/urls.ts"
+import {
+  docsDir,
+  docsUrl,
+  localePrefix,
+  locales,
+  markdownPath,
+  onMain,
+  siteOrigin,
+} from "../src/lib/urls.ts"
 import { rewriteHref, rewriteSrc, type Context } from "../src/mdx/remark-docs.ts"
 import { group } from "../src/lib/capture.ts"
 import { readRepoDocs, readText, splitFrontmatter, type RepoDocs } from "./lib/docs.ts"
 import { llmsTxt } from "./lib/llms.ts"
 import { toMarkdown } from "./lib/markdown.ts"
 import {
+  at,
   fromDirectory,
-  latestSources,
+  latest,
   releaseAsset,
   root,
   snapshot,
+  type Latest,
+  type Release,
   type Source,
   type Snapshot,
 } from "./lib/repos.ts"
@@ -41,6 +52,8 @@ export type SitePage = {
 
 export type SiteData = {
   repos: Source[]
+  /** The latest full release of each product, which the product pages show. */
+  releases: Record<string, Release>
   pages: Record<string, SitePage>
   redirects: { from: string; to: string }[]
 }
@@ -50,7 +63,6 @@ export type RepoLinks = {
   name: string
   github: string
   ref: string
-  channel: Source["channel"]
   translations: string[]
   published: string[]
   files: string[]
@@ -78,7 +90,7 @@ const publicDir = join(root, "public")
 const manifests = /^docs\/([^/]+\/)?(nav|redirects|([a-z]+-)?shots)\.ya?ml$/
 
 function pagePath(locale: string, repo: string, slug: string, ext: string) {
-  return join(pagesDir, locale === "en" ? "" : locale, "docs", repo, slug + ext)
+  return join(pagesDir, locale === "en" ? "" : locale, "docs", docsDir(repo), slug + ext)
 }
 
 /** The page's file in `locale`, or in the first locale that has one, with that locale. */
@@ -91,7 +103,7 @@ function contentOf(files: Partial<Record<string, string>>, locale: string): [str
 }
 
 function pageKey(locale: string, repo: string, slug: string) {
-  return `${locale}/${repo}/${slug}`
+  return `${locale}/${docsDir(repo)}/${slug}`
 }
 
 /** Title from the frontmatter, or the first `# ` heading, which is then removed from the body. */
@@ -147,7 +159,7 @@ function navOf(locale: string, repo: Source, docs: RepoDocs, titles: Record<stri
  * a link to an example file stays on the site.
  */
 function copyAssets(snap: Snapshot) {
-  const out = join(publicDir, "docs-assets", snap.repo.name)
+  const out = join(publicDir, "docs-assets", docsDir(snap.repo.name))
   for (const path of snap.files) {
     const inDocs =
       path.startsWith("docs/") &&
@@ -179,15 +191,30 @@ export const siteRepo: Source = {
   label: "Overview",
   github: "zeabur-oss/website",
   ref: "main",
-  channel: "release",
 }
 
 async function siteDocs(): Promise<Snapshot> {
   return { ...(await fromDirectory(root, siteRepo.name)), repo: siteRepo }
 }
 
+/** The catalog pages always show the catalog's latest release. */
+async function catalogData(repos: Latest[]): Promise<CatalogData> {
+  const repo = repos.find((r) => r.name === "catalog")
+  if (!repo) throw new Error("the catalog pages need the catalog repository")
+  const snap = await snapshot(at(repo, "release"))
+  return {
+    github: repo.github,
+    ref: snap.repo.ref,
+    ...readCatalog(await releaseAsset(snap.repo, "api-v1.tar.gz")),
+    files: Object.fromEntries(
+      exampleFiles.map((f) => [f, readFileSync(join(snap.dir, f), "utf8")]),
+    ) as Record<ExampleFile, string>,
+  }
+}
+
 export async function sync() {
-  const sources = await latestSources()
+  const repos = await latest()
+  const sources = repos.map((repo) => at(repo, onMain ? "main" : "release"))
   rmSync(content, { recursive: true, force: true })
   rmSync(pagesDir, { recursive: true, force: true })
   rmSync(join(publicDir, "docs-assets"), { recursive: true, force: true })
@@ -195,9 +222,13 @@ export async function sync() {
     rmSync(join(publicDir, localePrefix(locale), "docs"), { recursive: true, force: true })
   }
   const nav: SiteNav = {}
-  const site: SiteData = { repos: [], pages: {}, redirects: [] }
+  const site: SiteData = {
+    repos: [],
+    releases: Object.fromEntries(repos.map((r) => [r.name, r.release])),
+    pages: {},
+    redirects: [],
+  }
   const links: Record<string, RepoLinks> = {}
-  let catalog: CatalogData | undefined
   for (const next of [siteDocs, ...sources.map((repo) => () => snapshot(repo))]) {
     const snap = await next()
     const { repo } = snap
@@ -215,8 +246,6 @@ export async function sync() {
           repo: repo.name,
           contentLocale,
           sourcePath: source,
-          // The site's search lists the release pages only.
-          ...(repo.channel === "main" && { pagefind: false }),
         }
         const path = pagePath(locale, repo.name, page.slug, ext)
         writeFile(path, `---\n${toYaml(data).trimEnd()}\n---\n\n${body}`)
@@ -238,7 +267,7 @@ export async function sync() {
     for (const [from, to] of Object.entries(docs.redirects)) {
       for (const locale of locales) {
         site.redirects.push({
-          from: `${localePrefix(locale)}/docs/${repo.name}/${from}`,
+          from: `${localePrefix(locale)}/docs/${docsDir(repo.name)}/${from}`,
           to: docsUrl(locale, repo.name, to),
         })
       }
@@ -247,23 +276,12 @@ export async function sync() {
       name: repo.name,
       github: repo.github,
       ref: repo.ref,
-      channel: repo.channel,
       translations: docs.translations,
       published: docs.pages.map((p) => p.slug),
       files: [...snap.files],
     }
-    if (repo.name === "catalog" && repo.channel === "release") {
-      catalog = {
-        github: repo.github,
-        ref: repo.ref,
-        ...readCatalog(await releaseAsset(repo, "api-v1.tar.gz")),
-        files: Object.fromEntries(
-          exampleFiles.map((f) => [f, readFileSync(join(snap.dir, f), "utf8")]),
-        ) as Record<ExampleFile, string>,
-      }
-    }
     copyAssets(snap)
-    if (repo.channel === "release") await writeSocialImage(snap)
+    if (!onMain) await writeSocialImage(snap)
     console.log(
       `${repo.name}@${repo.ref}: ${docs.pages.length} pages` +
         (docs.missing.length ? `, ${docs.missing.length} listed without a file` : ""),
@@ -272,13 +290,16 @@ export async function sync() {
   writeFile(join(content, "site.json"), JSON.stringify(site, null, 2))
   writeFile(join(content, "links.json"), JSON.stringify(links))
   writeFile(join(content, "nav.json"), JSON.stringify(nav, null, 2))
-  if (!catalog) throw new Error("the catalog pages need the catalog repository")
-  writeFile(join(content, "catalog.json"), JSON.stringify(catalog, null, 2))
+  writeFile(join(content, "catalog.json"), JSON.stringify(await catalogData(repos), null, 2))
   writeMarkdown(site, links)
   writeFile(join(publicDir, "llms.txt"), llmsTxt(nav.en ?? {}, site))
   writeFile(
     join(publicDir, "docs/versions.json"),
-    JSON.stringify(Object.fromEntries(sources.map((s) => [s.name, s.ref])), null, 2),
+    JSON.stringify(
+      Object.fromEntries(repos.map((r) => [r.name, { release: r.release.tag, main: r.main }])),
+      null,
+      2,
+    ),
   )
 }
 

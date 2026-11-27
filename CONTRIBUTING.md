@@ -90,7 +90,7 @@ OSI-approved.
 
 ## Product documentation
 
-Each build takes every repository's docs at its latest full release, served at `/docs/<repo>/`,
+The site takes every repository's docs at its latest full release, served at `/docs/<repo>/`,
 and at `main`, served at `/docs/<repo>/main/`. The product pages and the landing page show the
 same release. Fix a docs page in its own repository and run `bun scripts/docs-check.ts <checkout>`
 there before you open the pull request. The fix shows under `main` within 6 hours of its merge, and

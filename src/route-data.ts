@@ -4,8 +4,7 @@ import { defineRouteMiddleware } from "@astrojs/starlight/route-data"
 import { getCollection } from "astro:content"
 import type { StarlightRouteData } from "@astrojs/starlight/route-data"
 import type { SiteData, SiteNav } from "../scripts/sync-docs.ts"
-import { localePrefix, locales, markdownPath, siteOrigin } from "./lib/urls.ts"
-import { releasePage } from "./lib/releases.ts"
+import { localePrefix, locales, markdownPath, onMain, releasePath, siteOrigin } from "./lib/urls.ts"
 import { jsonLd, OG_HEIGHT, OG_WIDTH, ogLocale, organization, summary } from "./lib/seo.ts"
 
 type SidebarEntry = StarlightRouteData["sidebar"][number]
@@ -94,22 +93,15 @@ async function writtenLanguages() {
  */
 async function searchHead(route: StarlightRouteData, pathname: string) {
   const written = await writtenLanguages()
-  const data = route.entry.data as {
-    title: string
-    description?: string
-    contentLocale?: string
-    repo?: string
-  }
+  const data = route.entry.data as { title: string; description?: string; contentLocale?: string }
   const here = pathname.replace(/\/$/, "")
   const prefix = localePrefix(route.lang)
   const path = prefix && here.startsWith(prefix) ? here.slice(prefix.length) : here
   const at = (lang: string) => `${localePrefix(lang)}${path}`
   const ownLanguage = (lang: string) => written.get(at(lang).toLowerCase()) === lang
   const contentLocale = data.contentLocale ?? route.lang
-  // A page of main points search engines at the same page of the latest release, and stays out
-  // of their index.
-  const release = data.repo && releasePage(contentLocale, data.repo, at(contentLocale))
-  const canonical = `${siteOrigin}${release && release.same ? release.href : at(contentLocale)}`
+  // The docs of main point search engines at the release and stay out of their index.
+  const canonical = `${siteOrigin}${releasePath(at(contentLocale))}`
   if (data.contentLocale) route.entryMeta = { ...route.entryMeta, lang: contentLocale }
   const languages = locales.filter(ownLanguage)
   const head = route.head.filter(
@@ -167,7 +159,7 @@ async function searchHead(route: StarlightRouteData, pathname: string) {
     { tag: "meta", attrs: { property: "og:image:height", content: String(OG_HEIGHT) } },
     { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
   )
-  if (route.entry.id === "404" || release)
+  if (route.entry.id === "404" || onMain)
     head.push({ tag: "meta", attrs: { name: "robots", content: "noindex" } })
   route.head = head
 }

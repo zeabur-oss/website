@@ -8,7 +8,7 @@ import type { VFile } from "vfile"
 import type { RepoLinks, SiteData, SitePage } from "../../scripts/sync-docs.ts"
 import { registry } from "../docs-components/registry.ts"
 import { avifFileSize } from "../lib/avif.ts"
-import { docsUrl, localePrefix, locales, mainSection } from "../lib/urls.ts"
+import { docsDir, docsUrl, localePrefix, locales } from "../lib/urls.ts"
 import {
   classifyLink,
   githubDocsLink,
@@ -65,31 +65,15 @@ export function contextOf(file: VFile): Context | undefined {
   return { page, repo: repo.links, files: repo.files }
 }
 
-/**
- * A GitHub URL of a published docs page, of any repository the site carries, as its site URL in
- * the same channel: a page of main links to main.
- */
-function siteUrlOfGithub(href: string, locale: string, channel: RepoLinks["channel"]) {
+/** A GitHub URL of a published docs page, of any repository the site carries, as its site URL. */
+function siteUrlOfGithub(href: string, locale: string) {
   const link = githubDocsLink(href)
   if (!link) return undefined
-  const repo = [...load().repos.values()].find(
-    (r) => r.links.github === link.github && r.links.channel === channel,
-  )
+  const repo = [...load().repos.values()].find((r) => r.links.github === link.github)
   if (!repo) return undefined
   const slug = slugOfPath(link.path, repo.links.translations)
   if (slug === undefined || !repo.files.published.has(slug)) return undefined
   return docsUrl(locale, repo.links.name, slug) + link.hash
-}
-
-/** A site path to a release docs page, as the same page of main when `channel` is main and main has it. */
-function sameChannel(path: string, channel: RepoLinks["channel"]) {
-  const match = /^\/docs\/([^/]+)(?:\/(.+?))?\/?$/.exec(path)
-  if (channel !== "main" || !match?.[1]) return path
-  const main = load().repos.get(mainSection(match[1]))
-  const slug = match[2] ?? "index"
-  return main?.files.published.has(slug)
-    ? path.replace(/^\/docs\/[^/]+/, `/docs/${main.links.name}`)
-    : path
 }
 
 /**
@@ -102,18 +86,14 @@ export function rewriteHref(href: string, { page, repo, files }: Context): strin
     case "anchor":
       return href
     case "external":
-      return siteUrlOfGithub(href, page.locale, repo.channel) ?? href
+      return siteUrlOfGithub(href, page.locale) ?? href
     case "site":
-      return (
-        (localePrefix(page.locale) + sameChannel(target.path, repo.channel)).replace(
-          /(.)\/$/,
-          "$1",
-        ) + target.hash
-      )
+      return (localePrefix(page.locale) + target.path).replace(/(.)\/$/, "$1") + target.hash
     case "page":
       return docsUrl(page.locale, repo.name, target.slug) + target.hash
     case "file":
-      if (isDocsAsset(target.path)) return `/docs-assets/${repo.name}/${target.path}${target.hash}`
+      if (isDocsAsset(target.path))
+        return `/docs-assets/${docsDir(repo.name)}/${target.path}${target.hash}`
       return `https://github.com/${repo.github}/blob/${repo.ref}/${target.path}${target.hash}`
     case "dir":
       return `https://github.com/${repo.github}/tree/${repo.ref}/${target.path}${target.hash}`
@@ -127,7 +107,7 @@ export function rewriteSrc(src: string, { page, repo, files }: Context): string 
   if (target.kind === "site") return target.path
   if (target.kind === "external" || target.kind === "anchor") return src
   const path = resolveImage(target.path, files)
-  return path ? `/docs-assets/${repo.name}/${path}` : src
+  return path ? `/docs-assets/${docsDir(repo.name)}/${path}` : src
 }
 
 function importNode(names: string[]): MdxjsEsm {

@@ -2,20 +2,21 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { join, relative, resolve } from "node:path"
 import { $ } from "bun"
 import { productIds, productName } from "../../src/lib/products.ts"
-import { mainSection } from "../../src/lib/urls.ts"
 
 /** The docs of one repository at one ref. */
 export type Source = {
-  /** The part of the URL after /docs/: `builder` for the release, `builder/main` for main. */
   name: string
   label: string
   github: string
   /** The release tag, or the commit of main or of a local check. */
   ref: string
-  channel: "release" | "main"
-  /** The release's page and files, for the release channel. */
-  release?: { page: string; files: { name: string; url: string }[] }
 }
+
+/** A full release with its page and files. */
+export type Release = { tag: string; page: string; files: { name: string; url: string }[] }
+
+/** A product repository's latest full release and the commit main is at. */
+export type Latest = Omit<Source, "ref"> & { release: Release; main: string }
 
 export type Snapshot = {
   repo: Source
@@ -28,7 +29,7 @@ export type Snapshot = {
 export const root = resolve(import.meta.dirname, "../..")
 
 /** The fields of a GitHub release the site reads. */
-export type ReleaseInfo = {
+type ReleaseReply = {
   tag_name: string
   draft: boolean
   prerelease: boolean
@@ -37,7 +38,7 @@ export type ReleaseInfo = {
 }
 
 /** The highest full release: no draft, no pre-release, a tag like v0.2.0. */
-export function latestRelease<T extends Omit<ReleaseInfo, "html_url" | "assets">>(
+export function latestRelease<T extends Pick<ReleaseReply, "tag_name" | "draft" | "prerelease">>(
   releases: T[],
 ): T | undefined {
   return releases
@@ -54,39 +55,35 @@ async function github(path: string, accept = "application/vnd.github+json") {
   return response
 }
 
-/**
- * Each product repository twice: at its latest full release and at the commit main is at now,
- * from GitHub's API.
- */
-export async function latestSources(): Promise<Source[]> {
-  const sources = await Promise.all(
-    productIds.map(async (id): Promise<Source[]> => {
-      const repo = { label: productName[id], github: `zeabur-oss/${id}` }
-      const releases: ReleaseInfo[] = await (
-        await github(`${repo.github}/releases?per_page=100`)
-      ).json()
-      const latest = latestRelease(releases)
-      if (!latest) throw new Error(`${repo.github} has no full release`)
-      const main = await (
-        await github(`${repo.github}/commits/main`, "application/vnd.github.sha")
-      ).text()
-      return [
-        {
-          ...repo,
-          name: id,
-          ref: latest.tag_name,
-          channel: "release",
-          release: {
-            page: latest.html_url,
-            files: latest.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
-          },
+/** Each product repository's latest full release and main, from GitHub's API. */
+export function latest(): Promise<Latest[]> {
+  return Promise.all(
+    productIds.map(async (id) => {
+      const repo = `zeabur-oss/${id}`
+      const releases: ReleaseReply[] = await (await github(`${repo}/releases?per_page=100`)).json()
+      const release = latestRelease(releases)
+      if (!release) throw new Error(`${repo} has no full release`)
+      const main = await (await github(`${repo}/commits/main`, "application/vnd.github.sha")).text()
+      return {
+        name: id,
+        label: productName[id],
+        github: repo,
+        main,
+        release: {
+          tag: release.tag_name,
+          page: release.html_url,
+          files: release.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
         },
-        { ...repo, name: mainSection(id), ref: main, channel: "main" },
-      ]
+      }
     }),
   )
-  return sources.flat()
 }
+
+/** A repository at its release tag, or at main. */
+export const at = ({ release, main, ...repo }: Latest, ref: "release" | "main"): Source => ({
+  ...repo,
+  ref: ref === "main" ? main : release.tag,
+})
 
 /** Gets `docs/` and `README.md` of a repository at its ref, from GitHub's tarball. */
 export async function snapshot(repo: Source): Promise<Snapshot> {
@@ -138,7 +135,6 @@ const local = (name: string, ref: string): Source => ({
   label: name,
   github: `zeabur-oss/${name}`,
   ref,
-  channel: "release",
 })
 
 /** A working tree's own commit `rev` as a snapshot, the base that docs-check compares with. */

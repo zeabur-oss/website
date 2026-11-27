@@ -4,14 +4,7 @@ import Default from "@astrojs/starlight/components/Sidebar.astro"
 import Icon from "../Icon.astro"
 import { chrome } from "../../lib/chrome.ts"
 import { productIcon, productIds, productName } from "../../lib/products.ts"
-import {
-  blogUrl,
-  docsUrl,
-  homeUrl,
-  isSiteLocale,
-  mainSection,
-  releaseSection,
-} from "../../lib/urls.ts"
+import { blogUrl, docsUrl, homeUrl, isSiteLocale } from "../../lib/urls.ts"
 
 // The product whose docs these are, as a menu at the top, then that product's pages.
 const { lang, entry } = Astro.locals.starlightRoute
@@ -19,9 +12,7 @@ const locale = isSiteLocale(lang) ? lang : "en"
 const t = chrome[locale]
 const repo = (entry.data as { repo?: string }).repo
 // The overview is a docs page of the site itself, not of a product.
-const current = productIds.find((id) => repo !== undefined && id === releaseSection(repo))
-// The menu stays in the docs of main on a page of main.
-const onMain = repo !== undefined && repo !== releaseSection(repo)
+const current = productIds.find((id) => id === repo)
 ---
 
 {current && (
@@ -37,7 +28,7 @@ const onMain = repo !== undefined && repo !== releaseSection(repo)
       {productIds.map((id) => (
         <ProductLink
           id={id}
-          href={docsUrl(locale, onMain ? mainSection(id) : id)}
+          href={docsUrl(locale, id)}
           current={id === current}
           name={productName[id]}
           line={t.products[id].short}

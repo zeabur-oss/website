@@ -30,15 +30,21 @@ export function localePrefix(locale: string) {
   return localeInfo(locale).prefix
 }
 
-/** The docs of a repository's main branch are a section of their own, at /docs/<repo>/main. */
-export const mainSection = (repo: string) => `${repo}/main`
+/**
+ * The docs this build makes: each repository's latest release, or with DOCS_CHANNEL=main its main
+ * branch, under /docs/<repo>/main. scripts/build.ts runs both and merges them.
+ */
+export const onMain = globalThis.process?.env.DOCS_CHANNEL === "main"
 
-/** The release section of a docs section: `builder` for both `builder` and `builder/main`. */
-export const releaseSection = (section: string) => section.replace(/\/main$/, "")
+/** The folder of a repository's docs under /docs. */
+export const docsDir = (repo: string) => (onMain ? `${repo}/main` : repo)
 
 export function docsUrl(locale: string, repo: string, slug = "index") {
-  return `${localePrefix(locale)}/docs/${repo}${slug === "index" ? "" : `/${slug}`}`
+  return `${localePrefix(locale)}/docs/${docsDir(repo)}${slug === "index" ? "" : `/${slug}`}`
 }
+
+/** A path of the main docs as the same path in the release docs. */
+export const releasePath = (path: string) => path.replace(/(\/docs\/[^/]+)\/main(?=\/|$)/, "$1")
 
 /** The Markdown copy of a page (scripts/sync-docs.ts): its path plus `.md`, or `index.md` after a slash. */
 export function markdownPath(pathname: string) {
