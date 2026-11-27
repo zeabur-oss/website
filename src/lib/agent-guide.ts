@@ -42,11 +42,11 @@ const releaseHas = (locale: string, slug: string, text: string) => {
   return existsSync(file) && readFileSync(file, "utf8").includes(text)
 }
 
-/** The Markdown copy of the page of a catalog prompt, once the latest release has its section. */
+/** The Markdown copy and section title a catalog prompt names, once the latest release has the section. */
 export function catalogPromptDocs(locale: SiteLocale, kind: CatalogKind) {
   const { slug, title } = catalogSections[kind]
   return releaseHas(locale, slug, `\n## ${title[locale]}\n`)
-    ? siteOrigin + markdownPath(docsUrl(locale, "zeabur", slug))
+    ? { docs: siteOrigin + markdownPath(docsUrl(locale, "zeabur", slug)), section: title[locale] }
     : undefined
 }
 

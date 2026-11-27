@@ -1,8 +1,9 @@
 ---
 import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
+import CommandBlock from "../landing/CommandBlock.astro"
 import { catalogPromptDocs } from "../lib/agent-guide.ts"
-import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, formatBytes, formatCpu, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -35,15 +36,6 @@ const agent = catalogPromptDocs(locale, "templates")
   facts={[{ label: t.facts.version, value: x.version }]}
   actions={[
     { href: docsUrl(locale, "zeabur", "deploy/templates"), text: w.deploy, icon: "arrow-right" },
-    ...(agent
-      ? [
-          {
-            href: `${productUrl(locale, "agent")}?id=${x.id}#templates`,
-            text: t.agent,
-            icon: "terminal",
-          },
-        ]
-      : []),
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
@@ -83,6 +75,17 @@ const agent = catalogPromptDocs(locale, "templates")
       </div>
     )}
   </Section>
+
+  {agent && (
+    <Section id="agent" title={t.agent.title} body={t.agent.body}>
+      <CommandBlock
+        id="agent-prompt"
+        code={t.agent.templates(x.id, agent.docs, agent.section)}
+        copy={t.agent.copy}
+        wrap
+      />
+    </Section>
+  )}
 
   {rest.map((r) => (
     <Section id={r.id} title={r.title}>

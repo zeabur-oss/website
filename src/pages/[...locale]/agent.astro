@@ -4,7 +4,7 @@ import Icon from "../../components/Icon.astro"
 import CommandBlock from "../../landing/CommandBlock.astro"
 import { agentCopy } from "../../landing/agent-copy.ts"
 import Site from "../../layouts/Site.astro"
-import { agentDocs, catalogPromptDocs, catalogSections } from "../../lib/agent-guide.ts"
+import { agentDocs } from "../../lib/agent-guide.ts"
 import { chrome } from "../../lib/chrome.ts"
 import { docsUrl, localePaths, type SiteLocale } from "../../lib/urls.ts"
 
@@ -18,13 +18,6 @@ const links = [
   { href: docsUrl(locale, "zeabur", "install/one-command"), text: t.manual },
 ]
 const number = (i: number) => String(i + 1).padStart(2, "0")
-const prompts = (["templates", "components"] as const).flatMap((kind) => {
-  const docs = catalogPromptDocs(locale, kind)
-  const section = catalogSections[kind].title[locale]
-  return docs
-    ? [{ kind, label: t.catalog[kind].label, text: t.catalog[kind].text(docs, section) }]
-    : []
-})
 ---
 
 <Site
@@ -104,31 +97,4 @@ const prompts = (["templates", "components"] as const).flatMap((kind) => {
       </div>
     </div>
   </section>
-
-  {prompts.length > 0 && (
-    <section class="wrap section rails" aria-labelledby="agent-catalog">
-      <h2 id="agent-catalog" class="mb-4">
-        {t.catalog.title}
-      </h2>
-      <p class="body mb-8 max-w-[40em] text-site-muted">{t.catalog.body}</p>
-      <div class="grid gap-8 lg:grid-cols-2">
-        {prompts.map((p) => (
-          <div id={p.kind} class="grid content-start gap-3">
-            <h3 class="label text-site-faint">{p.label}</h3>
-            <CommandBlock id={`agent-${p.kind}`} code={p.text} copy={t.copy} wrap />
-          </div>
-        ))}
-      </div>
-    </section>
-  )}
 </Site>
-
-<script>
-  // A catalog page links here with ?id=<entry>#templates or #components: put the entry in that prompt.
-  document.addEventListener("astro:page-load", () => {
-    const id = new URLSearchParams(location.search).get("id")
-    const code = document.getElementById(`agent-${location.hash.slice(1)}`)
-    if (id && /^[a-z0-9-]+$/.test(id) && code)
-      code.textContent = code.textContent.replace("<id>", id)
-  })
-</script>

@@ -1,8 +1,9 @@
 ---
 import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
+import CommandBlock from "../landing/CommandBlock.astro"
 import { catalogPromptDocs } from "../lib/agent-guide.ts"
-import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
+import { docsUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -51,15 +52,6 @@ const agent = catalogPromptDocs(locale, "components")
   ]}
   actions={[
     { href: docsUrl(locale, "zeabur", "cluster/components"), text: w.install, icon: "arrow-right" },
-    ...(agent
-      ? [
-          {
-            href: `${productUrl(locale, "agent")}?id=${x.id}#components`,
-            text: t.agent,
-            icon: "terminal",
-          },
-        ]
-      : []),
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
@@ -68,6 +60,17 @@ const agent = catalogPromptDocs(locale, "components")
       <div class="prose min-w-0" set:html={r.html} />
     </Section>
   ))}
+
+  {agent && (
+    <Section id="agent" title={t.agent.title} body={t.agent.body}>
+      <CommandBlock
+        id="agent-prompt"
+        code={t.agent.components(x.id, agent.docs, agent.section)}
+        copy={t.agent.copy}
+        wrap
+      />
+    </Section>
+  )}
 
   {usedBy.length > 0 && (
     <Section id="used-by" title={w.usedBy}>

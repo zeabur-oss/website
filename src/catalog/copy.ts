@@ -30,8 +30,14 @@ type CatalogCopy = {
   details: string
   /** The button to the project's own site. */
   about: (name: string) => string
-  /** The button to the entry's prompt on the agent page. */
-  agent: string
+  /** The prompt to paste into a coding agent; `docs` holds the rules under the `section` heading. */
+  agent: {
+    title: string
+    body: string
+    copy: { label: string; done: string; failed: string }
+    templates: (id: string, docs: string, section: string) => string
+    components: (id: string, docs: string, section: string) => string
+  }
   tests: {
     title: string
     body: string
@@ -112,7 +118,15 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     },
     details: "Technical details",
     about: (name) => `About ${name}`,
-    agent: "Hand it to an agent",
+    agent: {
+      title: "Hand it to an agent",
+      body: "Paste this into Claude Code or Codex on a computer that can reach your cluster. The agent shows you each change and applies it only after you agree.",
+      copy: { label: "Copy the prompt", done: "Copied", failed: "Could not copy" },
+      templates: (id, docs, section) =>
+        `Deploy the Zeabur Catalog template ${id} to my Zeabur OSS cluster. Follow ${docs}, section "${section}".`,
+      components: (id, docs, section) =>
+        `Install the Zeabur Catalog component ${id} on my cluster. Follow ${docs}, section "${section}".`,
+    },
     tests: {
       title: "Tested in CI",
       body: "CI installs these exact files on a new cluster, waits until they are ready, then records the idle memory.",
@@ -203,7 +217,15 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     },
     details: "技術細節",
     about: (name) => `認識 ${name}`,
-    agent: "交給 Agent",
+    agent: {
+      title: "交給 Agent",
+      body: "在連得到叢集的電腦上，把這句話貼到 Claude Code 或 Codex。Agent 會先給你看每個改動，你同意後才套用。",
+      copy: { label: "複製這句話", done: "已複製", failed: "無法複製" },
+      templates: (id, docs, section) =>
+        `把 Zeabur Catalog 範本 ${id} 部署到我的 Zeabur 開源版叢集。照著 ${docs} 裡「${section}」那一節做。`,
+      components: (id, docs, section) =>
+        `在我的叢集安裝 Zeabur Catalog 元件 ${id}。照著 ${docs} 裡「${section}」那一節做。`,
+    },
     tests: {
       title: "CI 測試結果",
       body: "CI 會把這些檔案原封不動裝到新的叢集，等到它就緒，再記下閒置時的記憶體用量。",
@@ -293,7 +315,15 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     },
     details: "技术细节",
     about: (name) => `了解 ${name}`,
-    agent: "交给 Agent",
+    agent: {
+      title: "交给 Agent",
+      body: "在连得到集群的电脑上，把这句话粘贴到 Claude Code 或 Codex。Agent 会先给你看每个改动，你同意后才应用。",
+      copy: { label: "复制这句话", done: "已复制", failed: "无法复制" },
+      templates: (id, docs, section) =>
+        `把 Zeabur Catalog 模板 ${id} 部署到我的 Zeabur 开源版集群。按照 ${docs} 中“${section}”一节操作。`,
+      components: (id, docs, section) =>
+        `在我的集群安装 Zeabur Catalog 组件 ${id}。按照 ${docs} 中“${section}”一节操作。`,
+    },
     tests: {
       title: "CI 测试结果",
       body: "CI 会把这些文件原样装到新的集群，等到它就绪，再记下空闲时的内存用量。",
