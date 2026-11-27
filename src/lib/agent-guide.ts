@@ -1,23 +1,10 @@
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import type { RepoLinks } from "../../scripts/sync-docs.ts"
-import { docsUrl, markdownPath, siteOrigin, type SiteLocale } from "./urls.ts"
+import { docsUrl, markdownPath, siteOrigin } from "./urls.ts"
 
 const guide = "get-started/from-zeabur-com"
 const install = "install/agent"
-
-/** The sections of the Zeabur OSS docs the catalog prompts name, by their title in each locale. */
-export const catalogSections = {
-  templates: {
-    slug: "deploy/templates",
-    title: { en: "Deploy with an agent", "zh-TW": "交給 Agent 部署", "zh-CN": "交给 Agent 部署" },
-  },
-  components: {
-    slug: "cluster/components",
-    title: { en: "Install with an agent", "zh-TW": "交給 Agent 安裝", "zh-CN": "交给 Agent 安装" },
-  },
-} as const
-export type CatalogKind = keyof typeof catalogSections
 
 /** The Markdown copy of the guide (scripts/sync-docs.ts), which the prompt asks the agent to read. */
 export const agentGuideMarkdown = (locale: string) =>
@@ -30,24 +17,16 @@ const published = (): string[] => {
   return links.zeabur?.published ?? []
 }
 
-/** Whether the page in Zeabur's latest release holds `text`. */
-const releaseHas = (locale: string, slug: string, text: string) => {
+/** The guide in Zeabur's latest release gives the same prompt. */
+const guideReady = (locale: string) => {
   const file = join(
     process.cwd(),
     "src/content/docs",
     locale === "en" ? "" : locale,
     "docs/zeabur",
-    `${slug}.mdx`,
+    `${guide}.mdx`,
   )
-  return existsSync(file) && readFileSync(file, "utf8").includes(text)
-}
-
-/** The Markdown copy and section title a catalog prompt names, once the latest release has the section. */
-export function catalogPromptDocs(locale: SiteLocale, kind: CatalogKind) {
-  const { slug, title } = catalogSections[kind]
-  return releaseHas(locale, slug, `\n## ${title[locale]}\n`)
-    ? { docs: siteOrigin + markdownPath(docsUrl(locale, "zeabur", slug)), section: title[locale] }
-    : undefined
+  return existsSync(file) && readFileSync(file, "utf8").includes(agentGuideMarkdown(locale))
 }
 
 /**
@@ -58,9 +37,7 @@ export function agentDocs(locale: string) {
   const pages = published()
   return {
     guide:
-      pages.includes(guide) && releaseHas(locale, guide, agentGuideMarkdown(locale))
-        ? docsUrl(locale, "zeabur", guide)
-        : undefined,
+      pages.includes(guide) && guideReady(locale) ? docsUrl(locale, "zeabur", guide) : undefined,
     install: pages.includes(install) ? docsUrl(locale, "zeabur", install) : undefined,
   }
 }
