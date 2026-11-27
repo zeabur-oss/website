@@ -2,10 +2,13 @@ name: Pages
 
 # Builds the site in the repository's Nix dev shell and, on main, deploys dist/ to GitHub Pages
 # (custom domain oss.zeabur.com, set in the repository's Pages settings). Pull requests only build.
+# The schedule picks up each repository's newest release and main every 6 hours.
 on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: "17 */6 * * *"
   workflow_dispatch:
 
 permissions:
@@ -32,7 +35,7 @@ jobs:
         run: nix develop --command sh -c 'bun install --frozen-lockfile && bun run lint && bun scripts/docs-check.ts . --name overview'
       - name: Build
         env:
-          # The docs sync reads each locked repository's tarball from GitHub.
+          # The docs sync reads each repository's releases and tarballs from GitHub.
           GITHUB_TOKEN: ${{ github.token }}
           # PostHog's project key (repository variable POSTHOG_KEY), only in builds that deploy;
           # without it the site sends nothing.
