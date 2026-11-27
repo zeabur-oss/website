@@ -8,7 +8,7 @@ import type { VFile } from "vfile"
 import type { RepoLinks, SiteData, SitePage } from "../../scripts/sync-docs.ts"
 import { registry } from "../docs-components/registry.ts"
 import { avifFileSize } from "../lib/avif.ts"
-import { buildPath, docsDir, docsUrl, localePrefix, locales } from "../lib/urls.ts"
+import { docsUrl, localePrefix, locales } from "../lib/urls.ts"
 import {
   classifyLink,
   githubDocsLink,
@@ -78,7 +78,7 @@ function siteUrlOfGithub(href: string, locale: string) {
 
 /**
  * The site URL for a link in a page. Pages, and files under docs/, stay on the site. Links to the
- * rest of the repository go to GitHub at the tag or commit the page comes from.
+ * rest of the repository go to GitHub at the release tag.
  */
 export function rewriteHref(href: string, { page, repo, files }: Context): string {
   const target = classifyLink(href, page.source, files)
@@ -88,14 +88,11 @@ export function rewriteHref(href: string, { page, repo, files }: Context): strin
     case "external":
       return siteUrlOfGithub(href, page.locale) ?? href
     case "site":
-      return (
-        (localePrefix(page.locale) + buildPath(target.path)).replace(/(.)\/$/, "$1") + target.hash
-      )
+      return (localePrefix(page.locale) + target.path).replace(/(.)\/$/, "$1") + target.hash
     case "page":
       return docsUrl(page.locale, repo.name, target.slug) + target.hash
     case "file":
-      if (isDocsAsset(target.path))
-        return `/docs-assets/${docsDir(repo.name)}/${target.path}${target.hash}`
+      if (isDocsAsset(target.path)) return `/docs-assets/${repo.name}/${target.path}${target.hash}`
       return `https://github.com/${repo.github}/blob/${repo.ref}/${target.path}${target.hash}`
     case "dir":
       return `https://github.com/${repo.github}/tree/${repo.ref}/${target.path}${target.hash}`
@@ -109,7 +106,7 @@ export function rewriteSrc(src: string, { page, repo, files }: Context): string 
   if (target.kind === "site") return target.path
   if (target.kind === "external" || target.kind === "anchor") return src
   const path = resolveImage(target.path, files)
-  return path ? `/docs-assets/${docsDir(repo.name)}/${path}` : src
+  return path ? `/docs-assets/${repo.name}/${path}` : src
 }
 
 function importNode(names: string[]): MdxjsEsm {

@@ -9,7 +9,7 @@ import type { SiteData } from "./scripts/sync-docs.ts"
 import { starlightIcons } from "./src/lib/icons.ts"
 import { chrome } from "./src/lib/chrome.ts"
 import { githubOrg } from "./src/lib/site.ts"
-import { docsUrl, localePrefix, locales, onMain, siteOrigin } from "./src/lib/urls.ts"
+import { docsUrl, localePrefix, locales, siteOrigin } from "./src/lib/urls.ts"
 import { rehypeReferences } from "./src/blog/rehype-references.ts"
 import { remarkTerms } from "./src/blog/remark-terms.ts"
 import { rehypeDocsHtml } from "./src/mdx/rehype-docs-html.ts"
@@ -44,7 +44,6 @@ export default defineConfig({
   site: siteOrigin,
   trailingSlash: "never",
   prefetch: { prefetchAll: true, defaultStrategy: "viewport" },
-  outDir: onMain ? ".cache/main-dist" : "dist",
   build: { format: "directory", concurrency: 8 },
   redirects,
   markdown: {
@@ -55,8 +54,7 @@ export default defineConfig({
     }),
   },
   integrations: [
-    // The docs of main are left out of the sitemap and the site's search.
-    ...(onMain ? [] : [sitemap({ filter: (page) => !copies.has(page.replace(/\/$/, "")) })]),
+    sitemap({ filter: (page) => !copies.has(page.replace(/\/$/, "")) }),
     starlight({
       title: "Zeabur OSS",
       defaultLocale: "root",
@@ -67,7 +65,6 @@ export default defineConfig({
       social: [{ icon: "github", label: "GitHub", href: githubOrg }],
       customCss: ["./src/styles/docs.css"],
       routeMiddleware: "./src/route-data.ts",
-      pagefind: !onMain,
       components: {
         Head: "./src/components/docs/Head.astro",
         Header: "./src/components/docs/Header.astro",

@@ -1,7 +1,6 @@
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { avifFileSize } from "../lib/avif.ts"
-import { docsDir } from "../lib/urls.ts"
 
 // Screenshots on the landing and the product pages, from the docs images sync-docs.ts copies to
 // public/docs-assets/, and the widths they are shown at.
@@ -10,7 +9,7 @@ export type ShotImage = { src: string; width: number; height: number }
 
 function image(repo: string, ...paths: string[]): ShotImage {
   for (const path of paths) {
-    const src = `/docs-assets/${docsDir(repo)}/docs/${path}`
+    const src = `/docs-assets/${repo}/docs/${path}`
     const file = join(process.cwd(), "public", src)
     if (!existsSync(file)) continue
     const [width, height] = avifFileSize(file)
@@ -29,7 +28,7 @@ export const identityShot = (name: string, theme: "light" | "dark" = "light") =>
 
 /** A screen of Zeatend's terminal interface, 80 × 24, from its docs. */
 export function zeatendScreen(locale: string, name: string): ShotImage {
-  const src = `/docs-assets/${docsDir("zeatend")}/docs/screens/80x24/${locale.replace("-", "_")}-${name}.svg`
+  const src = `/docs-assets/zeatend/docs/screens/80x24/${locale.replace("-", "_")}-${name}.svg`
   const svg = readFileSync(join(process.cwd(), "public", src), "utf8")
   const size = /<svg[^>]* width="(\d+)" height="(\d+)"/.exec(svg)
   if (!size) throw new Error(`${src}: no width and height`)

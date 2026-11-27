@@ -6,7 +6,7 @@
   "scripts": {
     "sync": "bun scripts/sync-docs.ts",
     "dev": "bun scripts/sync-docs.ts && astro dev",
-    "build": "bun scripts/build.ts",
+    "build": "bun scripts/sync-docs.ts && astro build",
     "preview": "bun scripts/serve.ts",
     "docs-check": "bun scripts/docs-check.ts",
     "typecheck": "tsc && astro check --minimumSeverity warning",

@@ -90,11 +90,11 @@ OSI-approved.
 
 ## Product documentation
 
-The site takes every repository's docs at its latest full release, served at `/docs/<repo>/`,
-and at `main`, served at `/docs/<repo>/main/`. The product pages and the landing page show the
-same release. Fix a docs page in its own repository and run `bun scripts/docs-check.ts <checkout>`
-there before you open the pull request. The fix shows under `main` within 6 hours of its merge, and
-at `/docs/<repo>/` with that repository's next release; a docs-only patch release is fine.
+The site takes every repository's docs at its latest full release, served at `/docs/<repo>/`.
+The product pages and the landing page show the same release. Fix a docs page in its own
+repository and run `bun scripts/docs-check.ts <checkout>` there before you open the pull request.
+The fix reaches the site within 6 hours of that repository's next release; a docs-only patch
+release is fine.
 
 ## Copy
 
@@ -106,7 +106,7 @@ text of their own.
 | A product page                                                            | `src/content/pages/<locale>/<slug>.yaml`, one file per locale |
 | The home page                                                             | `src/landing/copy.ts`                                         |
 | The agent page                                                            | `src/landing/agent-copy.ts`                                   |
-| The features of Zeabur OSS on its page, beside their ids and screenshots  | `src/landing/features.ts`                                     |
+| The features of Zeabur OSS on its page, beside their ids and screenshots           | `src/landing/features.ts`                                     |
 | The catalog pages                                                         | `src/catalog/copy.ts`                                         |
 | The blog's own words                                                      | `src/blog/copy.ts`                                            |
 | Words on more than one page: header, footer, product list, section labels | `src/lib/chrome.ts`                                           |

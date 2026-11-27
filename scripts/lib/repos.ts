@@ -8,15 +8,15 @@ export type Source = {
   name: string
   label: string
   github: string
-  /** The release tag, or the commit of main or of a local check. */
+  /** The release tag, or the commit of a local check. */
   ref: string
 }
 
 /** A full release with its page and files. */
 export type Release = { tag: string; page: string; files: { name: string; url: string }[] }
 
-/** A product repository's latest full release and the commit main is at. */
-export type Latest = Omit<Source, "ref"> & { release: Release; main: string }
+/** A product repository at its latest full release. */
+export type Latest = { repo: Source; release: Release }
 
 export type Snapshot = {
   repo: Source
@@ -46,8 +46,8 @@ export function latestRelease<T extends Pick<ReleaseReply, "tag_name" | "draft" 
     .sort((a, b) => Bun.semver.order(b.tag_name, a.tag_name))[0]
 }
 
-async function github(path: string, accept = "application/vnd.github+json") {
-  const headers: Record<string, string> = { accept }
+async function github(path: string) {
+  const headers: Record<string, string> = { accept: "application/vnd.github+json" }
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   const url = `https://api.github.com/repos/${path}`
   const response = await fetch(url, { headers })
@@ -55,7 +55,7 @@ async function github(path: string, accept = "application/vnd.github+json") {
   return response
 }
 
-/** Each product repository's latest full release and main, from GitHub's API. */
+/** Each product repository's latest full release, from GitHub's API. */
 export function latest(): Promise<Latest[]> {
   return Promise.all(
     productIds.map(async (id) => {
@@ -63,12 +63,8 @@ export function latest(): Promise<Latest[]> {
       const releases: ReleaseReply[] = await (await github(`${repo}/releases?per_page=100`)).json()
       const release = latestRelease(releases)
       if (!release) throw new Error(`${repo} has no full release`)
-      const main = await (await github(`${repo}/commits/main`, "application/vnd.github.sha")).text()
       return {
-        name: id,
-        label: productName[id],
-        github: repo,
-        main,
+        repo: { name: id, label: productName[id], github: repo, ref: release.tag_name },
         release: {
           tag: release.tag_name,
           page: release.html_url,
@@ -78,12 +74,6 @@ export function latest(): Promise<Latest[]> {
     }),
   )
 }
-
-/** A repository at its release tag, or at main. */
-export const at = ({ release, main, ...repo }: Latest, ref: "release" | "main"): Source => ({
-  ...repo,
-  ref: ref === "main" ? main : release.tag,
-})
 
 /** Gets `docs/` and `README.md` of a repository at its ref, from GitHub's tarball. */
 export async function snapshot(repo: Source): Promise<Snapshot> {

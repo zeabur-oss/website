@@ -100,39 +100,3 @@ test("every docs page links to its built Markdown copy", () => {
   }
   expect(missing).toEqual([])
 })
-
-test("docs links between repositories stay in the page's channel", () => {
-  const wrong: string[] = []
-  for (const page of pages(join(dist, "docs"))) {
-    const html = readFileSync(page, "utf8")
-    const start = html.indexOf('class="sl-markdown-content')
-    if (start < 0) continue
-    const onMain = /^\/docs\/[^/]+\/main(\/|$)/.test(page.slice(dist.length))
-    for (const match of html.slice(start).matchAll(/href="\/docs\/([^/"#]+)(\/[^"#]*)?/g)) {
-      const [, repo = "", rest = ""] = match
-      const linksMain = rest === "/main" || rest.startsWith("/main/")
-      const mainPage = join(dist, "docs", repo, "main", rest, "index.html")
-      if (onMain ? !linksMain && existsSync(mainPage) : linksMain)
-        wrong.push(`${page.slice(dist.length)}: ${match[0]}`)
-    }
-  }
-  expect(wrong).toEqual([])
-})
-
-test("pages of main are left out of search engines and the sitemap", () => {
-  const page = readFileSync(join(dist, "docs/builder/main/index.html"), "utf8")
-  expect(page).toContain('<meta name="robots" content="noindex"')
-  expect(page).toContain('<link rel="canonical" href="https://oss.zeabur.com/docs/builder"')
-  const sitemap = readFileSync(join(dist, "sitemap-0.xml"), "utf8")
-  expect(sitemap).not.toContain("/main<")
-  expect(sitemap).not.toContain("/main/")
-})
-
-test("pages of main load bundles that are in the build", () => {
-  const missing = new Set<string>()
-  for (const page of pages(join(dist, "docs/builder/main"))) {
-    for (const [src] of readFileSync(page, "utf8").matchAll(/\/_astro\/[^"' )]+/g))
-      if (!existsSync(join(dist, src))) missing.add(src)
-  }
-  expect([...missing]).toEqual([])
-})

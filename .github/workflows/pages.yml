@@ -2,7 +2,7 @@ name: Pages
 
 # Builds the site in the repository's Nix dev shell and, on main, deploys dist/ to GitHub Pages
 # (custom domain oss.zeabur.com, set in the repository's Pages settings). Pull requests only build.
-# The schedule picks up each repository's newest release and main every 6 hours.
+# The schedule picks up each repository's newest release every 6 hours.
 on:
   push:
     branches: [main]

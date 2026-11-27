@@ -30,28 +30,9 @@ export function localePrefix(locale: string) {
   return localeInfo(locale).prefix
 }
 
-/**
- * The docs this build makes: each repository's latest release, or with DOCS_CHANNEL=main its main
- * branch, under /docs/<repo>/main. scripts/build.ts runs both and merges them.
- */
-export const onMain = globalThis.process?.env.DOCS_CHANNEL === "main"
-
-/** The folder of a repository's docs under /docs. */
-export const docsDir = (repo: string) => (onMain ? `${repo}/main` : repo)
-
 export function docsUrl(locale: string, repo: string, slug = "index") {
-  return `${localePrefix(locale)}/docs/${docsDir(repo)}${slug === "index" ? "" : `/${slug}`}`
+  return `${localePrefix(locale)}/docs/${repo}${slug === "index" ? "" : `/${slug}`}`
 }
-
-/** A path of the main docs as the same path in the release docs. */
-export const releasePath = (path: string) => path.replace(/(\/docs\/[^/]+)\/main(?=\/|$)/, "$1")
-
-/** A site path, with a docs page moved to this build: links between docs stay in main or the release. */
-export const buildPath = (path: string) =>
-  releasePath(path).replace(
-    /^\/docs\/([^/.]+)(?=\/|$)/,
-    (_, repo: string) => `/docs/${docsDir(repo)}`,
-  )
 
 /** The Markdown copy of a page (scripts/sync-docs.ts): its path plus `.md`, or `index.md` after a slash. */
 export function markdownPath(pathname: string) {

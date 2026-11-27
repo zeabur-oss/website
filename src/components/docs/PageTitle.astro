@@ -1,9 +1,8 @@
 ---
 import { Aside } from "@astrojs/starlight/components"
-import { docsUrl, onMain, releasePath } from "../../lib/urls.ts"
 
-// The title, the description as the lead, a notice when the page is not in the reader's
-// language (scripts/sync-docs.ts falls back to another one), and one on every page of main.
+// The title, the description as the lead, and a notice when the page is not in the reader's
+// language (scripts/sync-docs.ts falls back to another one).
 const notices: Record<string, Record<string, string>> = {
   en: { "zh-TW": "This page is only available in Traditional Chinese for now." },
   "zh-TW": { en: "這一頁還沒有繁體中文版，以下是英文原文。" },
@@ -12,14 +11,7 @@ const notices: Record<string, Record<string, string>> = {
     "zh-TW": "这一页还没有简体中文版，以下是繁体中文版。",
   },
 }
-const unreleased: Record<string, { text: string; link: string }> = {
-  en: { text: "This page describes unreleased work on main.", link: "Read the released docs" },
-  "zh-TW": { text: "這一頁說明 main 分支上還沒發布的內容。", link: "看已發布版本的文件" },
-  "zh-CN": { text: "这一页说明 main 分支上还没发布的内容。", link: "看已发布版本的文档" },
-}
 const { entry, lang } = Astro.locals.starlightRoute
-const main = onMain && (unreleased[lang] ?? unreleased.en)
-const repo = (entry.data as { repo?: string }).repo
 const data = entry.data as { title: string; description?: string; contentLocale?: string }
 const notice = data.contentLocale && notices[lang]?.[data.contentLocale]
 ---
@@ -32,13 +24,6 @@ const notice = data.contentLocale && notices[lang]?.[data.contentLocale]
 </h1>
 {data.description && (
   <p class="mt-3 max-w-[40rem] text-lg leading-[1.7] text-secondary">{data.description}</p>
-)}
-{main && repo && (
-  <div class="mt-5">
-    <Aside type="note">
-      {main.text} <a href={releasePath(docsUrl(lang, repo))}>{main.link}</a>
-    </Aside>
-  </div>
 )}
 {notice && (
   <div class="mt-5">

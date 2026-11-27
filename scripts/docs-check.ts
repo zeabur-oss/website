@@ -1,12 +1,12 @@
 // Checks a repository's docs/ (nav.yaml, links, redirects, frontmatter, MDX components).
 // Exits 1 on errors only.
-//   bun scripts/docs-check.ts                            every repository at its latest release and main
+//   bun scripts/docs-check.ts                            every repository at its latest release
 //   bun scripts/docs-check.ts <dir> [--base <rev>]       a working tree, as each repository's CI does
 import { basename, resolve } from "node:path"
 import { parseArgs } from "node:util"
 import { checkRepo } from "./lib/check.ts"
 import type { Finding } from "./lib/findings.ts"
-import { at, fromDirectory, fromRevision, latest, snapshot, type Snapshot } from "./lib/repos.ts"
+import { fromDirectory, fromRevision, latest, snapshot, type Snapshot } from "./lib/repos.ts"
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -22,10 +22,7 @@ if (target !== undefined) {
   const base = values.base ? await fromRevision(dir, values.base, name) : undefined
   targets.push({ snap, base })
 } else {
-  for (const repo of await latest()) {
-    for (const ref of ["release", "main"] as const)
-      targets.push({ snap: await snapshot(at(repo, ref)) })
-  }
+  for (const { repo } of await latest()) targets.push({ snap: await snapshot(repo) })
 }
 
 const order: Finding["level"][] = ["error", "warning"]

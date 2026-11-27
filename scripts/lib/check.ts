@@ -73,7 +73,7 @@ export function checkRepo(snap: Snapshot, options: CheckOptions = {}): Finding[]
           "error",
           "reserved-name",
           "docs/nav.yaml",
-          `${page.slug}: "${segment}" is reserved for translations, docs/ folders or the docs of main`,
+          `${page.slug}: "${segment}" is reserved for translations or docs/ folders`,
         )
       }
     }

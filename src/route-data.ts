@@ -4,7 +4,7 @@ import { defineRouteMiddleware } from "@astrojs/starlight/route-data"
 import { getCollection } from "astro:content"
 import type { StarlightRouteData } from "@astrojs/starlight/route-data"
 import type { SiteData, SiteNav } from "../scripts/sync-docs.ts"
-import { localePrefix, locales, markdownPath, onMain, releasePath, siteOrigin } from "./lib/urls.ts"
+import { localePrefix, locales, markdownPath, siteOrigin } from "./lib/urls.ts"
 import { jsonLd, OG_HEIGHT, OG_WIDTH, ogLocale, organization, summary } from "./lib/seo.ts"
 
 type SidebarEntry = StarlightRouteData["sidebar"][number]
@@ -100,8 +100,7 @@ async function searchHead(route: StarlightRouteData, pathname: string) {
   const at = (lang: string) => `${localePrefix(lang)}${path}`
   const ownLanguage = (lang: string) => written.get(at(lang).toLowerCase()) === lang
   const contentLocale = data.contentLocale ?? route.lang
-  // The docs of main point search engines at the release and stay out of their index.
-  const canonical = `${siteOrigin}${releasePath(at(contentLocale))}`
+  const canonical = `${siteOrigin}${at(contentLocale)}`
   if (data.contentLocale) route.entryMeta = { ...route.entryMeta, lang: contentLocale }
   const languages = locales.filter(ownLanguage)
   const head = route.head.filter(
@@ -159,7 +158,7 @@ async function searchHead(route: StarlightRouteData, pathname: string) {
     { tag: "meta", attrs: { property: "og:image:height", content: String(OG_HEIGHT) } },
     { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
   )
-  if (route.entry.id === "404" || onMain)
+  if (route.entry.id === "404")
     head.push({ tag: "meta", attrs: { name: "robots", content: "noindex" } })
   route.head = head
 }
