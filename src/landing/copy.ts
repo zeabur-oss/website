@@ -1,4 +1,4 @@
-import { releaseTag } from "../lib/products.ts"
+import { releaseTag } from "../lib/releases.ts"
 import type { SiteLocale } from "../lib/urls.ts"
 
 // The home page's words, one key per string. zh-TW is written first, then zh-CN and English;

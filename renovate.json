@@ -1,31 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "description": "The shared preset of zeabur-oss, plus packages (bun.lock), flake.lock (lock file maintenance) and the release tags in docs.lock.json.",
+  "description": "The shared preset of zeabur-oss, plus packages (bun.lock) and flake.lock (lock file maintenance).",
   "extends": ["github>zeabur-oss/.github"],
-  "enabledManagers": ["bun", "github-actions", "nix", "custom.regex"],
+  "enabledManagers": ["bun", "github-actions", "nix"],
   "packageRules": [
     {
       "description": "One pull request for compatible package updates; majors stay separate.",
       "matchManagers": ["bun"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "packages (non-major)"
-    },
-    {
-      "description": "One pull request moves every docs tag; the shared preset gives zeabur-oss releases no publish delay.",
-      "matchFileNames": ["docs.lock.json"],
-      "groupName": "docs"
-    }
-  ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "description": "The release each repository's docs are taken from.",
-      "managerFilePatterns": ["/^docs\\.lock\\.json$/"],
-      "matchStrings": [
-        "\"github\": \"(?<depName>[^\"]+)\",\\s*\"tag\": \"(?<currentValue>v[^\"]+)\""
-      ],
-      "datasourceTemplate": "github-releases",
-      "versioningTemplate": "semver"
     }
   ]
 }

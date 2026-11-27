@@ -1,6 +1,6 @@
 import { isMap, isScalar, isSeq, parseDocument, type YAMLMap } from "yaml"
 
-/** Component files the catalog and landing pages show, copied from the pinned release. */
+/** Component files the catalog and landing pages show, copied from its latest release. */
 export const exampleFiles = [
   "components/traefik/component.yaml",
   "components/cert-manager/component.yaml",

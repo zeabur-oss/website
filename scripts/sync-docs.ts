@@ -1,6 +1,6 @@
-// Reads the site's own docs/ and each repository's docs/ at the tag in docs.lock.json, and writes
-// what Starlight reads:
-// src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and content/nav.json (the sidebar),
+// Reads the site's own docs/ and each repository's docs/ at its latest full release, and writes
+// what Starlight reads: src/content/docs/[<locale>/]docs/<repo>/…, content/site.json and
+// content/nav.json (the sidebar),
 // content/catalog.json (the catalog's components and templates), the images and social images
 // under public/, and for agents a Markdown copy of each page at its URL plus `.md` and /llms.txt.
 //   bun scripts/sync-docs.ts
@@ -16,11 +16,13 @@ import { llmsTxt } from "./lib/llms.ts"
 import { toMarkdown } from "./lib/markdown.ts"
 import {
   fromDirectory,
-  readLock,
+  latest,
   releaseAsset,
   root,
   snapshot,
-  type LockRepo,
+  type Latest,
+  type Release,
+  type Source,
   type Snapshot,
 } from "./lib/repos.ts"
 import { readCatalog, type CatalogComponent, type CatalogTemplate } from "./lib/catalog.ts"
@@ -39,7 +41,9 @@ export type SitePage = {
 }
 
 export type SiteData = {
-  repos: Pick<LockRepo, "name" | "label" | "github" | "ref">[]
+  repos: Source[]
+  /** The latest full release of each product, which the product pages show. */
+  releases: Record<string, Release>
   pages: Record<string, SitePage>
   redirects: { from: string; to: string }[]
 }
@@ -54,7 +58,7 @@ export type RepoLinks = {
   files: string[]
 }
 
-/** The catalog's components and templates at the tag docs.lock.json pins. */
+/** The catalog's components and templates at its latest release. */
 export type CatalogData = {
   github: string
   ref: string
@@ -119,7 +123,7 @@ function writeFile(path: string, text: string) {
   writeFileSync(path, text)
 }
 
-function navOf(locale: string, repo: LockRepo, docs: RepoDocs, titles: Record<string, string>) {
+function navOf(locale: string, repo: Source, docs: RepoDocs, titles: Record<string, string>) {
   const labels = docs.labels[locale]
   const item = (slug: string): NavItem => ({
     slug,
@@ -173,7 +177,7 @@ async function writeSocialImage(snap: Snapshot) {
 }
 
 /** The site's own docs/: the overview, at /docs/overview, read from the working tree. */
-export const siteRepo: LockRepo = {
+export const siteRepo: Source = {
   name: "overview",
   label: "Overview",
   github: "zeabur-oss/website",
@@ -184,22 +188,42 @@ async function siteDocs(): Promise<Snapshot> {
   return { ...(await fromDirectory(root, siteRepo.name)), repo: siteRepo }
 }
 
+/** The catalog pages always show the catalog's latest release. */
+async function catalogData(repos: Latest[]): Promise<CatalogData> {
+  const repo = repos.find((r) => r.repo.name === "catalog")?.repo
+  if (!repo) throw new Error("the catalog pages need the catalog repository")
+  const snap = await snapshot(repo)
+  return {
+    github: repo.github,
+    ref: snap.repo.ref,
+    ...readCatalog(await releaseAsset(snap.repo, "api-v1.tar.gz")),
+    files: Object.fromEntries(
+      exampleFiles.map((f) => [f, readFileSync(join(snap.dir, f), "utf8")]),
+    ) as Record<ExampleFile, string>,
+  }
+}
+
 export async function sync() {
-  const lock = readLock()
+  const repos = await latest()
+  const sources = repos.map((r) => r.repo)
   rmSync(content, { recursive: true, force: true })
   rmSync(pagesDir, { recursive: true, force: true })
   for (const locale of locales) {
     rmSync(join(publicDir, localePrefix(locale), "docs"), { recursive: true, force: true })
   }
   const nav: SiteNav = {}
-  const site: SiteData = { repos: [], pages: {}, redirects: [] }
+  const site: SiteData = {
+    repos: [],
+    releases: Object.fromEntries(repos.map((r) => [r.repo.name, r.release])),
+    pages: {},
+    redirects: [],
+  }
   const links: Record<string, RepoLinks> = {}
-  let catalog: CatalogData | undefined
-  for (const next of [siteDocs, ...lock.map((repo) => () => snapshot(repo))]) {
+  for (const next of [siteDocs, ...sources.map((repo) => () => snapshot(repo))]) {
     const snap = await next()
     const { repo } = snap
     const docs = readRepoDocs(snap)
-    site.repos.push({ name: repo.name, label: repo.label, github: repo.github, ref: repo.ref })
+    site.repos.push(repo)
     const titles: Record<string, Record<string, string>> = {}
     for (const page of docs.pages) {
       for (const locale of locales) {
@@ -207,7 +231,12 @@ export async function sync() {
         const navTitle = docs.labels[locale]?.pages[page.slug]
         const { frontmatter, body } = normalise(readText(snap, source), navTitle ?? page.slug)
         const ext = source.endsWith(".mdx") ? ".mdx" : ".md"
-        const data = { ...frontmatter, repo: repo.name, contentLocale, sourcePath: source }
+        const data = {
+          ...frontmatter,
+          repo: repo.name,
+          contentLocale,
+          sourcePath: source,
+        }
         const path = pagePath(locale, repo.name, page.slug, ext)
         writeFile(path, `---\n${toYaml(data).trimEnd()}\n---\n\n${body}`)
         ;(titles[locale] ??= {})[page.slug] = navTitle ?? frontmatter.title
@@ -241,16 +270,6 @@ export async function sync() {
       published: docs.pages.map((p) => p.slug),
       files: [...snap.files],
     }
-    if (repo.name === "catalog") {
-      catalog = {
-        github: repo.github,
-        ref: repo.ref,
-        ...readCatalog(await releaseAsset(repo, "api-v1.tar.gz")),
-        files: Object.fromEntries(
-          exampleFiles.map((f) => [f, readFileSync(join(snap.dir, f), "utf8")]),
-        ) as Record<ExampleFile, string>,
-      }
-    }
     copyAssets(snap)
     await writeSocialImage(snap)
     console.log(
@@ -261,8 +280,7 @@ export async function sync() {
   writeFile(join(content, "site.json"), JSON.stringify(site, null, 2))
   writeFile(join(content, "links.json"), JSON.stringify(links))
   writeFile(join(content, "nav.json"), JSON.stringify(nav, null, 2))
-  if (!catalog) throw new Error("docs.lock.json: the catalog pages need the catalog repository")
-  writeFile(join(content, "catalog.json"), JSON.stringify(catalog, null, 2))
+  writeFile(join(content, "catalog.json"), JSON.stringify(await catalogData(repos), null, 2))
   writeMarkdown(site, links)
   writeFile(join(publicDir, "llms.txt"), llmsTxt(nav.en ?? {}, site))
 }

@@ -65,7 +65,7 @@ export function contextOf(file: VFile): Context | undefined {
   return { page, repo: repo.links, files: repo.files }
 }
 
-/** A GitHub URL of a published docs page, of any locked repository, as its site URL. */
+/** A GitHub URL of a published docs page, of any repository the site carries, as its site URL. */
 function siteUrlOfGithub(href: string, locale: string) {
   const link = githubDocsLink(href)
   if (!link) return undefined
@@ -78,7 +78,7 @@ function siteUrlOfGithub(href: string, locale: string) {
 
 /**
  * The site URL for a link in a page. Pages, and files under docs/, stay on the site. Links to the
- * rest of the repository go to GitHub at the locked ref.
+ * rest of the repository go to GitHub at the release tag.
  */
 export function rewriteHref(href: string, { page, repo, files }: Context): string {
   const target = classifyLink(href, page.source, files)

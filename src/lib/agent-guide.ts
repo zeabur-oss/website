@@ -17,7 +17,7 @@ const published = (): string[] => {
   return links.zeabur?.published ?? []
 }
 
-/** The guide in the Zeabur release that docs.lock.json pins gives the same prompt. */
+/** The guide in Zeabur's latest release gives the same prompt. */
 const guideReady = (locale: string) => {
   const file = join(
     process.cwd(),
@@ -30,7 +30,7 @@ const guideReady = (locale: string) => {
 }
 
 /**
- * The docs pages behind the agent page, in `locale`. Until the pinned release's guide has the
+ * The docs pages behind the agent page, in `locale`. Until the latest release's guide has the
  * prompt, the page shows "Stay tuned" and no prompt.
  */
 export function agentDocs(locale: string) {

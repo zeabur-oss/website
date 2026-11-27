@@ -90,11 +90,11 @@ OSI-approved.
 
 ## Product documentation
 
-`docs.lock.json` pins each repository's docs to a release tag, and the product pages and the
-landing page show the same version. Renovate opens a pull request when a repository publishes a full
-release. Fix a docs page in its own repository and run `bun scripts/docs-check.ts <checkout>` there
-before you open the pull request. The fix reaches the
-site with that repository's next release; a docs-only patch release is fine.
+The site takes every repository's docs at its latest full release, served at `/docs/<repo>/`.
+The product pages and the landing page show the same release. Fix a docs page in its own
+repository and run `bun scripts/docs-check.ts <checkout>` there before you open the pull request.
+The fix reaches the site within 6 hours of that repository's next release; a docs-only patch
+release is fine.
 
 ## Copy
 

@@ -8,7 +8,8 @@ import {
   identityExample,
   zeatendCommands,
 } from "../landing/examples.ts"
-import { productIcon, productName, releaseTag, type ProductId } from "./products.ts"
+import { productIcon, productName, type ProductId } from "./products.ts"
+import { releaseTag } from "./releases.ts"
 import { productUrl, type SiteLocale } from "./urls.ts"
 
 export type NavGroup = "manage" | "install" | "components"
@@ -121,17 +122,15 @@ export const pageSlugs = siteRows.map((r) => r.slug)
 
 export type PageRow = ReturnType<typeof pageRow>
 
-/** The row of a page, with its name, icon and the release docs.lock.json pins for its repository. */
+/** The row of a page, with its name, icon and the latest release of its repository. */
 export function pageRow(slug: string) {
   const row = siteRows.find((r) => r.slug === slug)
   if (!row) throw new Error(`no page row for ${slug}`)
-  const tag = releaseTag(row.repo)
   return {
     ...row,
     name: row.name ?? productName[row.repo],
     icon: row.icon ?? productIcon[row.repo],
-    tag,
-    beta: tag.includes("-"),
+    tag: releaseTag(row.repo),
   }
 }
 
