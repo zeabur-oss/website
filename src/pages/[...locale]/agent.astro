@@ -4,17 +4,14 @@ import Icon from "../../components/Icon.astro"
 import CommandBlock from "../../landing/CommandBlock.astro"
 import { agentCopy } from "../../landing/agent-copy.ts"
 import Site from "../../layouts/Site.astro"
-import { agentDocs } from "../../lib/agent-guide.ts"
-import { chrome } from "../../lib/chrome.ts"
 import { docsUrl, localePaths, type SiteLocale } from "../../lib/urls.ts"
 
 export const getStaticPaths = localePaths
 const { locale } = Astro.props as { locale: SiteLocale }
 const t = agentCopy[locale]
-const docs = agentDocs(locale)
 const links = [
-  ...(docs.guide ? [{ href: docs.guide, text: t.guide }] : []),
-  ...(docs.install ? [{ href: docs.install, text: t.install }] : []),
+  { href: docsUrl(locale, "zeabur", "get-started/from-zeabur-com"), text: t.guide },
+  { href: docsUrl(locale, "zeabur", "install/agent"), text: t.install },
   { href: docsUrl(locale, "zeabur", "install/one-command"), text: t.manual },
 ]
 const number = (i: number) => String(i + 1).padStart(2, "0")
@@ -30,7 +27,6 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
   <section class="wrap hero rails">
     <p class="label inline-flex items-center gap-2.5 text-site-muted" data-reveal>
       <span>{t.label}</span>
-      {!docs.guide && <span class="pill">{chrome[locale].nav.soon}</span>}
     </p>
     <h1 class="mega mt-6 max-w-[13em]" data-reveal="text">
       <HeadingText text={t.title} />
@@ -43,15 +39,11 @@ const number = (i: number) => String(i + 1).padStart(2, "0")
       <p class="lead">
         <HeadingText text={t.lead} />
       </p>
-      {docs.guide ? (
-        <div class="grid w-full gap-3">
-          <p class="body text-site-muted">{t.prompt.label}</p>
-          <CommandBlock id="agent-prompt" code={t.prompt.text} copy={t.copy} wrap />
-          <p class="body text-site-muted">{t.prompt.where}</p>
-        </div>
-      ) : (
-        <p class="body">{t.soon}</p>
-      )}
+      <div class="grid w-full gap-3">
+        <p class="body text-site-muted">{t.prompt.label}</p>
+        <CommandBlock id="agent-prompt" code={t.prompt.text} copy={t.copy} wrap />
+        <p class="body text-site-muted">{t.prompt.where}</p>
+      </div>
       <ul class="grid w-full border-t border-site-line">
         {links.map(({ href, text }) => (
           <li class="border-b border-site-line">

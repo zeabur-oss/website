@@ -1,8 +1,11 @@
-import { agentGuideMarkdown } from "../lib/agent-guide.ts"
-import type { SiteLocale } from "../lib/urls.ts"
+import { docsUrl, markdownPath, siteOrigin, type SiteLocale } from "../lib/urls.ts"
 
 // The words of the agent page. zh-TW is written first, then zh-CN and English; all three say the
 // same things. The prompt matches the one on the guide's docs page in the same language.
+
+/** The Markdown copy of the guide, which the prompt asks the agent to read. */
+const agentGuideMarkdown = (locale: SiteLocale) =>
+  siteOrigin + markdownPath(docsUrl(locale, "zeabur", "get-started/from-zeabur-com"))
 
 export type AgentCopy = {
   meta: { title: string; description: string }
@@ -11,7 +14,6 @@ export type AgentCopy = {
   lead: string
   prompt: { label: string; text: string; where: string }
   copy: { label: string; done: string; failed: string }
-  soon: string
   guide: string
   install: string
   manual: string
@@ -31,11 +33,9 @@ const zhTW: AgentCopy = {
   prompt: {
     label: "在 Claude Code 或 Codex 貼上",
     text: `讀 ${agentGuideMarkdown("zh-TW")}，把我在 Zeabur 的服務搬到我自己的伺服器上，用 Zeabur 開源版管理。`,
-    where:
-      "在你自己的電腦上執行 Agent。電腦要能用 SSH 連到新伺服器，也要能登入 Zeabur 的 CLI。",
+    where: "在你自己的電腦上執行 Agent。電腦要能用 SSH 連到新伺服器，也要能登入 Zeabur 的 CLI。",
   },
   copy: { label: "複製這句話", done: "已複製", failed: "無法複製" },
-  soon: "搬家指南會跟著下一版 Zeabur 開源版推出，屆時這裡會放上要貼的那句話。在那之前，可以自己動手安裝。",
   guide: "Agent 照著做的完整指南",
   install: "只要安裝 Zeabur 開源版，不搬家",
   manual: "自己動手安裝",
@@ -75,11 +75,9 @@ const zhCN: AgentCopy = {
   prompt: {
     label: "在 Claude Code 或 Codex 粘贴",
     text: `读 ${agentGuideMarkdown("zh-CN")}，把我在 Zeabur 的服务迁到我自己的服务器上，用 Zeabur 开源版管理。`,
-    where:
-      "在你自己的电脑上运行 Agent。电脑要能用 SSH 连到新服务器，也要能登录 Zeabur 的 CLI。",
+    where: "在你自己的电脑上运行 Agent。电脑要能用 SSH 连到新服务器，也要能登录 Zeabur 的 CLI。",
   },
   copy: { label: "复制这句话", done: "已复制", failed: "无法复制" },
-  soon: "迁移指南会随下一版 Zeabur 开源版推出，届时这里会放上要粘贴的那句话。在那之前，可以自己动手安装。",
   guide: "Agent 照着做的完整指南",
   install: "只安装 Zeabur 开源版，不迁移",
   manual: "自己动手安装",
@@ -123,7 +121,6 @@ const en: AgentCopy = {
       "Run the agent on your own computer. The computer needs to reach the new server over SSH and to sign in to the Zeabur CLI.",
   },
   copy: { label: "Copy the sentence", done: "Copied", failed: "Copy failed" },
-  soon: "The guide comes with the next Zeabur OSS release, and the sentence to paste will appear here then. Until then, you can install it yourself.",
   guide: "The full guide the agent follows",
   install: "Install Zeabur OSS only, without moving",
   manual: "Install it yourself",
