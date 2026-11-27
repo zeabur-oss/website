@@ -1,7 +1,8 @@
-// What the site reads from GitHub at build time: the star count and the pinned releases. A build
-// without network or over the rate limit leaves out what it could not read.
+// What the site reads from GitHub at build time: the star count and the files of each latest
+// release. A build without network or over the rate limit leaves out what it could not read.
 import { z } from "astro/zod"
-import { releaseTag, type ProductId } from "./products.ts"
+import type { ProductId } from "./products.ts"
+import { releaseTag } from "./releases.ts"
 import { githubOrg } from "./site.ts"
 
 export const starredRepo = `${githubOrg}/zeabur`
@@ -49,8 +50,6 @@ const releaseReply = z.object({
 
 export type Release = {
   tag: string
-  /** A tag with a suffix, like v0.3.0-beta.1. */
-  beta: boolean
   page: string
   /** The release's files with their download links. */
   files: { name: string; url: string }[]
@@ -58,16 +57,15 @@ export type Release = {
 
 async function readRelease(id: ProductId): Promise<Release> {
   const tag = releaseTag(id)
-  const pinned: Release = {
+  const latest: Release = {
     tag,
-    beta: tag.includes("-"),
     page: `${githubOrg}/${id}/releases/tag/${tag}`,
     files: [],
   }
   const reply = await api(`${id}/releases/tags/${tag}`, releaseReply)
-  if (!reply) return pinned
+  if (!reply) return latest
   return {
-    ...pinned,
+    ...latest,
     page: reply.html_url,
     files: reply.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
   }
@@ -76,8 +74,8 @@ async function readRelease(id: ProductId): Promise<Release> {
 const releases = new Map<ProductId, Promise<Release>>()
 
 /**
- * The release docs.lock.json pins for a repository, with its files, read once per build. A build
- * without network gets the tag and its release page, without files.
+ * The latest full release of a repository, with its files, read once per build. A build without
+ * network gets the tag and its release page, without files.
  */
 export function release(id: ProductId): Promise<Release> {
   let r = releases.get(id)

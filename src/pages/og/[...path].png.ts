@@ -10,7 +10,7 @@ import { productIds, productName, type ProductId } from "../../lib/products.ts"
 import { pageRow, pageSlugs, pageText } from "../../lib/site-pages.ts"
 import { renderOg, type OgCard } from "../../lib/og.ts"
 import { summary } from "../../lib/seo.ts"
-import { localeInfo, locales, type SiteLocale } from "../../lib/urls.ts"
+import { localeInfo, locales, releaseSection, type SiteLocale } from "../../lib/urls.ts"
 
 // English cards use the traditional Han font.
 const han = (locale: string) => localeInfo(locale).han ?? "tc"
@@ -101,8 +101,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
       "en"
     if (!data.repo || (data.contentLocale ?? lang) !== lang) continue
     const words = chrome[lang]
-    const product = (productIds as readonly string[]).includes(data.repo)
-      ? productName[data.repo as ProductId]
+    const repo = releaseSection(data.repo)
+    const product = (productIds as readonly string[]).includes(repo)
+      ? productName[repo as ProductId]
       : "Zeabur Open Source"
     add(entry.id.toLowerCase(), {
       kicker: `${product} · ${words.nav.docs}`,

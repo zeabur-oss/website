@@ -1,17 +1,22 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { join, relative, resolve } from "node:path"
 import { $ } from "bun"
+import { productIds, productName } from "../../src/lib/products.ts"
+import { mainSection } from "../../src/lib/urls.ts"
 
-export type LockRepo = {
+/** The docs of one repository at one ref. */
+export type Source = {
+  /** The part of the URL after /docs/: `builder` for the release, `builder/main` for main. */
   name: string
   label: string
   github: string
-  /** The release tag in docs.lock.json, or the commit a local check reads. */
+  /** The release tag, or the commit of main or of a local check. */
   ref: string
+  channel: "release" | "main"
 }
 
 export type Snapshot = {
-  repo: LockRepo
+  repo: Source
   /** Holds `docs/` and `README.md` of the repository at `ref`. */
   dir: string
   /** Every file path in the repository at `ref`. */
@@ -20,32 +25,62 @@ export type Snapshot = {
 
 export const root = resolve(import.meta.dirname, "../..")
 
-type LockEntry = Omit<LockRepo, "ref"> & { tag: string }
+/** The fields of a GitHub release that pick the latest one. */
+export type ReleaseInfo = { tag_name: string; draft: boolean; prerelease: boolean }
 
-/** docs.lock.json names a release tag per repository, like v0.2.0 or v0.2.0-beta.2. */
-export function readLock(path = join(root, "docs.lock.json")): LockRepo[] {
-  const entries: LockEntry[] = JSON.parse(readFileSync(path, "utf8")).repos
-  const repos: LockRepo[] = []
-  for (const { tag, ...repo } of entries) {
-    if (!/^v\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?$/.test(tag)) {
-      throw new Error(`docs.lock.json: ${repo.name} needs a release tag like v0.2.0, not "${tag}"`)
-    }
-    repos.push({ ...repo, ref: tag })
-  }
-  return repos
+/** The highest full release: no draft, no pre-release, a tag like v0.2.0. */
+export function latestRelease(releases: ReleaseInfo[]): string | undefined {
+  return releases
+    .filter((r) => !r.draft && !r.prerelease && /^v\d+\.\d+\.\d+$/.test(r.tag_name))
+    .map((r) => r.tag_name)
+    .sort((a, b) => Bun.semver.order(b, a))[0]
 }
 
-/** Gets `docs/` and `README.md` of a repository at its locked ref, from GitHub's tarball. */
-export async function snapshot(repo: LockRepo): Promise<Snapshot> {
-  const dir = join(root, ".cache/repos", `${repo.name}-${repo.ref}`)
+async function github(path: string, accept = "application/vnd.github+json") {
+  const headers: Record<string, string> = { accept }
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
+  const url = `https://api.github.com/repos/${path}`
+  const response = await fetch(url, { headers })
+  if (!response.ok) throw new Error(`${url}: ${response.status}`)
+  return response
+}
+
+/**
+ * Each product repository twice: at its latest full release and at the commit main is at now,
+ * from GitHub's API.
+ */
+export async function latestSources(): Promise<Source[]> {
+  const sources = await Promise.all(
+    productIds.map(async (id): Promise<Source[]> => {
+      const repo = { label: productName[id], github: `zeabur-oss/${id}` }
+      const releases: ReleaseInfo[] = await (
+        await github(`${repo.github}/releases?per_page=100`)
+      ).json()
+      const tag = latestRelease(releases)
+      if (!tag) throw new Error(`${repo.github} has no full release`)
+      const main = await (
+        await github(`${repo.github}/commits/main`, "application/vnd.github.sha")
+      ).text()
+      return [
+        { ...repo, name: id, ref: tag, channel: "release" },
+        { ...repo, name: mainSection(id), ref: main, channel: "main" },
+      ]
+    }),
+  )
+  return sources.flat()
+}
+
+/** Gets `docs/` and `README.md` of a repository at its ref, from GitHub's tarball. */
+export async function snapshot(repo: Source): Promise<Snapshot> {
+  const dir = join(root, ".cache/repos", `${repo.github.replace("/", "-")}-${repo.ref}`)
   const url = `https://codeload.github.com/${repo.github}/tar.gz/${repo.ref}`
   const headers: Record<string, string> = {}
   if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`
   return { repo, dir, files: new Set(await unpack(url, dir, headers, ["--strip-components=1"])) }
 }
 
-/** Unpacks the `.tar.gz` asset `name` of the public release at the locked tag; returns its directory. */
-export async function releaseAsset(repo: LockRepo, name: string): Promise<string> {
+/** Unpacks the `.tar.gz` asset `name` of the public release at the source's tag; returns its directory. */
+export async function releaseAsset(repo: Source, name: string): Promise<string> {
   const dir = join(root, ".cache/assets", `${repo.name}-${repo.ref}-${name}`)
   await unpack(`https://github.com/${repo.github}/releases/download/${repo.ref}/${name}`, dir, {})
   return dir
@@ -80,6 +115,14 @@ export function walk(dir: string): string[] {
     .map((entry) => join(entry.parentPath, entry.name))
 }
 
+const local = (name: string, ref: string): Source => ({
+  name,
+  label: name,
+  github: `zeabur-oss/${name}`,
+  ref,
+  channel: "release",
+})
+
 /** A working tree's own commit `rev` as a snapshot, the base that docs-check compares with. */
 export async function fromRevision(dir: string, rev: string, name: string): Promise<Snapshot> {
   const out = join(root, ".cache/base", name)
@@ -92,8 +135,7 @@ export async function fromRevision(dir: string, rev: string, name: string): Prom
     files.some((f) => f === p || f.startsWith(p + "/")),
   )
   await $`git -C ${dir} archive --format=tar ${rev} ${wanted} | tar -xf - -C ${out}`.quiet()
-  const repo = { name, label: name, github: `zeabur-oss/${name}`, ref: rev }
-  return { repo, dir: out, files: new Set(files) }
+  return { repo: local(name, rev), dir: out, files: new Set(files) }
 }
 
 /** A working tree as a snapshot, for checking a repository in its own CI. */
@@ -104,6 +146,5 @@ export async function fromDirectory(dir: string, name: string): Promise<Snapshot
   const files = tracked
     ? tracked.split("\n").filter(Boolean)
     : walk(dir).map((p) => relative(dir, p))
-  const repo = { name, label: name, github: `zeabur-oss/${name}`, ref: "HEAD" }
-  return { repo, dir, files: new Set(files) }
+  return { repo: local(name, "HEAD"), dir, files: new Set(files) }
 }

@@ -1,6 +1,6 @@
 import { catalog } from "../catalog/data.ts"
 import { excerpt } from "../catalog/examples.ts"
-import { releaseTag } from "../lib/products.ts"
+import { releaseTag } from "../lib/releases.ts"
 
 export const builderExample = `apiVersion: builder.zeabur.com/v1alpha1
 kind: Build

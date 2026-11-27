@@ -1,13 +1,12 @@
-// Reads the built site (bun run build first) against the catalog release that docs.lock.json pins.
+// Reads the built site (bun run build first) against the catalog release it was built from.
 import { expect, test } from "bun:test"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import { readLock, root } from "./lib/repos.ts"
+import { releaseTag } from "../src/lib/releases.ts"
+import { root } from "./lib/repos.ts"
 
 const dist = join(root, "dist")
-const catalog = readLock().find((r) => r.name === "catalog")
-if (!catalog) throw new Error("docs.lock.json has no catalog")
-const api = join(root, ".cache/assets", `catalog-${catalog.ref}-api-v1.tar.gz`, "v1")
+const api = join(root, ".cache/assets", `catalog-${releaseTag("catalog")}-api-v1.tar.gz`, "v1")
 
 type Entry = { id: string; sourceDigest: string }
 type Run = { result: string; sourceDigest: string }

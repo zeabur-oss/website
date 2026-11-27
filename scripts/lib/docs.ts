@@ -30,7 +30,7 @@ export type RepoDocs = {
 
 const pageExtensions = [".mdx", ".md"]
 /** Names a page or folder may not take: translation folders, and docs/ folders that are not pages. */
-export const reservedNames = ["internal", "images"]
+export const reservedNames = ["internal", "images", "main"]
 
 export function isLocaleName(name: string) {
   return (locales as readonly string[]).includes(name) || /^[a-z]{2}(-[A-Za-z]{2,4})?$/.test(name)

@@ -24,7 +24,8 @@ const redirects = Object.fromEntries([
 ])
 
 // Docs pages copied into a language they are not written in (scripts/sync-docs.ts) point their
-// canonical link at the original, so the sitemap leaves them out.
+// canonical link at the original, and the docs of main at the release, so the sitemap leaves them
+// out.
 const copies = new Set(
   readdirSync("src/content/docs", { recursive: true, encoding: "utf8" })
     .filter((file) => /\.mdx?$/.test(file))
@@ -54,7 +55,10 @@ export default defineConfig({
     }),
   },
   integrations: [
-    sitemap({ filter: (page) => !copies.has(page.replace(/\/$/, "")) }),
+    sitemap({
+      filter: (page) =>
+        !copies.has(page.replace(/\/$/, "")) && !/\/docs\/[^/]+\/main(\/|$)/.test(page),
+    }),
     starlight({
       title: "Zeabur OSS",
       defaultLocale: "root",

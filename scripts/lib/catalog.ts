@@ -1,4 +1,4 @@
-// Reads the catalog from the API of the release that docs.lock.json pins (`api-v1.tar.gz`), as
+// Reads the catalog from the API of its latest release (`api-v1.tar.gz`), as
 // the catalog's docs/reference/releases.mdx describes it.
 import { readFileSync } from "node:fs"
 import { join } from "node:path"

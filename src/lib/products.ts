@@ -1,5 +1,3 @@
-import lock from "../../docs.lock.json"
-
 // The projects whose docs the site carries, in the order the site lists them.
 export const productIds = ["zeabur", "identity", "builder", "catalog", "zeatend"] as const
 export type ProductId = (typeof productIds)[number]
@@ -20,11 +18,4 @@ export const productName: Record<ProductId, string> = {
   builder: "Zeabur Builder",
   catalog: "Zeabur Catalog",
   zeatend: "Zeatend",
-}
-
-/** The release tag docs.lock.json pins each product's docs to. */
-export function releaseTag(id: ProductId): string {
-  const repo = lock.repos.find((r) => r.name === id)
-  if (!repo) throw new Error(`docs.lock.json has no ${id}`)
-  return repo.tag
 }

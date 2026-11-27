@@ -30,6 +30,12 @@ export function localePrefix(locale: string) {
   return localeInfo(locale).prefix
 }
 
+/** The docs of a repository's main branch are a section of their own, at /docs/<repo>/main. */
+export const mainSection = (repo: string) => `${repo}/main`
+
+/** The release section of a docs section: `builder` for both `builder` and `builder/main`. */
+export const releaseSection = (section: string) => section.replace(/\/main$/, "")
+
 export function docsUrl(locale: string, repo: string, slug = "index") {
   return `${localePrefix(locale)}/docs/${repo}${slug === "index" ? "" : `/${slug}`}`
 }

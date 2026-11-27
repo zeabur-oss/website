@@ -1,9 +1,0 @@
-{
-  "repos": [
-    { "name": "zeabur", "label": "Zeabur", "github": "zeabur-oss/zeabur", "tag": "v0.3.2" },
-    { "name": "identity", "label": "Identity", "github": "zeabur-oss/identity", "tag": "v0.3.4" },
-    { "name": "builder", "label": "Builder", "github": "zeabur-oss/builder", "tag": "v0.3.0" },
-    { "name": "catalog", "label": "Catalog", "github": "zeabur-oss/catalog", "tag": "v0.6.3" },
-    { "name": "zeatend", "label": "Zeatend", "github": "zeabur-oss/zeatend", "tag": "v0.1.2" }
-  ]
-}

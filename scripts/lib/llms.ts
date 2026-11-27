@@ -1,5 +1,5 @@
-// /llms.txt (https://llmstxt.org/): the docs of each repository, from the English sidebar, with
-// links to the Markdown copy of each page.
+// /llms.txt (https://llmstxt.org/): the docs of each repository's latest release, from the English
+// sidebar, with links to the Markdown copy of each page.
 import { markdownPath, siteOrigin } from "../../src/lib/urls.ts"
 import type { SiteData, SiteNav } from "../sync-docs.ts"
 
@@ -12,7 +12,8 @@ const about = [
 
 export function llmsTxt(nav: SiteNav[string], site: SiteData): string {
   const lines = ["# Zeabur OSS", "", `> ${summary}`, "", ...about, ""]
-  for (const repo of site.repos) {
+  const repos = site.repos.filter((r) => r.channel === "release")
+  for (const repo of repos) {
     const groups = nav[repo.name]
     if (!groups) continue
     lines.push(`## ${repo.label}`, "")
@@ -25,7 +26,7 @@ export function llmsTxt(nav: SiteNav[string], site: SiteData): string {
     lines.push("")
   }
   lines.push("## Optional", "")
-  for (const repo of site.repos.filter((r) => r.github !== "zeabur-oss/website")) {
+  for (const repo of repos.filter((r) => r.github !== "zeabur-oss/website")) {
     lines.push(
       `- [${repo.label} on GitHub](https://github.com/${repo.github}): Source code and releases.`,
     )

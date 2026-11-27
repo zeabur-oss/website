@@ -22,8 +22,7 @@ so Node must find it from the site's root. Move it with Starlight.
 ## Layout
 
 ```
-docs.lock.json              the repositories and the commit (later, the tag) of each
-scripts/sync-docs.ts        docs/ of each locked repository -> content/ (not committed)
+scripts/sync-docs.ts        docs/ of each repository's latest release and main -> content/ (not committed)
 scripts/docs-check.ts       checks a repository's docs/ (see below)
 scripts/serve.ts            static server for dist/
 scripts/review.ts           full-page screenshots at 390, 1440 and 1960 px, light and dark
@@ -43,9 +42,16 @@ src/styles/                 site.css (shared), landing.css, imagery.css and docs
 
 ## How the docs come in
 
-`bun run sync` (part of `dev` and `build`) reads `docs.lock.json`. For each repository it takes
-`docs/` and `README.md` at the locked ref from GitHub's tarball (`GITHUB_TOKEN` is used if
-present). Snapshots are kept in `.cache/repos/`. Renovate moves the refs.
+`bun run sync` (part of `dev` and `build`) asks GitHub's API for each repository's latest full
+release (no draft, no pre-release) and the commit `main` is at. It takes `docs/` and `README.md`
+at both from GitHub's tarball (`GITHUB_TOKEN` is used if present) and keeps the snapshots in
+`.cache/repos/`. No older release is kept. The release is served at `/docs/<repo>/`, `main` at
+`/docs/<repo>/main/`, and `/docs/versions.json` names the tags and commits of the build. The site
+builds every 6 hours, on every push to `main` and by hand.
+
+The pages of `main` say that they describe unreleased work and link to the release. They are
+`noindex`, their canonical link is the release page, and the sitemap, the site's search and
+`llms.txt` leave them out. The product pages and the landing page show the latest release.
 
 From `docs/nav.yaml` it writes the pages to `src/content/docs/[<locale>/]docs/<repo>/`, where
 Starlight reads them, plus `content/nav.json` for the sidebar (one per repository) and
@@ -56,7 +62,8 @@ is the home page in that locale.
 
 Links between pages become site URLs, and so do GitHub URLs of published docs pages. Files under
 `docs/` are served from `/docs-assets/`. A relative link to any other file of the repository goes
-to GitHub at the locked ref, so it opens the release the page describes. Write it relative:
+to GitHub at the tag or commit the page comes from. A link to another repository's page stays in
+the page's channel: a page of `main` links to the other repository's `main`. Write it relative:
 `docs-check` fails on a GitHub URL into the page's own repository. The edit link of each page is
 the one link to GitHub the site adds itself.
 
@@ -82,19 +89,19 @@ density and shows at half its size.
 ## docs-check
 
 ```sh
-bun run docs-check                                # every locked repository at its ref
+bun run docs-check                                # every repository at its latest release and main
 bun scripts/docs-check.ts ../zeabur --base main   # a working tree, against a base ref
 ```
 
 It fails on: pages that `nav.yaml` lists without a file, reserved names (`internal`, `images`,
-locale names) in page paths, relative links and images to files that do not exist or pages that
+`main`, locale names) in page paths, relative links and images to files that do not exist or pages that
 are not published, published pages that are gone without a `redirects.yaml` entry, redirects to
 unpublished pages, frontmatter fields other than `title` and `description`, `import`/`export`,
 unknown components, props that are not literals or do not match the registry, GitHub URLs of docs
 pages, GitHub URLs of files in the page's own repository, and images outside `docs/` or written
 by reference, which the site does not serve. It lists pages that are not published.
 
-Each repository in `docs.lock.json` runs it on every pull request and in the merge queue, through
+Each product repository runs it on every pull request and in the merge queue, through
 the composite action `.github/actions/docs-check`, so a broken link fails before a release. The
 job in its `ci.yml` pins this repository by commit, and Renovate moves the pin:
 
