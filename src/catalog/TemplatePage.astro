@@ -1,7 +1,9 @@
 ---
 import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
+import CommandBlock from "../landing/CommandBlock.astro"
 import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { agentPrompt } from "./agent.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, formatBytes, formatCpu, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -23,6 +25,7 @@ const readme = await Promise.all(
   x.readme[locale].map(async (s) => ({ ...s, html: (await render.render(s.markdown)).code })),
 )
 const [intro, ...rest] = readme
+const prompt = agentPrompt(locale, "templates", x.id)
 ---
 
 <EntryPage
@@ -39,6 +42,12 @@ const [intro, ...rest] = readme
   {intro && (
     <Section id={intro.id} title={intro.title}>
       <div class="prose min-w-0" set:html={intro.html} />
+    </Section>
+  )}
+
+  {prompt && (
+    <Section id="agent" title={w.agent.title} body={w.agent.body}>
+      <CommandBlock id="agent-prompt" code={prompt} copy={t.copyPrompt} wrap />
     </Section>
   )}
 

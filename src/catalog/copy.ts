@@ -44,6 +44,8 @@ type CatalogCopy = {
     capability: string
   }
   security: string
+  /** The copy button of the agent prompt. */
+  copyPrompt: { label: string; done: string; failed: string }
   template: {
     kind: string
     pageTitle: (name: string) => string
@@ -70,6 +72,13 @@ type CatalogCopy = {
       cores: (n: string) => string
     }
     risks: { title: string; risk: string; mitigation: string }
+    /** `section` is the title of the section in deploy/templates that the prompt names. */
+    agent: {
+      title: string
+      body: string
+      section: string
+      prompt: (id: string, url: string, section: string) => string
+    }
   }
   component: {
     kind: string
@@ -81,6 +90,7 @@ type CatalogCopy = {
     capability: (name: string) => string
     releases: string
     usedBy: string
+    agent: { title: string; body: string; prompt: (id: string, url: string) => string }
   }
 }
 
@@ -124,6 +134,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       capability: "Provides",
     },
     security: "Security",
+    copyPrompt: { label: "Copy the prompt", done: "Copied", failed: "Copy failed" },
     template: {
       kind: "App template",
       pageTitle: (name) => `Deploy ${name} on your own server · Zeabur Catalog`,
@@ -157,6 +168,13 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         cores: (n) => `${n} ${n === "1" ? "core" : "cores"}`,
       },
       risks: { title: "Known risks", risk: "Risk", mitigation: "How it is handled" },
+      agent: {
+        title: "Deploy with an agent",
+        body: "Paste this into Claude Code or Codex. The agent follows the Zeabur OSS docs and shows you each change before it applies it.",
+        section: "Deploy with an agent",
+        prompt: (id, url, section) =>
+          `Deploy the Zeabur Catalog template \`${id}\` to my Zeabur OSS cluster.\nFollow ${url}, section "${section}".`,
+      },
     },
     component: {
       kind: "Cluster component",
@@ -174,6 +192,12 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       capability: (name) => `any ${name} component`,
       releases: "What it installs",
       usedBy: "Templates that need it",
+      agent: {
+        title: "Install with an agent",
+        body: "Paste this into Claude Code or Codex. The agent follows the Zeabur Catalog docs and shows you each change before it applies it.",
+        prompt: (id, url) =>
+          `Install the Zeabur Catalog component \`${id}\` on my cluster.\nFollow ${url}.`,
+      },
     },
   },
   "zh-TW": {
@@ -214,6 +238,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       capability: "提供的功能",
     },
     security: "安全性",
+    copyPrompt: { label: "複製提示", done: "已複製", failed: "無法複製" },
     template: {
       kind: "應用程式範本",
       pageTitle: (name) => `在自己的伺服器部署 ${name} · Zeabur Catalog`,
@@ -246,6 +271,13 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         cores: (n) => `${n} 核`,
       },
       risks: { title: "已知風險", risk: "風險", mitigation: "怎麼處理" },
+      agent: {
+        title: "交給 Agent 部署",
+        body: "貼到 Claude Code 或 Codex。Agent 會照著 Zeabur 開源版文件做，每個改動都先給你看，你同意後才套用。",
+        section: "交給 Agent 部署",
+        prompt: (id, url, section) =>
+          `把 Zeabur Catalog 範本 \`${id}\` 部署到我的 Zeabur 開源版叢集。\n照著 ${url} 裡「${section}」那一節做。`,
+      },
     },
     component: {
       kind: "叢集元件",
@@ -263,6 +295,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       capability: (name) => `任一個提供 ${name} 的元件`,
       releases: "會安裝的內容",
       usedBy: "需要它的範本",
+      agent: {
+        title: "交給 Agent 安裝",
+        body: "貼到 Claude Code 或 Codex。Agent 會照著 Zeabur Catalog 文件做，每個改動都先給你看，你同意後才套用。",
+        prompt: (id, url) => `在我的叢集安裝 Zeabur Catalog 元件 \`${id}\`。\n照著 ${url} 做。`,
+      },
     },
   },
   "zh-CN": {
@@ -303,6 +340,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       capability: "提供的功能",
     },
     security: "安全性",
+    copyPrompt: { label: "复制提示", done: "已复制", failed: "无法复制" },
     template: {
       kind: "应用模板",
       pageTitle: (name) => `在自己的服务器部署 ${name} · Zeabur Catalog`,
@@ -335,6 +373,13 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
         cores: (n) => `${n} 核`,
       },
       risks: { title: "已知风险", risk: "风险", mitigation: "怎么处理" },
+      agent: {
+        title: "交给 Agent 部署",
+        body: "粘贴到 Claude Code 或 Codex。Agent 会按照 Zeabur 开源版文档操作，每个改动都先给你看，你同意后才应用。",
+        section: "交给 Agent 部署",
+        prompt: (id, url, section) =>
+          `把 Zeabur Catalog 模板 \`${id}\` 部署到我的 Zeabur 开源版集群。\n按照 ${url} 中“${section}”一节操作。`,
+      },
     },
     component: {
       kind: "集群组件",
@@ -352,6 +397,11 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
       capability: (name) => `任一个提供 ${name} 的组件`,
       releases: "会安装的内容",
       usedBy: "需要它的模板",
+      agent: {
+        title: "交给 Agent 安装",
+        body: "粘贴到 Claude Code 或 Codex。Agent 会按照 Zeabur Catalog 文档操作，每个改动都先给你看，你同意后才应用。",
+        prompt: (id, url) => `在我的集群安装 Zeabur Catalog 组件 \`${id}\`。\n按照 ${url} 操作。`,
+      },
     },
   },
 }
