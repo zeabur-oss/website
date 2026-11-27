@@ -127,3 +127,12 @@ test("pages of main are left out of search engines and the sitemap", () => {
   expect(sitemap).not.toContain("/main<")
   expect(sitemap).not.toContain("/main/")
 })
+
+test("pages of main load bundles that are in the build", () => {
+  const missing = new Set<string>()
+  for (const page of pages(join(dist, "docs/builder/main"))) {
+    for (const [src] of readFileSync(page, "utf8").matchAll(/\/_astro\/[^"' )]+/g))
+      if (!existsSync(join(dist, src))) missing.add(src)
+  }
+  expect([...missing]).toEqual([])
+})
