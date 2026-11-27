@@ -46,6 +46,13 @@ export function docsUrl(locale: string, repo: string, slug = "index") {
 /** A path of the main docs as the same path in the release docs. */
 export const releasePath = (path: string) => path.replace(/(\/docs\/[^/]+)\/main(?=\/|$)/, "$1")
 
+/** A site path, with a docs page moved to this build: links between docs stay in main or the release. */
+export const buildPath = (path: string) =>
+  releasePath(path).replace(
+    /^\/docs\/([^/.]+)(?=\/|$)/,
+    (_, repo: string) => `/docs/${docsDir(repo)}`,
+  )
+
 /** The Markdown copy of a page (scripts/sync-docs.ts): its path plus `.md`, or `index.md` after a slash. */
 export function markdownPath(pathname: string) {
   return pathname.endsWith("/") ? `${pathname}index.md` : `${pathname}.md`

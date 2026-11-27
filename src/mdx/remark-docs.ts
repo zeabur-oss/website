@@ -8,7 +8,7 @@ import type { VFile } from "vfile"
 import type { RepoLinks, SiteData, SitePage } from "../../scripts/sync-docs.ts"
 import { registry } from "../docs-components/registry.ts"
 import { avifFileSize } from "../lib/avif.ts"
-import { docsDir, docsUrl, localePrefix, locales } from "../lib/urls.ts"
+import { buildPath, docsDir, docsUrl, localePrefix, locales } from "../lib/urls.ts"
 import {
   classifyLink,
   githubDocsLink,
@@ -88,7 +88,9 @@ export function rewriteHref(href: string, { page, repo, files }: Context): strin
     case "external":
       return siteUrlOfGithub(href, page.locale) ?? href
     case "site":
-      return (localePrefix(page.locale) + target.path).replace(/(.)\/$/, "$1") + target.hash
+      return (
+        (localePrefix(page.locale) + buildPath(target.path)).replace(/(.)\/$/, "$1") + target.hash
+      )
     case "page":
       return docsUrl(page.locale, repo.name, target.slug) + target.hash
     case "file":
