@@ -30,6 +30,8 @@ type CatalogCopy = {
   details: string
   /** The button to the project's own site. */
   about: (name: string) => string
+  /** The button to the entry's prompt on the agent page. */
+  agent: string
   tests: {
     title: string
     body: string
@@ -110,6 +112,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     },
     details: "Technical details",
     about: (name) => `About ${name}`,
+    agent: "Hand it to an agent",
     tests: {
       title: "Tested in CI",
       body: "CI installs these exact files on a new cluster, waits until they are ready, then records the idle memory.",
@@ -200,6 +203,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     },
     details: "技術細節",
     about: (name) => `認識 ${name}`,
+    agent: "交給 Agent",
     tests: {
       title: "CI 測試結果",
       body: "CI 會把這些檔案原封不動裝到新的叢集，等到它就緒，再記下閒置時的記憶體用量。",
@@ -289,6 +293,7 @@ export const catalogCopy: Record<SiteLocale, CatalogCopy> = {
     },
     details: "技术细节",
     about: (name) => `了解 ${name}`,
+    agent: "交给 Agent",
     tests: {
       title: "CI 测试结果",
       body: "CI 会把这些文件原样装到新的集群，等到它就绪，再记下空闲时的内存用量。",

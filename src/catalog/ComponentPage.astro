@@ -1,7 +1,8 @@
 ---
 import type { CatalogComponent } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { catalogPromptDocs } from "../lib/agent-guide.ts"
+import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -33,6 +34,7 @@ const readme = await Promise.all(
 // Used by follows Use it: setup and use first, then what depends on it, then removal.
 const split = readme.findIndex((s) => s.id === "remove-it" || s.id === "troubleshooting")
 const [before, after] = split < 0 ? [readme, []] : [readme.slice(0, split), readme.slice(split)]
+const agent = catalogPromptDocs(locale, "components")
 ---
 
 <EntryPage
@@ -49,6 +51,15 @@ const [before, after] = split < 0 ? [readme, []] : [readme.slice(0, split), read
   ]}
   actions={[
     { href: docsUrl(locale, "zeabur", "cluster/components"), text: w.install, icon: "arrow-right" },
+    ...(agent
+      ? [
+          {
+            href: `${productUrl(locale, "agent")}?id=${x.id}#components`,
+            text: t.agent,
+            icon: "terminal",
+          },
+        ]
+      : []),
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >

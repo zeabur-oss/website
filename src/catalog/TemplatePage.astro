@@ -1,7 +1,8 @@
 ---
 import type { CatalogTemplate } from "../../scripts/lib/catalog.ts"
 import Icon from "../components/Icon.astro"
-import { docsUrl, type SiteLocale } from "../lib/urls.ts"
+import { catalogPromptDocs } from "../lib/agent-guide.ts"
+import { docsUrl, productUrl, type SiteLocale } from "../lib/urls.ts"
 import { catalogCopy } from "./copy.ts"
 import { catalog, entryUrl, formatBytes, formatCpu, markdown } from "./data.ts"
 import EntryPage from "./EntryPage.astro"
@@ -23,6 +24,7 @@ const readme = await Promise.all(
   x.readme[locale].map(async (s) => ({ ...s, html: (await render.render(s.markdown)).code })),
 )
 const [intro, ...rest] = readme
+const agent = catalogPromptDocs(locale, "templates")
 ---
 
 <EntryPage
@@ -33,6 +35,15 @@ const [intro, ...rest] = readme
   facts={[{ label: t.facts.version, value: x.version }]}
   actions={[
     { href: docsUrl(locale, "zeabur", "deploy/templates"), text: w.deploy, icon: "arrow-right" },
+    ...(agent
+      ? [
+          {
+            href: `${productUrl(locale, "agent")}?id=${x.id}#templates`,
+            text: t.agent,
+            icon: "terminal",
+          },
+        ]
+      : []),
     { href: x.homepage, text: t.about(x.name), icon: "arrow-up-right" },
   ]}
 >
