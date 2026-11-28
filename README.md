@@ -100,7 +100,7 @@ job in its `ci.yml` pins this repository by commit, and Renovate moves the pin:
 
 ```yaml
 docs:
-  runs-on: instabox-small
+  runs-on: ubuntu-26.04
   timeout-minutes: 10
   steps:
     - uses: zeabur-oss/website/.github/actions/docs-check@<commit> # main
